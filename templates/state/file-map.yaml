@@ -1,0 +1,5 @@
+# Private logical-file mapping
+# Populate only with Drive IDs returned during onboarding.
+
+schema_version: 1
+files: {}
