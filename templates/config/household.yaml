@@ -1,0 +1,13 @@
+timezone: America/Los_Angeles
+entities:
+  - entity_id: child_1
+    display_name: Child 1
+    type: child
+    sort_order: 1
+  - entity_id: household
+    display_name: Family
+    type: shared
+    sort_order: 99
+grouping:
+  canonical_scope_field: entities
+  shared_group_id: household
