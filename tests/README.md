@@ -11,6 +11,6 @@ All fixtures are synthetic. Tests must never require a real household, inbox, Dr
 - Upgrade: staged release, declared migration, validation, and failed-upgrade preservation.
 - Adapter: actual runtime/provider/auth profile capability checks.
 
-The three `legacy-rolling-*` fixtures exercise the deterministic provenance migration's success, zero-match, and ambiguous-match paths. Only the exact-one-match fixture may produce migrated output; the other two must block without changing the input.
+The four `legacy-rolling-*` fixtures exercise the deterministic provenance migration's success, zero-match, ambiguous-match, and configured-group-projection paths. Only the exact-one-match/group-projection fixtures may produce migrated output; the other two must block without changing the input.
 
 Every future behavior change should add a synthetic fixture or expected-output case before modifying a release contract.

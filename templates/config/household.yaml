@@ -11,3 +11,4 @@ entities:
 grouping:
   canonical_scope_field: entities
   shared_group_id: household
+  unscoped_update_group: household

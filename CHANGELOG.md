@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0-alpha.3 — release candidate
+
+- Corrected the rolling-provenance migration to use configured group projection rather than comparing raw entity scope with a displayed group.
+- Added a synthetic fixture for multi-entity and unscoped updates projected to the shared group.
+
 ## 0.1.0-alpha.2 — release candidate
 
 - Corrected the release manifest/schema contract so the packaged manifest is installable and schema-valid.
@@ -18,4 +23,3 @@
 - Added provider-neutral source-catalog, task, capability, adapter, and release contracts.
 - Added reference templates for Gmail, Todoist, ChatGPT Work, Claude, scheduler, and optional audio integration.
 - Added synthetic fixtures and privacy boundaries.
-

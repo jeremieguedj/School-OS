@@ -35,7 +35,7 @@ For each legacy bullet, in file order:
 
 1. Resolve its source record from the catalog's stored source identifiers, never from filename resemblance alone.
 2. Select catalog facts whose source identifier matches the bullet, `is_update=true`, `is_guideline=false`, and `is_action=false`.
-3. Require the fact's local received date to equal the bullet's enclosing received-day heading and its entity scope to match the bullet scope.
+3. Require the fact's local received date to equal the bullet's enclosing received-day heading. Derive the fact's presentation group through the private configured group-projection rule, then require that derived group to equal the bullet's displayed group. Do not compare raw entity-scope text directly to the displayed group.
 4. Normalize only Markdown presentation wrappers and whitespace. A legacy source row may prefix displayed Fact text with its own backticked Fact ID followed by a colon; remove that prefix before comparison. Do not rewrite words or punctuation.
 5. Match the bullet text to candidate Fact text exactly after that normalization.
 6. If exactly one candidate matches, append its stable Fact ID in the target form.
@@ -48,9 +48,8 @@ Before replacing the private rolling stream, verify all of the following:
 - bullet count, order, received-day headings, scopes, visible text, and source identifiers are unchanged;
 - every bullet has at least one Fact reference;
 - every referenced Fact exists in the referenced source record;
-- every referenced Fact passes the update/guideline/action filters above;
+- every referenced Fact passes the update/guideline/action, local-date, and configured-group-projection filters above;
 - no Fact ID was invented, changed, or renumbered; and
 - readback of the migrated file matches the composed target byte-for-byte or through the instance's declared verified-replacement method.
 
 On any failure, leave the original rolling stream active and record the migration as blocked.
-

@@ -1,5 +1,5 @@
 schema_version: 1
-system_version: 0.1.0-alpha.2
+system_version: 0.1.0-alpha.3
 channel: alpha
 status: released
 runtime_bundle: source-tree
@@ -14,5 +14,4 @@ optional_capabilities:
   - audio.retrieve
 migrations:
   - migrations/0001-add-atomic-fact-refs-to-rolling-updates.md
-notes: First installable alpha candidate with a schema-valid release manifest and deterministic legacy rolling-update provenance migration.
-
+notes: First installable alpha candidate with a schema-valid release manifest and deterministic legacy rolling-update provenance migration using configured group projection.

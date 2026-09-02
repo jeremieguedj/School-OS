@@ -1,5 +1,12 @@
 # School-OS progress log
 
+## 2026-09-02 — alpha.2 migration QA correction
+
+- The `v0.1.0-alpha.2` tag/release correctly points to its schema-valid manifest, but its rolling-provenance migration compared raw fact scope to displayed group scope.
+- Private shadow QA showed that this would incorrectly block valid multi-entity and unscoped updates that project to the shared group under configuration.
+- No private rolling data was changed. Prepared `0.1.0-alpha.3` to use configured group projection and added a synthetic fixture for that behavior.
+- Next: tag the corrected candidate, rerun the bounded migration shadow, then apply only after all mappings are verified.
+
 ## 2026-09-02 — initialization
 
 - Repository confirmed: `jeremieguedj/School-OS` (private, default branch `main`).
@@ -49,4 +56,3 @@
 - The first published alpha tag is non-installable because its packaged manifest still declares a development, unreleased version. It remains a packaging dry run.
 - Shadow validation also found a legacy compatibility gap: rolling-update bullets carry source identifiers but not atomic Fact IDs required by the new source-catalog contract.
 - Prepared `0.1.0-alpha.2` with a schema-valid release manifest, a deterministic fail-closed provenance migration, and synthetic fixtures. Next: verify the new package after tagging, run the declared migration in private shadow mode, and install only after every exception is explicitly mapped.
-
