@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/release.schema.json",
+  "title": "School-OS release manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "system_version", "channel", "status", "data_schema_compatibility", "migrations"],
+  "properties": {
+    "schema_version": {"type": "integer", "minimum": 1},
+    "system_version": {"type": "string"},
+    "channel": {"enum": ["development", "stable", "beta"]},
+    "status": {"enum": ["unreleased", "released"]},
+    "data_schema_compatibility": {"type": "object", "required": ["minimum", "maximum"], "properties": {"minimum": {"type": "integer"}, "maximum": {"type": "integer"}}},
+    "migrations": {"type": "array", "items": {"type": "string"}}
+  }
+}
