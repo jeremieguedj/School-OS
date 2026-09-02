@@ -1,0 +1,13 @@
+schema_version: 1
+system_version: 0.1.0-dev
+channel: development
+status: unreleased
+runtime_bundle: not-built
+source_repository: jeremieguedj/School-OS
+data_schema_compatibility:
+  minimum: 1
+  maximum: 1
+required_capabilities: []
+optional_capabilities: []
+migrations: []
+notes: This is a development manifest, not an installable release.
