@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/configuration.schema.json",
+  "title": "School-OS private configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["timezone", "entities", "integrations"],
+  "properties": {
+    "timezone": {"type": "string"},
+    "entities": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["entity_id", "display_name", "sort_order"], "properties": {"entity_id": {"type": "string"}, "display_name": {"type": "string"}, "sort_order": {"type": "integer"}}}},
+    "integrations": {"type": "object", "required": ["runtime_adapter", "mail_adapter", "task_adapter"], "properties": {"runtime_adapter": {"type": "string"}, "mail_adapter": {"type": "string"}, "task_adapter": {"type": "string"}, "scheduler_adapter": {"type": ["string", "null"]}, "audio_adapter": {"type": ["string", "null"]}}}
+  }
+}
