@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/fact.schema.json",
+  "title": "School-OS logical atomic fact",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["fact_id", "source_message_id", "received_date", "entity_scope", "category", "text", "flags"],
+  "properties": {
+    "fact_id": {"type": "string", "minLength": 1},
+    "source_message_id": {"type": "string", "minLength": 1},
+    "received_date": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+    "entity_scope": {"type": "string"},
+    "category": {"type": "string"},
+    "text": {"type": "string", "minLength": 1},
+    "flags": {"type": "object", "additionalProperties": false, "required": ["is_update", "is_durable", "is_guideline", "is_action"], "properties": {"is_update": {"type": "boolean"}, "is_durable": {"type": "boolean"}, "is_guideline": {"type": "boolean"}, "is_action": {"type": "boolean"}}}
+  }
+}
