@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/provider-state.schema.json",
+  "title": "School-OS private provider state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["provider_id", "adapter_id", "bindings", "cursor"],
+  "properties": {
+    "provider_id": {"type": "string"},
+    "adapter_id": {"type": "string"},
+    "cursor": {"type": ["string", "null"]},
+    "bindings": {"type": "array", "items": {"type": "object", "required": ["task_id", "provider_object_id", "status"], "properties": {"task_id": {"type": "string"}, "provider_object_id": {"type": "string"}, "status": {"type": "string"}}}}
+  }
+}
