@@ -31,3 +31,11 @@
 - QA passed: all six JSON schemas parsed successfully; required entry, operation, adapter, template, fixture, plan, progress, and deferred-review files were read back from GitHub; targeted scan found no private family names, school domains, recipient address, or sampled live Drive IDs.
 - No private Drive files, schedules, provider objects, or emails were modified during repository extraction.
 - Next phase: private-instance inventory and configuration mapping under `docs/current-instance-migration.md`. This requires separate inspection/approval because it touches the live private deployment. Do not enable a new scheduler or release a public installer before that phase is validated.
+
+
+## 2026-09-02 — private migration inventory checkpoint
+
+- Phase 6 started in read-only mode: private Drive layout and logical roles were inventoried and stored only in the private instance migration area.
+- The inventory maps current generic instructions, configuration, canonical catalog/task data, derived files, and runtime state to the new model without copying private content into GitHub.
+- Existing scheduler, current daily runbook, catalog, task provider, and delivery behavior remain unchanged.
+- Next: create a versioned installed release area from a tagged/released package, generate private config/state mappings that initially reference the current files, then run no-send/no-provider-write shadow validation.
