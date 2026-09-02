@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/task.schema.json",
+  "title": "School-OS logical canonical task",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["task_id", "action", "entity_scope", "workflow_state", "source_facts"],
+  "properties": {
+    "task_id": {"type": "string", "minLength": 1},
+    "action": {"type": "string", "minLength": 1},
+    "task_context": {"type": "string"},
+    "entity_scope": {"type": "string"},
+    "workflow_state": {"enum": ["needs_action", "waiting_external", "needs_review"]},
+    "source_opened_date": {"type": ["string", "null"]},
+    "source_due": {"type": ["string", "null"]},
+    "parent_planned_due": {"type": ["string", "null"]},
+    "source_link": {"type": ["string", "null"]},
+    "source_facts": {"type": "array", "items": {"type": "string"}},
+    "latest_progress": {"type": ["string", "null"]}
+  }
+}
