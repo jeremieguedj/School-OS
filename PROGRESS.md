@@ -1,5 +1,12 @@
 # School-OS progress log
 
+## 2026-09-02 — alpha.3 legacy-date QA correction
+
+- After configured-group-projection validation, private shadow QA identified legacy catalog records without per-Fact local dates.
+- The corrected migration permits the record-level date only when it is singular and unambiguous; any range, multiple date, or missing date remains blocking.
+- No private rolling data was changed. Prepared `0.1.0-alpha.4` and a synthetic fixture for this compatibility path.
+- Next: tag the corrected candidate, rerun the complete migration shadow, then apply only after full verified coverage.
+
 ## 2026-09-02 — alpha.2 migration QA correction
 
 - The `v0.1.0-alpha.2` tag/release correctly points to its schema-valid manifest, but its rolling-provenance migration compared raw fact scope to displayed group scope.

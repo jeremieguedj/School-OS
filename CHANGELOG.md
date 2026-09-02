@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0-alpha.4 — release candidate
+
+- Added a fail-closed, singular-record-date fallback for legacy Facts that predate per-Fact local received dates.
+- Added a synthetic fixture for the permitted fallback behavior.
+
 ## 0.1.0-alpha.3 — release candidate
 
 - Corrected the rolling-provenance migration to use configured group projection rather than comparing raw entity scope with a displayed group.
