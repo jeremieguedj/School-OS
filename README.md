@@ -19,6 +19,7 @@ GitHub is the reusable upstream. A user's Google Drive contains the active insta
 - Providers and agent runtimes are selected explicitly through adapters and configuration.
 - The package must be usable by a single agent without conversational memory or subagents.
 - All write-capable operations follow the installed operation recipe and its verification requirements.
+- Every installable release is a pinned, immutable package with a complete payload inventory and independently distributed archive checksum.
 
 ## Repository map
 
@@ -32,4 +33,4 @@ GitHub is the reusable upstream. A user's Google Drive contains the active insta
 
 ## Current status
 
-This repository is being built from an existing private deployment. It intentionally contains no real names, domains, email messages, Drive IDs, provider IDs, recipients, or secrets. It is not yet a released installer.
+This repository is being built from an existing private deployment. It intentionally contains no real names, domains, email messages, Drive IDs, provider IDs, recipients, or secrets. Alpha packages are prereleases; `release.yaml` is authoritative about whether the checked-out source is an installable released version.

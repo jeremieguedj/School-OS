@@ -4,14 +4,61 @@
   "title": "School-OS instance manifest",
   "type": "object",
   "additionalProperties": false,
-  "required": ["instance_format_version", "system_version", "data_schema_version", "active_release", "configuration"],
+  "required": [
+    "instance_format_version",
+    "instance_id",
+    "system_version",
+    "data_schema_version",
+    "release_channel",
+    "active_release",
+    "configuration",
+    "state",
+    "last_completed_migration",
+    "latest_release_seen"
+  ],
   "properties": {
     "instance_format_version": {"type": "integer", "minimum": 1},
-    "system_version": {"type": "string"},
+    "instance_id": {"type": "string", "minLength": 1},
+    "system_version": {"type": "string", "minLength": 1},
     "data_schema_version": {"type": "integer", "minimum": 1},
-    "active_release": {"type": "object", "required": ["version", "manifest_reference"], "properties": {"version": {"type": "string"}, "manifest_reference": {"type": "string"}}},
-    "configuration": {"type": "object", "required": ["household_reference", "integrations_reference"], "properties": {"household_reference": {"type": "string"}, "integrations_reference": {"type": "string"}}},
+    "release_channel": {"enum": ["development", "alpha", "beta", "stable"]},
+    "active_release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "manifest_reference"],
+      "properties": {
+        "version": {"type": "string", "minLength": 1},
+        "manifest_reference": {"type": "string", "minLength": 1}
+      }
+    },
+    "configuration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["household_reference", "integrations_reference", "policies_reference"],
+      "properties": {
+        "household_reference": {"type": "string", "minLength": 1},
+        "integrations_reference": {"type": "string", "minLength": 1},
+        "policies_reference": {"type": "string", "minLength": 1}
+      }
+    },
+    "state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file_map_reference", "operation_state_reference"],
+      "properties": {
+        "file_map_reference": {"type": "string", "minLength": 1},
+        "operation_state_reference": {"type": "string", "minLength": 1}
+      }
+    },
     "last_completed_migration": {"type": ["string", "null"]},
-    "release_channel": {"type": "string"}
+    "latest_release_seen": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "source"],
+      "properties": {
+        "version": {"type": ["string", "null"]},
+        "source": {"type": ["string", "null"]}
+      }
+    }
   }
 }

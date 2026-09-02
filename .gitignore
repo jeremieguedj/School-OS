@@ -7,3 +7,11 @@ instance-private/
 private/
 exports/
 diagnostics/private/
+
+# Local validation and release-build outputs
+__pycache__/
+*.py[cod]
+dist/
+school-os-*.tar.gz
+SHA256SUMS
+RELEASE-INVENTORY.sha256

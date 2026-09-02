@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-alpha.5 — 2026-09-02
+
+- Defined a version-derived source artifact, complete payload checksum inventory, and archive checksum asset.
+- Required source identity and immutable-release verification before installation.
+- Added fail-closed upgrade journal, backup-generation, checksum, activation, and rollback gates.
+- Added continuous integration for the repository validation harness.
+
 ## 0.1.0-alpha.4 — release candidate
 
 - Added a fail-closed, singular-record-date fallback for legacy Facts that predate per-Fact local received dates.

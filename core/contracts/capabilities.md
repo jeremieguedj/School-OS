@@ -24,6 +24,15 @@ storage.read_complete
 storage.create_file
 storage.replace_verified
 storage.get_metadata
+storage.copy_verified
+storage.restore_verified
+
+release.read_package
+release.verify_sha256
+release.verify_inventory
+release.verify_source_identity
+
+coordination.ensure_idle
 
 mail.search
 mail.read_complete_message
@@ -49,6 +58,8 @@ scheduler.verify
 audio.generate
 audio.retrieve
 ```
+
+Release and upgrade operations use the `release.*` capabilities to read the supplied package, verify its archive checksum and complete payload inventory, and establish that its immutable tag, commit, version, and release status agree. `storage.copy_verified` is required to stage or back up files with readback evidence; `storage.restore_verified` is required before an operation may promise automatic rollback. `coordination.ensure_idle` is required before an upgrade can cross its first private-write gate.
 
 The selected operation recipe declares which capabilities are required and which are optional. Missing required capability stops before side effects. Missing optional capability produces the recipe's documented degraded result.
 
