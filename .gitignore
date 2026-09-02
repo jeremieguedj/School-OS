@@ -1,0 +1,9 @@
+# Never commit private instance material or credentials
+.env
+.env.*
+*.secret
+*.key
+instance-private/
+private/
+exports/
+diagnostics/private/
