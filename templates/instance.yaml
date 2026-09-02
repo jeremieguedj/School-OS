@@ -1,0 +1,19 @@
+instance_format_version: 1
+instance_id: REPLACE_WITH_PRIVATE_INSTANCE_ID
+system_version: REPLACE_WITH_INSTALLED_RELEASE_VERSION
+data_schema_version: 1
+release_channel: stable
+active_release:
+  version: REPLACE_WITH_INSTALLED_RELEASE_VERSION
+  manifest_reference: system/releases/REPLACE_WITH_INSTALLED_RELEASE_VERSION/release.yaml
+configuration:
+  household_reference: config/household.yaml
+  integrations_reference: config/integrations.yaml
+  policies_reference: config/policies.yaml
+state:
+  file_map_reference: state/file-map.yaml
+  operation_state_reference: state/operation-state.yaml
+last_completed_migration: null
+latest_release_seen:
+  version: null
+  source: null
