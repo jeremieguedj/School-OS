@@ -1,0 +1,15 @@
+runtime_adapter: runtimes/REPLACE_WITH_RUNTIME.md
+mail_adapter: mail/REPLACE_WITH_MAIL.md
+task_adapter: tasks/REPLACE_WITH_TASK_PROVIDER.md
+scheduler_adapter: null
+audio_adapter: null
+
+mail:
+  source_scope_reference: REPLACE_WITH_PRIVATE_SOURCE_SCOPE
+
+task_provider:
+  status: not_configured
+  container_reference: null
+
+delivery:
+  recipients_reference: REPLACE_WITH_PRIVATE_DELIVERY_CONFIGURATION
