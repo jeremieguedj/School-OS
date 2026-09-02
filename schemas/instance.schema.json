@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/instance.schema.json",
+  "title": "School-OS instance manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["instance_format_version", "system_version", "data_schema_version", "active_release", "configuration"],
+  "properties": {
+    "instance_format_version": {"type": "integer", "minimum": 1},
+    "system_version": {"type": "string"},
+    "data_schema_version": {"type": "integer", "minimum": 1},
+    "active_release": {"type": "object", "required": ["version", "manifest_reference"], "properties": {"version": {"type": "string"}, "manifest_reference": {"type": "string"}}},
+    "configuration": {"type": "object", "required": ["household_reference", "integrations_reference"], "properties": {"household_reference": {"type": "string"}, "integrations_reference": {"type": "string"}}},
+    "last_completed_migration": {"type": ["string", "null"]},
+    "release_channel": {"type": "string"}
+  }
+}
