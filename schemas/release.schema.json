@@ -4,13 +4,56 @@
   "title": "School-OS release manifest",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "system_version", "channel", "status", "data_schema_compatibility", "migrations"],
+  "required": [
+    "schema_version",
+    "system_version",
+    "channel",
+    "status",
+    "runtime_bundle",
+    "source_repository",
+    "data_schema_compatibility",
+    "required_capabilities",
+    "optional_capabilities",
+    "migrations"
+  ],
   "properties": {
     "schema_version": {"type": "integer", "minimum": 1},
-    "system_version": {"type": "string"},
-    "channel": {"enum": ["development", "stable", "beta"]},
+    "system_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?$"
+    },
+    "channel": {"enum": ["development", "alpha", "beta", "stable"]},
     "status": {"enum": ["unreleased", "released"]},
-    "data_schema_compatibility": {"type": "object", "required": ["minimum", "maximum"], "properties": {"minimum": {"type": "integer"}, "maximum": {"type": "integer"}}},
-    "migrations": {"type": "array", "items": {"type": "string"}}
+    "runtime_bundle": {"enum": ["not-built", "source-tree"]},
+    "source_repository": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+    },
+    "data_schema_compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimum", "maximum"],
+      "properties": {
+        "minimum": {"type": "integer", "minimum": 1},
+        "maximum": {"type": "integer", "minimum": 1}
+      }
+    },
+    "required_capabilities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "optional_capabilities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "migrations": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^migrations/.+\\.md$"}
+    },
+    "notes": {"type": "string"}
   }
 }
+

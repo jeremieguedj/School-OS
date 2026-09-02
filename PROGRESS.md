@@ -39,3 +39,14 @@
 - The inventory maps current generic instructions, configuration, canonical catalog/task data, derived files, and runtime state to the new model without copying private content into GitHub.
 - Existing scheduler, current daily runbook, catalog, task provider, and delivery behavior remain unchanged.
 - Next: create a versioned installed release area from a tagged/released package, generate private config/state mappings that initially reference the current files, then run no-send/no-provider-write shadow validation.
+
+
+## 2026-09-02 — inactive candidate and shadow checkpoint
+
+- A private inactive candidate configuration and logical file map were created in the migration area; all candidate external writes are disabled.
+- All mapped private objects resolved successfully, and live scheduler, catalog, task, brief, and state files remained unmodified during shadow reads.
+- Bounded shadow checks passed for source-record structure, raw-message membership, record-level update traceability, durable/task provenance, task-binding parity, received-day grouping, section separation, mobile-link rules, and freeform required-comment behavior.
+- The first published alpha tag is non-installable because its packaged manifest still declares a development, unreleased version. It remains a packaging dry run.
+- Shadow validation also found a legacy compatibility gap: rolling-update bullets carry source identifiers but not atomic Fact IDs required by the new source-catalog contract.
+- Prepared `0.1.0-alpha.2` with a schema-valid release manifest, a deterministic fail-closed provenance migration, and synthetic fixtures. Next: verify the new package after tagging, run the declared migration in private shadow mode, and install only after every exception is explicitly mapped.
+

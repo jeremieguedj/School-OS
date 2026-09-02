@@ -16,6 +16,7 @@ Read only the declared private derived files:
 - Render News, Guidelines, and Action Items as separate sections.
 - Group each section's entries by the configured local received day, newest first.
 - Group task presentation by configured person/entity order followed by the household group.
+- Validate every rolling update's atomic Fact references through the source-catalog contract before rendering it. Use the stored source identifier for the human-facing source link; Fact IDs remain provenance metadata and need not be shown to the reader.
 - Use source-linked factual wording. Do not introduce a task, deadline, or recommendation that is absent from its canonical input.
 - Keep guidelines separate from tasks.
 - Give source-backed tasks a direct action/source link when one exists; never invent URLs.
@@ -25,3 +26,4 @@ Read only the declared private derived files:
 ## Delivery
 
 Use the private delivery state to prevent duplicate daily sends. Verify the sent result through the selected mail adapter before recording success. If delivery outcome is ambiguous, follow the installed delivery policy and do not blindly resend.
+

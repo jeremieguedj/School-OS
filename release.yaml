@@ -1,13 +1,18 @@
 schema_version: 1
-system_version: 0.1.0-dev
-channel: development
-status: unreleased
-runtime_bundle: not-built
+system_version: 0.1.0-alpha.2
+channel: alpha
+status: released
+runtime_bundle: source-tree
 source_repository: jeremieguedj/School-OS
 data_schema_compatibility:
   minimum: 1
   maximum: 1
 required_capabilities: []
-optional_capabilities: []
-migrations: []
-notes: This is a development manifest, not an installable release.
+optional_capabilities:
+  - scheduler.ensure
+  - audio.generate
+  - audio.retrieve
+migrations:
+  - migrations/0001-add-atomic-fact-refs-to-rolling-updates.md
+notes: First installable alpha candidate with a schema-valid release manifest and deterministic legacy rolling-update provenance migration.
+
