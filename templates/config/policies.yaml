@@ -1,0 +1,17 @@
+brief:
+  rolling_window_days: 7
+  group_by_received_day: true
+  source_links_required_for_source_backed_tasks: true
+
+tasks:
+  completion_requires_parent_comment: true
+  completion_comment_structure: freeform
+  reopen_when_comment_missing: true
+
+attachments:
+  excluded_content_policy: do_not_catalogue_sensitive_unrelated_content
+  unsupported_outcome: manual_review
+
+audio:
+  enabled: false
+  unavailable_behavior: disclose_optional_degradation
