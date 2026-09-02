@@ -22,3 +22,12 @@
 - Phase 2 in progress: created generic contracts for capabilities, source catalog, tasks, adapters, releases, fact-flag decisions, and initial logical schemas.
 - Inspected the existing private system's generic instruction structure only; no personal catalog, task, or configuration content was copied into the repository.
 - Next: add deterministic operations, private-instance templates, reference adapters, synthetic fixtures, and release/onboarding material.
+
+
+## 2026-09-02 — reusable-package checkpoint complete
+
+- Phases 1–5 are implemented at initial-package level: repository foundation; generic contracts/schemas; deterministic core operation recipes; private-instance templates; reference runtime/mail/task/scheduler/audio adapters; manual-install/update/migration documentation; and synthetic fixtures.
+- Deferred reviewer findings and recommendations are recorded in `docs/deferred-adversarial-review.md` and were not incorporated into the frozen baseline.
+- QA passed: all six JSON schemas parsed successfully; required entry, operation, adapter, template, fixture, plan, progress, and deferred-review files were read back from GitHub; targeted scan found no private family names, school domains, recipient address, or sampled live Drive IDs.
+- No private Drive files, schedules, provider objects, or emails were modified during repository extraction.
+- Next phase: private-instance inventory and configuration mapping under `docs/current-instance-migration.md`. This requires separate inspection/approval because it touches the live private deployment. Do not enable a new scheduler or release a public installer before that phase is validated.
