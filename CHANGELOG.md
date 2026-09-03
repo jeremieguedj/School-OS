@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-alpha.6 — 2026-09-02
+
+- Declared the complete private dependency and operation-specific capability set for production daily runs.
+- Added a private scheduled-surface capability-profile contract and executable conformance validation.
+- Completed the ChatGPT Work runtime and scheduler adapter contracts, including model/effort, approval, overlap, and readback gates.
+- Preserved data schema version 1 and Migration 0001; this release changes control-plane completeness only and does not rewrite private canonical data.
+
 ## 0.1.0-alpha.5 — 2026-09-02
 
 - Defined a version-derived source artifact, complete payload checksum inventory, and archive checksum asset.

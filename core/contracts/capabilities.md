@@ -43,11 +43,17 @@ mail.send
 mail.verify_send
 
 tasks.list_complete
+tasks.read_identity
+tasks.discover_configuration
+tasks.list_completed
+tasks.read_activity
 tasks.read_comments
 tasks.create
 tasks.update
+tasks.move
 tasks.complete
 tasks.reopen
+tasks.write_comment
 tasks.verify
 
 scheduler.ensure
@@ -65,4 +71,4 @@ The selected operation recipe declares which capabilities are required and which
 
 ## Capability profile
 
-Onboarding writes an observed capability profile to the private instance state. It records no secrets and no private source content. A runtime must recheck capabilities when authentication, provider configuration, or adapter version changes.
+Onboarding writes an observed capability profile to the private instance state. It records no secrets and no private source content. The conformance unit is the exact runtime, provider, authorization, and execution surface. Interactive evidence cannot authorize scheduled execution. A runtime must recheck capabilities when authentication, provider configuration, adapter version, execution surface, or selected model/effort changes.

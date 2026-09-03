@@ -72,3 +72,11 @@
 - Added deterministic source packaging with a complete internal SHA-256 inventory, external archive checksum, safe-path verification, and reproducible-byte tests.
 - Hardened release and upgrade contracts with immutable publication, capability, conditional-write, upgrade-journal, generation/revision, checksum, backup, activation, and recovery gates.
 - Added continuous integration. Local validation passes before publication; next: publish and verify an immutable `v0.1.0-alpha.5`, stage it privately, and complete no-external-write operational parity before any activation or scheduler cutover.
+
+
+## 2026-09-02 — alpha.6 scheduled-runtime conformance checkpoint
+
+- The supervised production probe on the ChatGPT Work scheduled surface failed closed before any Drive, mail, or task-provider side effect because alpha.5 did not declare the complete daily-run dependency set or carry a private scheduled-surface capability profile. The single daily schedule was verified paused.
+- Prepared `0.1.0-alpha.6` with a standalone daily-run contract, operation-specific capabilities, an observed capability-profile schema and validator, and production-capable ChatGPT Work runtime/scheduler reference contracts.
+- Preserved data schema version 1 and Migration 0001. This is a control-plane completeness release; no private canonical data rewrite or architecture change is required.
+- All 44 dependency-free tests pass before the release commit. Next: commit the candidate, run the complete clean-HEAD validation, publish and verify an immutable release, install it privately with a conformant scheduled profile, then perform one supervised production run before resuming the schedule.

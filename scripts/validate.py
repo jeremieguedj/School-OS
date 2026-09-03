@@ -12,7 +12,7 @@ from pathlib import Path
 
 from build_release import BuildError, build_release, verify_release_archive
 from privacy_scan import scan_tracked_files
-from validate_instance import ContractError, load_mapping_yaml, validate
+from validate_instance import ContractError, load_manifest, validate
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -37,11 +37,15 @@ def validate_manifests() -> list[str]:
     errors: list[str] = []
     pairs = (
         (ROOT / "templates" / "instance.yaml", ROOT / "schemas" / "instance.schema.json"),
+        (
+            ROOT / "templates" / "state" / "capability-profile.json",
+            ROOT / "schemas" / "capability-profile.schema.json",
+        ),
         (ROOT / "release.yaml", ROOT / "schemas" / "release.schema.json"),
     )
     for manifest_path, schema_path in pairs:
         try:
-            manifest = load_mapping_yaml(manifest_path.read_text(encoding="utf-8"))
+            manifest = load_manifest(manifest_path)
             schema = json.loads(schema_path.read_text(encoding="utf-8"))
             errors.extend(
                 f"{manifest_path.relative_to(ROOT)} {error}" for error in validate(manifest, schema)

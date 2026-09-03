@@ -2,4 +2,18 @@
 # Populate only with Drive IDs returned during onboarding.
 
 schema_version: 1
-files: {}
+mapping_status: not_configured
+files:
+  capability_profile: {}
+  current_index: {}
+  source_catalog_folder: {}
+  source_catalog_index: {}
+  canonical_tasks: {}
+  guidelines: {}
+  rolling_updates: {}
+  brief_template: {}
+  family_scope: {}
+  active_task_provider: {}
+  task_sync_state: {}
+  delivery_state: {}
+  durable_profiles: {}

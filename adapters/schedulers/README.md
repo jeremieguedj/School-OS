@@ -11,3 +11,7 @@ A scheduler adapter must define:
 - how to prove that a prior schedule is disabled before cutover.
 
 A runtime without a certified scheduler adapter may support manual runs only.
+
+Available adapters:
+
+- `chatgpt-work.md` — ChatGPT Work scheduled tasks with private per-instance conformance.

@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "profile_id": "REPLACE_WITH_PRIVATE_PROFILE_ID",
+  "runtime_adapter": "runtimes/REPLACE_WITH_RUNTIME.md",
+  "execution_surface": "scheduled",
+  "runtime_selector": {
+    "model": "REPLACE_WITH_OBSERVED_MODEL",
+    "reasoning_effort": "REPLACE_WITH_OBSERVED_REASONING_EFFORT"
+  },
+  "selected_adapters": {
+    "mail": "mail/REPLACE_WITH_MAIL.md",
+    "tasks": "tasks/REPLACE_WITH_TASK_PROVIDER.md",
+    "scheduler": "schedulers/REPLACE_WITH_SCHEDULER.md",
+    "audio": null
+  },
+  "verified_at": "REPLACE_WITH_PRIVATE_VERIFICATION_TIMESTAMP",
+  "capabilities": [],
+  "scheduler_behavior": {
+    "connector_authorization": "REPLACE_WITH_OBSERVED_RESULT",
+    "invocation_payload": "REPLACE_WITH_OBSERVED_RESULT",
+    "retry_behavior": "REPLACE_WITH_OBSERVED_RESULT",
+    "overlap_behavior": "REPLACE_WITH_OBSERVED_RESULT",
+    "status_inspection": "REPLACE_WITH_OBSERVED_RESULT",
+    "disable_verification": "REPLACE_WITH_OBSERVED_RESULT"
+  },
+  "conformant_operations": []
+}

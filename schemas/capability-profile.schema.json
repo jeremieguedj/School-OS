@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/capability-profile.schema.json",
+  "title": "School-OS observed capability profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "profile_id",
+    "runtime_adapter",
+    "execution_surface",
+    "runtime_selector",
+    "selected_adapters",
+    "verified_at",
+    "capabilities",
+    "scheduler_behavior",
+    "conformant_operations"
+  ],
+  "properties": {
+    "schema_version": {"type": "integer", "minimum": 1},
+    "profile_id": {"type": "string", "minLength": 1},
+    "runtime_adapter": {"type": "string", "minLength": 1},
+    "execution_surface": {"enum": ["interactive", "scheduled"]},
+    "runtime_selector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model", "reasoning_effort"],
+      "properties": {
+        "model": {"type": "string", "minLength": 1},
+        "reasoning_effort": {"type": "string", "minLength": 1}
+      }
+    },
+    "selected_adapters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mail", "tasks", "scheduler", "audio"],
+      "properties": {
+        "mail": {"type": "string", "minLength": 1},
+        "tasks": {"type": "string", "minLength": 1},
+        "scheduler": {"type": ["string", "null"], "minLength": 1},
+        "audio": {"type": ["string", "null"], "minLength": 1}
+      }
+    },
+    "verified_at": {"type": "string", "minLength": 1},
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["capability_id", "status", "verification", "limits", "degradation"],
+        "properties": {
+          "capability_id": {"type": "string", "minLength": 1},
+          "status": {"enum": ["available", "unavailable", "unknown"]},
+          "verification": {"type": "string", "minLength": 1},
+          "limits": {"type": "string", "minLength": 1},
+          "degradation": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "scheduler_behavior": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": [
+        "connector_authorization",
+        "invocation_payload",
+        "retry_behavior",
+        "overlap_behavior",
+        "status_inspection",
+        "disable_verification"
+      ],
+      "properties": {
+        "connector_authorization": {"type": "string", "minLength": 1},
+        "invocation_payload": {"type": "string", "minLength": 1},
+        "retry_behavior": {"type": "string", "minLength": 1},
+        "overlap_behavior": {"type": "string", "minLength": 1},
+        "status_inspection": {"type": "string", "minLength": 1},
+        "disable_verification": {"type": "string", "minLength": 1}
+      }
+    },
+    "conformant_operations": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  }
+}
