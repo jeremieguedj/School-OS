@@ -63,6 +63,13 @@ class AudioBriefWorkerTests(unittest.TestCase):
                 output, _ = worker.write_fresh_mp3(Path(directory), "2026-09-02", b"ID3test")
                 self.assertEqual(output.name, "SHA Daily Brief Wednesday September 2nd.mp3")
 
+    def test_whatsapp_compatibility_mode_is_explicit(self):
+        import sys
+        from unittest.mock import patch
+
+        with patch.object(sys, "argv", ["worker", "--manifest", "m.json", "--output-dir", "out", "--whatsapp-compatible"]):
+            self.assertTrue(worker.parse_args().whatsapp_compatible)
+
     def test_verified_fallback_voice_pair_is_the_default_recipe(self):
         self.assertEqual(worker.VOICES["voice_a"], "CwhRBWXzGAHq8TQ4Fs17")
         self.assertEqual(worker.VOICES["voice_b"], "EXAVITQu4vr4xnSDxMaL")

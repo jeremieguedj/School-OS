@@ -224,7 +224,23 @@ def request_audio(inputs: list[dict[str, str]], run_date: str, api_key: str) -> 
     return body
 
 
-def write_fresh_mp3(output_dir: Path, run_date: str, body: bytes) -> tuple[Path, str]:
+def stage_whatsapp_compatible_mp3(source: Path, target: Path) -> None:
+    """Stream-copy to ID3v2.3, which WhatsApp Desktop accepts without re-encoding."""
+    try:
+        subprocess.run(
+            [
+                "ffmpeg", "-nostdin", "-v", "error", "-i", str(source), "-map", "0:a:0",
+                "-c:a", "copy", "-id3v2_version", "3", str(target),
+            ],
+            check=True,
+        )
+    except FileNotFoundError as error:
+        raise BriefError("ffmpeg is required for --whatsapp-compatible output") from error
+    except subprocess.CalledProcessError as error:
+        raise BriefError("WhatsApp compatibility remux failed") from error
+
+
+def write_fresh_mp3(output_dir: Path, run_date: str, body: bytes, *, whatsapp_compatible: bool = False) -> tuple[Path, str]:
     output_dir.mkdir(parents=True, exist_ok=True)
     try:
         filename_date = dt.date.fromisoformat(run_date)
@@ -240,6 +256,14 @@ def write_fresh_mp3(output_dir: Path, run_date: str, body: bytes) -> tuple[Path,
         saved = temporary.read_bytes()
         if not saved or not is_mp3(saved):
             raise BriefError("temporary audio file failed MP3 verification")
+        if whatsapp_compatible:
+            staged = temporary.with_suffix(".mp3")
+            stage_whatsapp_compatible_mp3(temporary, staged)
+            temporary.unlink(missing_ok=True)
+            saved = staged.read_bytes()
+            if not saved or not is_mp3(saved):
+                raise BriefError("WhatsApp compatibility output failed MP3 verification")
+            temporary = staged
         digest = hashlib.sha256(saved).hexdigest()
         temporary.replace(target)
         return target, digest
@@ -253,6 +277,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--whatsapp-compatible", action="store_true", help="stream-copy output to WhatsApp-compatible ID3v2.3")
     parser.add_argument("--keychain-service", default="School-OS.ElevenLabs.APIKey")
     parser.add_argument("--keychain-account", default=os.environ.get("USER", ""))
     return parser.parse_args()
@@ -274,7 +299,9 @@ def main() -> int:
         key = keychain_secret(args.keychain_service, args.keychain_account)
         validate_voice_ids(inputs, key)
         body = request_audio(inputs, manifest["run_date"], key)
-        output, digest = write_fresh_mp3(args.output_dir, manifest["run_date"], body)
+        output, digest = write_fresh_mp3(
+            args.output_dir, manifest["run_date"], body, whatsapp_compatible=args.whatsapp_compatible,
+        )
         status = f"audio truncated: {omitted} manifest records omitted" if omitted else "audio attached-ready"
         print(f"{status}: {output.name}")
         print(f"sha256: {digest}")

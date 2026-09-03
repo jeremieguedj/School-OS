@@ -80,7 +80,8 @@ Drive-derived manifest to a run-scoped temporary directory:
 ```sh
 python3 automation/audio-brief/elevenlabs_audio_brief.py \
   --manifest /private/tmp/school-os-audio/2026-09-03/manifest.json \
-  --output-dir /private/tmp/school-os-audio/2026-09-03
+  --output-dir /private/tmp/school-os-audio/2026-09-03 \
+  --whatsapp-compatible
 ```
 
 The output is a new `sha-daily-audio-YYYY-MM-DD.mp3`. The script refuses to
@@ -95,15 +96,17 @@ send.
 ## WhatsApp compatibility staging
 
 An ElevenLabs MP3 can pass structural MP3 checks yet still be rejected by the
-WhatsApp desktop media uploader. Before attaching an audio brief to WhatsApp,
-create a compatibility-staged copy using a local MP3 encoder, keep the exact
-user-facing filename, and verify the staged file before upload. For example:
+WhatsApp desktop media uploader. The observed cause was the raw ElevenLabs
+file's ID3v2.4 tag. WhatsApp accepted a stream-copy remux carrying exactly the
+same MPEG audio bytes with an ID3v2.3 tag. Use `--whatsapp-compatible` for
+scheduled WhatsApp delivery; it keeps the exact user-facing filename and does
+not transcode or degrade the audio.
+
+For a standalone equivalent:
 
 ```sh
 ffmpeg -nostdin -v error -i "raw-brief.mp3" -map 0:a:0 \
-  -c:a libmp3lame -ar 44100 -ac 1 -b:a 128k "SHA Daily Brief Wednesday September 2nd.mp3"
+  -c:a copy -id3v2_version 3 "SHA Daily Brief Wednesday September 2nd.mp3"
 ```
 
-Preserve the raw worker output for audit purposes; attach the staged copy. If
-WhatsApp rejects an attachment caption, send the verified MP3 without a
-caption and place the companion sentence in a separate text message.
+Preserve the raw worker output for audit purposes and attach the staged copy.
