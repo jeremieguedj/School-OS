@@ -29,6 +29,18 @@
 4. Continue only from the first unchecked task in the active phase.
 5. Update this file after each verified milestone.
 
+## 2026-09-02 — local audio-worker scaffold
+
+- Added a generic local ElevenLabs audio worker under `automation/audio-brief/`.
+- The worker consumes a source-linked private manifest, uses a macOS Keychain secret at runtime, validates ElevenLabs dialogue constraints and fresh MP3 output, and never stores credentials or private household data in the repository.
+- Its dry-run path passed without contacting ElevenLabs or generating an audio file. WhatsApp UI delivery, Drive manifest construction, and schedule activation remain intentionally unimplemented pending supervised integration work.
+
+## 2026-09-02 — audio-worker recipe conformance correction
+
+- Re-verified the local audio worker against the private ElevenLabs recipe: the API path is `v1/text-to-dialogue`; the requested dialogue model remains `eleven_v3` in the JSON body.
+- Corrected the character-limit edge case to fail closed when the first complete record cannot fit, and reject action statuses outside the recipe's fixed set.
+- Added dependency-free tests for the recipe's voice/tag mapping, the oversized-first-record gate, and due-status validation. Local syntax, dry-run, and all three tests pass without an API request.
+
 
 ## 2026-09-02 — foundation and core-contract checkpoint
 

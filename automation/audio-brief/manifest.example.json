@@ -1,0 +1,24 @@
+{
+  "run_date": "2026-09-03",
+  "window": {
+    "start": "2026-09-02T06:00:00-07:00",
+    "end": "2026-09-03T06:00:00-07:00"
+  },
+  "records": [
+    {
+      "section": "news",
+      "voice_role": "voice_a",
+      "spoken_text": "Example source-linked school update.",
+      "source_tid": "example-thread-id",
+      "fact_or_row_id": "example-fact-001"
+    },
+    {
+      "section": "action",
+      "voice_role": "voice_b",
+      "spoken_text": "Example action due today.",
+      "source_tid": "example-thread-id",
+      "fact_or_row_id": "example-action-001",
+      "due_status": "due_today"
+    }
+  ]
+}
