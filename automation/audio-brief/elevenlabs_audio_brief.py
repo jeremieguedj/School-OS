@@ -226,7 +226,11 @@ def request_audio(inputs: list[dict[str, str]], run_date: str, api_key: str) -> 
 
 def write_fresh_mp3(output_dir: Path, run_date: str, body: bytes) -> tuple[Path, str]:
     output_dir.mkdir(parents=True, exist_ok=True)
-    target = output_dir / f"SHA Daily Brief {display_date(run_date)}.mp3"
+    try:
+        filename_date = dt.date.fromisoformat(run_date)
+    except ValueError as error:
+        raise BriefError("run_date must be YYYY-MM-DD for audio filename") from error
+    target = output_dir / f"SHA Daily Brief {display_date(filename_date)}.mp3"
     if target.exists():
         raise BriefError(f"refusing to overwrite an existing audio file: {target}")
     with tempfile.NamedTemporaryFile(dir=output_dir, prefix=".audio-", suffix=".tmp", delete=False) as temp:

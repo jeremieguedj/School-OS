@@ -55,6 +55,14 @@ class AudioBriefWorkerTests(unittest.TestCase):
     def test_output_filename_is_human_readable_without_commas(self):
         self.assertEqual(worker.display_date(worker.dt.date(2026, 9, 2)), "Wednesday September 2nd")
 
+    def test_writer_uses_the_human_readable_filename(self):
+        with self.subTest("does not need a network request"):
+            import tempfile
+
+            with tempfile.TemporaryDirectory() as directory:
+                output, _ = worker.write_fresh_mp3(Path(directory), "2026-09-02", b"ID3test")
+                self.assertEqual(output.name, "SHA Daily Brief Wednesday September 2nd.mp3")
+
     def test_verified_fallback_voice_pair_is_the_default_recipe(self):
         self.assertEqual(worker.VOICES["voice_a"], "CwhRBWXzGAHq8TQ4Fs17")
         self.assertEqual(worker.VOICES["voice_b"], "EXAVITQu4vr4xnSDxMaL")
