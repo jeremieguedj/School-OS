@@ -23,7 +23,8 @@ The runtime profile must provide and verify:
 2. project lookup by configured ID;
 3. complete pagination over active tasks;
 4. completed-task and activity reads over the configured overlap window;
-5. direct comment reads for changed tasks;
+5. direct comment reads for changed tasks, using the connector's supported
+   page size and continuation tokens until complete;
 6. section/label discovery and mapping verification;
 7. create, patch update, move, complete, reopen, and comment write;
 8. exact task readback after every write.
@@ -49,4 +50,9 @@ The core policy determines whether completion requires a parent comment. When re
 
 ## Limitations
 
-Todoist capability and history retention vary by account and connector surface. The runtime profile must declare exact activity, comments, pagination, completed-task, and readback limits before enabling this adapter.
+Todoist capability and history retention vary by account and connector surface. The
+runtime profile must declare exact activity, comments, pagination, completed-task,
+and readback limits before enabling this adapter. For the currently supported
+Todoist connector, comment reads use `limit=10` and must follow every returned
+continuation token; a smaller page is never permission to inspect only the first
+page.
