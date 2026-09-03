@@ -54,6 +54,11 @@ assume an ID published by someone else is licensed for your account.
 Each private manifest selects a generic `voice_role` (`voice_a` or `voice_b`)
 rather than placing household names in this public worker. The role mapping is
 the only part that changes when an instance owner chooses a different voice.
+Each record also supplies a private `subject_label`. The worker uses those
+labels only in the spoken opening to summarize the sections covered that day.
+It speaks the school name as `S-H-A`, produces a filename such as
+`SHA Daily Brief Wednesday September 2nd.mp3`, and does not use commas in that
+filename.
 
 ## Safe local test
 

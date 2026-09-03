@@ -16,6 +16,7 @@ def record(**overrides):
     value = {
         "section": "news",
         "voice_role": "voice_b",
+        "subject_label": "Student A",
         "spoken_text": "A source-linked update.",
         "source_tid": "thread-1",
         "fact_or_row_id": "fact-1",
@@ -35,6 +36,24 @@ class AudioBriefWorkerTests(unittest.TestCase):
             "text": "[warmly] News: A source-linked update.",
         })
         self.assertEqual(inputs[-1]["voice_id"], worker.VOICES["narrator"])
+
+    def test_opening_spells_sha_and_summarizes_subjects_by_section(self):
+        manifest = {
+            "run_date": "2026-09-02",
+            "records": [
+                record(section="guideline", subject_label="Student B"),
+                record(section="action", subject_label="Student C", fact_or_row_id="fact-2"),
+            ],
+        }
+        inputs, _ = worker.build_inputs(manifest)
+
+        self.assertEqual(
+            inputs[0]["text"],
+            "[warmly] S-H-A Daily Brief for Wednesday September 2nd. Today we're going to cover action items for Student C and guidelines for Student B.",
+        )
+
+    def test_output_filename_is_human_readable_without_commas(self):
+        self.assertEqual(worker.display_date(worker.dt.date(2026, 9, 2)), "Wednesday September 2nd")
 
     def test_verified_fallback_voice_pair_is_the_default_recipe(self):
         self.assertEqual(worker.VOICES["voice_a"], "CwhRBWXzGAHq8TQ4Fs17")

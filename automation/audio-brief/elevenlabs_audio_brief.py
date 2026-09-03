@@ -46,6 +46,37 @@ def normalize_spoken_text(value: str) -> str:
     return value.replace("[", "(").replace("]", ")").strip()
 
 
+def ordinal(value: int) -> str:
+    if 10 <= value % 100 <= 20:
+        suffix = "th"
+    else:
+        suffix = {1: "st", 2: "nd", 3: "rd"}.get(value % 10, "th")
+    return f"{value}{suffix}"
+
+
+def display_date(run_date: dt.date) -> str:
+    return f"{run_date.strftime('%A %B')} {ordinal(run_date.day)}"
+
+
+def join_words(values: list[str]) -> str:
+    if len(values) == 1:
+        return values[0]
+    return " and ".join(values)
+
+
+def coverage_summary(records: list[dict[str, Any]]) -> str:
+    section_names = {"news": "news", "action": "action items", "guideline": "guidelines"}
+    phrases: list[str] = []
+    for section in ("news", "action", "guideline"):
+        labels: list[str] = []
+        for record in records:
+            if record["section"] == section and record["subject_label"] not in labels:
+                labels.append(record["subject_label"])
+        if labels:
+            phrases.append(f"{section_names[section]} for {join_words(labels)}")
+    return join_words(phrases)
+
+
 def tag_for(record: dict[str, Any]) -> str:
     section = record["section"]
     if section == "news":
@@ -91,13 +122,17 @@ def build_inputs(manifest: dict[str, Any]) -> tuple[list[dict[str, str]], int]:
     for record in records:
         if not isinstance(record, dict):
             raise BriefError("each manifest record must be an object")
-        for field in ("section", "voice_role", "spoken_text", "source_tid", "fact_or_row_id"):
+        for field in ("section", "voice_role", "subject_label", "spoken_text", "source_tid", "fact_or_row_id"):
             require_string(record, field)
         key = f"{record['section']}:{record['fact_or_row_id']}"
         if key not in seen:
             seen.add(key)
             unique.append(record)
-    opening = {"voice_id": VOICES["narrator"], "text": f"[warmly] School audio brief for {run_date.strftime('%B %-d, %Y')}."}
+    spoken_date = display_date(run_date)
+    opening = {
+        "voice_id": VOICES["narrator"],
+        "text": f"[warmly] S-H-A Daily Brief for {spoken_date}. Today we're going to cover {coverage_summary(unique)}.",
+    }
     closing = {"voice_id": VOICES["narrator"], "text": "[warmly] End of today's new school information."}
     accepted = [opening]
     for position, record in enumerate(unique):
@@ -191,7 +226,7 @@ def request_audio(inputs: list[dict[str, str]], run_date: str, api_key: str) -> 
 
 def write_fresh_mp3(output_dir: Path, run_date: str, body: bytes) -> tuple[Path, str]:
     output_dir.mkdir(parents=True, exist_ok=True)
-    target = output_dir / f"sha-daily-audio-{run_date}.mp3"
+    target = output_dir / f"SHA Daily Brief {display_date(run_date)}.mp3"
     if target.exists():
         raise BriefError(f"refusing to overwrite an existing audio file: {target}")
     with tempfile.NamedTemporaryFile(dir=output_dir, prefix=".audio-", suffix=".tmp", delete=False) as temp:

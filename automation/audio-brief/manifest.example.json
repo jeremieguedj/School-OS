@@ -8,6 +8,7 @@
     {
       "section": "news",
       "voice_role": "voice_a",
+      "subject_label": "Student A",
       "spoken_text": "Example source-linked school update.",
       "source_tid": "example-thread-id",
       "fact_or_row_id": "example-fact-001"
@@ -15,6 +16,7 @@
     {
       "section": "action",
       "voice_role": "voice_b",
+      "subject_label": "Student B",
       "spoken_text": "Example action due today.",
       "source_tid": "example-thread-id",
       "fact_or_row_id": "example-action-001",
