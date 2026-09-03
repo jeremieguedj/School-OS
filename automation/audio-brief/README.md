@@ -96,11 +96,13 @@ send.
 ## WhatsApp compatibility staging
 
 An ElevenLabs MP3 can pass structural MP3 checks yet still be rejected by the
-WhatsApp desktop media uploader. The observed cause was the raw ElevenLabs
-file's ID3v2.4 tag. WhatsApp accepted a stream-copy remux carrying exactly the
-same MPEG audio bytes with an ID3v2.3 tag. Use `--whatsapp-compatible` for
-scheduled WhatsApp delivery; it keeps the exact user-facing filename and does
-not transcode or degrade the audio.
+WhatsApp desktop media uploader. In the observed failing sample, WhatsApp
+accepted a stream-copy remux carrying exactly the same MPEG audio bytes after
+its ID3 metadata changed from v2.4 to v2.3. An earlier v2.4 sample did send,
+so this is a WhatsApp Desktop metadata-parser compatibility edge case—not a
+universal ElevenLabs failure. Use `--whatsapp-compatible` for scheduled
+WhatsApp delivery; it keeps the exact user-facing filename and does not
+transcode or degrade the audio.
 
 For a standalone equivalent:
 
