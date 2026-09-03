@@ -18,6 +18,6 @@ This document prepares, but does not itself authorize, migration of a live Schoo
 11. Obtain explicit approval before changing any live scheduled operation.
 12. Disable the old scheduler before enabling a new bootstrap-based scheduler, and verify the supervised first production run.
 
-Before steps 6–8, verify the supplied release's immutable source identity, archive checksum, and complete payload inventory. Private upgrade state must retain the exact release identity, target generations or revisions, pre/post checksums, backup references, and recovery verification evidence.
+Before steps 6–8, verify the supplied release's immutable source identity, archive checksum, and complete payload inventory. Private upgrade state must retain the exact release identity, backup references, and recovery verification evidence. In `native_conditional` mode, target version evidence is the provider generation/revision token plus the complete-byte SHA-256 before and after each write. In the bounded `supervised_operational_single_writer` mode, target version evidence is the exact file ID, observed `modified_time`, and complete-byte SHA-256 before and after each write. The latter is valid only while the attended no-concurrent-mutators guard remains verified.
 
 The repository must not receive the private inventory, mapping, exception records, or shadow outputs.

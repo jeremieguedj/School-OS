@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.7 — 2026-09-02
+
+- Preserved native conditional upgrade behavior and added a bounded `supervised_operational_single_writer` fallback for storage connectors without atomic write preconditions.
+- Required exact-ID targeting, paused schedules, one actor, an explicit no-concurrent-mutators guard, immediate full-content SHA-256 and `modified_time` prechecks, and immediate readback.
+- Added create-only generation-specific backups and append-only per-phase journal checkpoints for the fallback, with guarded restore and manual-recovery semantics.
+- Declared the attended interactive system-upgrade capability set, including conditional scheduler and restore requirements, and aligned private-migration version evidence with both coordination modes.
+- Preserved data schema version 1 and the existing architecture; this is a storage capability and upgrade-contract correction only.
+
 ## 0.1.0-alpha.6 — 2026-09-02
 
 - Declared the complete private dependency and operation-specific capability set for production daily runs.

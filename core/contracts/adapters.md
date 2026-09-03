@@ -36,6 +36,7 @@ Every adapter declares:
 - pagination and completeness behavior;
 - mutation/readback behavior;
 - idempotency or recovery behavior;
+- supported upgrade coordination mode and version evidence (provider generation/revision token, or exact ID plus `modified_time` plus complete-byte SHA-256 under supervised operational single-writer rules);
 - unsupported/lossy fields; and
 - test profile(s) it supports.
 

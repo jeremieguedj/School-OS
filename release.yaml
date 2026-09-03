@@ -1,5 +1,5 @@
 schema_version: 1
-system_version: 0.1.0-alpha.6
+system_version: 0.1.0-alpha.7
 channel: alpha
 status: released
 runtime_bundle: source-tree
@@ -14,4 +14,4 @@ optional_capabilities:
   - audio.retrieve
 migrations:
   - migrations/0001-add-atomic-fact-refs-to-rolling-updates.md
-notes: Completes scheduled daily-run dependency, capability-profile, runtime, and scheduler conformance contracts without changing the frozen architecture.
+notes: Adds a bounded supervised single-writer upgrade fallback for storage connectors without native write preconditions, preserving the frozen architecture and data schema.

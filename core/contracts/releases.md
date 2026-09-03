@@ -36,4 +36,6 @@ GitHub connectivity is optional transport only. Production runs read the install
 
 ## Update behavior
 
-An upgrade stages a new installed release, validates compatibility and integrity, executes only declared migrations, verifies results, and activates the new release only after success. The installed instance records its current active version, exact source identity, package and inventory checksums, backup generations, migration history, and verification evidence privately.
+An upgrade stages a new installed release, validates compatibility and integrity, executes only declared migrations, verifies results, and activates the new release only after success. The installed instance records its current active version, exact source identity, package and inventory checksums, backup generations, migration history, coordination mode, and verification evidence privately.
+
+For a provider with native conditional writes, version evidence is its generation/revision token plus the complete-byte SHA-256. For the bounded `supervised_operational_single_writer` fallback, version evidence is the exact file ID, observed `modified_time`, and complete-byte SHA-256. The fallback does not weaken release integrity, backup, exact-ID targeting, readback, or manual-recovery requirements; it substitutes verified operational exclusivity only for a provider write precondition that the selected connector does not expose.

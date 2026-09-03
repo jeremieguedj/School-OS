@@ -27,6 +27,8 @@ For each capability, record status, the actual observation/probe, relevant pagin
 - Do not retry an external effect whose outcome is unknown.
 - Stop before side effects when an approval, authentication, limit, or capability result is missing or ambiguous.
 
+For an attended system upgrade, record whether the connected Drive surface exposes an atomic version precondition. When it does not, the runtime may use only the installed `supervised_operational_single_writer` upgrade procedure: schedules paused and read back, one actor, explicit exclusion of every other mutator, exact file IDs, complete-byte SHA-256 plus `modified_time` immediately before each update, create-only backup and journal-checkpoint files, and immediate complete readback. This fallback never authorizes an unattended upgrade or represents an unconditional update as provider-conditional.
+
 ## Scheduled execution
 
 Scheduled production additionally requires a selected scheduler adapter, observed background authorization for every required connector, one stable schedule identity, explicit retry/overlap behavior, and inspected model/effort. The schedule remains paused through the supervised first production run and may be enabled only after complete readback.

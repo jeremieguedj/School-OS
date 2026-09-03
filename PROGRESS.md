@@ -80,3 +80,12 @@
 - Prepared `0.1.0-alpha.6` with a standalone daily-run contract, operation-specific capabilities, an observed capability-profile schema and validator, and production-capable ChatGPT Work runtime/scheduler reference contracts.
 - Preserved data schema version 1 and Migration 0001. This is a control-plane completeness release; no private canonical data rewrite or architecture change is required.
 - All 44 dependency-free tests pass before the release commit. Next: commit the candidate, run the complete clean-HEAD validation, publish and verify an immutable release, install it privately with a conformant scheduled profile, then perform one supervised production run before resuming the schedule.
+
+
+## 2026-09-02 — alpha.7 connector-safe upgrade correction
+
+- The immutable alpha.6 scheduled-surface conformance probe passed on the configured ChatGPT Work model/effort, but its Drive update surface exposed no atomic generation/revision precondition. The upgrade correctly stopped before any private write.
+- Prepared `0.1.0-alpha.7` with a bounded supervised operational-single-writer fallback while preserving native conditional mode, the frozen architecture, data schema version 1, and Migration 0001.
+- The fallback requires paused schedules, one actor, an explicit no-concurrent-mutators guard, exact-ID full-byte SHA-256 and `modified_time` checks immediately before updates, create-only backups and journal checkpoints, immediate readback, and fail-closed manual recovery.
+- Declared the attended interactive upgrade capability gate and reconciled private-migration version evidence with both supported coordination modes; automatic restore remains optional unless promised.
+- All 55 dependency-free tests pass and the diff check is clean. Next: review and commit the candidate before publishing and verifying a new immutable release.
