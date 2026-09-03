@@ -91,3 +91,19 @@ WhatsApp delivery remains deliberately separate. It should accept only this
 freshly verified file, resolve a user-confirmed contact, verify the outgoing
 attachment in the WhatsApp app, and record delivery only after a confirmed
 send.
+
+## WhatsApp compatibility staging
+
+An ElevenLabs MP3 can pass structural MP3 checks yet still be rejected by the
+WhatsApp desktop media uploader. Before attaching an audio brief to WhatsApp,
+create a compatibility-staged copy using a local MP3 encoder, keep the exact
+user-facing filename, and verify the staged file before upload. For example:
+
+```sh
+ffmpeg -nostdin -v error -i "raw-brief.mp3" -map 0:a:0 \
+  -c:a libmp3lame -ar 44100 -ac 1 -b:a 128k "SHA Daily Brief Wednesday September 2nd.mp3"
+```
+
+Preserve the raw worker output for audit purposes; attach the staged copy. If
+WhatsApp rejects an attachment caption, send the verified MP3 without a
+caption and place the companion sentence in a separate text message.
