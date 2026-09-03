@@ -7,7 +7,7 @@ This is the neutral entry point for a fresh agent. It is intentionally thin.
 1. Read `release.yaml` when working from a supplied release package.
 2. Read `PLAN.md` and `PROGRESS.md` when maintaining this repository.
 3. For a private installed instance, begin from that instance's stable Drive bootstrap and instance manifest.
-4. Select exactly one operation: onboarding, import, daily run, task sync, brief generation, upgrade, audit, or maintenance.
+4. Select exactly one operation: onboarding, import, daily run, manual daily-brief request, task sync, brief generation, upgrade, audit, or maintenance.
 
 ## Instruction hierarchy
 

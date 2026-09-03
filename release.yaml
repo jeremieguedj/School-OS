@@ -1,7 +1,7 @@
 schema_version: 1
-system_version: 0.1.0-alpha.7
+system_version: 0.1.0-alpha.8
 channel: alpha
-status: released
+status: unreleased
 runtime_bundle: source-tree
 source_repository: jeremieguedj/School-OS
 data_schema_compatibility:
@@ -14,4 +14,4 @@ optional_capabilities:
   - audio.retrieve
 migrations:
   - migrations/0001-add-atomic-fact-refs-to-rolling-updates.md
-notes: Adds a bounded supervised single-writer upgrade fallback for storage connectors without native write preconditions, preserving the frozen architecture and data schema.
+notes: Adds a scheduler-issued manual run-now bridge, preserving one production sender, delivery idempotency, and data schema compatibility.

@@ -19,6 +19,7 @@
     "connector_authorization": "REPLACE_WITH_OBSERVED_RESULT",
     "invocation_payload": "REPLACE_WITH_OBSERVED_RESULT",
     "retry_behavior": "REPLACE_WITH_OBSERVED_RESULT",
+    "run_now_behavior": "REPLACE_WITH_OBSERVED_RESULT",
     "overlap_behavior": "REPLACE_WITH_OBSERVED_RESULT",
     "status_inspection": "REPLACE_WITH_OBSERVED_RESULT",
     "disable_verification": "REPLACE_WITH_OBSERVED_RESULT"

@@ -14,7 +14,7 @@ Resolve every private dependency by the exact references in the stable bootstrap
 - **Canonical data:** source-catalog folder and index, canonical task register, and the exact existing catalog records selected by source identity.
 - **Derived data:** rolling updates, recent guidelines, durable profiles/references, and the knowledge/run index.
 - **Installed recipes:** `attachment-processing.md`, `task-sync.md`, and `brief-rendering.md` from the same active release.
-- **Selected adapters:** runtime, mail, task provider, scheduler for scheduled execution, and optional audio.
+- **Selected adapters:** runtime, mail, task provider, scheduler for a scheduler-issued execution, and optional audio.
 
 The private logical file map must resolve, at minimum, `current_index`, `source_catalog_folder`, `source_catalog_index`, `canonical_tasks`, `guidelines`, `rolling_updates`, `brief_template`, `delivery_state`, `task_sync_state`, `active_task_provider`, `family_scope`, and every configured durable-profile target. A capability profile is private state and must be mapped as `capability_profile`. Missing or ambiguous references stop the run before provider access or writes.
 
@@ -52,7 +52,7 @@ tasks.write_comment
 tasks.verify
 ```
 
-For a scheduled run, `scheduler.inspect` and `scheduler.verify` are also required. Scheduler creation, cutover, pause, or replacement additionally requires `scheduler.ensure` and `scheduler.disable`.
+For a scheduler-issued run, `scheduler.inspect` and `scheduler.verify` are also required. Scheduler creation, cutover, pause, or replacement additionally requires `scheduler.ensure` and `scheduler.disable`. A user-requested immediate run is scheduler-issued only when `manual-daily-run.md` invokes the same verified schedule through its observed run-now control; an ad-hoc interactive execution is not a production sender.
 
 `mail.read_attachment` is conditionally required only when attachment extraction is attempted; otherwise record the explicit unavailable/unsupported outcome defined by `attachment-processing.md`. `audio.generate` and `audio.retrieve` are optional and apply only when audio is enabled. Optional failure must use the documented degradation and must never fabricate content or success.
 
@@ -65,7 +65,7 @@ Interactive evidence does not prove scheduled-surface conformance. If authentica
 1. Read all declared control/configuration dependencies completely and capture one timestamp in the configured timezone.
 2. Verify release version, status, source identity, installed reference, data compatibility, and completed migration state agree.
 3. Validate the scheduled-surface capability profile and selected adapter identities.
-4. Require an idle operation state and the deployment's single-writer guarantee. A manual mutating run and a scheduled mutating run must never overlap.
+4. Require an idle operation state and the deployment's single-writer guarantee. Cadenced and user-requested run-now invocations of the same schedule must never overlap.
 5. Require operation state and private policy to permit the intended reads, writes, provider actions, delivery, and cursor advancement. A cutover must keep the schedule paused until a supervised run verifies.
 
 ### 2. Discover

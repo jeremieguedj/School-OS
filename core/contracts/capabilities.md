@@ -58,6 +58,7 @@ tasks.verify
 
 scheduler.ensure
 scheduler.inspect
+scheduler.run_now
 scheduler.disable
 scheduler.verify
 

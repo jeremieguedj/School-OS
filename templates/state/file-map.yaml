@@ -16,4 +16,5 @@ files:
   active_task_provider: {}
   task_sync_state: {}
   delivery_state: {}
+  manual_run_recipe: {}
   durable_profiles: {}

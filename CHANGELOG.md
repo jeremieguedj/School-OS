@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0-alpha.8 — unreleased
+
+- Added a user-requested immediate-run operation that dispatches through the one verified scheduled runtime rather than creating a second sender.
+- Preserved scheduler identity, delivery reservation, verification, duplicate prevention, and non-overlap controls for run-now invocations.
+
 ## 0.1.0-alpha.7 — 2026-09-02
 
 - Preserved native conditional upgrade behavior and added a bounded `supervised_operational_single_writer` fallback for storage connectors without atomic write preconditions.

@@ -64,6 +64,7 @@
         "connector_authorization",
         "invocation_payload",
         "retry_behavior",
+        "run_now_behavior",
         "overlap_behavior",
         "status_inspection",
         "disable_verification"
@@ -72,6 +73,7 @@
         "connector_authorization": {"type": "string", "minLength": 1},
         "invocation_payload": {"type": "string", "minLength": 1},
         "retry_behavior": {"type": "string", "minLength": 1},
+        "run_now_behavior": {"type": "string", "minLength": 1},
         "overlap_behavior": {"type": "string", "minLength": 1},
         "status_inspection": {"type": "string", "minLength": 1},
         "disable_verification": {"type": "string", "minLength": 1}

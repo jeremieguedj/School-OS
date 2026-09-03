@@ -24,7 +24,7 @@ The private record contains account/task IDs and observations. This public adapt
 
 ## Safety and single writer
 
-Only one schedule may target a mutating School-OS operation for an instance. Keep that schedule paused during migration, parity testing, and the supervised first production run. Manual mutating runs are prohibited while it is active. If the platform cannot guarantee non-overlap, operation state plus an operational single-writer rule must stop the later run before its first side effect.
+Only one schedule may target a mutating School-OS operation for an instance. Keep that schedule paused during migration, parity testing, and the supervised first production run. A direct interactive mutating run is prohibited. An authenticated owner may request an immediate brief only through the schedule's observed run-now control, which invokes the same stable schedule identity and production prompt as the regular cadence. If the platform cannot guarantee non-overlap, operation state plus an operational single-writer rule must stop the later run before its first side effect.
 
 Inspect and read back the schedule after every create, update, pause, resume, or replacement. A duplicate identity, unknown status, stale model/effort, missing connector authorization, or unknown retry/overlap outcome blocks activation.
 
