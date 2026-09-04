@@ -1,9 +1,9 @@
 # Changelog
 
-## 0.1.0-alpha.8 — unreleased
+## 0.1.0-alpha.8 — 2026-09-03
 
 - Added a user-requested immediate-run operation that dispatches through the one verified scheduled runtime rather than creating a second sender.
-- Preserved scheduler identity, delivery reservation, verification, duplicate prevention, and non-overlap controls for run-now invocations.
+- Simplified routine daily coordination: the one verified schedule is the sender; delivery-key and Sent-mail verification prevent duplicates without a separate Drive lease.
 
 ## 0.1.0-alpha.7 — 2026-09-02
 

@@ -10,7 +10,7 @@ Resolve every private dependency by the exact references in the stable bootstrap
 
 - **Routing and release:** instance manifest, active installed `release.yaml`, and this installed operation recipe.
 - **Configuration:** household/timezone/entity order and grouping, integrations and selected adapters, source inclusion/exclusion scope, delivery configuration, and policies.
-- **Control state:** logical file map, operation state and lock, scheduled-surface capability profile, mail discovery checkpoint, task-provider cursor and bindings, delivery ledger, and final run checkpoint.
+- **Control state:** logical file map, operation state, scheduled-surface capability profile, mail discovery checkpoint, task-provider cursor and bindings, delivery ledger, and final run checkpoint.
 - **Canonical data:** source-catalog folder and index, canonical task register, and the exact existing catalog records selected by source identity.
 - **Derived data:** rolling updates, recent guidelines, durable profiles/references, and the knowledge/run index.
 - **Installed recipes:** `attachment-processing.md`, `task-sync.md`, and `brief-rendering.md` from the same active release.
@@ -30,7 +30,6 @@ storage.read_complete
 storage.create_file
 storage.replace_verified
 storage.get_metadata
-coordination.ensure_idle
 mail.search
 mail.read_complete_message
 mail.read_complete_thread
@@ -65,8 +64,8 @@ Interactive evidence does not prove scheduled-surface conformance. If authentica
 1. Read all declared control/configuration dependencies completely and capture one timestamp in the configured timezone.
 2. Verify release version, status, source identity, installed reference, data compatibility, and completed migration state agree.
 3. Validate the scheduled-surface capability profile and selected adapter identities.
-4. Require an idle operation state and the deployment's single-writer guarantee. Cadenced and user-requested run-now invocations of the same schedule must never overlap.
-5. Require operation state and private policy to permit the intended reads, writes, provider actions, delivery, and cursor advancement. A cutover must keep the schedule paused until a supervised run verifies.
+4. Require an idle operation state. Exactly one verified schedule is the production sender for an instance, and a user-requested run-now invocation must use that same schedule. An idle state is sufficient for a routine run: do not create or wait for a separate Drive lease.
+5. Require operation state and private policy to permit the intended reads, writes, provider actions, delivery, and cursor advancement. A cutover must use one supervised first-production run before ordinary recurring delivery is considered verified. When a scheduler exposes its authenticated **Run now** control only while the task is enabled, that single owner-approved supervised invocation may run with the one production schedule enabled; the schedule remains subject to full post-run verification before it is treated as normally active.
 
 ### 2. Discover
 
@@ -98,7 +97,7 @@ Execute `task-sync.md` through the explicitly selected private task-provider con
 
 ### 6. Brief and delivery
 
-Execute `brief-rendering.md` from declared derived inputs; do not repeat source discovery. Delivery configuration and state own recipients, template selection, duplicate prevention, and send authorization. Verify provider acceptance or Sent visibility before recording delivery success. An unknown delivery outcome is terminal for the run and must not be retried blindly.
+Execute `brief-rendering.md` from declared derived inputs; do not repeat source discovery. Delivery configuration and state own recipients, template selection, duplicate prevention, and send authorization. Before sending, read the delivery state and verify whether the same private delivery key already has a recorded, verified Gmail message ID or a matching Sent message. If it does, suppress the duplicate and report the existing delivery; otherwise send once. Immediately verify provider acceptance or Sent visibility, then record the verified message ID and delivery key. An unknown delivery outcome is terminal for the run and must not be retried blindly.
 
 ### 7. Commit and report
 
@@ -108,4 +107,4 @@ Execute `brief-rendering.md` from declared derived inputs; do not repeat source 
 
 ## Cutover rule
 
-Before first production activation, require a no-send/no-provider-write parity packet, a verified backup/rollback packet for the mutable private set, one verified schedule identity, and explicit user authorization. Keep the schedule paused while running the supervised first production execution. Enable the single recurring schedule only after all Drive, task-provider, mail-delivery, ledger, and cursor readbacks succeed.
+Before first production activation, require a no-send/no-provider-write parity packet, a verified backup/rollback packet for the mutable private set, one verified schedule identity, and explicit user authorization. Prefer a paused schedule for the supervised first production execution. If the scheduler makes **Run now** unavailable while paused, enable only the verified production schedule for that one owner-approved supervised invocation, and do not treat the schedule as normally active until all Drive, task-provider, mail-delivery, ledger, and cursor readbacks succeed.

@@ -28,6 +28,12 @@ and production prompt as a normal cadence-triggered run.
 5. Verify that the scheduler's run-now control targets the same stable schedule;
    never recreate, clone, or substitute a schedule to satisfy a manual request.
 
+If the scheduler exposes **Run now** only while its task is enabled, an
+owner-approved manual request may use that enabled task for the single
+supervised first-production invocation. Normal recurring activation is not
+considered verified until the resulting run has fully read back its writes and
+delivery.
+
 The selected scheduler must declare `scheduler.inspect`, `scheduler.verify`, and
 `scheduler.run_now` as available for the exact observed run-now control.
 

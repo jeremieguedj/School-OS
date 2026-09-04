@@ -101,3 +101,10 @@
 - The fallback requires paused schedules, one actor, an explicit no-concurrent-mutators guard, exact-ID full-byte SHA-256 and `modified_time` checks immediately before updates, create-only backups and journal checkpoints, immediate readback, and fail-closed manual recovery.
 - Declared the attended interactive upgrade capability gate and reconciled private-migration version evidence with both supported coordination modes; automatic restore remains optional unless promised.
 - All 55 dependency-free tests pass and the diff check is clean. Next: review and commit the candidate before publishing and verifying a new immutable release.
+
+## 2026-09-03 — alpha.8 routine-run simplification
+
+- Removed the routine daily-run Drive lease prerequisite and its coordination capability requirement.
+- Kept exactly one scheduled production sender and made Gmail delivery-key/Sent-message verification the routine duplicate guard.
+- Preserved the stricter coordination protocol for attended release upgrades; it does not apply to routine daily brief delivery.
+- Added executable regression coverage for the simplified daily-run contract. Next: commit, publish, install, and perform one supervised scheduled production run.

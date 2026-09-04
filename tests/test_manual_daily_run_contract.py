@@ -22,6 +22,14 @@ class ManualDailyRunContractTests(unittest.TestCase):
         self.assertIn("send mail in this dispatcher", recipe)
         self.assertIn("does not modify the next", recipe)
 
+    def test_daily_run_uses_delivery_idempotency_not_a_drive_lease(self) -> None:
+        recipe = (ROOT / "core" / "operations" / "daily-run.md").read_text(encoding="utf-8")
+        required = recipe.split("## Required capabilities", 1)[1].split("For a scheduler-issued run", 1)[0]
+        self.assertNotIn("coordination.ensure_idle", required)
+        self.assertIn("do not create or wait for a separate Drive lease", recipe)
+        self.assertIn("matching Sent message", recipe)
+        self.assertIn("verified message ID and delivery key", recipe)
+
 
 if __name__ == "__main__":
     unittest.main()
