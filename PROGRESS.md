@@ -126,3 +126,12 @@
   update the private instance manifest and task prompt, then perform a
   supervised scheduled production run. Do not delete the legacy private
   runbook during the initial rollout.
+
+## 2026-09-03 — alpha.12 raw-Markdown losslessness correction
+
+- Production validation of alpha.11 found four native Google Docs whose raw-message sections were shortened even though the generic contract prohibited summaries. The Work turn had no provider, authorization, or runtime blocker and stopped after cataloguing without completing reconciliation, required task sync, delivery, or cursors.
+- A new isolated ChatGPT Work cloud agent replaced raw Drive file `school-os-markdown-write-probe-20260903.md` in place, preserved its `text/markdown` MIME type and file ID, and read back the exact 70 UTF-8 bytes including the final newline. Raw Markdown scheduled-surface replacement is therefore observed as available; the earlier contrary assumption is retired.
+- Alpha.12 removes the native-Docs daily storage exception, requires direct equality between each complete mail-adapter plaintext body and the corresponding catalog raw-message section, retains exact-byte Drive readback, and forbids successful termination after an intermediate phase.
+- Added executable losslessness regressions for summary, truncation, substitution, message reordering, and whitespace normalization. The complete repository validation now passes 77 tests.
+- Verified private rollback mapping exists for seven mutable Markdown records. Six remain logically equivalent to their native copies. The raw catalog index and four September 3 source records require a fresh lossless rebuild before activation.
+- Next: commit and publish immutable alpha.12; install it privately; restore exact Markdown references and scheduled capability evidence; rebuild the four records from fresh complete Gmail reads; run and monitor a new Work agent using the production prompt; independently verify catalog equality, task reconciliation, and the delivered email; repeat once; then replace the old schedules with one fresh daily 6:00 a.m. schedule.

@@ -10,7 +10,7 @@ Validate `interactive` and `scheduled` separately. A passing interactive probe d
 
 ## Required private mapping record
 
-- Drive: scoped list, complete read, create, in-place verified replacement, metadata read, and the concrete storage representation used by the scheduled surface.
+- Drive: scoped list, complete read, raw UTF-8 Markdown creation, in-place raw-file replacement, exact-byte readback, and metadata read.
 - Mail: complete search/thread read, attachment access, send/readback.
 - Tasks: the selected provider's complete required operation set.
 - Scheduler: scheduled-run connector authorization, invocation payload, retry/overlap behavior, status inspection, and disable verification.
@@ -27,9 +27,9 @@ For each capability, record status, the actual observation/probe, relevant pagin
 - Do not retry an external effect whose outcome is unknown.
 - Stop before side effects when an approval, authentication, limit, or capability result is missing or ambiguous.
 
-### Native Google Docs storage
+### Raw Markdown storage
 
-Some ChatGPT Work scheduled surfaces can create and replace native Google Docs but cannot safely mutate arbitrary raw Markdown files. A private instance using that surface may designate native Google Docs for every mutable catalog, derived record, ledger, cursor, and checkpoint used by the daily run. It may retain immutable historical raw files as readable evidence. The private capability profile must explicitly record this representation and confirm complete document-body replacement plus full readback. The operation must not use a partial document patch as a substitute for a verified complete replacement.
+The scheduled production surface must create and replace raw UTF-8 Markdown while preserving the exact Drive file ID and `text/markdown` MIME type. It must read the complete raw bytes back after every write and compare them exactly with the intended bytes. Native Google Docs, document-body patches, generated summaries, and readback of an agent-authored draft are not substitutes for raw-file verification. A scheduled surface that cannot perform this operation is nonconformant for production writes.
 
 For an attended system upgrade, record whether the connected Drive surface exposes an atomic version precondition. When it does not, the runtime may use only the installed `supervised_operational_single_writer` upgrade procedure: schedules paused and read back, one actor, explicit exclusion of every other mutator, exact file IDs, complete-byte SHA-256 plus `modified_time` immediately before each update, create-only backup and journal-checkpoint files, and immediate complete readback. This fallback never authorizes an unattended upgrade or represents an unconditional update as provider-conditional.
 

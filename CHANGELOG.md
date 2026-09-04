@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.1.0-alpha.12 — 2026-09-03
+
+- Restored raw UTF-8 Markdown as the required ChatGPT Work scheduled storage representation after a fresh scheduled-surface probe verified exact in-place replacement and readback.
+- Made lossless catalogue acceptance compare each Gmail message body directly with its corresponding raw-message section before exact-byte Drive readback.
+- Prohibited successful termination after an intermediate daily-run phase and added executable regressions for summaries, truncation, substitution, reordering, and whitespace normalization.
+- Preserved the alpha.10 scheduler authorization correction, the single-sender model, task reconciliation, delivery-key/Sent verification, and data schema version 1.
+
+## 0.1.0-alpha.11 — 2026-09-03
+
+- Added a native-Google-Docs storage path for scheduled runtimes; subsequent production validation found that its self-referential content readback did not prove source losslessness.
+
+## 0.1.0-alpha.10 — 2026-09-03
+
+- Allowed a verified scheduled runtime to execute without requiring an unobservable fresh Run-now provenance identity.
+
 ## 0.1.0-alpha.9 — 2026-09-03
 
 - Separated the generic daily sequence from the private daily-run personal-values document.

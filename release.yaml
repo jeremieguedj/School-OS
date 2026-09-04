@@ -1,5 +1,5 @@
 schema_version: 1
-system_version: 0.1.0-alpha.11
+system_version: 0.1.0-alpha.12
 channel: alpha
 status: released
 runtime_bundle: source-tree
@@ -14,4 +14,4 @@ optional_capabilities:
   - audio.retrieve
 migrations:
   - migrations/0001-add-atomic-fact-refs-to-rolling-updates.md
-notes: Adds a verified native-Google-Docs storage path for ChatGPT Work scheduled surfaces that cannot safely mutate raw Markdown; data schema compatibility is unchanged.
+notes: Restores raw UTF-8 Markdown storage and requires direct source-to-catalog verbatim verification before reconciliation; data schema compatibility is unchanged.

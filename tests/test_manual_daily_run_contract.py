@@ -37,12 +37,22 @@ class ManualDailyRunContractTests(unittest.TestCase):
         self.assertIn("does not expose its invocation provenance", scheduler)
         self.assertIn("`scheduler.run_now`", recipe)
 
-    def test_daily_run_allows_a_verified_native_document_storage_representation(self) -> None:
+    def test_daily_run_requires_raw_markdown_and_independent_source_comparison(self) -> None:
         recipe = (ROOT / "core" / "operations" / "daily-run.md").read_text(encoding="utf-8")
         runtime = (ROOT / "adapters" / "runtimes" / "chatgpt-work.md").read_text(encoding="utf-8")
-        self.assertIn("native-document runtime", recipe)
-        self.assertIn("Native Google Docs storage", runtime)
-        self.assertIn("complete document-body replacement", runtime)
+        self.assertIn("raw UTF-8 Markdown", recipe)
+        self.assertIn("directly with the complete plaintext body", recipe)
+        self.assertIn("exact bytes", recipe)
+        self.assertIn("Raw Markdown storage", runtime)
+        self.assertIn("Native Google Docs", runtime)
+        self.assertIn("not substitutes", runtime)
+
+    def test_scheduled_run_cannot_stop_after_an_intermediate_phase(self) -> None:
+        recipe = (ROOT / "core" / "operations" / "daily-run.md").read_text(encoding="utf-8")
+        self.assertIn("must not return after a successful intermediate phase", recipe)
+        self.assertIn("`COMPLETE`", recipe)
+        self.assertIn("`BLOCKED`", recipe)
+        self.assertIn("continue immediately to the next phase", recipe)
 
     def test_routine_and_dispatcher_do_not_sweep_the_logical_file_map(self) -> None:
         for relative_path in ("core/operations/daily-run.md", "core/operations/manual-daily-run.md"):

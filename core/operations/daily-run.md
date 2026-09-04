@@ -86,7 +86,7 @@ Interactive evidence does not prove scheduled-surface conformance. If authentica
 2. Preserve complete available source text verbatim, source metadata, attachment presence/outcomes, atomic facts, and ordered source-coverage decisions.
 3. Apply `core/contracts/source-catalog.md`, `core/decision-tables/fact-flags.md`, and `core/operations/attachment-processing.md`. Every substantive source clause must map to a Fact or an explicit no-fact reason.
 4. A new or refreshed Fact records its source message and configured local received date. Retain existing Fact IDs; append stable new IDs; never delete or renumber history.
-5. For every changed record, replace the mapped file in place or create a genuinely new record using the selected runtime's declared storage representation, then read it back completely and compare it with the intended content before any dependent write. A raw-file runtime compares exact bytes; a native-document runtime replaces the complete document body and verifies the complete readback. Never substitute a lossy partial edit or a generated summary.
+5. For every changed record, replace the mapped raw UTF-8 Markdown file in place or create a genuinely new raw Markdown record. Before any dependent write, compare each message's raw-message section directly with the complete plaintext body returned by the mail adapter for the same immutable message ID, then read the persisted file back completely and compare its exact bytes with the intended Markdown bytes. Missing, reordered, truncated, normalized, substituted, or summarized source text fails the catalog phase. Never use a native Google Doc or compare persisted content only with an agent-authored draft as a substitute for these two independent checks.
 
 ### 4. Reconcile
 
@@ -109,6 +109,8 @@ Execute `brief-rendering.md` from declared derived inputs; do not repeat source 
 1. Advance discovery/provider cursors only after every required canonical write and external effect has verified.
 2. Write one concise final run checkpoint containing the bounded window, counts, attachment outcomes, Fact/derived/task changes, provider actions, optional degradation, every verified write, and delivery result.
 3. If any required phase fails, preserve the last verified checkpoint, record the blocking phase without overstating progress, and leave later cursors/effects untouched.
+
+A scheduled invocation must not return after a successful intermediate phase. It has only two valid terminal outcomes: `COMPLETE`, after all seven required phases and their readbacks succeed, or `BLOCKED`, after an observed tool, provider, authorization, or source-integrity failure is recorded with concrete evidence. Finishing because the agent has completed a working pass, consumed substantial effort, or chosen to defer later phases is invalid. After a phase passes, continue immediately to the next phase.
 
 ## Cutover rule
 
