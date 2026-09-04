@@ -1,5 +1,5 @@
 schema_version: 1
-system_version: 0.1.0-alpha.8
+system_version: 0.1.0-alpha.9
 channel: alpha
 status: released
 runtime_bundle: source-tree
@@ -14,4 +14,4 @@ optional_capabilities:
   - audio.retrieve
 migrations:
   - migrations/0001-add-atomic-fact-refs-to-rolling-updates.md
-notes: Adds a scheduler-issued manual run-now bridge and simplifies routine coordination to one production sender plus delivery idempotency; data schema compatibility is unchanged.
+notes: Separates generic daily-run behavior from private daily values and phase-specific adapter resolution; data schema compatibility is unchanged.

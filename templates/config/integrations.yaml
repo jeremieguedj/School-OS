@@ -6,10 +6,8 @@ audio_adapter: null
 
 mail:
   source_scope_reference: REPLACE_WITH_PRIVATE_SOURCE_SCOPE
+  delivery_configuration_reference: REPLACE_WITH_PRIVATE_DELIVERY_CONFIGURATION
 
 task_provider:
   status: not_configured
-  container_reference: null
-
-delivery:
-  recipients_reference: REPLACE_WITH_PRIVATE_DELIVERY_CONFIGURATION
+  selector_reference: REPLACE_WITH_PRIVATE_ACTIVE_TASK_PROVIDER

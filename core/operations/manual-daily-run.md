@@ -15,8 +15,10 @@ and production prompt as a normal cadence-triggered run.
 
 ## Preconditions
 
-1. Read the stable private bootstrap, instance manifest, logical file map,
-   `operation_state`, capability profile, delivery state, and this recipe.
+1. Read the stable private bootstrap, instance manifest, the instance's
+   `daily_run_personal_values_reference`, `operation_state`, capability profile,
+   delivery state, and this recipe. The logical file map is an onboarding,
+   upgrade, recovery, and maintenance artifact; the dispatcher does not sweep it.
 2. Resolve exactly one active production schedule for the instance. Confirm its
    identity, production prompt, model/effort, timezone, and enabled state by
    readback.

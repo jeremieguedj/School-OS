@@ -30,6 +30,13 @@ class ManualDailyRunContractTests(unittest.TestCase):
         self.assertIn("matching Sent message", recipe)
         self.assertIn("verified message ID and delivery key", recipe)
 
+    def test_routine_and_dispatcher_do_not_sweep_the_logical_file_map(self) -> None:
+        for relative_path in ("core/operations/daily-run.md", "core/operations/manual-daily-run.md"):
+            recipe = (ROOT / relative_path).read_text(encoding="utf-8")
+            normalized = " ".join(recipe.split())
+            self.assertIn("logical file map", normalized)
+            self.assertIn("sweep it", normalized)
+
 
 if __name__ == "__main__":
     unittest.main()

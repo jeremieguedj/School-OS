@@ -41,3 +41,14 @@ Every adapter declares:
 - test profile(s) it supports.
 
 The selected runtime/provider combination—not a vendor name alone—is the conformance unit.
+
+## Phase resolution
+
+A generic operation must not embed a household's adapter choice or provider
+binding. At the start of a phase, it resolves the phase's private selector from
+the integration configuration, reads the selected generic adapter, and then
+reads only the private configuration/state declared by that adapter. For
+example, task reconciliation resolves the active task-provider selector before
+loading a task adapter; delivery resolves the selected mail adapter before
+reading delivery state. The private daily-values document may point to daily
+canonical records but never replaces this resolution chain.

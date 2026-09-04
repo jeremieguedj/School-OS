@@ -6,17 +6,22 @@ Process new relevant communications losslessly, reconcile private derived record
 
 ## Declared private dependencies
 
-Resolve every private dependency by the exact references in the stable bootstrap, instance manifest, selected configuration, and logical file map. Do not discover a dependency by filename when an exact reference is available.
+Resolve the routine's private dependencies by the exact reference to
+`daily-run-personal-values.md` in the instance manifest. Do not discover a
+dependency by filename when an exact reference is available. The full logical
+file map is for onboarding, upgrades, recovery, and maintenance; routine daily
+runs do not sweep it.
 
 - **Routing and release:** instance manifest, active installed `release.yaml`, and this installed operation recipe.
-- **Configuration:** household/timezone/entity order and grouping, integrations and selected adapters, source inclusion/exclusion scope, delivery configuration, and policies.
-- **Control state:** logical file map, operation state, scheduled-surface capability profile, mail discovery checkpoint, task-provider cursor and bindings, delivery ledger, and final run checkpoint.
-- **Canonical data:** source-catalog folder and index, canonical task register, and the exact existing catalog records selected by source identity.
+- **Daily values:** the private daily-values document, containing only daily source/canonical references, household values, approved customization, and a runtime-profile reference.
+- **Phase selectors:** private integration configuration selects the mail, task, runtime, scheduler, and optional audio adapter. Each phase then reads only the configuration/state declared by its selected adapter.
+- **Control state:** operation state, runtime profile, mail discovery checkpoint, task-provider cursor and bindings, delivery ledger, and final run checkpoint.
+- **Canonical data:** source-catalog folder and index, canonical task register, and the exact existing catalog records selected by source identity, all resolved from daily values or the current phase's adapter configuration.
 - **Derived data:** rolling updates, recent guidelines, durable profiles/references, and the knowledge/run index.
 - **Installed recipes:** `attachment-processing.md`, `task-sync.md`, and `brief-rendering.md` from the same active release.
 - **Selected adapters:** runtime, mail, task provider, scheduler for a scheduler-issued execution, and optional audio.
 
-The private logical file map must resolve, at minimum, `current_index`, `source_catalog_folder`, `source_catalog_index`, `canonical_tasks`, `guidelines`, `rolling_updates`, `brief_template`, `delivery_state`, `task_sync_state`, `active_task_provider`, `family_scope`, and every configured durable-profile target. A capability profile is private state and must be mapped as `capability_profile`. Missing or ambiguous references stop the run before provider access or writes.
+The daily-values document must resolve, at minimum, the source checkpoint/catalog, canonical action register, guidelines, rolling updates, brief template, delivery state, and final run checkpoint. Each adapter selector must resolve before its phase begins. Missing or ambiguous references stop the affected run before provider access or writes.
 
 Legacy prompts and adapters may be retained as migration evidence, but they are not behavioral dependencies of this operation and must not supply undeclared production rules.
 
@@ -61,9 +66,9 @@ Interactive evidence does not prove scheduled-surface conformance. If authentica
 
 ### 1. Preflight
 
-1. Read all declared control/configuration dependencies completely and capture one timestamp in the configured timezone.
-2. Verify release version, status, source identity, installed reference, data compatibility, and completed migration state agree.
-3. Validate the scheduled-surface capability profile and selected adapter identities.
+1. Read the instance manifest, the private daily-values document, the routine runtime-profile header, and the integration selectors needed for this run. Capture one timestamp in the configured timezone.
+2. Verify release version, installed reference, data compatibility, and completed migration state agree. Do not re-audit historical migrations on an unchanged routine release.
+3. Validate the approved runtime-profile revision/fingerprint and resolve the selected adapter only when entering its phase. A mismatch requires setup/health validation before side effects.
 4. Require an idle operation state. Exactly one verified schedule is the production sender for an instance, and a user-requested run-now invocation must use that same schedule. An idle state is sufficient for a routine run: do not create or wait for a separate Drive lease.
 5. Require operation state and private policy to permit the intended reads, writes, provider actions, delivery, and cursor advancement. A cutover must use one supervised first-production run before ordinary recurring delivery is considered verified. When a scheduler exposes its authenticated **Run now** control only while the task is enabled, that single owner-approved supervised invocation may run with the one production schedule enabled; the schedule remains subject to full post-run verification before it is treated as normally active.
 

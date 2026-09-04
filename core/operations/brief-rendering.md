@@ -2,7 +2,8 @@
 
 ## Inputs
 
-Read only the declared private derived files:
+Resolve the selected mail adapter from private integration configuration before
+delivery. Read only the declared private derived files:
 
 - rolling update stream;
 - recent guidelines;

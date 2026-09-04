@@ -36,6 +36,12 @@ class InstanceContractTests(unittest.TestCase):
         del candidate["configuration"]["policies_reference"]
         self.assertIn("$.configuration: missing required property 'policies_reference'", validate(candidate, self.schema))
 
+    def test_daily_run_personal_values_are_an_explicit_instance_dependency(self) -> None:
+        self.assertEqual(
+            "config/daily-run-personal-values.md",
+            self.instance["configuration"]["daily_run_personal_values_reference"],
+        )
+
     def test_cli_validates_template(self) -> None:
         result = subprocess.run(
             [sys.executable, str(ROOT / "scripts" / "validate_instance.py"), str(ROOT / "templates" / "instance.yaml")],

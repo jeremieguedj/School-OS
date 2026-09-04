@@ -10,6 +10,7 @@ configuration:
   household_reference: config/household.yaml
   integrations_reference: config/integrations.yaml
   policies_reference: config/policies.yaml
+  daily_run_personal_values_reference: config/daily-run-personal-values.md
 state:
   file_map_reference: state/file-map.yaml
   operation_state_reference: state/operation-state.yaml

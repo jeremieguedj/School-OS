@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0-alpha.9 — 2026-09-03
+
+- Separated the generic daily sequence from the private daily-run personal-values document.
+- Made routine phases resolve their selected adapter and only that adapter's private configuration/state, rather than sweep the full logical file map.
+- Kept source cataloguing, task reconciliation, verified delivery, and durable checkpoints as required daily behavior.
+
 ## 0.1.0-alpha.8 — 2026-09-03
 
 - Added a user-requested immediate-run operation that dispatches through the one verified scheduled runtime rather than creating a second sender.

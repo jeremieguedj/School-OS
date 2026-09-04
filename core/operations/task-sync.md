@@ -6,7 +6,7 @@ Synchronize the canonical private task register with exactly one explicitly sele
 
 ## Procedure
 
-1. Read the canonical task register, group configuration, selected provider configuration, sync state, and adapter.
+1. Resolve the active task-provider selector from private integration configuration. Read the selected generic task adapter and only the provider configuration, canonical task register, group configuration, and sync state declared by that adapter.
 2. Validate the required task table/schema, provider binding, group mapping, workflow mapping, and binding uniqueness.
 3. Pull provider changes before pushing canonical changes.
 4. Resolve managed tasks through immutable system IDs and stored bindings, never title matching.

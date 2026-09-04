@@ -34,11 +34,12 @@
     "configuration": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["household_reference", "integrations_reference", "policies_reference"],
+      "required": ["household_reference", "integrations_reference", "policies_reference", "daily_run_personal_values_reference"],
       "properties": {
         "household_reference": {"type": "string", "minLength": 1},
         "integrations_reference": {"type": "string", "minLength": 1},
-        "policies_reference": {"type": "string", "minLength": 1}
+        "policies_reference": {"type": "string", "minLength": 1},
+        "daily_run_personal_values_reference": {"type": "string", "minLength": 1}
       }
     },
     "state": {
