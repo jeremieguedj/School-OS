@@ -86,7 +86,7 @@ Interactive evidence does not prove scheduled-surface conformance. If authentica
 2. Preserve complete available source text verbatim, source metadata, attachment presence/outcomes, atomic facts, and ordered source-coverage decisions.
 3. Apply `core/contracts/source-catalog.md`, `core/decision-tables/fact-flags.md`, and `core/operations/attachment-processing.md`. Every substantive source clause must map to a Fact or an explicit no-fact reason.
 4. A new or refreshed Fact records its source message and configured local received date. Retain existing Fact IDs; append stable new IDs; never delete or renumber history.
-5. For every changed record, replace the mapped file in place or create a genuinely new record, then read it back completely and compare it with the intended bytes/content before any dependent write.
+5. For every changed record, replace the mapped file in place or create a genuinely new record using the selected runtime's declared storage representation, then read it back completely and compare it with the intended content before any dependent write. A raw-file runtime compares exact bytes; a native-document runtime replaces the complete document body and verifies the complete readback. Never substitute a lossy partial edit or a generated summary.
 
 ### 4. Reconcile
 

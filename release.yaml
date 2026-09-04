@@ -1,5 +1,5 @@
 schema_version: 1
-system_version: 0.1.0-alpha.10
+system_version: 0.1.0-alpha.11
 channel: alpha
 status: released
 runtime_bundle: source-tree
@@ -14,4 +14,4 @@ optional_capabilities:
   - audio.retrieve
 migrations:
   - migrations/0001-add-atomic-fact-refs-to-rolling-updates.md
-notes: Clarifies scheduled-runtime authorization so a verified ChatGPT Work schedule does not require an unobservable run-now identity; data schema compatibility is unchanged.
+notes: Adds a verified native-Google-Docs storage path for ChatGPT Work scheduled surfaces that cannot safely mutate raw Markdown; data schema compatibility is unchanged.

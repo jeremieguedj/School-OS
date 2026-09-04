@@ -37,6 +37,13 @@ class ManualDailyRunContractTests(unittest.TestCase):
         self.assertIn("does not expose its invocation provenance", scheduler)
         self.assertIn("`scheduler.run_now`", recipe)
 
+    def test_daily_run_allows_a_verified_native_document_storage_representation(self) -> None:
+        recipe = (ROOT / "core" / "operations" / "daily-run.md").read_text(encoding="utf-8")
+        runtime = (ROOT / "adapters" / "runtimes" / "chatgpt-work.md").read_text(encoding="utf-8")
+        self.assertIn("native-document runtime", recipe)
+        self.assertIn("Native Google Docs storage", runtime)
+        self.assertIn("complete document-body replacement", runtime)
+
     def test_routine_and_dispatcher_do_not_sweep_the_logical_file_map(self) -> None:
         for relative_path in ("core/operations/daily-run.md", "core/operations/manual-daily-run.md"):
             recipe = (ROOT / relative_path).read_text(encoding="utf-8")
