@@ -46,3 +46,40 @@ Deferred adversarial-review findings are captured separately in `docs/deferred-a
 ## Completion criteria for the current execution
 
 This execution is complete when phases 1–5 are implemented in the repository and the repository is ready for the private-instance inventory/migration phase. Phase 6 and production cutover require separate inspection and explicit confirmation because they touch private systems.
+
+## Approved alpha.9 daily-run simplification
+
+The next release replaces the routine alpha.7 bootstrap/file-map sweep with one
+generic daily operation and one narrowly scoped private companion document.
+
+```text
+Scheduled task
+  -> generic daily-run.md
+  -> private daily-run-personal-values.md
+  -> phase-specific provider selector
+  -> selected generic adapter
+  -> that adapter's private configuration and state
+```
+
+`daily-run.md` remains the reusable sequence: catalogue source updates,
+reconcile canonical actions and the selected task provider, update derived
+knowledge, render the brief, verify delivery, and checkpoint the result. Task
+reconciliation remains a required daily phase.
+
+The private `daily-run-personal-values.md` holds only daily-run-specific values
+and approved presentation/household customizations. It must not embed adapter
+identity, provider bindings, credentials, or a second competing operation
+recipe. It may not override factual provenance, task reconciliation,
+duplicate-delivery prevention, or verified readback requirements.
+
+Adapter selection remains separate. Each phase resolves its private selector
+(for example, the active task-provider record), then reads the selected generic
+adapter and only the private configuration/state declared by that adapter.
+Routine runs read only the phase-relevant references. The full logical file map
+remains available for onboarding, upgrades, recovery, and maintenance, not as a
+routine daily-run preflight dependency.
+
+Implementation requires a new immutable `0.1.0-alpha.9` release; the already
+published alpha.8 tag must not be changed. The private legacy daily runbook is
+retained as read-only migration evidence through verified production runs and is
+not deleted during the initial rollout.

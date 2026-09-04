@@ -108,3 +108,21 @@
 - Kept exactly one scheduled production sender and made Gmail delivery-key/Sent-message verification the routine duplicate guard.
 - Preserved the stricter coordination protocol for attended release upgrades; it does not apply to routine daily brief delivery.
 - Added executable regression coverage for the simplified daily-run contract. Next: commit, publish, install, and perform one supervised scheduled production run.
+
+## 2026-09-03 — approved alpha.9 daily-run architecture
+
+- User approved one generic `daily-run.md` plus one private
+  `daily-run-personal-values.md`, rather than two competing daily runbooks.
+- The private values document will contain only daily values and explicitly
+  supported household/presentation customization. Adapter identity and
+  provider-specific configuration remain outside it.
+- Each daily phase will resolve its own active provider selector, generic
+  adapter, and only the private configuration/state declared by that adapter.
+  Task reconciliation remains a required daily phase.
+- The full logical file map will move out of routine-run preflight and remain
+  available for onboarding, upgrades, recovery, and maintenance.
+- Alpha.8 is already tagged and cannot be amended. Next: implement/test/publish
+  alpha.9, create the companion private values file from the legacy runbook,
+  update the private instance manifest and task prompt, then perform a
+  supervised scheduled production run. Do not delete the legacy private
+  runbook during the initial rollout.
