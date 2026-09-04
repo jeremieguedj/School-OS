@@ -30,6 +30,13 @@ class ManualDailyRunContractTests(unittest.TestCase):
         self.assertIn("matching Sent message", recipe)
         self.assertIn("verified message ID and delivery key", recipe)
 
+    def test_scheduled_runtime_does_not_require_unobservable_run_now_provenance(self) -> None:
+        recipe = (ROOT / "core" / "operations" / "daily-run.md").read_text(encoding="utf-8")
+        scheduler = (ROOT / "adapters" / "schedulers" / "chatgpt-work.md").read_text(encoding="utf-8")
+        self.assertIn("must not require a fresh Run-now observation", recipe)
+        self.assertIn("does not expose its invocation provenance", scheduler)
+        self.assertIn("`scheduler.run_now`", recipe)
+
     def test_routine_and_dispatcher_do_not_sweep_the_logical_file_map(self) -> None:
         for relative_path in ("core/operations/daily-run.md", "core/operations/manual-daily-run.md"):
             recipe = (ROOT / relative_path).read_text(encoding="utf-8")

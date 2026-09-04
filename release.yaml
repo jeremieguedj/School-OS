@@ -1,5 +1,5 @@
 schema_version: 1
-system_version: 0.1.0-alpha.9
+system_version: 0.1.0-alpha.10
 channel: alpha
 status: released
 runtime_bundle: source-tree
@@ -14,4 +14,4 @@ optional_capabilities:
   - audio.retrieve
 migrations:
   - migrations/0001-add-atomic-fact-refs-to-rolling-updates.md
-notes: Separates generic daily-run behavior from private daily values and phase-specific adapter resolution; data schema compatibility is unchanged.
+notes: Clarifies scheduled-runtime authorization so a verified ChatGPT Work schedule does not require an unobservable run-now identity; data schema compatibility is unchanged.
