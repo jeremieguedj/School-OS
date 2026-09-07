@@ -11,6 +11,8 @@ School-OS has two layers.
 
 GitHub publishes a versioned package. The user transports that package manually or through an optional connected agent. The Drive installation is pinned to one release and is the only system copy used by production runs.
 
+The product purpose, personas, use cases, and priority order that drive this architecture are defined in `docs/product-principles.md`.
+
 ## Private-instance areas
 
 ```text
@@ -30,6 +32,7 @@ instance root/
 
 ## Core invariants
 
+- Available substantive source information within the configured scope is never silently discarded; unsupported or unavailable content has an explicit coverage outcome.
 - Every source-derived claim has provenance.
 - Every catalog record has stable identity.
 - Facts are atomic and independently classified.
@@ -37,7 +40,13 @@ instance root/
 - A finite unresolved request becomes a task; a standing routine is a guideline, not a task.
 - Derived data is rebuildable from canonical data.
 - External task-provider identities never replace canonical task identities.
-- Core behavior is independent of any one agent runtime or task provider.
+- Core behavior is independent of any one agent runtime, storage provider, email provider, task manager, audio service, scheduler, or other application.
+- Provider- and runtime-specific behavior stays behind adapters that implement stable core contracts. The adapter pattern is extensible and is not limited to the integrations currently implemented.
+- An unfamiliar runtime is handled through observed capability discovery and declared degradation, never assumptions based only on its vendor or model name.
+- Repeated decisions are encoded in contracts, decision tables, and ordered operations so correctness does not depend on conversational memory or unusually strong model reasoning.
+- Routine execution reads only its declared dependencies and reuses canonical state so it remains token-efficient.
+- The normal deployment assumes one or two parent users and low write concurrency. Add coordination complexity only for a concrete, evidenced risk and keep it scoped to the operation that needs it.
+- New applications and workflows consume the canonical data layer and contracts rather than creating a parallel source of truth.
 - Scheduled execution uses the Drive-installed release, never a live GitHub branch.
 
 See `docs/instruction-ownership.md` for where each type of rule belongs.

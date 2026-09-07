@@ -2,6 +2,8 @@
 
 School-OS is a reusable, agent-operated system for turning school or family communications into a private, source-linked knowledge base, task register, and daily brief.
 
+The canonical knowledge layer is the foundation of the product. Daily email, task synchronization, and optional audio briefs are applications built on it, and users can add other applications and workflows without replacing the underlying source-linked data. See [Product principles](docs/product-principles.md) for the intended users, use cases, and design priorities.
+
 It is designed for this deployment model:
 
 ```text
@@ -24,6 +26,7 @@ GitHub is the reusable upstream. A user's Google Drive contains the active insta
 ## Repository map
 
 - [START-HERE.md](START-HERE.md) — neutral agent entry point.
+- [docs/product-principles.md](docs/product-principles.md) — purpose, personas, use cases, and product-level design priorities.
 - [PLAN.md](PLAN.md) — resumable implementation plan.
 - [PROGRESS.md](PROGRESS.md) — current execution checkpoint.
 - [core](core) — generic operations, contracts, and decision tables.

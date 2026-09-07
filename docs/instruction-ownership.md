@@ -4,6 +4,7 @@ Each durable rule has one owner.
 
 | Rule type | Owner |
 |---|---|
+| Product purpose, personas, use cases, and design priorities | `docs/product-principles.md` |
 | System boundaries and invariants | `docs/architecture.md` |
 | Agent routing and precedence | `START-HERE.md` |
 | Operation procedure | One file in `core/operations/` |

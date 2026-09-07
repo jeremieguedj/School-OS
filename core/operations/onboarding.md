@@ -12,7 +12,7 @@ Install one pinned School-OS release into a new private Google Drive instance wi
 
 ## Procedure
 
-1. Read the supplied package's `START-HERE.md` and `release.yaml`.
+1. Read the supplied package's `START-HERE.md`, `docs/product-principles.md`, and `release.yaml`.
 2. Confirm the package is a tagged release asset, not an unpinned working branch. Record the observed version and assurance level.
 3. Collect integration choices before capability preflight; never infer a provider from visible connectors.
 4. Probe the selected runtime, Drive, mail, task, scheduler, and optional audio capabilities.
