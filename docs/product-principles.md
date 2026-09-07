@@ -42,7 +42,7 @@ Apply these priorities when requirements or implementation choices compete:
 
 ## Release and instance lifecycle
 
-GitHub is the authoritative source for the latest reusable School-OS source and published releases. The expected user journey does not require the user's agent to be connected to GitHub: a user will commonly download a packaged release archive from GitHub, typically a ZIP when that format is published, share that package with an agent, and ask the agent to install or upgrade a private instance. Production operations then use the pinned installed release rather than a live GitHub branch.
+GitHub is the authoritative source for the latest reusable School-OS source and published releases. The expected user journey does not require the user's agent to be connected to GitHub: a user will commonly download a packaged release from GitHub, share that package with an agent, and ask the agent to install or upgrade a private instance. Production operations then use the pinned installed release rather than a live GitHub branch.
 
 A private instance may evolve after installation with additional tools, adapters, use cases, applications, and workflows. Preserve those additions outside the immutable managed release copy and build them against canonical contracts and data whenever possible. A later upgrade should replace or activate versioned system files while preserving private data, configuration, and compatible local extensions.
 
