@@ -13,10 +13,6 @@ This is the neutral entry point for a fresh agent. It is intentionally thin.
 
 Read `docs/product-principles.md` during onboarding and before making decisions about architecture, customization, integrations, adapters, capability degradation, or new applications. Routine scheduled operations should not reread it unless their selected operation recipe declares it; they remain governed by the installed recipes and contracts.
 
-## Core-change approval guard
-
-Keep local integrations, applications, workflows, and household customization outside the managed installed release whenever the existing contracts allow it. Before changing School-OS core architecture or editing a managed release file, explicitly warn the user that the change may create a local fork and impair future upgrades, explain why an adapter, configuration, or external application cannot meet the need, and obtain explicit approval. Never describe a modified managed release as an unchanged official release.
-
 ## Instruction hierarchy
 
 For an installed instance, use this order:

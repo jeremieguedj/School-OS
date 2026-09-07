@@ -11,15 +11,6 @@ An agent without GitHub access cannot independently discover a remote release. T
 
 A connected agent may optionally check release metadata, but daily production runs remain independent of that connectivity.
 
-## Local customization and updateability
-
-- Treat every installed `system/releases/<version>/` directory as an immutable managed copy.
-- Keep household configuration, canonical data, state, local adapters, applications, and workflows outside managed release directories.
-- Build local additions against School-OS contracts and canonical data so an upgrade can preserve them and assess their compatibility independently.
-- Do not replace or discard private data, configuration, or compatible local additions merely because a newer system release is installed.
-- Before proposing a core-architecture change or an edit to a managed release, explain why the supported extension boundaries are insufficient, explicitly warn that a local fork may impair future upgrades, and obtain the user's approval.
-- Record any approved core departure as a local modification. Do not claim that the instance remains an unmodified official release or that future upgrades are automatic until compatibility has been reconciled.
-
 ## Upgrade rules
 
 - Never execute a live source branch.
