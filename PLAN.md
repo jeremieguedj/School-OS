@@ -12,6 +12,10 @@ including the approved manual-sender and cross-session continuation decisions.
 Implementation has not started. This planning reference does not change the
 current release manifest or authorize private-instance activation.
 
+The subsequent [simplicity review](docs/plans/0.1.0-alpha.13/REVIEW.md) evaluates
+that snapshot against product personas and priorities. Its scope refinements
+are recommendations pending acceptance; they do not replace the captured plan.
+
 ## Objective
 
 Build a reusable, privacy-safe School-OS whose generic source is maintained in GitHub and whose installed runtime executes from a user's Google Drive. Private configuration, knowledge, task records, credentials, and runtime state never enter this repository.

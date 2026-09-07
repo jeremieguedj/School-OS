@@ -151,3 +151,20 @@
 - Next: review the committed plan against documented personas, use cases, and
   design priorities for over-engineering; keep review recommendations separate
   from the captured plan pending acceptance.
+
+## 2026-09-07 — alpha.13 simplicity review
+
+- After pushing and verifying planning commit `3acd660`, reviewed the captured
+  plan against the documented parent and agent personas, core use cases, and
+  simplicity/portability priorities.
+- Recorded recommendations in `docs/plans/0.1.0-alpha.13/REVIEW.md` and linked
+  them from the root plan. The original release-plan snapshot is preserved.
+- Recommended retaining the reliability requirements while narrowing instruction
+  generation, runtime optimization, worker orchestration, generic format/merge
+  support, benchmark infrastructure, and optional adapter release gates.
+- Identified historical source-backed retrieval as a small acceptance check that
+  protects the broader canonical-data use case beyond briefs and tasks.
+- Review recommendations remain proposed; no implementation scope was silently
+  removed, and no private-instance changes were made.
+- Next: incorporate accepted review refinements into a subsequent plan revision
+  before implementation.
