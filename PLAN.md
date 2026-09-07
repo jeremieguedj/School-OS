@@ -3,6 +3,15 @@
 Status: active  
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
+## Next-release planning
+
+The current planning snapshot for the next release, `0.1.0-alpha.13`, is
+[the alpha.13 release plan](docs/plans/0.1.0-alpha.13/PLAN.md). It records ten work
+packages, deliverables, benefits, deferral impacts, and acceptance criteria,
+including the approved manual-sender and cross-session continuation decisions.
+Implementation has not started. This planning reference does not change the
+current release manifest or authorize private-instance activation.
+
 ## Objective
 
 Build a reusable, privacy-safe School-OS whose generic source is maintained in GitHub and whose installed runtime executes from a user's Google Drive. Private configuration, knowledge, task records, credentials, and runtime state never enter this repository.

@@ -135,3 +135,19 @@
 - Added executable losslessness regressions for summary, truncation, substitution, message reordering, and whitespace normalization. The complete repository validation now passes 77 tests.
 - Verified private rollback mapping exists for seven mutable Markdown records. Six remain logically equivalent to their native copies. The raw catalog index and four September 3 source records require a fresh lossless rebuild before activation.
 - Next: commit and publish immutable alpha.12; install it privately; restore exact Markdown references and scheduled capability evidence; rebuild the four records from fresh complete Gmail reads; run and monitor a new Work agent using the production prompt; independently verify catalog equality, task reconciliation, and the delivered email; repeat once; then replace the old schedules with one fresh daily 6:00 a.m. schedule.
+
+## 2026-09-07 — alpha.13 planning snapshot
+
+- Selected `0.1.0-alpha.13` as the next planning target after checking the remote
+  release tags and current alpha.12 manifest.
+- Captured the ten-part technical proposal in
+  `docs/plans/0.1.0-alpha.13/PLAN.md`, including deliverables, benefits, impacts
+  of deferral, acceptance criteria, and implementation sequence.
+- Recorded the user's approval for verified manual sending without a scheduler
+  and checkpointed continuation across execution sessions. The remaining
+  implementation details are a planning baseline for further review.
+- Added a pointer from the root plan. No implementation, release publication,
+  manifest-version change, or private-instance activation is included.
+- Next: review the committed plan against documented personas, use cases, and
+  design priorities for over-engineering; keep review recommendations separate
+  from the captured plan pending acceptance.
