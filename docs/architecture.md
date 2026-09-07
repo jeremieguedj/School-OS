@@ -11,6 +11,8 @@ School-OS has two layers.
 
 GitHub publishes a versioned package. The user transports that package manually or through an optional connected agent. The Drive installation is pinned to one release and is the only system copy used by production runs.
 
+GitHub is authoritative for the latest reusable source and published releases; the pinned installed copy is authoritative for production behavior in one private instance. A user may install or upgrade by giving a downloaded release package to an agent, without granting that agent GitHub access.
+
 The product purpose, personas, use cases, and priority order that drive this architecture are defined in `docs/product-principles.md`.
 
 ## Private-instance areas
@@ -47,6 +49,8 @@ instance root/
 - Routine execution reads only its declared dependencies and reuses canonical state so it remains token-efficient.
 - The normal deployment assumes one or two parent users and low write concurrency. Add coordination complexity only for a concrete, evidenced risk and keep it scoped to the operation that needs it.
 - New applications and workflows consume the canonical data layer and contracts rather than creating a parallel source of truth.
+- Private tools, adapters, applications, and workflows remain outside immutable managed release directories so compatible local evolution can survive a system upgrade.
+- An agent must not change core architecture or edit managed release files without first warning the user that doing so may impair future updates, explaining why the extension boundaries are insufficient, and obtaining explicit approval. Any approved departure is recorded as a local fork and is not represented as an unchanged official release.
 - Scheduled execution uses the Drive-installed release, never a live GitHub branch.
 
 See `docs/instruction-ownership.md` for where each type of rule belongs.

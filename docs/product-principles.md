@@ -23,6 +23,7 @@ All three roles use the same product principles when making design or operationa
 - Reconcile actionable requests into durable canonical tasks and synchronize them with a selected task application when configured.
 - Produce recent-update briefs, including the currently implemented daily email brief and an optional audio brief when the runtime and selected service support it.
 - Easily create new applications, automations, analyses, and workflows on top of the canonical School-OS data layer without redesigning ingestion or compromising provenance.
+- Install from a user-supplied packaged release and later update the private instance while preserving its private data, configuration, and compatible local extensions.
 
 Email, task synchronization, and audio generation are reference applications of the data layer, not the boundary of the product.
 
@@ -37,6 +38,15 @@ Apply these priorities when requirements or implementation choices compete:
 5. **Tool agnosticism.** Core business logic and canonical data must not depend on a particular agent runtime, storage provider, email provider, task manager, audio service, scheduler, or other application. Integrations implement stable contracts through adapters so tools can be selected, replaced, or newly discovered without redefining system behavior.
 6. **Capability-led portability.** Detect the actual capabilities and limits of the runtime/provider combination. An unfamiliar agent must be able to discover what it can do, select conformant adapters, and declare supported degradation rather than guess from a vendor name.
 7. **Extensibility from canonical data.** New applications should consume the existing contracts and canonical data. They must not create an incompatible parallel source of truth.
+8. **Sustainable updates.** Keep user configuration, data, integrations, applications, and workflows separate from versioned managed system files so a user can adopt later School-OS releases without losing compatible local work.
+
+## Release and instance lifecycle
+
+GitHub is the authoritative source for the latest reusable School-OS source and published releases. The expected user journey does not require the user's agent to be connected to GitHub: a user will commonly download a packaged release from GitHub, share that package with an agent, and ask the agent to install or upgrade a private instance. Production operations then use the pinned installed release rather than a live GitHub branch.
+
+A private instance may evolve after installation with additional tools, adapters, use cases, applications, and workflows. Preserve those additions outside the immutable managed release copy and build them against canonical contracts and data whenever possible. A later upgrade should replace or activate versioned system files while preserving private data, configuration, and compatible local extensions.
+
+Changing the core architecture or editing managed release files can create a local fork and break compatibility with future updates. Before making such a change, an agent must explicitly warn the user about that consequence, explain why an adapter, configuration, or external application is insufficient, and obtain explicit approval. An approved departure must be clearly recorded; it must never be mistaken for an unmodified official release.
 
 ## Compatibility posture
 
