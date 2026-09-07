@@ -24,6 +24,14 @@ Adapters own only:
 
 Adapters must not embed household values, canonical facts, task history, recipient addresses, private IDs, or secrets.
 
+## Adapter origin and extensibility
+
+An adapter may ship in an official release or be created by a user and their agent for one private instance. Both are first-class School-OS adapters when they implement the applicable contract, declare the required metadata, pass capability validation, and preserve core invariants. Conformance depends on behavior and evidence, not on who created the adapter or whether its provider is already known upstream.
+
+Adding a conformant adapter for a different runtime, storage service, mail provider, task manager, scheduler, audio service, or future integration is compatible system expansion; it does not by itself change the core architecture or make the instance a fork. The instance must record and select the adapter through its normal configuration and file mapping so another agent and a later upgrade can identify it.
+
+If an integration cannot be implemented without changing a core invariant or breaking an existing generic contract, treat that proposal as a core architectural change rather than labeling it an adapter. Explain the update-compatibility consequence and obtain explicit user approval before proceeding.
+
 ## Required adapter metadata
 
 Every adapter declares:

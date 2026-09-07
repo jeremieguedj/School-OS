@@ -11,6 +11,14 @@ An agent without GitHub access cannot independently discover a remote release. T
 
 A connected agent may optionally check release metadata, but daily production runs remain independent of that connectivity.
 
+## Compatible instance evolution
+
+A private instance may contain user-created adapters, tools, applications, analyses, automations, and workflows in addition to the official installed release. These are supported School-OS expansion when they preserve core invariants and implement or consume the applicable contracts.
+
+An upgrade agent must distinguish compatible instance additions from core architectural modifications. It must preserve private data, configuration, and compatible additions; identify their contract versions and capability requirements; and assess them against the proposed release. A local adapter is not incompatible merely because it is absent from the official package. If an addition needs adjustment for a newer contract, present that bounded compatibility work rather than treating the entire instance as a fork.
+
+Only a change that alters core invariants, canonical data meaning, generic contracts incompatibly, or release/upgrade behavior requires the core-change warning. Before such a change, explain why a conformant adapter or application cannot meet the need, warn that future updates may be impaired, and obtain explicit user approval.
+
 ## Upgrade rules
 
 - Never execute a live source branch.

@@ -13,6 +13,16 @@ This is the neutral entry point for a fresh agent. It is intentionally thin.
 
 Read `docs/product-principles.md` during onboarding and before making decisions about architecture, customization, integrations, adapters, capability degradation, or new applications. Routine scheduled operations should not reread it unless their selected operation recipe declares it; they remain governed by the installed recipes and contracts.
 
+## Classify proposed changes
+
+Before changing an installed instance or this reusable system, classify the request:
+
+1. **Configuration or personalization** selects existing behavior without changing core policy.
+2. **Compatible expansion** adds a conformant adapter, tool, application, analysis, automation, or workflow while preserving core invariants and contracts. It is normal School-OS evolution and does not make an instance a fork.
+3. **Core architectural change** alters an invariant, canonical data meaning, a generic contract incompatibly, or release/upgrade behavior.
+
+Proceed with the first two categories under the selected operation and ordinary user authorization. Before the third, explain why compatible expansion is insufficient, explicitly warn that the change may impair future official updates, and obtain the user's approval. Do not treat a user-created adapter as a core change merely because its provider is not included in the official release.
+
 ## Instruction hierarchy
 
 For an installed instance, use this order:
