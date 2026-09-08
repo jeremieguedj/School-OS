@@ -2110,3 +2110,20 @@ requirements, then read this log from top to bottom.
   paired with the new installer. Commit this candidate locally, then rerun the
   actual command and full ordinary-CPython suite against the exact new package
   before push or acceptance. No provider or release effect occurred.
+
+## 2026-09-08 — exact runtime primitive candidate validated
+
+- Exact local commit `512b408` passed all 229 tests on ordinary CPython 3.12.14,
+  schemas/templates, and immutable release-package smoke validation. The actual
+  measurement command also passed against that exact package; refreshed its
+  baseline while preserving durable task intent/callback behavior and the
+  executable regression. The earlier mixed-schema measurement failure is
+  resolved, without weakening package validation or suppressing ordinary child
+  interpreter behavior.
+- Concrete ingestion candidate is independently under review. A separate
+  isolated worker owns canonical-task/Sheets binding, while the brief worker
+  implements the now-approved user-added task exception and presentation fixes.
+  The generic transport/delivery primitives do not establish a connected daily
+  operation or any actual provider acceptance.
+- Next: publish the validated primitive integration and verify its exact CI;
+  review/integrate the concrete workers, then complete fresh-instance acceptance.

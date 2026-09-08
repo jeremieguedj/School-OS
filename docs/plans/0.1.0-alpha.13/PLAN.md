@@ -241,6 +241,13 @@ not be relabelled as user tasks. The former policy pause is resolved. The brief
 candidate still requires implementation review, deterministic and visual
 verification, and connected acceptance before delivery or release.
 
+The reviewed runtime primitives are now integrated: bounded private host
+transport, exact Sent identity/content verification, durable partial-phase
+continuation, and admitted package-byte recovery. The exact candidate passes
+229 repository tests and executable synthetic measurements. Concrete ingestion,
+task/Sheets, and brief bindings remain under implementation/review; authenticated
+M4-003/M4-009 acceptance and final release gates remain open.
+
 ## Proposed implementation shape
 
 Organize executable code as a small shared Python package, such as `school_os/`,
