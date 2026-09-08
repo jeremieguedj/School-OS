@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation in progress; M1 and M2-001–M2-005 complete, M2-006 next
-- Approved plan: [PLAN.md](PLAN.md), revision 9
+- Status: implementation in progress; M1 and M2-001–M2-006 complete, M2-007 next
+- Approved plan: [PLAN.md](PLAN.md), revision 11
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
@@ -434,7 +434,7 @@ or any real provider is conformant.
 
 ## Milestone 2 — Connect a complete normal operation
 
-**Status:** in progress (M2-001–M2-005 complete; M2-006 next).
+**Status:** in progress (M2-001–M2-006 complete; M2-007 next).
 
 ### Deliverable
 
@@ -483,6 +483,15 @@ after exact readback. Parent/provider-owned fields are not part of the patch.
 **M2-005 implementation note (2026-09-07):** `school_os.brief` deterministically
 renders the versioned input contract to escaped HTML/plain text. The delivery
 ledger confirms a content-hash/key once through the send sink and blocks repeats.
+
+**M2-006 implementation note (2026-09-07):** `school_os.adapters` now exposes
+provider-neutral storage, mail, task, and optional scheduler protocols with
+normalized complete-read, pagination, and effect-result records. The shared
+`school_os.daily.run_daily` qualifies the exact entrypoint before any phase,
+requires operation/attempt identities and verified outputs for all seven phases,
+and adds scheduler admission only for a scheduled entrypoint. The thin Python
+`scripts/run_operation.py` is synthetic-only until a selected authenticated
+adapter host binds real stage callables; it makes no provider-effect claim.
 
 ### Milestone check
 

@@ -639,3 +639,32 @@ requirements, then read this log from top to bottom.
   tests and changed files passed privacy/diff checks.
 - `origin/main` resolves to the same commit. Next: M2-006 shared daily runner,
   adapter protocols, and manual/scheduled entrypoint alignment.
+
+## 2026-09-07 — alpha.13 M2-006 shared daily entrypoints
+
+- Completed M2-006. Added provider-neutral `school_os.adapters` protocols and
+  normalized complete-read, page, and effect outcome records. Added
+  `school_os.daily.run_daily`, which fails closed without nonempty
+  operation/attempt identities, qualifies the actual manual or scheduled
+  surface before phases, passes each verified predecessor result forward, and
+  requires every named phase. A scheduled entrypoint adds verified scheduler
+  admission; a direct manual entrypoint requests no scheduler capability.
+- Added the thin synthetic-only `scripts/run_operation.py` host entrypoint,
+  documented the executable adapter boundary, and revised daily/manual recipes
+  and contract tests to retire scheduler-only manual dispatch while preserving
+  delivery/recovery and no-lease requirements. The entrypoint makes no real
+  provider call or production-conformance claim.
+- Focused daily/recipe tests passed 10 tests. The complete
+  `PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate.py` gate passed 113
+  tests plus schema/template and release-smoke validation. No design
+  contradiction, provider effect, private-instance access, or consultation
+  occurred.
+- Changed files: `school_os/adapters.py`, `school_os/daily.py`,
+  `scripts/run_operation.py`, `tests/test_daily_runner.py`,
+  `tests/test_manual_daily_run_contract.py`, `core/contracts/adapters.md`,
+  `core/operations/daily-run.md`, `core/operations/manual-daily-run.md`, root
+  `PLAN.md`, and the alpha.13 plan/specification.
+- Validation/publication remains pending. Exact next action: privacy-scan the
+  changed tracked and new files, commit/push/verify M2-006, then implement the
+  M2-007 connected daily-run test using only installer output and predecessor
+  artifacts.

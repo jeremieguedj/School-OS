@@ -27,7 +27,7 @@ Legacy prompts and adapters may be retained as migration evidence, but they are 
 
 ## Required capabilities
 
-Every capability below must be recorded as `available` in the capability profile for the exact runtime, provider authorization, and **scheduled execution surface** before production writes are enabled:
+Every capability below must be recorded as `available` in the capability profile for the exact runtime, provider authorization, and execution surface before writes are enabled:
 
 ```text
 storage.scoped_list
@@ -56,7 +56,7 @@ tasks.write_comment
 tasks.verify
 ```
 
-For a scheduler-issued run, `scheduler.inspect` and `scheduler.verify` are also required. Scheduler creation, cutover, pause, or replacement additionally requires `scheduler.ensure` and `scheduler.disable`; a manual dispatch additionally requires `scheduler.run_now`. A user-requested immediate run is scheduler-issued only when `manual-daily-run.md` invokes the same verified schedule through its observed run-now control; an ad-hoc interactive execution is not a production sender.
+For a scheduler-issued run, `scheduler.inspect` and `scheduler.verify` are also required. Scheduler creation, cutover, pause, or replacement additionally requires `scheduler.ensure` and `scheduler.disable`. A qualified direct manual run requires no scheduler capability and invokes the same `school_os.daily.run_daily` sequence.
 
 `mail.read_attachment` is conditionally required only when attachment extraction is attempted; otherwise record the explicit unavailable/unsupported outcome defined by `attachment-processing.md`. `audio.generate` and `audio.retrieve` are optional and apply only when audio is enabled. Optional failure must use the documented degradation and must never fabricate content or success.
 
@@ -69,7 +69,7 @@ Interactive evidence does not prove scheduled-surface conformance. If authentica
 1. Read the instance manifest, the private daily-values document, the routine runtime-profile header, and the integration selectors needed for this run. Capture one timestamp in the configured timezone.
 2. Verify release version, installed reference, data compatibility, and completed migration state agree. Do not re-audit historical migrations on an unchanged routine release.
 3. Validate the approved runtime-profile revision/fingerprint and resolve the selected adapter only when entering its phase. A mismatch requires setup/health validation before side effects.
-4. Require an idle operation state. Exactly one verified schedule is the production sender for an instance, and a user-requested run-now invocation must use that same schedule. The scheduled runtime relies on the approved scheduled-surface conformance record and its configured immutable prompt; it must not require a fresh Run-now observation or a scheduler invocation identity that the runtime surface cannot inspect. An idle state is sufficient for a routine run: do not create or wait for a separate Drive lease.
+4. Require operation admission and serialization evidence. A manual run uses its attended-single-writer evidence; a scheduled run uses verified scheduler/runtime serialization. Both invoke the same daily sequence. The scheduled runtime relies on its conformance record and need not require fresh run-now provenance. Do not create or wait for a separate Drive lease.
 5. Require operation state and private policy to permit the intended reads, writes, provider actions, delivery, and cursor advancement. A cutover must use one supervised first-production run before ordinary recurring delivery is considered verified. When a scheduler exposes its authenticated **Run now** control only while the task is enabled, that single owner-approved supervised invocation may run with the one production schedule enabled; the schedule remains subject to full post-run verification before it is treated as normally active.
 
 ### 2. Discover

@@ -24,6 +24,23 @@ Adapters own only:
 
 Adapters must not embed household values, canonical facts, task history, recipient addresses, private IDs, or secrets.
 
+## Executable core boundary
+
+`school_os.adapters` defines the narrow Python structural protocols used by
+the synthetic connected path: storage reads/listing/create/replace; complete
+mail discovery, reads, send, and delivery lookup; task snapshot/read/write
+calls; and optional scheduler inspection/triggering. Its `ReadResult`, `Page`,
+and `EffectResult` records normalize only identity, pagination, bytes, version,
+and outcome evidence. `EffectResult.outcome` is exactly `confirmed`,
+`definitely_not_applied`, or `unknown`; accepted requests alone are never
+confirmation. A caller retries only the definitely-not-applied case and routes
+unknown effects through reconciliation.
+
+These protocols make no Markdown provider mapping executable and do not select
+a provider. A concrete adapter still supplies the documented readback that
+establishes a confirmed effect. The checked-in fakes are synthetic behavioral
+evidence only, never production conformance.
+
 ## Adapter origin and extensibility
 
 An adapter may ship in an official release or be created by a user and their agent for one private instance. Both are first-class School-OS adapters when they implement the applicable contract, declare the required metadata, pass capability validation, and preserve core invariants. Conformance depends on behavior and evidence, not on who created the adapter or whether its provider is already known upstream.
