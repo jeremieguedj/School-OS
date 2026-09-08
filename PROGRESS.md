@@ -511,3 +511,21 @@ requirements, then read this log from top to bottom.
   file map and operation-state files. No provider effect occurred. Added those
   synthetic references and an idle-state assertion; the M2-001 commit will be
   amended only after the exact-HEAD package gate passes.
+
+## 2026-09-07 — alpha.13 M2-001 verification and handoff
+
+- Amended and accepted M2-001 as
+  `c928eb12157809576e2c1924fe562e2d3d9a9769`
+  (`Implement alpha.13 operation state checkpoints`) on `main`. The initial
+  exact-HEAD fixture failure recorded above is fixed in that same commit.
+- Post-amend evidence: the complete repository gate passed all 100 tests,
+  schema/template checks, tracked-file privacy scan, and exact-HEAD release
+  smoke build. The exact archive passed offline
+  `scripts/validate_installed.py --candidate-test`.
+- Remote verification: `origin/main` resolved to
+  `c928eb12157809576e2c1924fe562e2d3d9a9769`; the worktree was clean. The
+  sandboxed remote lookup hit DNS restriction, and the approved read-only
+  lookup confirmed the same SHA.
+- Next: M2-002. Implement the versioned lossless source/extraction schemas and
+  catalog codec, preserving adapter body bytes and proving both source-to-record
+  equality and intended-to-persisted byte equality before indexing.
