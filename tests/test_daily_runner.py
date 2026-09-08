@@ -42,4 +42,11 @@ class DailyRunnerTests(unittest.TestCase):
   self.assertEqual(1,plan.max_records_per_unit);self.assertEqual(65536,plan.max_bytes_per_unit)
   stages,_=self.stages();stages['reconcile']=lambda _:{'verified':True,'progressed':False}
   with self.assertRaisesRegex(DailyError,'made no progress'):run_daily(profile=self.profile('manual'),capability_schema=self.schema,entrypoint='manual',operation_id='daily-001',attempt_id='attempt-002',stages=stages,resume_after='catalog',durable_predecessor_output={'verified':True,'phase':'catalog'},require_progress_after_resume=True)
+ def test_no_new_message_run_still_regenerates_required_outputs(self):
+  stages,seen=self.stages()
+  stages['discover']=lambda _:{'verified':True,'new_conversations':0}
+  stages['reconcile']=lambda previous: seen.append(('reconcile',previous)) or {'verified':True,'rolling_regenerated':True}
+  stages['brief_delivery']=lambda previous: seen.append(('brief_delivery',previous)) or {'verified':True,'brief_regenerated':True}
+  result=run_daily(profile=self.profile('manual'),capability_schema=self.schema,entrypoint='manual',operation_id='daily-empty-001',attempt_id='attempt-001',stages=stages)
+  self.assertEqual('COMPLETE',result.outcome);self.assertTrue(result.outputs['reconcile']['rolling_regenerated']);self.assertTrue(result.outputs['brief_delivery']['brief_regenerated']);self.assertEqual(['reconcile','brief_delivery'],[phase for phase,_ in seen if phase in {'reconcile','brief_delivery'}])
 if __name__=='__main__':unittest.main()

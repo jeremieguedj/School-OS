@@ -25,6 +25,15 @@ recovery class. The broader state, authentication, capacity, cancellation, and
 ambiguity tests remain required; all evidence is synthetic and does not claim
 real provider or private-instance conformance.
 
+## Alpha.13 import coverage
+
+`test_import_runner.py` uses `synthetic-fixtures/alpha13/import-pages.json` to
+prove complete multi-page identity accounting, stable bounded batch resumption,
+and exact supported text attachment extraction. Unsupported and oversized
+attachments remain visible outcomes with no inferred text. The daily runner
+also has a no-new-message case that still regenerates required rolling and
+brief outputs.
+
 ## Executable validation
 
 Run the complete dependency-free validation gate from the repository root:

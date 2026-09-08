@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation in progress; M1–M3 complete, M4-001 next
-- Approved plan: [PLAN.md](PLAN.md), revision 18
+- Status: implementation in progress; M1–M3 and M4-001 complete, M4-002 next
+- Approved plan: [PLAN.md](PLAN.md), revision 19
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
@@ -584,7 +584,7 @@ state removed. A passing uninterrupted operation is insufficient.
 
 ## Milestone 4 — Expand coverage and establish release readiness
 
-**Status:** pending.
+**Status:** in progress (M4-001 complete; M4-002 next).
 
 M4 is sufficiently specified to bound later work, but concrete real-provider
 limits and migrations must be based on observed authorized surfaces and private
@@ -600,6 +600,14 @@ legacy inventories. Do not invent them in advance.
 | M4-004 | M4-001–M4-003 | Record representative onboarding, bounded import, daily update, no-new-message, and interruption measurements in a small checked-in synthetic baseline. | Available tokens/tool calls/bytes/elapsed/repeated work are labeled measured; unavailable values are explicit; no benchmark framework or private telemetry is introduced. |
 | M4-005 | M4-002–M4-004 | Extend `.github/workflows/validate.yml`, release tests, changelog, release manifest, package verification, migration/upgrade docs, and release recipe. Implement draft-asset verification and post-publication checks using the existing release workflow surface. | Clean checkout and extracted package gates pass; archive/tag/commit/manifest/assets agree; older synthetic instance upgrades and resumes; publication remains blocked until all release gates pass. |
 | M4-006 | M4-005 | Perform authorized real-surface conformance and release-candidate validation; keep evidence private when it contains instance/provider data. | Every support claim has surface-specific evidence, repository privacy scan is clean, and no production activation occurs without separate authorization. |
+
+**M4-001 implementation note (2026-09-08):** `school_os.importer` records every
+provider page token and immutable conversation disposition, then chooses whole
+records from deterministic byte/record bounds and durable completed IDs. It
+extracts only exact supported `text/plain` UTF-8 attachment content and exposes
+unsupported, inaccessible, duplicate, and manual-review outcomes without
+inventing content. The daily runner proves an empty discovery still regenerates
+required rolling/brief outputs. These are synthetic repository checks only.
 
 Optional adapters from work package 10 receive independent IDs only when the
 user selects a concrete deployment need. They do not become dependencies of

@@ -1,0 +1,11 @@
+{
+  "pages": [
+    {"token": null, "items": [{"conversation_id": "conversation-003", "byte_size": 7}, {"conversation_id": "conversation-001", "byte_size": 4}], "next_page_token": "page-2"},
+    {"token": "page-2", "items": [{"conversation_id": "conversation-002", "byte_size": 5}, {"conversation_id": "conversation-003", "byte_size": 7}], "next_page_token": null}
+  ],
+  "attachments": [
+    {"attachment_id": "attachment-text", "mime_type": "text/plain", "byte_size": 11},
+    {"attachment_id": "attachment-pdf", "mime_type": "application/pdf", "byte_size": 12},
+    {"attachment_id": "attachment-large", "mime_type": "text/plain", "byte_size": 99}
+  ]
+}

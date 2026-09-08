@@ -865,3 +865,24 @@ requirements, then read this log from top to bottom.
   complete multi-page, bounded-resume, no-new-message, and explicit unsupported
   content requirements before changing the design. Real-provider conformance
   remains outside this evidence and is not authorized here.
+
+## 2026-09-08 — alpha.13 M4-001 bounded import and attachment coverage
+
+- Completed M4-001. Added `school_os.importer` for complete page-token and
+  immutable-identity enumeration, stable whole-record batches from durable
+  completed IDs, and visible exact attachment outcomes. The initial supported
+  extraction is exact `text/plain` UTF-8; unsupported/oversized content has no
+  inferred text. Added a synthetic multi-page fixture and focused import tests.
+- Added the no-new-message daily-run proof that reconciliation and brief
+  generation still run, and updated import/attachment recipes and test guidance
+  with the same limits, evidence, and non-inference boundary. No provider,
+  delivery, or private-instance effect occurred.
+- Focused import/daily tests passed 9 tests; the complete
+  `PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate.py` gate passed 133
+  tests plus schema/template and release-smoke validation. Direct privacy
+  scanning of all three new files and `git diff --check` passed. Changed files:
+  `school_os/importer.py`, `tests/test_import_runner.py`,
+  `tests/synthetic-fixtures/alpha13/import-pages.json`,
+  `tests/test_daily_runner.py`, import/attachment/test documentation, root
+  `PLAN.md`, and alpha.13 plan/specification. Commit/push/remote verification
+  remain pending. Exact next action: publish M4-001 before M4-002.
