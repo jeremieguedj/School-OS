@@ -732,3 +732,13 @@ requirements, then read this log from top to bottom.
   `tests/test_fresh_process_recovery.py`, root `PLAN.md`, and alpha.13 plan/spec.
   Validation/publication pending. Exact next action: privacy-scan, commit/push/
   verify M3-001, then implement M3-002 catalog/index write-fault recovery.
+
+## 2026-09-07 — alpha.13 M3-001 verification
+
+- M3-001 was accepted as `7f3c16548f80fef6f0027248bf2454cdbc1cfa50`
+  (`Implement alpha.13 daily recovery admission`). The complete repository gate
+  passed 119 tests; direct privacy scanning included the new fresh-process test,
+  and `origin/main` was read back at the exact same SHA.
+- Next: M3-002 catalog/index write-fault recovery. The task must adopt one
+  verified durable record after interruption without duplicate index rows or
+  renumbered Facts.
