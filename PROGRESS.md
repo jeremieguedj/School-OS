@@ -886,3 +886,12 @@ requirements, then read this log from top to bottom.
   `tests/test_daily_runner.py`, import/attachment/test documentation, root
   `PLAN.md`, and alpha.13 plan/specification. Commit/push/remote verification
   remain pending. Exact next action: publish M4-001 before M4-002.
+
+## 2026-09-08 — alpha.13 M4-001 verification
+
+- M4-001 was accepted as `d2611583c587175a5ac8fa899cc2379477ae3967`
+  (`Add alpha.13 bounded import coverage`). The 133-test repository gate,
+  direct new-file privacy scan, and diff checks passed; `origin/main` was read
+  back at the same SHA. Next: M4-002, inspect exact alpha.12 template/record
+  forms and existing upgrade coordination before implementing only the declared
+  migration surface.
