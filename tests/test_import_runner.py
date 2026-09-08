@@ -10,7 +10,7 @@ sys.path.insert(0, str(ROOT))
 
 from school_os.adapters import Page, ReadResult
 from school_os.catalog import serialize_v2_record, validate_source_to_record, verify_persisted_record
-from school_os.importer import AttachmentExtraction, DirectResourceRead, ImportError, admit_exact_plaintext_representation, discover_direct_html_resources, enumerate_conversations, next_import_batch, process_attachments, process_direct_html_resources, require_message_source_coverage
+from school_os.importer import AttachmentExtraction, DirectResourceRead, ImportError, admit_exact_plaintext_representation, discover_direct_html_resources, enumerate_conversations, next_import_batch, process_attachments, process_direct_html_resources, require_complete_message_coverage, require_message_source_coverage
 
 
 class ImportRunnerTests(unittest.TestCase):
@@ -65,14 +65,14 @@ class ImportRunnerTests(unittest.TestCase):
             }
 
         admissions = (
-            admit_exact_plaintext_representation((part(b"Exact\r\n"),)),
-            admit_exact_plaintext_representation((part(b"caf=E9", encoding="quoted-printable", charset="iso-8859-1"),)),
-            admit_exact_plaintext_representation((part(b"Y2Fmw6k=", encoding="base64"),)),
+            admit_exact_plaintext_representation((part(b"Exact\r\n"),), mime_tree_complete=True),
+            admit_exact_plaintext_representation((part(b"caf=E9", encoding="quoted-printable", charset="iso-8859-1"),), mime_tree_complete=True),
+            admit_exact_plaintext_representation((part(b"Y2Fmw6k=", encoding="base64"),), mime_tree_complete=True),
             admit_exact_plaintext_representation((
                 part(b"Plain alternative"),
                 {"part_id": "html", "role": "body", "selected_plaintext": False, "complete": True, "mime_type": "text/html", "charset": "utf-8", "content_transfer_encoding": "identity", "data": b"<p>Plain alternative</p>"},
                 {"part_id": "attachment", "role": "attachment", "selected_plaintext": False, "complete": True, "mime_type": "application/pdf", "charset": "binary", "content_transfer_encoding": "base64", "data": b"cGRm"},
-            )),
+            ), mime_tree_complete=True),
         )
         self.assertEqual(["admitted"] * 4, [item.outcome for item in admissions])
         self.assertEqual([b"Exact\r\n", "café".encode("utf-8"), "café".encode("utf-8"), b"Plain alternative"], [item.plaintext for item in admissions])
@@ -100,11 +100,11 @@ class ImportRunnerTests(unittest.TestCase):
             ({**selected, "content_transfer_encoding": "quoted-printable", "data": b"bad=Q"},),
             ({**selected, "data": None},),
         )
-        outcomes = [admit_exact_plaintext_representation(parts) for parts in cases]
+        outcomes = [admit_exact_plaintext_representation(parts, mime_tree_complete=True) for parts in cases]
         outcomes.append(admit_exact_plaintext_representation((selected,), mime_tree_complete=False))
         self.assertTrue(all(outcome.outcome in {"unsupported", "manual_review"} for outcome in outcomes))
         self.assertTrue(all(outcome.plaintext is None for outcome in outcomes))
-        self.assertEqual(outcomes[0], admit_exact_plaintext_representation(cases[0]))
+        self.assertEqual(outcomes[0], admit_exact_plaintext_representation(cases[0], mime_tree_complete=True))
 
     def test_selected_pdf_or_image_extraction_requires_a_provenance_locator(self) -> None:
         raw = {"agenda": b"%PDF-raw", "image": b"jpeg-raw", "bad": b"broken"}
@@ -192,6 +192,8 @@ class ImportRunnerTests(unittest.TestCase):
         self.assertEqual("manual_review", blocked[0].outcome)
         with self.assertRaisesRegex(ImportError, "coverage"):
             require_message_source_coverage(b"", blocked)
+        with self.assertRaisesRegex(ImportError, "attachment coverage"):
+            require_complete_message_coverage(b"body", (process_attachments(({"attachment_id": "missing", "mime_type": "text/plain", "byte_size": 1},), read_attachment=lambda _id: (_ for _ in ()).throw(OSError()), supported_mime_types=("text/plain",), max_bytes=4)[0],), outcomes)
 
 
 if __name__ == "__main__":

@@ -558,6 +558,13 @@ relations, completion/comment replay, field clearing, and guarded retargeting.
 This is repository evidence only; M4-003/M4-009 still require the actual
 runtime bridge and observed private-Sheet conformance.
 
+**M4-001/M4-007 custody correction (2026-09-08):** Source admission now requires
+an explicit complete MIME-tree assertion and rejects high-bit 7bit transport.
+The combined message gate requires resolved MIME attachment and direct-resource
+outcomes before advancement. Semantic packets are deep-copied/frozen before an
+interpreter callback, while audit identifies both the packet and canonical exact
+interpretation hashes. Further selected-runtime evidence remains M4-003/M4-009.
+
 **M2-005 implementation note (2026-09-07):** `school_os.brief` deterministically
 renders the versioned input contract to escaped HTML/plain text. The delivery
 ledger confirms a content-hash/key once through the send sink and blocks repeats.

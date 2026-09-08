@@ -61,7 +61,17 @@ class SemanticTests(unittest.TestCase):
         self.assertEqual(first["packet_sha256"], second["packet_sha256"])
         self.assertEqual([item["fact_id"] for item in first["facts"]], [item["fact_id"] for item in second["facts"]])
         self.assertEqual("attachment-001", first["facts"][1]["attachment"]["attachment_id"])
-        validate_independent_audit(packet, first, {"packet_sha256": first["packet_sha256"], "segments": [{"segment_id": "body-001", "disposition": "accepted"}, {"segment_id": "attachment-001", "disposition": "accepted"}]})
+        validate_independent_audit(packet, first, {"packet_sha256": first["packet_sha256"], "interpreted_sha256": first["interpreted_sha256"], "segments": [{"segment_id": "body-001", "disposition": "accepted"}, {"segment_id": "attachment-001", "disposition": "accepted"}]})
+
+    def test_interpreter_cannot_mutate_packet_and_audit_binds_exact_result(self) -> None:
+        packet = self.packet()
+        def mutating(value: dict) -> dict:
+            value["segments"][1]["attachment"]["attachment_id"] = "forged"
+            return self.live_interpreter(self.packet().as_mapping())
+        result = interpret_packet(packet, mutating, fact_schema=self.fact_schema, extraction_schema=self.extraction_schema)
+        self.assertEqual("attachment-001", result["facts"][1]["attachment"]["attachment_id"])
+        with self.assertRaisesRegex(SemanticError, "exact interpreted artifact"):
+            validate_independent_audit(packet, result, {"packet_sha256": result["packet_sha256"], "interpreted_sha256": "0" * 64, "segments": [{"segment_id": "body-001", "disposition": "accepted"}, {"segment_id": "attachment-001", "disposition": "accepted"}]})
 
     def test_rephrased_or_uncovered_semantic_output_fails_before_facts(self) -> None:
         def rephrasing(_packet: dict) -> dict:

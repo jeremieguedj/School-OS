@@ -102,6 +102,15 @@ implementation portion of the reopened M2-003/M2-004/M3-003 and M4-008 work;
 authenticated runtime binding and observed private test-Sheet evidence remain
 M4-003/M4-009 work.
 
+**Source custody and semantic audit correction (2026-09-08):** M4-001 and
+M4-007 are reopened. Complete source admission must bind the selected raw MIME
+part, strict transport/charset decode, and provider Unicode result; custody
+must retain ordered attachment/resource outcomes and complete-unit evidence.
+The semantic interpreter receives a frozen packet and independent audit binds
+both that packet hash and the exact interpreted artifact hash. Existing daily
+brief policy governs both approved private test sends; the private recipient is
+not repository configuration.
+
 The user has authorized the new test instance to ingest the last 14 days of the
 grounded school-mail scope; execute real manual and temporary scheduled brief
 email runs; create and exercise a Google Sheets task projection; and validate

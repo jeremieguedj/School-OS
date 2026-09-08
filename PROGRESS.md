@@ -1482,3 +1482,18 @@ requirements, then read this log from top to bottom.
 - Next: run privacy/repository validation, commit this shared core/Sheets
   checkpoint, push it to `origin/main`, and verify the remote SHA. Authenticated
   runtime bridge and observed private test-Sheet acceptance remain M4-003/M4-009.
+
+## 2026-09-08 — alpha.13 source custody and semantic audit correction
+
+- Reopened M4-001/M4-007 after independent review and resolved the pending test
+  policy generically: both authorized test deliveries use the existing daily
+  brief recipe and a private approved recipient outside Git.
+- Tightened MIME admission so completeness is explicit and 7bit high-bit bytes
+  block; added a combined body/MIME-attachment/resource coverage gate and
+  explicit review for unrecognized HTML resource-bearing constructs.
+- Semantic interpretation now freezes/deep-copies the packet before the
+  callback, hashes the exact interpreted artifact for audit binding, retains
+  actual attachment outcomes, and rejects a covered segment without a Fact.
+- Next: finish typed source-conversation custody evidence and complete-unit
+  attachment/resource validation, run full validation/privacy, and publish the
+  corrected checkpoint. No provider or private-instance action occurred.

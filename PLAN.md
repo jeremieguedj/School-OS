@@ -52,11 +52,11 @@ synthetic measurement and M4-005 package preparation no longer wait for
 real-provider evidence; final M4-006 still does. M4-007's generic semantic
 packet/audit implementation is complete pending its authenticated binding.
 M4-008 Google Sheets synthetic mapping/reconciliation is implemented; its
-observed private-Sheet acceptance, and M4-009 full observed-path acceptance, remain. Two
-delivery/view choices remain pending: whether the 14-day scope changes normal
-brief eligibility or only import/audit coverage, and the exact test recipient
-set. Independent implementation and no-send work continue while those are
-resolved.
+observed private-Sheet acceptance, and M4-009 full observed-path acceptance, remain.
+The resolved test policy keeps ordinary daily-brief eligibility under the
+existing recipe and sends both authorized test variants only to the approved
+private recipient; those values remain outside Git. M4-001/M4-007 source-custody
+and semantic-audit gates are reopened for the corrective implementation.
 The original snapshot remains in Git.
 
 ## Objective

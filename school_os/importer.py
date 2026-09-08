@@ -103,6 +103,7 @@ class _DirectResourceParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=False)
         self.references: list[tuple[str, str, str]] = []
+        self.unrecognized_resource_bearers: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         values = {key.lower(): value for key, value in attrs}
@@ -115,6 +116,9 @@ class _DirectResourceParser(HTMLParser):
             urlparse(candidate).path.lower().endswith(".pdf") or declared_type == "application/pdf"
         ):
             self.references.append(("html_linked", "href" if tag.lower() == "a" else "src", candidate))
+            return
+        if tag.lower() in {"object", "embed", "iframe"} and isinstance(candidate, str):
+            self.unrecognized_resource_bearers.append(tag.lower())
 
 
 @dataclass(frozen=True)
@@ -165,7 +169,11 @@ def _decode_quoted_printable(data: bytes) -> bytes:
 
 def _decode_transport(data: bytes, encoding: str) -> bytes:
     normalized = encoding.lower()
-    if normalized in {"identity", "7bit", "8bit", "binary"}:
+    if normalized == "7bit":
+        if any(value > 0x7f for value in data):
+            raise ValueError("7bit transport contains high-bit bytes")
+        return data
+    if normalized in {"identity", "8bit", "binary"}:
         return data
     if normalized == "quoted-printable":
         return _decode_quoted_printable(data)
@@ -224,6 +232,8 @@ def discover_direct_html_resources(
     except (UnicodeError, ValueError) as exc:
         raise ImportError("HTML resource discovery cannot parse a complete strict HTML part") from exc
     html_hash = sha256_bytes(html_bytes)
+    if parser.unrecognized_resource_bearers:
+        raise ImportError("HTML has an unrecognized resource-bearing construct requiring review")
     resources: list[DirectHtmlResource] = []
     for occurrence, (origin, attribute, url) in enumerate(parser.references):
         if not _direct_https_url(url):
@@ -335,8 +345,19 @@ def require_message_source_coverage(
         raise ImportError("empty plaintext cannot establish source coverage without resource extraction")
 
 
+def require_complete_message_coverage(
+    plaintext: bytes, attachment_outcomes: Sequence[AttachmentOutcome],
+    resource_outcomes: Sequence[DirectResourceOutcome],
+) -> None:
+    """Single cursor gate: body plus every inventoried attachment/resource."""
+    unresolved = [item for item in attachment_outcomes if item.outcome not in {"extracted", "excluded_by_policy", "duplicate"}]
+    if unresolved:
+        raise ImportError("MIME attachment coverage remains unresolved")
+    require_message_source_coverage(plaintext, resource_outcomes)
+
+
 def admit_exact_plaintext_representation(
-    parts: Sequence[Mapping[str, Any]], *, mime_tree_complete: bool = True,
+    parts: Sequence[Mapping[str, Any]], *, mime_tree_complete: bool | None = None,
 ) -> SourceAdmission:
     """Strictly decode one provider-designated plaintext body for cataloguing.
 
@@ -348,7 +369,7 @@ def admit_exact_plaintext_representation(
     decoded Unicode body; all other outcomes are ineligible for any downstream
     catalog, Fact, view, task, or cursor write.
     """
-    if not mime_tree_complete:
+    if mime_tree_complete is not True:
         return SourceAdmission("manual_review", "MIME tree is incomplete", None)
     if not parts or any(not isinstance(part, Mapping) for part in parts):
         return SourceAdmission("manual_review", "MIME part metadata is malformed", None)

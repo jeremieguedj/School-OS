@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
+from copy import deepcopy
 from dataclasses import dataclass
 from typing import Any
 
@@ -92,8 +93,17 @@ def interpret_packet(
     must be the exact UTF-8 byte span the interpreter selected; rephrasing is
     rejected before any canonical Fact can be produced.
     """
-    segments = _segments_by_id(packet)
-    raw = interpreter(packet.as_mapping())
+    # The interpreter receives a detached snapshot.  Provenance and the packet
+    # digest are fixed before it can run, so a mutable callback cannot alter
+    # Fact identity or the independent-audit subject.
+    frozen_mapping = deepcopy(packet.as_mapping())
+    packet_sha256 = sha256_bytes(canonical_json_bytes(frozen_mapping))
+    frozen_packet = SemanticPacket(
+        frozen_mapping["record_id"], frozen_mapping["conversation_id"],
+        tuple(deepcopy(frozen_mapping["segments"])),
+    )
+    segments = _segments_by_id(frozen_packet)
+    raw = interpreter(deepcopy(frozen_mapping))
     if not isinstance(raw, Mapping):
         raise SemanticError("semantic interpreter did not return an object")
     candidates = raw.get("candidates")
@@ -121,6 +131,7 @@ def interpret_packet(
         raise SemanticError("semantic coverage does not account for every source segment")
     facts: list[dict[str, Any]] = []
     seen_fact_ids: set[str] = set()
+    candidate_segments: set[str] = set()
     for candidate in candidates:
         if not isinstance(candidate, Mapping):
             raise SemanticError("semantic candidate is malformed")
@@ -142,8 +153,8 @@ def interpret_packet(
         if text != _exact_span_text(segment, start, end):
             raise SemanticError("semantic candidate text is not its exact source span")
         fact = {
-            "fact_id": stable_fact_id(packet.record_id, segment["source_message_id"], segment["content_id"], start, end, kind),
-            "record_id": packet.record_id,
+            "fact_id": stable_fact_id(frozen_packet.record_id, segment["source_message_id"], segment["content_id"], start, end, kind),
+            "record_id": frozen_packet.record_id,
             "source_message_id": segment["source_message_id"],
             "source_byte_start": start,
             "source_byte_end": end,
@@ -159,19 +170,24 @@ def interpret_packet(
         if fact["fact_id"] in seen_fact_ids:
             raise SemanticError("semantic candidates produce duplicate stable Fact IDs")
         seen_fact_ids.add(fact["fact_id"])
+        candidate_segments.add(segment_id)
         facts.append(fact)
+    for entry in coverage:
+        if entry["outcome"] == "covered" and entry["segment_id"] not in candidate_segments:
+            raise SemanticError("covered source segment has no supported Fact")
     if any(not isinstance(entry, Mapping) for entry in review_cases):
         raise SemanticError("semantic review case is malformed")
     result = {
         "schema_version": 1,
-        "conversation_id": packet.conversation_id,
+        "conversation_id": frozen_packet.conversation_id,
         "candidates": [dict(candidate) for candidate in candidates],
         "coverage": [dict(entry) for entry in coverage],
-        "attachment_outcomes": [],
+        "attachment_outcomes": [dict(item) for item in raw.get("attachment_outcomes", [])],
         "review_cases": [dict(entry) for entry in review_cases],
     }
     _validated(result, extraction_schema, "semantic extraction result")
-    return {"facts": facts, "result": result, "packet_sha256": sha256_bytes(canonical_json_bytes(packet.as_mapping()))}
+    result_sha256 = sha256_bytes(canonical_json_bytes({"facts": facts, "result": result}))
+    return {"facts": facts, "result": result, "packet_sha256": packet_sha256, "interpreted_sha256": result_sha256}
 
 
 def validate_independent_audit(
@@ -181,6 +197,8 @@ def validate_independent_audit(
     segments = _segments_by_id(packet)
     if audit.get("packet_sha256") != interpreted.get("packet_sha256"):
         raise SemanticError("independent audit does not identify the interpreted source packet")
+    if audit.get("interpreted_sha256") != interpreted.get("interpreted_sha256"):
+        raise SemanticError("independent audit does not identify the exact interpreted artifact")
     entries = audit.get("segments")
     if not isinstance(entries, Sequence) or isinstance(entries, (str, bytes)):
         raise SemanticError("independent audit segments must be an array")
