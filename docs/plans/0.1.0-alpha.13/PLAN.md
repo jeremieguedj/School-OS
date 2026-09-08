@@ -475,7 +475,7 @@ alpha.13 release readiness or conformance for every runtime.
 
 ### Milestone 1 — Install a minimal candidate in a clean test instance
 
-**Status:** in progress (M1-001 complete; M1-003 next; M1-002 then M1-004
+**Status:** in progress (M1-001 and M1-003 complete; M1-002 next; M1-004
 through M1-006 pending).
 
 **Sequencing correction:** M1-003 precedes M1-002. M1-002 validates the

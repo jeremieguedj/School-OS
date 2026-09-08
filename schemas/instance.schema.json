@@ -25,10 +25,11 @@
     "active_release": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["version", "manifest_reference"],
+      "required": ["version", "manifest_reference", "operation_registry_reference"],
       "properties": {
         "version": {"type": "string", "minLength": 1},
-        "manifest_reference": {"type": "string", "minLength": 1}
+        "manifest_reference": {"type": "string", "minLength": 1},
+        "operation_registry_reference": {"type": "string", "pattern": "^system/releases/[^/]+/core/operations/registry\\.json$"}
       }
     },
     "configuration": {

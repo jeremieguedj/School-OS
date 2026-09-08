@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/object-reference.schema.json",
+  "title": "School-OS exact storage object reference",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["object_id", "kind", "permitted_ancestor_id"],
+  "properties": {
+    "object_id": {"type": "string", "minLength": 1},
+    "kind": {"enum": ["file", "folder"]},
+    "permitted_ancestor_id": {"type": "string", "minLength": 1},
+    "mime_type": {"type": "string", "minLength": 1},
+    "version": {"type": "string", "minLength": 1}
+  }
+}

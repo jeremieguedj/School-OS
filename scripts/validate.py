@@ -43,6 +43,10 @@ def validate_manifests() -> list[str]:
             ROOT / "schemas" / "capability-profile.schema.json",
         ),
         (ROOT / "release.yaml", ROOT / "schemas" / "release.schema.json"),
+        (
+            ROOT / "core" / "operations" / "registry.json",
+            ROOT / "schemas" / "operation-registry.schema.json",
+        ),
     )
     for manifest_path, schema_path in pairs:
         try:

@@ -6,6 +6,7 @@ release_channel: stable
 active_release:
   version: REPLACE_WITH_INSTALLED_RELEASE_VERSION
   manifest_reference: system/releases/REPLACE_WITH_INSTALLED_RELEASE_VERSION/release.yaml
+  operation_registry_reference: system/releases/REPLACE_WITH_INSTALLED_RELEASE_VERSION/core/operations/registry.json
 configuration:
   household_reference: config/household.yaml
   integrations_reference: config/integrations.yaml

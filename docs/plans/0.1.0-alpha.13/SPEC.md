@@ -1,6 +1,6 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation in progress; M1-001 complete
+- Status: implementation in progress; M1-001 and M1-003 complete
 - Approved plan: [PLAN.md](PLAN.md), revision 4
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
@@ -386,7 +386,7 @@ declared consistency window. Multiple matches or an inconclusive lookup is
 
 ## Milestone 1 — Install a minimal candidate in a clean test instance
 
-**Status:** in progress (M1-001 complete; M1-003 next; M1-002 then M1-004
+**Status:** in progress (M1-001 and M1-003 complete; M1-002 next; M1-004
 through M1-006 pending).
 
 ### Deliverable
@@ -399,7 +399,7 @@ required capability is missing.
 
 ### Ordered tasks
 
-**Task status:** M1-001 complete. M1-003 is next. M1-002 and M1-004 through
+**Task status:** M1-001 and M1-003 complete. M1-002 is next. M1-004 through
 M1-006 are pending.
 
 **Sequencing resolution (2026-09-07):** M1-002's installed validator must
@@ -413,7 +413,7 @@ must fail if it attempts to invoke Git.
 | ID | Depends on | Work and affected files | Observable acceptance |
 |---|---|---|---|
 | M1-001 | — | Set `release.yaml` to the alpha.13 candidate version with `status: unreleased`; create `school_os/contracts.py` and `school_os/package.py`; refactor `scripts/validate_instance.py`, `scripts/build_release.py`, and `scripts/validate.py` to reuse them without changing safe build behavior. | Existing tests remain green; exact-ref builds identify alpha.13; package verification runs against an extracted package with `.git` absent. |
-| M1-003 | M1-001 | Add `core/operations/registry.json`, its schema, `school_os/references.py`, object-reference schema, and resolver tests. Update `templates/BOOTSTRAP.md` and instance manifest/template references. | `daily-run` resolves the installed recipe and exact objects among multiple synthetic instance/release lookalikes; wrong type, parent, identity, MIME, or ambiguity blocks. |
+| M1-003 | M1-001 | Add `core/operations/registry.json`, its schema, `school_os/references.py`, object-reference schema, and resolver tests. Update `templates/BOOTSTRAP.md` and instance manifest/template references. | The registry validates and every mapped recipe is a safe installed regular payload file; `daily-run` resolves the installed recipe and exact objects among multiple synthetic instance/release lookalikes; wrong type, parent/root, identity, MIME, version, or ambiguity blocks. |
 | M1-002 | M1-001, M1-003 | Add installed validation command and tests: `scripts/validate_installed.py`, `tests/test_installed_validation.py`. Validate manifest/version/status, archive/inventory evidence when supplied, all managed payload hashes, schemas, registry, and required files; do not run repository-only tests or Git commands. Permit `unreleased` only behind an explicit candidate-test flag. | A clean exact-ref candidate containing the completed M1-003 registry and schema passes offline in explicit candidate mode with `.git` absent and Git unavailable; production mode rejects `unreleased`. Missing registry/schema/mapped recipes, invalid registry data, changed bytes, undeclared or missing files, version disagreement, invalid supplied archive/checksum evidence, or any attempted Git invocation fail specifically. |
 | M1-004 | M1-003 | Add dedicated configuration schemas, YAML-front-matter validation for `daily-run-personal-values.md`, installation-manifest schema/template, `school_os/install.py`, and `scripts/scaffold_instance.py`. | Confirmed synthetic answers and observed references produce byte-stable, schema-valid files with no unresolved placeholders; missing answers or fabricated references fail before output acceptance. |
 | M1-005 | M1-001, M1-004 | Extend the capability schema/validator and add `school_os/capabilities.py`. Update templates and capability contracts for conditional scheduler requirements, auth health, network paths, structured limits, and manual execution. | A manual profile with storage/mail/tasks and no scheduler qualifies; a scheduled profile still requires scheduler evidence; unknown limits are constrained, never unlimited; missing required capability yields a named blocker. |

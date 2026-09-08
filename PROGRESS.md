@@ -342,3 +342,27 @@ requirements, then read this log from top to bottom.
 - Validation pending for this documentation-only correction. Next: run the
   repository validation and privacy scan; commit and push the resolution; then
   implement M1-003 before M1-002.
+
+## 2026-09-07 — alpha.13 M1-003 deterministic routing
+
+- Completed M1-003 after the approved sequencing correction. Added the versioned
+  `core/operations/registry.json`, its strict schema, and the object-reference
+  schema. The registry maps `daily-run` only to the installed
+  `core/operations/daily-run.md` payload path.
+- Added `school_os/references.py`. It resolves opaque IDs through a minimal
+  storage port and fail-closes on missing/different identity, kind, root
+  containment, MIME, version, unsafe recipe paths, non-regular installed
+  recipes, and ambiguous scoped discovery. Exact IDs intentionally beat
+  same-named lookalikes.
+- Updated the instance contract/template with the active release's exact
+  registry path, revised the private bootstrap to resolve recipes through that
+  registry, and extended repository validation to validate the registry schema.
+- Added five focused resolver/registry tests. Validation: targeted resolver
+  tests passed; `python3 scripts/validate.py` passed all 85 tests, schema and
+  manifest checks, exact-HEAD release smoke build, and tracked privacy scan.
+  A direct privacy scan of each new file and `git diff --check` passed.
+- Consulted decisions: the M1 dependency correction remains the governing
+  resolution; no new architectural issue appeared. M1-002 is now unblocked and
+  next. Exact next action: implement the Git-free installed validator using the
+  registry/schema and extracted-tree verification, including the candidate-mode
+  and no-Git negative tests.

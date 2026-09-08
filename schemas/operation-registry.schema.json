@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/operation-registry.schema.json",
+  "title": "School-OS operation registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "operations"],
+  "properties": {
+    "schema_version": {"type": "integer", "minimum": 1},
+    "operations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["daily-run"],
+      "properties": {
+        "daily-run": {"type": "string", "pattern": "^core/operations/[A-Za-z0-9][A-Za-z0-9._-]*\\.md$"}
+      }
+    }
+  }
+}
