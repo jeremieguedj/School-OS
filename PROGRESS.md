@@ -1241,3 +1241,26 @@ requirements, then read this log from top to bottom.
   versioned lossless raw-source architecture; next: commit, push, verify the
   remote, then report that exact architectural decision rather than import a
   lossy message.
+
+## 2026-09-08 — alpha.13 multipart-admission checkpoint publication
+
+- Published the fail-closed source-admission safeguard as commit
+  `91c268b970d23f4617e74cabfb8abc1126bca854` on `main`; `origin/main` was
+  read back at that exact commit. The accepted checkpoint contains only generic
+  importer behavior, tests, and continuity records; it contains no candidate
+  source data or private-instance identifiers.
+- Evidence for the accepted work unit: full validation ran 145 tests and the
+  schema/template and release-smoke checks; diff and privacy scans passed
+  before publication. The candidate remains inactive, and the requested
+  positive one-message and 30-message Gmail import remains blocked by the
+  unapproved raw-source/provenance architectural decision.
+- The authorized GPT-5.6 Terra High read-only verifier confirmed that the
+  declared generation's create-only/readback evidence and the no-effect Gmail
+  stop remain inside the inactive-candidate boundary. It qualified the claim:
+  the preserved, unreferenced staging object means the root cannot establish a
+  clean candidate inventory or clean-instance acceptance. It must remain
+  untouched; no M1 clean-instance, Gmail/catalog, daily-run, task, delivery,
+  scheduler, migration, activation, or release-readiness claim follows. Next:
+  validate and publish this verifier-qualified continuity checkpoint, then
+  obtain explicit approval for the required core source/provenance extension
+  before any positive source admission can resume.

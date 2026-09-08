@@ -41,14 +41,16 @@ then an immutable admission receipt, then the stable bootstrap. M1-004 and
 M1-006 are reopened for this corrective validation; M2–M3 retain their accepted
 synthetic behavior but require revalidation against the repaired installer.
 
-The authorized inactive candidate has now exercised that create-only staging
-privately, but its first bounded Gmail message has both plain-text and HTML
-alternatives. Alpha.13's v2 catalog preserves exact plaintext only, so it has
-no approved lossless positive admission path for that message. The required
-GPT-5.6 Sol High consultation resolved the current scope as a fail-closed
-unsupported/manual-review disposition only. Admitting raw MIME as canonical
-source evidence would require a user-approved core source/provenance extension;
-no source, catalog, index, task, delivery, or activation write occurred.
+The authorized inactive candidate has read back its declared create-only
+generation privately, but one preserved, excluded staging object prevents this
+root from establishing a clean-instance acceptance. Its first bounded Gmail
+message also has both plain-text and HTML alternatives. Alpha.13's v2 catalog
+preserves exact plaintext only, so it has no approved lossless positive
+admission path for that message. The required GPT-5.6 Sol High consultation
+resolved the current scope as a fail-closed unsupported/manual-review
+disposition only. Admitting raw MIME as canonical source evidence would require
+a user-approved core source/provenance extension; no source, catalog, index,
+task, delivery, or activation write occurred.
 
 The user has deferred discussion of the review's historical-retrieval acceptance
 case. That proposed addition is not part of the current work or release gates.

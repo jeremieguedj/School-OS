@@ -12,11 +12,12 @@ including the approved manual-sender and cross-session continuation decisions.
 Implementation has completed the repository portion of M4-003. A create-only
 installation correction has reopened M1-004 and M1-006; M2–M3 require
 revalidation against that repair. An authorized
-inactive candidate-only Drive/Gmail observation has admitted a private
-create-only installation but is currently source-admission-blocked by an
-observed multipart Gmail message with no approved lossless representation;
-observed runtime, mail, task, and scheduler evidence is still required. The
-candidate cannot establish production,
+inactive candidate-only Drive/Gmail observation has read back the declared
+create-only generation, but a preserved excluded staging object means that root
+cannot establish a clean-instance acceptance. It is also source-admission-
+blocked by an observed multipart Gmail message with no approved lossless
+representation; observed runtime, mail, task, and scheduler evidence is still
+required. The candidate cannot establish production,
 delivery, task, scheduler, migration, or release-readiness claims. The
 installed private instance is an
 alpha.11 predecessor, outside alpha.13's declared alpha.12 migration input, so

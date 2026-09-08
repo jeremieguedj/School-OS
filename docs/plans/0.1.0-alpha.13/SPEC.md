@@ -688,6 +688,15 @@ user approval, including a versioned raw-artifact contract and recovery/privacy
 rules. This candidate result is negative observed evidence only, not successful
 Gmail/catalog conformance or M4 completion.
 
+**Candidate artifact verification (2026-09-08):** The authorized GPT-5.6 Terra
+High read-only verifier confirmed that the observed candidate stayed within the
+inactive-test boundary: its declared create-only generation was read back, and
+no source-derived persistence or external effect occurred. One wrongly named,
+unreferenced staging object remains preserved in the root; therefore this
+observation may not claim a clean candidate-root inventory or clean-instance
+acceptance. It remains private evidence only and must not be renamed, repaired,
+or deleted under the current authorization.
+
 `school_os.importer.admit_exact_plaintext_representation` is the repository
 fail-closed gate for this current boundary. Only one complete identity-transfer
 UTF-8 `text/plain` byte sequence is eligible for downstream admission; multiple
