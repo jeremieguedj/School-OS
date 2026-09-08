@@ -1,0 +1,23 @@
+{
+  "instance": {
+    "instance_format_version": 1,
+    "instance_id": "synthetic-alpha12",
+    "system_version": "0.1.0-alpha.12",
+    "data_schema_version": 1,
+    "release_channel": "alpha",
+    "active_release": {"version": "0.1.0-alpha.12", "manifest_reference": "system/releases/0.1.0-alpha.12/release.yaml"},
+    "configuration": {"household_reference": "config/household.yaml", "integrations_reference": "config/integrations.yaml", "policies_reference": "config/policies.yaml", "daily_run_personal_values_reference": "config/daily-run-personal-values.md"},
+    "state": {"file_map_reference": "state/file-map.yaml", "operation_state_reference": "state/operation-state.yaml"},
+    "last_completed_migration": null,
+    "latest_release_seen": {"version": null, "source": null}
+  },
+  "operation_state": {"schema_version": 1, "status": "idle", "active_operation": null, "last_successful_run": null, "last_error": null},
+  "file_map": {
+    "schema_version": 1,
+    "mapping_status": "not_configured",
+    "files": {
+      "capability_profile": {}, "current_index": {}, "source_catalog_folder": {}, "source_catalog_index": {}, "canonical_tasks": {}, "guidelines": {}, "rolling_updates": {}, "brief_template": {}, "family_scope": {}, "active_task_provider": {}, "task_sync_state": {}, "delivery_state": {}, "manual_run_recipe": {}, "durable_profiles": {}
+    }
+  },
+  "action_items_markdown": "# Canonical task register\n\n## Open tasks\n\n| ID | Action | Task context | Entity scope | Workflow state | Owner | Opened source date | Last source received date | Source due | Parent planned due | Link | Source Fact ID(s) | Latest progress |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|\n\n## Completion history\n\n| Task ID | Outcome | Detected at | Evidence source | Parent comment |\n|---|---|---|---|---|\n"
+}

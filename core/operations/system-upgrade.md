@@ -44,6 +44,15 @@ Missing, unavailable, stale, scheduled-only, or ambiguous required capability ev
 
 On failure before an activation attempt, leave the old release active and write the failure phase and evidence to the journal using the selected mode. If migration writes occurred, restore only the journaled generation-specific backups. In `native_conditional` mode, require the current target generation/revision and checksum to equal the failed migration's recorded post-write value and bind that version to the restore. In `supervised_operational_single_writer` mode, keep the exclusive guard active, immediately re-fetch the exact target ID and require its current `modified_time` and complete-byte SHA-256 to equal the recorded post-write evidence before restoring that exact ID. Immediately read back the restore and require its SHA-256 to equal the pre-migration checksum. If the guard lapses, any identity or evidence is ambiguous, the connector cannot restore and verify the exact target, or an activation write cannot be read back, stop for manual recovery and treat active state as unknown when applicable. Never claim automatic rollback without `storage.restore_verified`, and never claim rollback succeeded without exact-ID, checksum, and readback evidence.
 
+## Alpha.13 migration boundary
+
+`migrations/0002-alpha13-structured-state.md` is the only alpha.13 state
+migration. It accepts only declared alpha.12 template forms, composes
+byte-stable candidates without writing, and requires the verified target release
+version as an explicit input. Unsupported private variations stop for an
+authorized mapping; compatible extension files outside its declared targets are
+preserved and never silently deleted or normalized.
+
 ## Coordination-mode boundary
 
 `supervised_operational_single_writer` is not a simulated conditional write. It is a narrower deployment mode whose safety depends on verified operational exclusivity for the entire upgrade, exact-ID targeting, immediate pre-write content/metadata comparison, create-only evidence, and immediate readback. It is unavailable for unattended upgrades or when another mutator cannot be ruled out. Native conditional writes remain preferred whenever the storage adapter exposes a precondition that is atomically bound to the mutation.

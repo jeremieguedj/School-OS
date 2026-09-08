@@ -251,7 +251,7 @@ def _normalise_inputs(answers: dict[str, Any], references: dict[str, Any], packa
         "instance_format_version": 1,
         "instance_id": answers["instance_id"],
         "system_version": version,
-        "data_schema_version": 1,
+        "data_schema_version": 2,
         "release_channel": answers["release_channel"],
         "active_release": {
             "version": version,

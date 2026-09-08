@@ -1,7 +1,7 @@
 instance_format_version: 1
 instance_id: REPLACE_WITH_PRIVATE_INSTANCE_ID
 system_version: REPLACE_WITH_INSTALLED_RELEASE_VERSION
-data_schema_version: 1
+data_schema_version: 2
 release_channel: stable
 active_release:
   version: REPLACE_WITH_INSTALLED_RELEASE_VERSION

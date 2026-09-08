@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
 - Status: approved plan with linked implementation specification; M1–M3 complete, M4 in progress
-- Revision: 19, updated 2026-09-08
+- Revision: 20, updated 2026-09-08
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -21,8 +21,8 @@ verify its recovery behavior, then expand coverage. This revision records that
 approach as implementation milestones with deliverables and completion checks.
 The linked [implementation specification](SPEC.md) grounds those milestones in
 the alpha.12 codebase and defines the implementation tasks, interfaces, state
-transitions, migrations, and behavioral checks. M3 and M4-001 are complete;
-implementation continues at M4-002.
+transitions, migrations, and behavioral checks. M3 and M4-001–M4-002 are
+complete; implementation continues at M4-003.
 Implementation is limited to this reusable repository. It does not activate a
 private instance or authorize private onboarding, import, delivery, release
 publication, or real runtime/provider effects.
@@ -611,7 +611,7 @@ successful uninterrupted run alone is insufficient.
 
 ### Milestone 4 — Expand coverage and establish release readiness
 
-**Status:** in progress (M4-001 complete; M4-002 next).
+**Status:** in progress (M4-001–M4-002 complete; M4-003 next).
 
 **Work and deliverables:** Extend the working scenario to larger complete
 imports, repeated daily runs, supported attachment cases, manual/scheduled
@@ -727,3 +727,6 @@ evidence that does not need to be repeatedly printed into model context.
 - Revision 19: completed M4-001 complete-page enumeration, stable bounded
   import batches, no-new-message output regeneration, and explicit supported
   text/unsupported attachment outcomes. M4-002 migration work is next.
+- Revision 20: completed M4-002's strict alpha.12 structured-state/task
+  transformer, schema-2 candidate release metadata, migration procedure, and
+  synthetic idempotence/blocker coverage. M4-003 conformance work is next.

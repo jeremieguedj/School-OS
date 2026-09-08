@@ -34,6 +34,13 @@ attachments remain visible outcomes with no inferred text. The daily runner
 also has a no-new-message case that still regenerates required rolling and
 brief outputs.
 
+## Alpha.13 migration coverage
+
+`test_alpha13_migration.py` transforms only the checked-in alpha.12 fixture
+forms and proves byte-stable candidates, canonical task/history preservation,
+and fail-closed active-state or altered-Markdown handling. It does not represent
+or inspect a private instance.
+
 ## Executable validation
 
 Run the complete dependency-free validation gate from the repository root:

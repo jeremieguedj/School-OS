@@ -895,3 +895,26 @@ requirements, then read this log from top to bottom.
   back at the same SHA. Next: M4-002, inspect exact alpha.12 template/record
   forms and existing upgrade coordination before implementing only the declared
   migration surface.
+
+## 2026-09-08 — alpha.13 M4-002 structured-state migration
+
+- Completed M4-002. Added the strict `migrate_alpha12` transformer and
+  Migration 0002 procedure for the exact alpha.12 idle operation-state YAML,
+  instance/file-map forms, and readable task table. It composes schema-valid,
+  byte-stable alpha.13 candidates, preserves supported task/completion data,
+  requires an explicit target release version, and blocks active state or
+  altered/unmappable legacy content without writing private files.
+- Updated alpha.13 candidate metadata and new-install output to data schema 2
+  and declared Migration 0002. The upgrade recipe documents its strict input,
+  backup/readback, idempotence, and compatible-extension boundary. Added an
+  alpha.12 synthetic fixture and migration tests. No private migration,
+  production activation, or provider effect occurred.
+- Focused migration/scaffold/package tests passed 19 tests; the complete
+  `PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate.py` gate passed 136
+  tests plus schema/template and release-smoke validation. Direct privacy scan
+  of all four new files and `git diff --check` passed. Changed files:
+  `school_os/migrate_alpha13.py`, `migrations/0002-alpha13-structured-state.md`,
+  `school_os/install.py`, `release.yaml`, migration fixtures/tests, upgrade/test
+  documentation, root `PLAN.md`, and alpha.13 plan/specification. Commit/push/
+  remote verification remain pending. Exact next action: publish M4-002, then
+  inspect M4-003's conformance claims against available authorized surfaces.
