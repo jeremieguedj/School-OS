@@ -17,11 +17,12 @@ snapshot against product personas and priorities. The current plan incorporates
 those findings: narrow routing, conservative batches, sequential recovery,
 supported formats, focused tests, and independent optional adapters. The
 proposed additional historical-retrieval acceptance case is
-deferred for separate discussion. In revision 3, the user-approved complete-path
-approach is organized into four milestones: clean installation, a connected
-normal operation, verified recovery, and broader release coverage. Each has
-deliverables and completion checks; all remain pending. The original snapshot
-remains in Git.
+deferred for separate discussion. The user-approved complete-path approach is
+organized into four milestones: clean installation, a connected normal
+operation, verified recovery, and broader release coverage. The release plan now
+links the code-grounded [implementation specification](docs/plans/0.1.0-alpha.13/SPEC.md),
+which defines stable tasks and acceptance checks. All milestones remain pending.
+The original snapshot remains in Git.
 
 ## Objective
 

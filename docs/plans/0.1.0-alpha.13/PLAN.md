@@ -1,10 +1,11 @@
 # School-OS 0.1.0-alpha.13 release plan
 
-- Status: revised plan with approved complete-path sequencing; implementation not started
-- Revision: 3, updated 2026-09-07
+- Status: approved plan with linked implementation specification; implementation not started
+- Revision: 4, updated 2026-09-07
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
-- Baseline: `main` at `095485b`, with `release.yaml` declaring `0.1.0-alpha.12`
+- Specification inventory baseline: `main` at `4617215`, with `release.yaml`
+  declaring `0.1.0-alpha.12`
 
 ## Purpose and authority
 
@@ -18,9 +19,11 @@ The two approved product decisions remain in force. The user has also approved
 the complete-path development approach: connect one existing journey early,
 verify its recovery behavior, then expand coverage. This revision records that
 approach as implementation milestones with deliverables and completion checks.
-Implementation has not started, and detailed interfaces remain subject to
-implementation design. Approval of this plan does not activate a private
-instance or authorize private onboarding, import, or delivery.
+The linked [implementation specification](SPEC.md) grounds those milestones in
+the alpha.12 codebase and defines the implementation tasks, interfaces, state
+transitions, migrations, and behavioral checks. Implementation has not started.
+Approval of this plan does not activate a private instance or authorize private
+onboarding, import, delivery, release publication, or runtime implementation.
 
 The user has deferred discussion of the review's historical-retrieval acceptance
 case. That proposed addition is not part of the current work or release gates.
@@ -470,6 +473,8 @@ alpha.13 release readiness or conformance for every runtime.
 
 ### Milestone 1 — Install a minimal candidate in a clean test instance
 
+**Status:** pending.
+
 **Work and deliverables:** Select one existing runtime/provider combination as
 the first conformance target. Define a small synthetic corpus containing a
 school update, a standing guideline, and an actionable request, with explicit
@@ -489,6 +494,8 @@ blocked result. Manual execution can qualify without a scheduler.
 this journey. Implement only the shared interfaces needed by the next milestone.
 
 ### Milestone 2 — Connect a complete normal operation
+
+**Status:** pending.
 
 **Work and deliverables:** Use the installed candidate to execute this sequence:
 
@@ -522,6 +529,8 @@ check but do not replace it.
 
 ### Milestone 3 — Prove recovery and safe repeated execution
 
+**Status:** pending.
+
 **Work and deliverables:** Extend the same scenario with focused failure cases.
 Restart in a fresh process and discard the simulated agent's local files while
 retaining the test instance's durable provider state. Exercise interruption
@@ -543,6 +552,8 @@ is required before calling the initial connected implementation complete; a
 successful uninterrupted run alone is insufficient.
 
 ### Milestone 4 — Expand coverage and establish release readiness
+
+**Status:** pending.
 
 **Work and deliverables:** Extend the working scenario to larger complete
 imports, repeated daily runs, supported attachment cases, manual/scheduled
@@ -624,3 +635,7 @@ evidence that does not need to be repeatedly printed into model context.
   completion checks, and work-package coverage; required real stage-to-stage
   handoffs in the connected test. Implementation has not started, and the
   additional historical-retrieval acceptance case remains deferred.
+- Revision 4: linked the implementation specification grounded in the alpha.12
+  repository. All four milestones remain pending; no runtime, manifest, release,
+  or private instance changed. The additional historical-retrieval acceptance
+  case and independent optional adapters remain deferred as previously approved.

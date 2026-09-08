@@ -231,3 +231,42 @@ requirements, then read this log from top to bottom.
 - Next: publish and verify this maintenance checkpoint, then wait for user
   confirmation before creating and linking the alpha.13 implementation
   specification. Do not begin runtime implementation.
+
+## 2026-09-07 — alpha.13 implementation specification
+
+- Created `docs/plans/0.1.0-alpha.13/SPEC.md` from the approved release plan and
+  the actual alpha.12 tree. It inventories executable support separately from
+  prose-only behavior and defines concrete modules, interfaces, schemas,
+  durable/local ownership, state transitions, checkpoint boundaries, replay,
+  uncertain-effect reconciliation, and failure outcomes.
+- Organized ordered work as stable tasks M1-001 through M4-006. Milestones 1–3
+  specify the offline clean install, connected scheduler-free manual operation,
+  and fresh-process recovery path; Milestone 4 bounds migration, broader
+  coverage, real-surface conformance, measurement, and release work.
+- Selected the documented ChatGPT Work, Drive, Gmail, and Todoist mapping for
+  the first scheduler-free manual journey, exercised in Milestones 1–3 through
+  dependency-free Python 3.12 filesystem/fake adapters. This makes no
+  real-provider support claim; M4 still requires observed evidence.
+- Chose versioned byte-counted raw Markdown for new source records, structured
+  JSON for operation/checkpoint/task state, one active mutating operation, and
+  three scoped serialization modes. These are technical implementations of the
+  approved losslessness, simplicity, manual-send, and cross-session decisions.
+- Kept all four implementation milestones pending. No runtime code, manifest,
+  release, private instance, provider object, or schedule changed. The optional
+  adapters remain independent and the additional historical-retrieval
+  acceptance case remains deferred.
+- No unresolved product decision blocks Milestones 1–3. Real support claims,
+  private migration variants, optional adapter selection, paid/external effects,
+  release publication, and production activation require later evidence and/or
+  explicit user approval as recorded in the specification.
+- Relevant files: `docs/plans/0.1.0-alpha.13/SPEC.md`, its revised release-plan
+  link/status in `docs/plans/0.1.0-alpha.13/PLAN.md`, and the reconciled root
+  `PLAN.md` pointer.
+- Validation: `python3 scripts/validate.py` passed all 77 tests, schema/template
+  checks, release-package smoke verification, and the privacy scan with the new
+  specification staged. Direct changed-file privacy scanning, local-link checks,
+  25 unique stable-task checks, four-plan/four-spec pending-status checks, and
+  `git diff --check` also passed.
+- Publication remains unfinished for this documentation work.
+- Next: commit only these documentation files, push `main`, verify the remote
+  commit, and stop without starting implementation.
