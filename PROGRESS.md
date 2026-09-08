@@ -567,3 +567,11 @@ requirements, then read this log from top to bottom.
   records. No private source or provider effect was used.
 - Validation/publication pending. Exact next action: run complete validation and
   privacy scan, commit/push/verify M2-002, then continue M2-003.
+
+## 2026-09-07 — alpha.13 M2-002 verification
+
+- M2-002 was accepted as `69c1e7f8470e6aecc5c321bae58d61dfe280c593`
+  (`Implement alpha.13 lossless catalog codec`). The complete repository gate
+  passed 104 tests and the changed files passed privacy scanning and diff checks.
+- `origin/main` resolves to the same commit; no provider or private-instance
+  effect occurred. Next: M2-003 canonical facts, tasks, and derived builders.
