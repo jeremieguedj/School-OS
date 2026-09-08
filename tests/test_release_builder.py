@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from build_release import INVENTORY_NAME, build_release, verify_release_archive  # noqa: E402
+from school_os.package import verify_extracted_tree  # noqa: E402
 
 
 class ReleaseBuilderTests(unittest.TestCase):
@@ -77,6 +78,17 @@ class ReleaseBuilderTests(unittest.TestCase):
         archive, sums, _ = self.build("unreleased")
         self.assertTrue(archive.is_file())
         self.assertTrue(sums.is_file())
+
+    def test_extracted_package_verifies_without_git_metadata(self) -> None:
+        archive, _sums, _ = self.build("extracted")
+        extraction = Path(self.temporary.name) / "extraction"
+        with tarfile.open(archive, "r:gz") as package:
+            package.extractall(extraction)
+        root = extraction / "School-OS-1.2.3-alpha.1"
+        self.assertFalse((root / ".git").exists())
+        verification = verify_extracted_tree(root)
+        self.assertEqual("1.2.3-alpha.1", verification.version)
+        self.assertTrue(verification.payload_hashes)
 
 
 if __name__ == "__main__":

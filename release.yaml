@@ -1,7 +1,7 @@
 schema_version: 1
-system_version: 0.1.0-alpha.12
+system_version: 0.1.0-alpha.13
 channel: alpha
-status: released
+status: unreleased
 runtime_bundle: source-tree
 source_repository: jeremieguedj/School-OS
 data_schema_compatibility:
@@ -14,4 +14,4 @@ optional_capabilities:
   - audio.retrieve
 migrations:
   - migrations/0001-add-atomic-fact-refs-to-rolling-updates.md
-notes: Restores raw UTF-8 Markdown storage and requires direct source-to-catalog verbatim verification before reconciliation; data schema compatibility is unchanged.
+notes: Alpha.13 unreleased candidate: shared dependency-free contract and package verification support is implemented; data schema compatibility is unchanged.

@@ -1,11 +1,11 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation-ready specification; implementation not started
+- Status: implementation in progress; M1-001 complete
 - Approved plan: [PLAN.md](PLAN.md), revision 4
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
-- Milestone status: M1 pending; M2 pending; M3 pending; M4 pending
+- Milestone status: M1 in progress; M2 pending; M3 pending; M4 pending
 
 ## Authority and boundaries
 
@@ -15,9 +15,9 @@ owns the implementation detail linked by that plan. If the two conflict, stop
 and reconcile them rather than silently changing a product decision.
 
 This work remains subject to the repository's product principles, architecture,
-contracts, privacy boundary, and instruction-ownership rules. It does not
-authorize implementation, a release, access to a private instance, provider
-effects, or production activation.
+contracts, privacy boundary, and instruction-ownership rules. It authorizes
+repository implementation only; it does not authorize a release, access to a
+private instance, provider effects, or production activation.
 
 The selected provider mapping for the first connected journey is the existing
 ChatGPT Work, Google Drive, Gmail, and Todoist path, entered manually with no
@@ -386,7 +386,7 @@ declared consistency window. Multiple matches or an inconclusive lookup is
 
 ## Milestone 1 — Install a minimal candidate in a clean test instance
 
-**Status:** pending.
+**Status:** in progress (M1-001 complete; M1-002 through M1-006 pending).
 
 ### Deliverable
 
@@ -397,6 +397,8 @@ produces a scheduler-free manual execution plan, and fails specifically when a
 required capability is missing.
 
 ### Ordered tasks
+
+**Task status:** M1-001 complete. M1-002 through M1-006 pending.
 
 | ID | Depends on | Work and affected files | Observable acceptance |
 |---|---|---|---|

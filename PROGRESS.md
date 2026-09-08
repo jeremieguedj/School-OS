@@ -270,3 +270,34 @@ requirements, then read this log from top to bottom.
 - Publication remains unfinished for this documentation work.
 - Next: commit only these documentation files, push `main`, verify the remote
   commit, and stop without starting implementation.
+
+## 2026-09-07 — alpha.13 M1-001 shared package foundation
+
+- Completed M1-001. `release.yaml` now declares the unreleased
+  `0.1.0-alpha.13` candidate; no tag, publication, private instance, provider,
+  schedule, or external effect was created.
+- Added the standard-library-only `school_os` package. `contracts.py` is now the
+  single owner of the supported YAML/JSON-contract subset, canonical JSON
+  bytes, SHA-256, and diagnostics. `package.py` owns portable archive,
+  checksum, inventory, version, and Git-free extracted-tree verification.
+- Refactored `scripts/validate_instance.py`, `scripts/build_release.py`, and
+  `scripts/validate.py` to reuse those helpers while preserving their CLI
+  meanings. The existing deterministic Git build remains a development-only
+  input step; extracted-package verification makes no Git call and accepts no
+  Git metadata.
+- Added shared-contract coverage and an extracted-archive test that confirms
+  the root has no `.git` directory before verification. Changed files:
+  `release.yaml`, `school_os/__init__.py`, `school_os/contracts.py`,
+  `school_os/package.py`, `scripts/build_release.py`, `scripts/validate.py`,
+  `scripts/validate_instance.py`, `tests/test_release_builder.py`,
+  `tests/test_shared_contracts.py`, `PLAN.md`, and the alpha.13 plan/spec.
+- Validation: `python3 scripts/validate.py` passed 80 tests, all schema/template
+  checks, the exact-HEAD release-package smoke build, and the tracked-file
+  privacy scan. A direct privacy scan of `school_os` and the new test passed;
+  `git diff --check` passed.
+- Consulted decisions: no new or conflicting product/architecture decision was
+  discovered, so no consulting escalation was required.
+- Unfinished: M1-002 through M4-006 remain pending; M1 is in progress. Exact
+  next action: implement M1-002, the installed-only validator and its clean
+  extracted-candidate negative tests, reusing `school_os.package` without Git
+  or repository validation.

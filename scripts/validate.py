@@ -4,15 +4,16 @@
 from __future__ import annotations
 
 import json
-import re
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from school_os.contracts import ContractError, load_mapping as load_manifest, validate
 from build_release import BuildError, build_release, verify_release_archive
 from privacy_scan import scan_tracked_files
-from validate_instance import ContractError, load_manifest, validate
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -64,12 +65,14 @@ def validate_release_package() -> list[str]:
             capture_output=True,
             text=True,
         ).stdout
-        match = re.search(r"(?m)^system_version:[ \t]*([^#\s]+)", release_text)
-        if not match:
+        from school_os.contracts import load_mapping_yaml
+
+        version = load_mapping_yaml(release_text).get("system_version")
+        if not isinstance(version, str):
             return ["HEAD:release.yaml does not declare system_version"]
         with tempfile.TemporaryDirectory() as temporary:
-            archive, sums, _commit = build_release(ROOT, "HEAD", match.group(1), Path(temporary))
-            return verify_release_archive(archive, sums, match.group(1))
+            archive, sums, _commit = build_release(ROOT, "HEAD", version, Path(temporary))
+            return verify_release_archive(archive, sums, version)
     except (BuildError, OSError, subprocess.CalledProcessError) as exc:
         return [f"release package smoke check failed: {exc}"]
 

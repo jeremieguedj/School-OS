@@ -7,20 +7,27 @@ import argparse
 import gzip
 import hashlib
 import io
-import re
 import subprocess
 import sys
 import tarfile
 from pathlib import Path, PurePosixPath
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-VERSION_RE = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?$")
-ARTIFACT_RE = re.compile(r"^school-os-.+\.tar\.gz$")
-INVENTORY_NAME = "RELEASE-INVENTORY.sha256"
-SUMS_NAME = "SHA256SUMS"
+from school_os.package import (
+    ARTIFACT_RE,
+    INVENTORY_NAME,
+    SUMS_NAME,
+    VERSION_RE,
+    PackageError,
+    inventory_bytes,
+    is_output_artifact,
+    release_version,
+    safe_payload_path,
+    verify_release_archive as verify_package_archive,
+)
 
-
-class BuildError(RuntimeError):
+class BuildError(PackageError):
     """Raised when a ref cannot be packaged safely and deterministically."""
 
 
@@ -38,27 +45,21 @@ def _git(repo: Path, *args: str, input_data: bytes | None = None) -> bytes:
 
 
 def _safe_payload_path(raw: str) -> PurePosixPath:
-    path = PurePosixPath(raw)
-    if not raw or raw.startswith("/") or "\\" in raw or any(part in {"", ".", ".."} for part in path.parts):
-        raise BuildError(f"unsafe Git tree path: {raw!r}")
-    if ".git" in path.parts:
-        raise BuildError(f"Git metadata path is not packageable: {raw!r}")
-    return path
+    try:
+        return safe_payload_path(raw)
+    except PackageError as exc:
+        raise BuildError(str(exc).replace("package", "Git tree")) from exc
 
 
 def _is_output_artifact(path: PurePosixPath) -> bool:
-    return path.name in {INVENTORY_NAME, SUMS_NAME} or bool(ARTIFACT_RE.fullmatch(path.name))
+    return is_output_artifact(path)
 
 
 def _release_version(payload: dict[str, tuple[bytes, int]]) -> str:
     try:
-        text = payload["release.yaml"][0].decode("utf-8")
-    except (KeyError, UnicodeDecodeError) as exc:
-        raise BuildError("the selected ref must contain a UTF-8 release.yaml") from exc
-    match = re.search(r"(?m)^system_version:[ \t]*([^#\s]+)[ \t]*(?:#.*)?$", text)
-    if not match:
-        raise BuildError("release.yaml does not declare system_version")
-    return match.group(1)
+        return release_version(payload)
+    except PackageError as exc:
+        raise BuildError(str(exc)) from exc
 
 
 def read_ref_payload(repo: Path, ref: str) -> tuple[str, dict[str, tuple[bytes, int]]]:
@@ -87,10 +88,7 @@ def read_ref_payload(repo: Path, ref: str) -> tuple[str, dict[str, tuple[bytes, 
 
 
 def _inventory(payload: dict[str, tuple[bytes, int]]) -> bytes:
-    return "".join(
-        f"{hashlib.sha256(data).hexdigest()}  {path}\n"
-        for path, (data, _mode) in sorted(payload.items())
-    ).encode("utf-8")
+    return inventory_bytes(payload)
 
 
 def _tar_info(name: str, *, mode: int, size: int = 0, directory: bool = False) -> tarfile.TarInfo:
@@ -142,40 +140,8 @@ def build_release(repo: Path, ref: str, version: str, output_dir: Path) -> tuple
 
 
 def verify_release_archive(archive: Path, sums: Path, version: str) -> list[str]:
-    """Verify archive path safety, normalized members, inventory, and checksum."""
-    errors: list[str] = []
-    expected_root = f"School-OS-{version}"
-    actual_digest = hashlib.sha256(archive.read_bytes()).hexdigest()
-    expected_sum = f"{actual_digest}  {archive.name}\n"
-    if sums.read_text(encoding="utf-8") != expected_sum:
-        errors.append("SHA256SUMS does not match the archive")
-    with tarfile.open(archive, "r:gz") as tar:
-        members = tar.getmembers()
-        regular: dict[str, bytes] = {}
-        for member in members:
-            path = PurePosixPath(member.name)
-            if path.is_absolute() or ".." in path.parts or not path.parts or path.parts[0] != expected_root:
-                errors.append(f"unsafe or unexpected archive path: {member.name!r}")
-            if member.mtime != 0 or member.uid != 0 or member.gid != 0 or member.uname or member.gname:
-                errors.append(f"non-normalized metadata: {member.name!r}")
-            if member.isfile():
-                extracted = tar.extractfile(member)
-                if extracted is None:
-                    errors.append(f"unreadable regular file: {member.name!r}")
-                else:
-                    regular[PurePosixPath(*path.parts[1:]).as_posix()] = extracted.read()
-            elif not member.isdir():
-                errors.append(f"unsupported archive member type: {member.name!r}")
-    inventory = regular.pop(INVENTORY_NAME, None)
-    if inventory is None:
-        errors.append(f"missing {INVENTORY_NAME}")
-        return errors
-    expected_inventory = _inventory({path: (data, 0o644) for path, data in regular.items()})
-    if inventory != expected_inventory:
-        errors.append(f"{INVENTORY_NAME} is incomplete or has invalid checksums")
-    if any(_is_output_artifact(PurePosixPath(path)) for path in regular):
-        errors.append("archive contains an output artifact")
-    return errors
+    """Compatibility wrapper around the shared installed-package verifier."""
+    return verify_package_archive(archive, sums, version)
 
 
 def main(argv: list[str] | None = None) -> int:

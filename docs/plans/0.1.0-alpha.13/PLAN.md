@@ -1,6 +1,6 @@
 # School-OS 0.1.0-alpha.13 release plan
 
-- Status: approved plan with linked implementation specification; implementation not started
+- Status: approved plan with linked implementation specification; M1 in progress
 - Revision: 4, updated 2026-09-07
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
@@ -21,9 +21,11 @@ verify its recovery behavior, then expand coverage. This revision records that
 approach as implementation milestones with deliverables and completion checks.
 The linked [implementation specification](SPEC.md) grounds those milestones in
 the alpha.12 codebase and defines the implementation tasks, interfaces, state
-transitions, migrations, and behavioral checks. Implementation has not started.
-Approval of this plan does not activate a private instance or authorize private
-onboarding, import, delivery, release publication, or runtime implementation.
+transitions, migrations, and behavioral checks. Implementation is in progress
+at M1-001.
+Implementation is limited to this reusable repository. It does not activate a
+private instance or authorize private onboarding, import, delivery, release
+publication, or real runtime/provider effects.
 
 The user has deferred discussion of the review's historical-retrieval acceptance
 case. That proposed addition is not part of the current work or release gates.
@@ -467,13 +469,13 @@ explanation. The ten work packages describe what changes; the milestones below
 describe the order in which usable behavior and evidence are delivered. Do not
 finish all infrastructure packages in isolation before connecting the journey.
 
-All milestones are pending. Completing milestones 1–3 establishes the first
+M1 is in progress; M2–M4 remain pending. Completing milestones 1–3 establishes the first
 connected implementation with recovery evidence. It does not establish full
 alpha.13 release readiness or conformance for every runtime.
 
 ### Milestone 1 — Install a minimal candidate in a clean test instance
 
-**Status:** pending.
+**Status:** in progress (M1-001 complete; M1-002 through M1-006 pending).
 
 **Work and deliverables:** Select one existing runtime/provider combination as
 the first conformance target. Define a small synthetic corpus containing a
