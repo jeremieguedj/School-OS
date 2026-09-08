@@ -67,6 +67,13 @@ class Alpha13MigrationTests(unittest.TestCase):
         with self.assertRaisesRegex(MigrationError, "trailing"):
             self.migrate(markdown)
 
+    def test_non_alpha12_source_version_blocks_without_candidate(self) -> None:
+        fixture = copy.deepcopy(self.fixture)
+        fixture["instance"]["system_version"] = "0.1.0-alpha.11"
+        fixture["instance"]["active_release"]["version"] = "0.1.0-alpha.11"
+        with self.assertRaisesRegex(MigrationError, "unsupported legacy"):
+            self.migrate(fixture)
+
 
 if __name__ == "__main__":
     unittest.main()

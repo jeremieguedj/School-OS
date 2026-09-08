@@ -1,6 +1,6 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation blocked; M1–M3 and M4-001–M4-002 complete, M4-003 awaits observed private-surface evidence
+- Status: implementation blocked; M1–M3 and M4-001–M4-002 complete, M4-003 awaits observed private-surface evidence; the authorized private instance is an unsupported alpha.11 migration predecessor
 - Approved plan: [PLAN.md](PLAN.md), revision 21
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
@@ -616,16 +616,33 @@ schema-2 alpha.13 candidates. It requires an explicit target release version,
 preserves convertible task/history fields, is byte-stable from the same backup
 inputs, and blocks active state or undocumented legacy shapes. Upgrade backup,
 exact-ID write, readback, and activation remain governed by `system-upgrade.md`.
+The transformer also requires both the legacy manifest and active-release
+version to be exactly `0.1.0-alpha.12`; a schema-1 predecessor alone is not a
+supported input.
 
 **M4-003 status (2026-09-08):** Repository work now marks capability evidence
 as `unverified`, `synthetic`, or `observed`; scheduled mutation qualification
 requires `observed`. Synthetic tests cover independent network paths,
 authentication/limits, manual/scheduled delivery-key overlap, and the
 observed-evidence gate, but cannot establish a real execution surface. Current
-authorization excludes private-instance/provider inspection and real scheduler
-or connector probes, so the required observed runtime, storage, mail, task, and
-scheduler evidence is unavailable. M4-003 is not complete, and M4-004–M4-006
-remain blocked by its dependency.
+authorization now permits a read-only private Drive inventory, which found an
+alpha.11/schema-1 instance. That inventory does not establish runtime, mail,
+task, or scheduler conformance, and the alpha.11 predecessor is outside
+Migration 0002's explicit alpha.12 input. M4-003 is not complete, and
+M4-004–M4-006 remain blocked by its dependency.
+
+**Private-upgrade consultation (2026-09-08):** A bounded GPT-5.6 Sol High
+read-only review confirmed that there is no approved direct alpha.11-to-
+alpha.13 path. Extending Migration 0002 to support alpha.11 would alter the
+explicit supported-predecessor and release-upgrade boundary and requires new
+user approval. The least-risk path within existing scope is a read-only audit
+for conformance with the immutable released alpha.12 requirements, followed
+only if it passes by a separately verified alpha.11-to-alpha.12 upgrade; the
+alpha.13 candidate remains non-installable until its own release gates pass.
+Candidate staging may support testing only and cannot be activated. The review
+also found a missing explicit source-version check in the transformer; that
+fail-closed defect is corrected and regression-tested without broadening the
+migration scope.
 
 Optional adapters from work package 10 receive independent IDs only when the
 user selects a concrete deployment need. They do not become dependencies of

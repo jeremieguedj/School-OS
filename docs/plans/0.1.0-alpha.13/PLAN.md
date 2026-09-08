@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
-- Status: approved plan with linked implementation specification; M1–M3 complete, M4 blocked at observed-surface evidence
-- Revision: 21, updated 2026-09-08
+- Status: approved plan with linked implementation specification; M1–M3 complete, M4 blocked at observed-surface evidence and a private alpha.11 predecessor audit
+- Revision: 22, updated 2026-09-08
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -23,10 +23,11 @@ The linked [implementation specification](SPEC.md) grounds those milestones in
 the alpha.12 codebase and defines the implementation tasks, interfaces, state
 transitions, migrations, and behavioral checks. M3 and M4-001–M4-002 are
 complete. M4-003's repository safety work is complete, but its required
-observed-surface evidence is blocked pending separate authorization.
-Implementation is limited to this reusable repository. It does not activate a
-private instance or authorize private onboarding, import, delivery, release
-publication, or real runtime/provider effects.
+observed-surface evidence remains incomplete. The user has authorized a
+read-only private-instance inventory and upgrade assessment, not activation or
+external sends. That inventory reports an alpha.11 predecessor, whereas M4-002
+supports only alpha.12 input; direct private writes remain paused pending the
+documented staged-path audit or a new approved migration scope.
 
 The user has deferred discussion of the review's historical-retrieval acceptance
 case. That proposed addition is not part of the current work or release gates.
@@ -612,7 +613,9 @@ successful uninterrupted run alone is insufficient.
 
 ### Milestone 4 — Expand coverage and establish release readiness
 
-**Status:** blocked (M4-001–M4-002 complete; M4-003 awaits observed private-surface evidence).
+**Status:** blocked (M4-001–M4-002 complete; M4-003 awaits observed
+private-surface evidence; the authorized private instance is alpha.11 and is
+outside Migration 0002's declared input).
 
 **Work and deliverables:** Extend the working scenario to larger complete
 imports, repeated daily runs, supported attachment cases, manual/scheduled
@@ -736,3 +739,10 @@ evidence that does not need to be repeatedly printed into model context.
   scheduled qualification. The required private runtime/provider/scheduler
   observations are unavailable under current authorization, so M4 remains
   blocked and dependent M4-004–M4-006 do not start.
+- Revision 22: authorized read-only preflight found an alpha.11 private
+  predecessor rather than the declared alpha.12 Migration 0002 input. A
+  bounded GPT-5.6 Sol High consultation confirmed that direct alpha.11-to-
+  alpha.13 support would change the approved upgrade boundary and needs new
+  user approval. It also identified a missing source-version guard in the
+  transformer; that in-scope fail-closed correction is covered by regression
+  testing. No private file, provider, scheduler, or release was changed.

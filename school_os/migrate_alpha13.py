@@ -144,11 +144,19 @@ def migrate_alpha12(
 ) -> Alpha13Migration:
     """Compose exact alpha.13 candidates from supported alpha.12 private forms."""
     legacy_instance = _mapping(instance, "legacy instance")
-    if set(legacy_instance) != LEGACY_INSTANCE_KEYS or legacy_instance.get("data_schema_version") != 1:
+    if (
+        set(legacy_instance) != LEGACY_INSTANCE_KEYS
+        or legacy_instance.get("system_version") != "0.1.0-alpha.12"
+        or legacy_instance.get("data_schema_version") != 1
+    ):
         raise MigrationError("unsupported legacy instance manifest")
     active = _mapping(legacy_instance.get("active_release"), "legacy active_release")
     state = _mapping(legacy_instance.get("state"), "legacy state")
-    if set(active) != {"version", "manifest_reference"} or set(state) != {"file_map_reference", "operation_state_reference"}:
+    if (
+        set(active) != {"version", "manifest_reference"}
+        or active.get("version") != "0.1.0-alpha.12"
+        or set(state) != {"file_map_reference", "operation_state_reference"}
+    ):
         raise MigrationError("unsupported legacy instance references")
     legacy_state = _mapping(operation_state, "legacy operation state")
     if set(legacy_state) != LEGACY_STATE_KEYS or legacy_state.get("status") != "idle":

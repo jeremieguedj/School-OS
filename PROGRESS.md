@@ -986,3 +986,28 @@ requirements, then read this log from top to bottom.
 - Next: record the consultation finding in the alpha.13 specification and
   release plan as appropriate; do not modify the private instance unless a
   supported, approved path is established.
+
+## 2026-09-08 — alpha.13 alpha.11 upgrade-boundary consultation and guard
+
+- Completed the required bounded GPT-5.6 Sol High read-only consultation for
+  the authorized private upgrade preflight. It confirmed that no approved
+  direct alpha.11-to-alpha.13 path exists: Migration 0002 explicitly accepts
+  only alpha.12 forms, while alpha.13 remains an unreleased candidate. Adding
+  direct alpha.11 support would change the approved release/upgrade boundary
+  and requires new user approval; no private write or activation occurred.
+- The consultation also exposed an in-scope fail-closed defect: the transformer
+  checked schema-1 shape but did not assert its legacy manifest and active
+  release were alpha.12. It now requires both exact alpha.12 version values;
+  a regression test proves alpha.11 is rejected without candidates. The release
+  plan and specification now record the consultation, current private
+  predecessor, and the only within-scope conditional route: first complete a
+  read-only alpha.12-compatibility audit, then use the immutable alpha.12
+  release only if that audit passes. Alpha.13 itself still needs its release
+  gates before any production upgrade.
+- Changed files: `school_os/migrate_alpha13.py`,
+  `tests/test_alpha13_migration.py`, `PLAN.md`, and the alpha.13 plan and
+  specification. No private identifiers, catalog content, credentials, or
+  provider records were added to the repository.
+- Next: run focused migration tests and the full repository/privacy gate; if
+  accepted, publish this guard checkpoint, then perform only the authorized
+  read-only alpha.12-compatibility audit of the existing instance.

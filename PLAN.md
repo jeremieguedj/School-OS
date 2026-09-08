@@ -9,9 +9,11 @@ The current revised plan for the next release, `0.1.0-alpha.13`, is
 [the alpha.13 release plan](docs/plans/0.1.0-alpha.13/PLAN.md). It records ten work
 packages, deliverables, benefits, deferral impacts, and acceptance criteria,
 including the approved manual-sender and cross-session continuation decisions.
-Implementation has completed the repository portion of M4-003, but its required
-observed-surface evidence is blocked pending separate authorization. This planning reference does not
-authorize private-instance activation.
+Implementation has completed the repository portion of M4-003. Authorized
+read-only Drive preflight is now under way, but observed runtime, mail, task,
+and scheduler evidence is still required. The installed private instance is an
+alpha.11 predecessor, outside alpha.13's declared alpha.12 migration input, so
+no direct upgrade or activation is authorized by this planning reference.
 
 The [simplicity review](docs/plans/0.1.0-alpha.13/REVIEW.md) evaluates the original
 snapshot against product personas and priorities. The current plan incorporates
@@ -24,8 +26,11 @@ operation, verified recovery, and broader release coverage. The release plan now
 links the code-grounded [implementation specification](docs/plans/0.1.0-alpha.13/SPEC.md),
 which defines stable tasks and acceptance checks. M1 is complete (M1-001
 through M1-006). M2 and M3 are complete (M2-001–M2-007 and M3-001–M3-006);
-M4 is in progress with M4-001–M4-002 complete. M4-003 requires authorized
-private runtime/provider observations; M4-004–M4-006 depend on it.
+M4 is in progress with M4-001–M4-002 complete. M4-003 requires observed
+runtime/provider evidence; M4-004–M4-006 depend on it. The existing alpha.11
+private instance is not a direct alpha.13 migration source; its upgrade remains
+paused pending the separately documented compatible staged-path audit or new
+approved migration scope.
 The original snapshot remains in Git.
 
 ## Objective
