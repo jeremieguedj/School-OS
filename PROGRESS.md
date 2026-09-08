@@ -301,3 +301,23 @@ requirements, then read this log from top to bottom.
   next action: implement M1-002, the installed-only validator and its clean
   extracted-candidate negative tests, reusing `school_os.package` without Git
   or repository validation.
+
+## 2026-09-07 — alpha.13 M1-002 sequencing blocker
+
+- Blocked before implementing M1-002 because its required installed validation
+  explicitly includes the operation registry, while ordered task M1-003 is the
+  first task authorized to create `core/operations/registry.json` and its
+  schema. A clean package built after M1-002 but before M1-003 therefore cannot
+  both contain and validate the required registry.
+- Reproduction/evidence: the M1 ordered-task table in
+  `docs/plans/0.1.0-alpha.13/SPEC.md` lists M1-002 with only M1-001 as a
+  dependency and says it validates the registry; its immediately following
+  M1-003 says it adds that registry and schema. The release-plan M1 completion
+  checks require the extracted package to validate.
+- Working state is preserved at verified commit `1350122`; no M1-002 code or
+  generated artifacts were started. The affected task is marked blocked in the
+  release plan and specification.
+- Next: obtain the user-authorized GPT-5.6 Sol High read-only consultation on
+  whether M1-002 should validate a registry only when it is present, or depend
+  on M1-003 / be reordered. Do not implement the disputed validator behavior
+  until its recommendation is checked against the approved constraints.

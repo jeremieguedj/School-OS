@@ -475,7 +475,8 @@ alpha.13 release readiness or conformance for every runtime.
 
 ### Milestone 1 — Install a minimal candidate in a clean test instance
 
-**Status:** in progress (M1-001 complete; M1-002 through M1-006 pending).
+**Status:** in progress (M1-001 complete; M1-002 blocked pending sequencing
+resolution; M1-003 through M1-006 pending).
 
 **Work and deliverables:** Select one existing runtime/provider combination as
 the first conformance target. Define a small synthetic corpus containing a
