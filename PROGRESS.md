@@ -1702,3 +1702,11 @@ requirements, then read this log from top to bottom.
   Next: commit, run the full bundled validation and exact committed archive
   candidate check, then hand the final SHA to root. No manifest status, tag,
   release, push, or external-provider state was changed.
+
+- Committed the test decoupling as `b04ca84a65a5be4920b1a1961033247ea785b96c`.
+  Bundled CPython 3.12.14 then passed the full `scripts/validate.py` suite
+  (189 tests) under ordinary bytecode defaults. An archive built from that
+  exact SHA passed `validate_installed.py --candidate-test`; diff and tracked
+  privacy checks are clean. Next: commit this final evidence record and hand
+  root the resulting isolated SHA. Real GitHub draft/published readback and
+  all separate private/provider acceptance gates remain intentionally unrun.
