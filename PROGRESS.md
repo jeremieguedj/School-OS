@@ -1923,3 +1923,34 @@ requirements, then read this log from top to bottom.
   task integration, review the isolated runtime primitives, then implement the
   concrete connected workers. No provider effect, test send, or schedule was
   performed by this repository work.
+
+## 2026-09-08 — alpha.13 runtime primitive review and next bounded workers
+
+- Task/measurement merge `ed63d8227d083670afde5c1e3b1948091a8dad73` passed
+  the exact-commit 212-test CPython 3.12.14 gate and actual GitHub CI. Independent
+  hard-exit create/reminder recovery also passed from its verified extracted
+  archive with Git absent; the package inventory remained unchanged.
+- Independent Sol High review rejected isolated runtime primitive candidate
+  `a69ce99f79a9feb88f4affffcf57788c41af85cb`. Root reproduced all five issues:
+  Sent readback could confirm a different provider ID; a partial phase could
+  continue without a durable checkpoint; extraction could accept archive bytes
+  different from the admitted hash; bootstrap readback could be claimed without
+  content; and semantic bridge responses could admit nonfinite JSON. A separate
+  isolated repair is limited to those checks and regressions. This candidate is
+  not integrated or accepted as runtime support.
+- A parallel bounded implementation now owns concrete admitted-instance
+  artifact storage and ingestion workers through audited Fact/catalog/index
+  artifacts, using the existing source contracts. It must invoke real helpers
+  on predecessor bytes, persist per-unit continuation, and stop on unresolved
+  substantive source coverage. It owns no task, brief, delivery, or scheduling
+  effects and must consult before extending shared host request kinds.
+- Dated-only visual review is provisional. Its initial fixtures accidentally
+  used the generic template; those comparisons do not establish defects in the
+  selected private template. The reviewer is repeating the checks with the
+  exact supplied template and supported placeholder mapping. The undated-parent
+  policy question still blocks brief integration and sends.
+- Next: independently recheck the five runtime fixes, integrate accepted
+  primitives while preserving current task/measurement changes, review concrete
+  ingestion workers and correctly configured visual evidence, then continue
+  the already approved fresh-instance acceptance. All private values and repro
+  artifacts remain outside Git; no test send or schedule has been created.
