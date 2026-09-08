@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation in progress; M1–M2 and M3-001–M3-002 complete, M3-003 next
-- Approved plan: [PLAN.md](PLAN.md), revision 14
+- Status: implementation in progress; M1–M2 and M3-001–M3-003 complete, M3-004 next
+- Approved plan: [PLAN.md](PLAN.md), revision 15
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
@@ -509,7 +509,7 @@ Gmail, Todoist, Drive, or a scheduled runtime conforms.
 
 ## Milestone 3 — Prove recovery and safe repeated execution
 
-**Status:** in progress (M3-001–M3-002 complete; M3-003 next).
+**Status:** in progress (M3-001–M3-003 complete; M3-004 next).
 
 ### Deliverable
 
@@ -540,6 +540,10 @@ process completes after discardable local output is deleted.
 record only after independent source and persisted-byte verification. It makes
 one stable index row containing unchanged Fact IDs, is idempotent on replay,
 and blocks corrupted bytes, duplicate rows, or conflicting provenance.
+
+**M3-003 implementation note (2026-09-07):** Task replay adopts a lost create
+by canonical ID, and comment recovery adopts exactly one immutable effect after
+lookup. Parent-edited title/group remain untouched and become review cases.
 
 ### Required behavioral matrix
 

@@ -766,3 +766,16 @@ requirements, then read this log from top to bottom.
   `origin/main` was read back at the same SHA.
 - Next: M3-003 task create/update/comment fault recovery and parent-edit
   preservation, using immutable canonical task IDs and provider readback.
+
+## 2026-09-07 — alpha.13 M3-003 task effect recovery and parent edits
+
+- Completed M3-003. Lost task-create responses recover through canonical ID
+  without duplication. Lost immutable comments are adopted after complete
+  lookup; duplicate comment matches block. Parent-edited title/group fields
+  survive reconciliation and create review evidence rather than overwrite.
+- Focused tests passed 3 tests; the full gate passed 123 tests. No private or
+  provider effect occurred. Changed files: `school_os/tasks.py`,
+  `tests/support/fakes.py`, `tests/test_provider_reconciliation.py`, root
+  `PLAN.md`, and alpha.13 plan/specification. Validation/publication pending.
+  Exact next action: privacy-scan, commit/push/verify M3-003, then implement
+  M3-004 delivery recovery and duplicate-entrypoint safety.

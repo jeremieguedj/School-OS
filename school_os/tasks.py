@@ -19,6 +19,8 @@ class TaskProviderPort(Protocol):
     def create_task(self, candidate: Mapping[str, Any]) -> Mapping[str, Any]: ...
     def read_task(self, provider_object_id: str) -> Mapping[str, Any] | None: ...
     def apply_patch(self, provider_object_id: str, patch: Mapping[str, Any]) -> Mapping[str, Any]: ...
+    def find_comments(self, provider_object_id: str, effect_id: str) -> Sequence[Mapping[str, Any]]: ...
+    def write_comment(self, provider_object_id: str, effect_id: str, text: str) -> Mapping[str, Any]: ...
 
 
 @dataclass(frozen=True)
@@ -26,6 +28,7 @@ class ProviderReconciliation:
     tasks: dict[str, Any]
     provider_state: dict[str, Any]
     effects: tuple[dict[str, Any], ...]
+    review_cases: tuple[dict[str, Any], ...]
 
 
 def canonical_task_id(opening_fact_id: str) -> str:
@@ -108,6 +111,20 @@ def _projection_hash(projection: Mapping[str, Any]) -> str:
     return sha256_bytes(canonical_json_bytes(dict(projection)))
 
 
+def recover_task_comment(provider: TaskProviderPort, provider_object_id: str, effect_id: str, text: str) -> Mapping[str, Any]:
+    """Adopt one immutable comment after a lost response; never blindly repeat it."""
+    matches = [dict(comment) for comment in provider.find_comments(provider_object_id, effect_id)]
+    if len(matches) > 1:
+        raise TaskError("multiple provider comments match one immutable effect ID")
+    if matches:
+        return matches[0]
+    written = dict(provider.write_comment(provider_object_id, effect_id, text))
+    matches = [dict(comment) for comment in provider.find_comments(provider_object_id, effect_id)]
+    if len(matches) != 1 or matches[0] != written:
+        raise TaskError("provider comment readback does not establish one immutable effect")
+    return matches[0]
+
+
 def reconcile_provider_tasks(
     provider: TaskProviderPort,
     register: Mapping[str, Any],
@@ -131,6 +148,8 @@ def reconcile_provider_tasks(
         by_canonical[canonical_id] = item
     bindings: list[dict[str, Any]] = []
     effects: list[dict[str, Any]] = []
+    review_cases: list[dict[str, Any]] = []
+    previous_bindings = {binding["task_id"]: binding for binding in provider_state["bindings"]}
     for task in register["tasks"]:
         projection = managed_projection(task)
         task_id = task["task_id"]
@@ -144,6 +163,12 @@ def reconcile_provider_tasks(
             effect_kind = "create"
         else:
             object_id = current["provider_object_id"]
+            previous = previous_bindings.get(task_id, {})
+            previous_projection = previous.get("last_managed_projection", {})
+            for field in ("title", "group"):
+                if field in previous_projection and current.get(field) != previous_projection[field]:
+                    projection.pop(field)
+                    review_cases.append({"task_id": task_id, "field": field, "reason": "parent-owned provider edit preserved"})
             created = dict(provider.apply_patch(object_id, projection))
             effect_kind = "patch"
         readback = provider.read_task(object_id)
@@ -158,4 +183,4 @@ def reconcile_provider_tasks(
         raise TaskError("provider bindings are not unique")
     state = {"provider_id": provider_state["provider_id"], "adapter_id": provider_state["adapter_id"], "provider_revision": provider_state.get("provider_revision"), "bindings": bindings, "cursor": provider_state["cursor"], "cursor_evidence": {"pulled": True, "count": len(snapshot)}, "verified_readback": {"bindings": len(bindings)}}
     _validated(state, provider_state_schema, "provider state")
-    return ProviderReconciliation(dict(register), state, tuple(effects))
+    return ProviderReconciliation(dict(register), state, tuple(effects), tuple(review_cases))

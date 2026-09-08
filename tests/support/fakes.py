@@ -36,6 +36,7 @@ class FixtureMail:
 class FixtureTasks:
     def __init__(self) -> None:
         self.tasks: list[dict[str, str]] = []
+        self.comments: list[dict[str, str]] = []
         self.calls: list[str] = []
 
     def list_tasks(self) -> list[dict[str, str]]:
@@ -59,6 +60,16 @@ class FixtureTasks:
                 task.update(patch)
                 return dict(task)
         raise KeyError(provider_object_id)
+
+    def find_comments(self, provider_object_id: str, effect_id: str) -> list[dict[str, str]]:
+        self.calls.append("find_comments")
+        return [dict(comment) for comment in self.comments if comment["provider_object_id"] == provider_object_id and comment["effect_id"] == effect_id]
+
+    def write_comment(self, provider_object_id: str, effect_id: str, text: str) -> dict[str, str]:
+        self.calls.append("write_comment")
+        comment = {"provider_object_id": provider_object_id, "effect_id": effect_id, "text": text}
+        self.comments.append(comment)
+        return dict(comment)
 
 
 class SendSink:
