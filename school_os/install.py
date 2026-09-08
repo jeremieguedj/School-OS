@@ -15,11 +15,11 @@ import re
 import shutil
 import tempfile
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol
 
 from .contracts import ContractError, canonical_json_bytes, dump_mapping_yaml, load_mapping, load_mapping_yaml, sha256_bytes, validate
 from .package import PackageError, verify_extracted_tree, verify_release_archive
-from .references import ObjectReference, ReferenceError, ReferenceStorage, resolve_reference
+from .references import ObjectReference, ReferenceError, ReferenceStorage, StoredObject, resolve_reference
 
 
 class InstallationError(ValueError):
@@ -27,6 +27,8 @@ class InstallationError(ValueError):
 
 
 MANIFEST_PATH = "state/installation-manifest.json"
+ADMISSION_PATH = "state/installation-admission.json"
+BOOTSTRAP_PATH = "BOOTSTRAP.md"
 FILE_MAP_PATH = "state/file-map.yaml"
 OPERATION_STATE_PATH = "state/operation-state.json"
 MANAGED_PATHS = (
@@ -55,6 +57,12 @@ INTEGRATION_REFERENCE_KINDS = {
     "delivery_configuration": "file",
     "task_provider_selector": "file",
 }
+
+
+class CreateOnlyStorage(ReferenceStorage, Protocol):
+    """Storage surface for installation generations that may never replace bytes."""
+
+    def create_file(self, parent_id: str, name: str, data: bytes, mime_type: str) -> StoredObject: ...
 
 
 def parse_daily_values(data: bytes) -> dict[str, Any]:
@@ -191,10 +199,10 @@ def _normalise_inputs(answers: dict[str, Any], references: dict[str, Any], packa
         for role, kind in {**DAILY_REFERENCE_KINDS, **INTEGRATION_REFERENCE_KINDS}.items()
     }
     returned = _require_mapping(references["returned_objects"], "returned_objects")
-    _required_keys(returned, set(MANAGED_PATHS) | {MANIFEST_PATH}, "returned_objects")
+    _required_keys(returned, set(MANAGED_PATHS), "returned_objects")
     returned_references = {
         path: _reference(returned[path], root_id=root_id, expected_kind="file", label=f"returned_objects.{path}")
-        for path in (*MANAGED_PATHS, MANIFEST_PATH)
+        for path in MANAGED_PATHS
     }
 
     household_answers = _require_mapping(answers["household"], "household")
@@ -323,11 +331,10 @@ def _normalise_inputs(answers: dict[str, Any], references: dict[str, Any], packa
     if any(_contains_placeholder(load_mapping_yaml(data.decode("utf-8"))) for path, data in files.items() if path.endswith(".yaml")) or b"REPLACE_WITH_" in files["config/daily-run-personal-values.md"]:
         raise InstallationError("candidate contains an unresolved placeholder")
     manifest = {
-        "schema_version": 1,
+        "schema_version": 2,
         "verification_status": "candidate",
         "package": package,
         "instance_root_reference": instance_root,
-        "installation_manifest_reference": returned_references[MANIFEST_PATH],
         "files": {
             path: {"object_reference": returned_references[path], "sha256": sha256_bytes(data)}
             for path, data in sorted(files.items())
@@ -363,7 +370,6 @@ def validate_candidate(candidate_root: Path, package_root: Path) -> dict[str, An
             raise InstallationError(f"installation manifest hash disagrees for {path}")
         if b"REPLACE_WITH_" in data:
             raise InstallationError(f"unresolved placeholder in {path}")
-    _reference(manifest["installation_manifest_reference"], root_id=root_id, expected_kind="file", label="installation manifest reference")
     _validated(load_mapping(candidate_root / "instance.yaml"), package_root, "instance.schema.json", "instance manifest")
     _validated(load_mapping(candidate_root / "config" / "household.yaml"), package_root, "household.schema.json", "household configuration")
     _validated(load_mapping(candidate_root / "config" / "integrations.yaml"), package_root, "integrations.schema.json", "integration selection")
@@ -409,12 +415,89 @@ def verify_candidate_readback(candidate_root: Path, package_root: Path, storage:
             object_ = resolve_reference(storage, reference, expected_kind="file", instance_root_id=manifest["instance_root_reference"]["object_id"])
             if object_.data != (candidate_root / path).read_bytes():
                 raise InstallationError(f"provider readback bytes disagree for {path}")
-        manifest_reference = ObjectReference.from_mapping(manifest["installation_manifest_reference"])
-        object_ = resolve_reference(storage, manifest_reference, expected_kind="file", instance_root_id=manifest["instance_root_reference"]["object_id"])
-        if object_.data != (candidate_root / MANIFEST_PATH).read_bytes():
-            raise InstallationError("provider readback bytes disagree for installation manifest")
     except ReferenceError as exc:
         raise InstallationError(f"provider readback reference failed: {exc}") from exc
     accepted = dict(manifest)
     accepted["verification_status"] = "verified"
     return accepted
+
+
+def _stored_reference(object_: StoredObject, root_id: str) -> dict[str, Any]:
+    if object_.kind != "file" or object_.parent_id != root_id or root_id not in object_.ancestor_ids:
+        raise InstallationError("created object is outside the declared instance root")
+    if object_.data is None:
+        raise InstallationError("created object has no complete readback bytes")
+    return {
+        "object_id": object_.object_id,
+        "kind": "file",
+        "permitted_ancestor_id": root_id,
+        "mime_type": object_.mime_type,
+        "version": object_.version,
+    }
+
+
+def install_create_only_generation(
+    storage: CreateOnlyStorage, *, root_reference: dict[str, Any], package: dict[str, Any], payloads: dict[str, bytes],
+) -> dict[str, Any]:
+    """Create and verify an immutable payload/manifest/admission/bootstrap generation.
+
+    ``payloads`` must already contain final bytes: this routine never patches a
+    file or hides a lost create response.  The returned bootstrap reference is
+    the only fresh-process anchor; neither manifest nor bootstrap self-references.
+    """
+    try:
+        root = ObjectReference.from_mapping(root_reference)
+    except ReferenceError as exc:
+        raise InstallationError(f"invalid instance_root: {exc}") from exc
+    if root.kind != "folder" or root.permitted_ancestor_id != root.object_id:
+        raise InstallationError("instance root must be a self-contained folder")
+    if not payloads or any(not path or data is None for path, data in payloads.items()):
+        raise InstallationError("create-only generation requires final non-empty payload mapping")
+    objects: dict[str, StoredObject] = {}
+    for path, data in sorted(payloads.items()):
+        object_ = storage.create_file(root.object_id, path, data, "application/octet-stream")
+        reference = _stored_reference(object_, root.object_id)
+        readback = resolve_reference(storage, ObjectReference.from_mapping(reference), expected_kind="file", instance_root_id=root.object_id)
+        if readback.data != data:
+            raise InstallationError(f"provider readback bytes disagree for {path}")
+        objects[path] = readback
+    manifest = {
+        "schema_version": 2,
+        "verification_status": "candidate",
+        "package": package,
+        "instance_root_reference": root_reference,
+        "files": {
+            path: {"object_reference": _stored_reference(object_, root.object_id), "sha256": sha256_bytes(payloads[path])}
+            for path, object_ in sorted(objects.items())
+        },
+    }
+    manifest_bytes = canonical_json_bytes(manifest)
+    manifest_object = storage.create_file(root.object_id, MANIFEST_PATH, manifest_bytes, "application/json")
+    manifest_reference = _stored_reference(manifest_object, root.object_id)
+    manifest_readback = resolve_reference(storage, ObjectReference.from_mapping(manifest_reference), expected_kind="file", instance_root_id=root.object_id)
+    if manifest_readback.data != manifest_bytes:
+        raise InstallationError("provider readback bytes disagree for content manifest")
+    admission = {
+        "schema_version": 1,
+        "verification_status": "verified",
+        "instance_root_reference": root_reference,
+        "content_manifest_reference": manifest_reference,
+        "content_manifest_sha256": sha256_bytes(manifest_bytes),
+    }
+    admission_bytes = canonical_json_bytes(admission)
+    admission_object = storage.create_file(root.object_id, ADMISSION_PATH, admission_bytes, "application/json")
+    admission_reference = _stored_reference(admission_object, root.object_id)
+    admission_readback = resolve_reference(storage, ObjectReference.from_mapping(admission_reference), expected_kind="file", instance_root_id=root.object_id)
+    if admission_readback.data != admission_bytes:
+        raise InstallationError("provider readback bytes disagree for admission receipt")
+    bootstrap_bytes = (
+        "# School-OS instance bootstrap\n\n"
+        f"instance_manifest_object_id: {objects.get('instance.yaml', manifest_object).object_id}\n"
+        f"installation_admission_object_id: {admission_object.object_id}\n"
+    ).encode("utf-8")
+    bootstrap_object = storage.create_file(root.object_id, BOOTSTRAP_PATH, bootstrap_bytes, "text/markdown")
+    bootstrap_reference = _stored_reference(bootstrap_object, root.object_id)
+    bootstrap_readback = resolve_reference(storage, ObjectReference.from_mapping(bootstrap_reference), expected_kind="file", instance_root_id=root.object_id)
+    if bootstrap_readback.data != bootstrap_bytes:
+        raise InstallationError("provider readback bytes disagree for bootstrap")
+    return {"manifest": manifest, "manifest_reference": manifest_reference, "admission": admission, "admission_reference": admission_reference, "bootstrap_reference": bootstrap_reference}

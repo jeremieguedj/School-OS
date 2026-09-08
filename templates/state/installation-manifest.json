@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "verification_status": "candidate",
   "package": {
     "version": "REPLACE_WITH_INSTALLED_RELEASE_VERSION",
@@ -13,11 +13,6 @@
   "instance_root_reference": {
     "object_id": "REPLACE_WITH_PRIVATE_INSTANCE_ROOT",
     "kind": "folder",
-    "permitted_ancestor_id": "REPLACE_WITH_PRIVATE_INSTANCE_ROOT"
-  },
-  "installation_manifest_reference": {
-    "object_id": "REPLACE_WITH_PRIVATE_INSTALLATION_MANIFEST",
-    "kind": "file",
     "permitted_ancestor_id": "REPLACE_WITH_PRIVATE_INSTANCE_ROOT"
   },
   "files": {}

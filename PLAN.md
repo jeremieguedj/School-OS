@@ -9,7 +9,9 @@ The current revised plan for the next release, `0.1.0-alpha.13`, is
 [the alpha.13 release plan](docs/plans/0.1.0-alpha.13/PLAN.md). It records ten work
 packages, deliverables, benefits, deferral impacts, and acceptance criteria,
 including the approved manual-sender and cross-session continuation decisions.
-Implementation has completed the repository portion of M4-003. An authorized
+Implementation has completed the repository portion of M4-003. A create-only
+installation correction has reopened M1-004 and M1-006; M2–M3 require
+revalidation against that repair. An authorized
 inactive candidate-only Drive/Gmail observation may now exercise bounded source
 cataloguing and recovery, but observed runtime, mail, task, and scheduler
 evidence is still required. The candidate cannot establish production,

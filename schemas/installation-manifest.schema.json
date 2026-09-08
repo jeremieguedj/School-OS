@@ -4,7 +4,7 @@
   "title": "School-OS installation manifest",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "verification_status", "package", "instance_root_reference", "installation_manifest_reference", "files"],
+  "required": ["schema_version", "verification_status", "package", "instance_root_reference", "files"],
   "properties": {
     "schema_version": {"type": "integer", "minimum": 1},
     "verification_status": {"enum": ["candidate", "verified"]},
@@ -23,7 +23,6 @@
       }
     },
     "instance_root_reference": {"type": "object"},
-    "installation_manifest_reference": {"type": "object"},
     "files": {
       "type": "object",
       "properties": {}

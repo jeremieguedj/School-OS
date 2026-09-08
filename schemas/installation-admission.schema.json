@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/installation-admission.schema.json",
+  "title": "School-OS immutable installation admission receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "verification_status", "instance_root_reference", "content_manifest_reference", "content_manifest_sha256"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "verification_status": {"const": "verified"},
+    "instance_root_reference": {"type": "object"},
+    "content_manifest_reference": {"type": "object"},
+    "content_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

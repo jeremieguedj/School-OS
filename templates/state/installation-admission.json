@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "verification_status": "verified",
+  "instance_root_reference": {
+    "object_id": "REPLACE_WITH_PRIVATE_INSTANCE_ROOT",
+    "kind": "folder",
+    "permitted_ancestor_id": "REPLACE_WITH_PRIVATE_INSTANCE_ROOT"
+  },
+  "content_manifest_reference": {
+    "object_id": "REPLACE_WITH_PRIVATE_INSTALLATION_MANIFEST",
+    "kind": "file",
+    "permitted_ancestor_id": "REPLACE_WITH_PRIVATE_INSTANCE_ROOT"
+  },
+  "content_manifest_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+}

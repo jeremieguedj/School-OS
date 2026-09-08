@@ -1094,3 +1094,47 @@ requirements, then read this log from top to bottom.
   repository. Next: record the consultation finding and either resume with an
   in-scope verified protocol or report the specific architectural decision
   required.
+
+## 2026-09-08 — alpha.13 create-only installation correction
+
+- Completed the required bounded GPT-5.6 Sol High read-only consultation for
+  the candidate manifest contradiction. It found the recursive post-create-ID
+  requirement is an implementation/contract defect, not an approved product
+  invariant or a new architectural decision.
+- Resolution within scope: create and read back immutable payloads first;
+  create a non-self-referential content manifest containing their exact
+  references and hashes; create/read back an immutable admission receipt that
+  names that manifest; then create the stable bootstrap last. Its returned ID
+  is the external trust anchor for fresh recovery. No mutable pointer, replace,
+  placeholder acceptance, or weakened reference verification is allowed.
+- Reopened M1-004 and M1-006 for implementation and tests. M2–M3 retain their
+  accepted synthetic behavior but must be revalidated once the installer is
+  repaired. Updated root and alpha.13 plans/specification accordingly. No
+  private candidate or existing-instance write occurred.
+- Changed files: `PLAN.md`, `docs/plans/0.1.0-alpha.13/PLAN.md`,
+  `docs/plans/0.1.0-alpha.13/SPEC.md`, and this append-only log. Next:
+  implement the versioned create-only installation manifest/admission/bootstrap
+  flow with loss/recovery and forbidden-update tests before any private Drive
+  write.
+
+## 2026-09-08 — alpha.13 create-only installation implementation checkpoint
+
+- Implemented the first corrective installation slice: version-2 content
+  manifests no longer contain impossible self-references; added the immutable
+  admission-receipt schema/template; clarified bootstrap admission order; and
+  added a create-only installer helper that reads back every payload, content
+  manifest, admission receipt, and bootstrap without replace operations.
+- Added focused fake-storage coverage for create-only ordering and lost create
+  responses. Existing local scaffolding remains available while the broader
+  recovered-generation and installed-package tests are updated.
+- Changed files: `school_os/install.py`, installation schemas/templates,
+  `templates/BOOTSTRAP.md`, instance-scaffolding fixtures/tests, root and
+  alpha.13 plan/specification, and this append-only log. Focused validation:
+  `python3 -m unittest tests.test_instance_scaffolding` passed (6 tests);
+  `scripts/privacy_scan.py` and `git diff --check` passed. No private Drive or
+  Gmail write occurred.
+- Unfinished: add lost-response adoption/ambiguity/tamper/fresh-bootstrap
+  recovery tests; make the staged helper construct the real candidate payload
+  sequence; run the complete gate from the repaired exact package; then update
+  M1/M2/M3 status only if that evidence passes. Next: publish this recoverable
+  corrective checkpoint and continue those tests before private candidate work.

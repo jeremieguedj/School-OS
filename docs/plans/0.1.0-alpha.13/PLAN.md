@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
-- Status: approved plan with linked implementation specification; M1–M3 complete, M4 awaits observed-surface evidence and an alpha.11 private migration incompatibility
-- Revision: 25, updated 2026-09-08
+- Status: approved plan with linked implementation specification; M1 installation staging correction in progress, M2–M3 require revalidation, and M4 awaits observed-surface evidence
+- Revision: 26, updated 2026-09-08
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -31,6 +31,15 @@ alpha.12 input. Its alpha.12-compatibility audit found native document
 source-catalog storage alongside raw Markdown, so direct private writes to that
 existing instance remain paused pending an approved preservation mapping or new
 migration scope.
+
+The candidate Drive write-path review exposed an alpha.13 installation-contract
+defect: the current local manifest requires its own post-create storage ID,
+although the selected Drive create surface returns that ID only after bytes are
+written. The repair is within the approved installation sequence: create and
+verify immutable payloads first, then a non-self-referential content manifest,
+then an immutable admission receipt, then the stable bootstrap. M1-004 and
+M1-006 are reopened for this corrective validation; M2–M3 retain their accepted
+synthetic behavior but require revalidation against the repaired installer.
 
 The user has deferred discussion of the review's historical-retrieval acceptance
 case. That proposed addition is not part of the current work or release gates.
@@ -531,7 +540,8 @@ alpha.13 release readiness or conformance for every runtime.
 
 ### Milestone 1 — Install a minimal candidate in a clean test instance
 
-**Status:** complete (M1-001 through M1-006).
+**Status:** corrective implementation in progress (M1-001–M1-003 and M1-005
+remain complete; M1-004 and M1-006 are reopened).
 
 **Sequencing correction:** M1-003 precedes M1-002. M1-002 validates the
 required registry and registry schema that M1-003 creates, so it cannot safely

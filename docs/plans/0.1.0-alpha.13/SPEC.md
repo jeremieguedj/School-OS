@@ -386,7 +386,8 @@ declared consistency window. Multiple matches or an inconclusive lookup is
 
 ## Milestone 1 — Install a minimal candidate in a clean test instance
 
-**Status:** complete (M1-001 through M1-006).
+**Status:** corrective implementation in progress (M1-004 and M1-006 reopened
+for create-only provider installation).
 
 ### Deliverable
 
@@ -398,7 +399,8 @@ required capability is missing.
 
 ### Ordered tasks
 
-**Task status:** M1-001 through M1-006 complete.
+**Task status:** M1-001–M1-003 and M1-005 complete; M1-004 and M1-006
+corrective implementation in progress.
 
 **Sequencing resolution (2026-09-07):** M1-002's installed validator must
 verify the registry as a required payload, but M1-003 creates the registry and
@@ -413,9 +415,9 @@ must fail if it attempts to invoke Git.
 | M1-001 | — | Set `release.yaml` to the alpha.13 candidate version with `status: unreleased`; create `school_os/contracts.py` and `school_os/package.py`; refactor `scripts/validate_instance.py`, `scripts/build_release.py`, and `scripts/validate.py` to reuse them without changing safe build behavior. | Existing tests remain green; exact-ref builds identify alpha.13; package verification runs against an extracted package with `.git` absent. |
 | M1-003 | M1-001 | Add `core/operations/registry.json`, its schema, `school_os/references.py`, object-reference schema, and resolver tests. Update `templates/BOOTSTRAP.md` and instance manifest/template references. | The registry validates and every mapped recipe is a safe installed regular payload file; `daily-run` resolves the installed recipe and exact objects among multiple synthetic instance/release lookalikes; wrong type, parent/root, identity, MIME, version, or ambiguity blocks. |
 | M1-002 | M1-001, M1-003 | Add installed validation command and tests: `scripts/validate_installed.py`, `tests/test_installed_validation.py`. Validate manifest/version/status, archive/inventory evidence when supplied, all managed payload hashes, schemas, registry, and required files; do not run repository-only tests or Git commands. Permit `unreleased` only behind an explicit candidate-test flag. | A clean exact-ref candidate containing the completed M1-003 registry and schema passes offline in explicit candidate mode with `.git` absent and Git unavailable; production mode rejects `unreleased`. Missing registry/schema/mapped recipes, invalid registry data, changed bytes, undeclared or missing files, version disagreement, invalid supplied archive/checksum evidence, or any attempted Git invocation fail specifically. |
-| M1-004 | M1-003 | Add dedicated configuration schemas, YAML-front-matter validation for `daily-run-personal-values.md`, installation-manifest schema/template, `school_os/install.py`, and `scripts/scaffold_instance.py`. | Confirmed synthetic answers and observed references produce byte-stable, schema-valid files with no unresolved placeholders; missing answers or fabricated references fail before output acceptance. |
+| M1-004 | M1-003 | Add dedicated configuration schemas, YAML-front-matter validation for `daily-run-personal-values.md`, installation-manifest/admission schemas/templates, `school_os/install.py`, and `scripts/scaffold_instance.py`. | Confirmed synthetic answers and observed references produce byte-stable, schema-valid files with no unresolved placeholders; a create-only provider can persist payloads, a non-self-referential content manifest, immutable admission receipt, and bootstrap with exact readback; missing answers or fabricated references fail before acceptance. |
 | M1-005 | M1-001, M1-004 | Extend the capability schema/validator and add `school_os/capabilities.py`. Update templates and capability contracts for conditional scheduler requirements, auth health, network paths, structured limits, and manual execution. | A manual profile with storage/mail/tasks and no scheduler qualifies; a scheduled profile still requires scheduler evidence; unknown limits are constrained, never unlimited; missing required capability yields a named blocker. |
-| M1-006 | M1-002–M1-005 | Add synthetic installation answers/references/corpus, filesystem fake storage, fixture mail/task adapters, send sink, and reproducible setup in `tests/support/` and `tests/synthetic-fixtures/alpha13/`. | A fresh process installs and resolves the candidate using only extracted files. Test output identifies exact installed paths/hashes and the next operation; it performs no mail/task/send effect. |
+| M1-006 | M1-002–M1-005 | Add synthetic installation answers/references/corpus, filesystem fake storage, fixture mail/task adapters, send sink, and reproducible setup in `tests/support/` and `tests/synthetic-fixtures/alpha13/`. | A fresh process recovers an admitted create-only candidate using only extracted files and bootstrap state. Tests cover lost-response adoption, ambiguity, wrong parent/MIME/bytes, tampered manifest/receipt, incomplete generations, and forbidden replace; no mail/task/send effect occurs. |
 
 **M1-004 implementation note (2026-09-07):** `scaffold_instance.py` writes and
 validates only a local candidate directory. It requires an already verified
@@ -426,9 +428,21 @@ bytes through the storage port before changing the manifest outcome to
 `verified`. This keeps fabricated or unreadable provider references from being
 accepted without making the scaffolder perform provider effects.
 
+**M1-004 correction (2026-09-08):** A bounded GPT-5.6 Sol High read-only
+consultation found the self-referential manifest impossible on a create-only
+provider that returns IDs only after creation. The installer must instead
+create/read back payloads, create/read back a content manifest that records
+their IDs and hashes but no self-reference, create/read back an immutable
+admission receipt that references that manifest, and create the stable bootstrap
+last. Incomplete generations are not admitted. This corrects the existing
+installation/readback contract without changing canonical source, task,
+bootstrap, upgrade, or provider-effect authority; it does not authorize any
+private write by itself.
+
 ### Milestone check
 
-M1 completes only when M1-001 through M1-006 pass from a clean checkout and the
+M1 completes only when M1-001 through M1-006, including the reopened create-only
+installation correction, pass from a clean checkout and the
 release plan is updated with evidence. It does not claim that daily-run behavior
 or any real provider is conformant.
 

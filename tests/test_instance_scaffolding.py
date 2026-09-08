@@ -22,6 +22,7 @@ from school_os.install import (  # noqa: E402
     INTEGRATION_REFERENCE_KINDS,
     InstallationError,
     MANAGED_PATHS,
+    install_create_only_generation,
     scaffold_instance,
     validate_candidate,
     verify_candidate_readback,
@@ -38,6 +39,21 @@ class FakeStorage:
 
     def list_scoped(self, parent_id: str) -> list[StoredObject]:
         return [object_ for object_ in self.objects if object_.parent_id == parent_id]
+
+
+class CreateOnlyFakeStorage(FakeStorage):
+    def __init__(self, *, lose_after_create: bool = False) -> None:
+        super().__init__([])
+        self.lose_after_create = lose_after_create
+        self.calls: list[str] = []
+
+    def create_file(self, parent_id: str, name: str, data: bytes, mime_type: str) -> StoredObject:
+        self.calls.append(name)
+        object_ = StoredObject(f"created-{len(self.objects) + 1}", "file", parent_id, (parent_id,), mime_type, str(len(self.objects) + 1), name, data)
+        self.objects.append(object_)
+        if self.lose_after_create:
+            raise OSError("lost create response")
+        return object_
 
 
 class InstanceScaffoldingTests(unittest.TestCase):
@@ -88,7 +104,7 @@ class InstanceScaffoldingTests(unittest.TestCase):
             role: self.reference(f"observed-{role}", kind)
             for role, kind in {**DAILY_REFERENCE_KINDS, **INTEGRATION_REFERENCE_KINDS}.items()
         }
-        returned = {path: self.reference(f"returned-{path.replace('/', '-')}") for path in (*MANAGED_PATHS, "state/installation-manifest.json")}
+        returned = {path: self.reference(f"returned-{path.replace('/', '-')}") for path in MANAGED_PATHS}
         return {
             "instance_root": {"object_id": "instance-root", "kind": "folder", "permitted_ancestor_id": "instance-root", "version": "1"},
             "observed": observed,
@@ -153,8 +169,6 @@ class InstanceScaffoldingTests(unittest.TestCase):
         for path, record in manifest["files"].items():
             reference = record["object_reference"]
             objects.append(StoredObject(reference["object_id"], "file", "instance-root", ("instance-root",), reference.get("mime_type"), reference.get("version"), path, (candidate / path).read_bytes()))
-        reference = manifest["installation_manifest_reference"]
-        objects.append(StoredObject(reference["object_id"], "file", "instance-root", ("instance-root",), reference.get("mime_type"), reference.get("version"), "installation-manifest.json", (candidate / "state/installation-manifest.json").read_bytes()))
         accepted = verify_candidate_readback(candidate, self.package_root, FakeStorage(objects))
         self.assertEqual("verified", accepted["verification_status"])
         with self.assertRaisesRegex(InstallationError, "readback"):
@@ -173,6 +187,27 @@ class InstanceScaffoldingTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertIn("candidate:", result.stdout)
         self.assertTrue((output / "state/installation-manifest.json").is_file())
+
+    def test_create_only_generation_has_no_self_reference_or_replace(self) -> None:
+        storage = CreateOnlyFakeStorage()
+        result = install_create_only_generation(
+            storage,
+            root_reference={"object_id": "instance-root", "kind": "folder", "permitted_ancestor_id": "instance-root", "version": "1"},
+            package={"version": "0.1.0-alpha.13", "source_identity": {"repository": "example", "commit": "a" * 40}, "archive_sha256": "a" * 64, "inventory_sha256": "b" * 64},
+            payloads={"instance.yaml": b"instance\n", "state/operation-state.json": b"{}\n"},
+        )
+        self.assertNotIn("installation_manifest_reference", result["manifest"])
+        self.assertEqual("verified", result["admission"]["verification_status"])
+        self.assertEqual(["instance.yaml", "state/operation-state.json", "state/installation-manifest.json", "state/installation-admission.json", "BOOTSTRAP.md"], storage.calls)
+
+    def test_create_only_generation_stops_on_lost_response(self) -> None:
+        with self.assertRaisesRegex(OSError, "lost create response"):
+            install_create_only_generation(
+                CreateOnlyFakeStorage(lose_after_create=True),
+                root_reference={"object_id": "instance-root", "kind": "folder", "permitted_ancestor_id": "instance-root", "version": "1"},
+                package={"version": "0.1.0-alpha.13", "source_identity": {"repository": "example", "commit": "a" * 40}, "archive_sha256": "a" * 64, "inventory_sha256": "b" * 64},
+                payloads={"instance.yaml": b"instance\n"},
+            )
 
 
 if __name__ == "__main__":
