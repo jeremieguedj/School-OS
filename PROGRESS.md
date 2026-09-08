@@ -1658,3 +1658,14 @@ requirements, then read this log from top to bottom.
   and compares package verification before and after. Next: commit the repair,
   then run it and the full suite from the exact committed archive under ordinary
   bytecode defaults.
+
+- Committed the repair as `75796667d7765383b7c8341fd10333c78de203c5` and
+  verified it under bundled CPython 3.12.14 with `sys.pycache_prefix is None`
+  and `sys.dont_write_bytecode is False`. The focused extracted/connected/fresh
+  installed package matrix passed (9 tests), including ordinary child-process
+  bytecode defaults; the full `scripts/validate.py` suite passed 188 tests.
+  An exact-ref archive built from that commit passed `validate_installed.py
+  --candidate-test`; privacy and diff checks are clean. No GitHub, provider,
+  private-instance, tag, release, or push action occurred. Next: root may
+  integrate these local commits and re-run CI; only a CI observation can close
+  the prior hosted failure.
