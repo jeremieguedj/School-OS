@@ -5,16 +5,20 @@ Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 ## Next-release planning
 
-The current planning snapshot for the next release, `0.1.0-alpha.13`, is
+The current revised plan for the next release, `0.1.0-alpha.13`, is
 [the alpha.13 release plan](docs/plans/0.1.0-alpha.13/PLAN.md). It records ten work
 packages, deliverables, benefits, deferral impacts, and acceptance criteria,
 including the approved manual-sender and cross-session continuation decisions.
 Implementation has not started. This planning reference does not change the
 current release manifest or authorize private-instance activation.
 
-The subsequent [simplicity review](docs/plans/0.1.0-alpha.13/REVIEW.md) evaluates
-that snapshot against product personas and priorities. Its scope refinements
-are recommendations pending acceptance; they do not replace the captured plan.
+The [simplicity review](docs/plans/0.1.0-alpha.13/REVIEW.md) evaluates the original
+snapshot against product personas and priorities. At the user's request, plan
+revision 2 incorporates those findings: narrow routing, conservative batches,
+sequential recovery, supported formats, focused tests, and independent optional
+adapters. The proposed additional historical-retrieval acceptance case is
+deferred for separate discussion. The complete-path implementation sequence is
+being clarified before implementation; the original snapshot remains in Git.
 
 ## Objective
 

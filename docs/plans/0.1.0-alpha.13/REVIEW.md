@@ -1,10 +1,19 @@
 # Alpha.13 plan review: simplicity and product fit
 
 - Date: 2026-09-07
-- Reviewed snapshot: [PLAN.md](PLAN.md), committed and pushed as `3acd660`
-- Status: recommendations for user consideration; not accepted scope changes
+- Reviewed snapshot: release plan revision 1, committed and pushed as `3acd660`
+- Status: historical review; simplicity findings incorporated in plan revision 2
 - Method: review against documented personas, use cases, priorities, and
   existing implementation; no private-instance execution performed
+
+## Subsequent disposition
+
+At the user's request, the current [release plan](PLAN.md) now incorporates the
+simplicity recommendations directly into its work packages. The user deferred
+discussion of the historical-retrieval acceptance addition below; that addition
+is not a current work item or release gate. The complete-path sequencing
+recommendation is being explained before implementation. The review below
+preserves the assessment of revision 1; the current plan governs planning scope.
 
 ## Assessment
 
@@ -181,6 +190,7 @@ instruction compiler, sophisticated resource optimization, worker management,
 general format/merge frameworks, comprehensive benchmark infrastructure, and
 optional adapter breadth until evidence or a concrete deployment requires them.
 
-These are proposed scope refinements. The original ten-part plan remains the
-captured baseline, and no implementation or private-instance changes are
-authorized by this review itself.
+This review originally proposed scope refinements to the captured ten-part
+baseline. Their subsequent disposition is recorded above and in plan revision
+2. No implementation or private-instance changes are authorized by this review
+itself.

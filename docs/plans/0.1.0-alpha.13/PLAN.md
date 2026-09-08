@@ -1,17 +1,29 @@
 # School-OS 0.1.0-alpha.13 release plan
 
-- Status: planning snapshot; implementation not started
-- Captured: 2026-09-07
+- Status: revised plan incorporating simplicity findings; implementation not started
+- Revision: 2, updated 2026-09-07
+- Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Baseline: `main` at `095485b`, with `release.yaml` declaring `0.1.0-alpha.12`
 
 ## Purpose and authority
 
 Capture the current ten-part proposal for deterministic, efficient, portable,
-and resumable School-OS execution. This is the agreed state of planning, not a
-claim that every implementation detail or release scope is final. The user has
-requested a subsequent review for over-engineering; that review must remain
-distinguishable from this snapshot until its recommendations are accepted.
+and resumable School-OS execution. At the user's request, this revision
+incorporates the findings and scope recommendations from the
+[simplicity review](REVIEW.md) directly into the work packages. The original
+snapshot remains available in Git history at `3acd660`.
+
+The two approved product decisions remain in force. This document records
+current planning direction; it does not claim that implementation has started
+or that every technical detail is final. The complete-path build sequence below
+is the recommendation the user has asked to have explained. It is a development
+sequence, not authorization to run private onboarding, import, or delivery.
+
+The user has deferred discussion of the review's historical-retrieval acceptance
+case. That proposed addition is not part of the current work or release gates.
+Existing historical-retrieval functionality and canonical-data requirements
+remain product requirements; this deferral does not remove them.
 
 The next target is alpha.13 because alpha.12 is the highest actual existing
 release tag and manifest version. Release display titles do not determine
@@ -61,7 +73,31 @@ Keep the dependency footprint small and support execution without package
 downloads. Local processing files are recoverable caches or staging artifacts;
 the private Drive instance remains the durable authority. Normalized exchange
 formats must not introduce a competing canonical data store. New filenames and
-module boundaries below are proposals, subject to implementation design.
+module boundaries below are proposals, subject to implementation design. Extract
+shared helpers as the connected use case needs them; a generic workflow engine
+or a comprehensive set of abstractions is not a prerequisite.
+
+## Simplicity findings incorporated in this revision
+
+The documented household has one or two parents and low expected write
+concurrency. Keep the checks needed for losslessness, determinism, and safe
+recovery, while reducing machinery that creates no demonstrated benefit.
+
+| Area | Current direction | Defer until justified |
+|---|---|---|
+| Routing | Small operation-to-recipe map, exact references, narrow dependencies | General instruction-packet compilation |
+| Capabilities | Required functional probes and a few actionable limits | Exhaustive VM profiling and throughput optimization |
+| Recovery | Sequential operation, compact checkpoints, pending-effect receipts | Worker pools, distributed lock services, general cancellation infrastructure |
+| Formats and reconciliation | Supported canonical formats, field ownership, needed prior projection values | Arbitrary Markdown parsing and general multi-writer merging |
+| Tests and metrics | Focused failure cases and representative performance measurements | Full vendor emulation and comprehensive benchmark infrastructure |
+| Additional integrations | Independent work selected for concrete deployment needs | Making every new adapter or offline speech bundle a release prerequisite |
+
+These are scope refinements. Source preservation, exact readback, provenance,
+stable task identity, parent-edit preservation, and unknown-outcome handling
+remain mandatory. Keep source interpretation separate from mechanical checks.
+The agent handles routine recovery and targeted source re-reading; unresolved
+meaning, required authorization, and real provider blockers receive concise
+user-facing explanations instead of automatically becoming parent tasks.
 
 ## 1. Reliable release packaging and installation
 
@@ -97,20 +133,20 @@ Git or network downloads; altered files and inconsistent versions are rejected.
 
 ### Work and deliverables
 
-- Add a versioned operation registry, for example
-  `core/operations/registry.json`, declaring each operation's recipe,
-  dependencies, supported entrypoints, required capabilities, and allowed
-  effects.
+- Add a small versioned operation-to-recipe map, for example
+  `core/operations/registry.json`, with exact recipe references. Recipes retain
+  ownership of dependencies, required capabilities, and allowed effects; the
+  map must not become a second independently maintained policy definition.
 - Update onboarding to populate exact private references for operation
   entrypoints. The stable bootstrap resolves the instance manifest, active
   release, selected operation, and relevant configuration.
 - Implement a reference resolver that checks object identity, expected type,
   and permitted instance location. Recovery discovery uses scoped, paginated
   searches and stops on ambiguity.
-- Add an operation-packet builder. It assembles only instructions and references
-  needed for the selected operation and phase, with release and input
-  fingerprints. It preserves required rules instead of summarizing them through
-  an LLM.
+- Resolve only the current operation's and phase's declared dependencies. Start
+  with direct reads of the authoritative installed recipes. Defer a general
+  operation-packet builder unless measurements show that repeated reads or
+  instruction omissions remain material after direct routing is fixed.
 - Update recipes to invoke shared helpers for executable rules, keeping one
   authoritative owner for each rule and avoiding independently maintained
   copies.
@@ -128,19 +164,22 @@ instances and versions without a routine Drive-wide search.
 
 ### Work and deliverables
 
-- Extend `capability-profile.schema.json` beyond prose limits. Record structured
-  fields such as maximum payload bytes, supported pagination, execution budget
-  where known, file-transfer support, local execution availability, and storage
-  persistence observations.
+- Extend `capability-profile.schema.json` with the small set of structured
+  observations that changes execution decisions: complete reads/pagination,
+  file transfer, local execution, relevant payload limits, and an execution
+  budget when observable. Unknown values remain explicit. Exhaustive memory,
+  process-lifetime, or network-topology introspection is not a precondition.
 - Represent network paths separately: connector access, shell HTTPS access,
   package downloads, and external service access. Success on one path does not
   imply success on another.
 - Separate relatively stable capability observations from current authentication
   health. Add minimal authenticated probes for integrations needed by the
   current operation, plus revalidation after relevant changes or failures.
-- Implement a batch planner that selects work units using observed byte, time,
-  and tool limits. Use conservative defaults for unknown limits, reduce batch
-  size after capacity failures, and detect repeated non-progress.
+- Use conservative configured record/byte bounds, constrained by observed
+  limits. Add a simple bounded reduction rule after capacity failures and
+  detect repeated non-progress. An oversized single source needs an explicit
+  blocked or supported processing outcome, not truncation. Defer learned
+  throughput optimization and a general resource planner.
 - Make capability requirements conditional on the operation and configured
   features. Record explicit outcomes for unsupported operations and optional
   degradation.
@@ -165,19 +204,24 @@ Concurrency remains optional; unknown limits are never treated as unlimited.
 - Define explicit states such as `running`, `needs_continuation`, `blocked`,
   `complete`, and `cancelled`, with validated transitions. A saved checkpoint
   does not constitute completion.
-- Persist compact checkpoints remotely after bounded work units and before
-  consequential external effects. Maintain a small current snapshot so
-  resumption does not require reading an ever-growing log.
+- Persist a compact current operation snapshot remotely after bounded work
+  units and before consequential external effects. Preserve the last verified
+  checkpoint during updates. Reuse artifact references and effect receipts
+  instead of introducing a separate journal or manifest for every helper.
 - Implement guarded mutation helpers: read and validate current state,
   construct a candidate, check preservation rules, write through the adapter,
   read back, and record verification. Unexpected data loss fails validation;
   legitimate lifecycle changes remain possible.
-- Add an effect journal for sends, task creation, comments, and similar actions.
-  Persist intent before invocation and treat unconfirmed attempts as potentially
-  executed until provider reconciliation establishes the outcome.
+- Record pending-effect receipts for sends, task creation, comments, and similar
+  actions in operation state. Persist intent before invocation and treat
+  unconfirmed attempts as potentially executed until provider reconciliation
+  establishes the outcome. Reuse the delivery ledger and provider bindings for
+  their existing permanent records instead of duplicating their authority.
 - Implement recovery that checks release/configuration compatibility,
-  reconciles unfinished writes, and returns the next safe step. Track
-  operation-owned workers and reject superseded results.
+  reconciles unfinished writes, and returns the next safe step. Implement the
+  sequential path first. General worker registries, pools, and cancellation
+  infrastructure are deferred. If optional workers are later used, their
+  operation ownership and superseded-result handling must be implemented then.
 
 **Benefit:** Another session can recover using the private instance alone, with
 bounded repeated work.
@@ -210,9 +254,12 @@ uncertain effects.
 - Implement both acceptance comparisons: source body against catalog content,
   then intended catalog bytes against persisted bytes. Publish index entries
   only after verification.
-- Support bounded physical volumes without changing logical identities. Add
-  attachment extraction paths selected by observed MIME/size capabilities,
-  with explicit unsupported or incomplete outcomes.
+- Select one bounded catalog representation for the initial implementation,
+  preserving logical identities and source references. Physical volumes may
+  reduce provider calls; a storage-layout optimizer and multiple interchangeable
+  formats are deferred. Support the selected attachment extraction path through
+  observed MIME/size capabilities, with explicit unsupported or incomplete
+  outcomes. Additional extraction adapters are independent extensions.
 - Add structural coverage checks and omission warnings. Suspicious
   classifications trigger review; keyword matches do not automatically decide
   task meaning.
@@ -231,8 +278,10 @@ publication.
 
 ### Work and deliverables
 
-- Implement parsers and serializers for supported catalog and register formats.
-  Add round-trip tests so parsing and rewriting preserve required information.
+- Implement parsers and serializers for the defined canonical catalog and
+  register formats, with explicit migration for supported legacy forms. Add
+  round-trip tests so parsing and rewriting preserve required information.
+  Defer arbitrary Markdown interpretation.
 - Align the task schema with fields already present in the register, including
   owner, source dates, and completion history. Define the boundary between
   canonical task data and provider-binding state.
@@ -245,6 +294,9 @@ publication.
 - Define field ownership and store the last synchronized projection needed to
   distinguish parent changes from system changes. Apply patches that preserve
   parent-owned fields, history, and unrelated provider data.
+- Keep conflict handling scoped to those supported fields and operations.
+  Unresolved conflicts become explicit review cases; a general multi-writer
+  merge framework is deferred.
 - Keep parent-created tasks distinguishable from source-derived tasks. Advance
   synchronization state only after required writes verify.
 
@@ -272,8 +324,9 @@ review cases.
   it, report its progress, or start a new operation when safe.
 - Specify how adapters establish serialized execution when manual and scheduled
   runs coexist. Prefer verified runtime serialization; use explicit
-  coordination where necessary. A shared `idle` field alone cannot establish
-  exclusivity.
+  bounded operational coordination where necessary. A shared `idle` field
+  alone cannot establish exclusivity. A distributed lock service is not a
+  prerequisite for the household single-writer model.
 - Use a delivery key independent of the execution attempt, shared by manual and
   scheduled paths. Store the intended content identity and verified provider
   result. Give explicitly requested corrections/resends distinct
@@ -300,11 +353,13 @@ runs, explicit corrections, and interruption immediately after send.
 - Implement a renderer producing HTML and plain text from those inputs. Encode
   stable sorting, section separation, entity order, local-date grouping,
   escaping, and empty-state behavior.
-- Package a default template and validated theme settings for colors, labels,
-  and presentation choices. Keep recipients and provider configuration in their
-  existing configuration owners.
-- Emit rendered files and a compact rendering manifest containing input
-  fingerprints, template version, counts, and content hashes.
+- Package one default template and a small set of validated theme settings for
+  colors, labels, and existing presentation choices. Keep recipients and
+  provider configuration in their existing owners. Defer a layout engine,
+  multiple template languages, and extensive customization controls.
+- Emit rendered files and record their input fingerprints, template version,
+  counts, and content hashes in the operation's verification evidence. A
+  separate rendering-manifest subsystem is unnecessary.
 - Derive optional audio input from the permitted current-run delta. Keep speech
   normalization in the audio processing path.
 - Add expected-output fixtures and visual checks for mobile layout, long text,
@@ -323,22 +378,28 @@ rendered files, with correct content and readable presentation.
 
 ### Work and deliverables
 
-- Build fake storage, mail, task, and scheduler adapters with configurable
-  failures: stale authentication, truncated results, successful responses with
-  stale content, lost responses, and interrupted execution.
+- Build small fake adapters at the interfaces exercised by the connected path.
+  Prioritize pagination, stale authentication, stale writes reported as
+  successful, lost send responses, environment loss, and fresh-session
+  recovery. Defer full vendor-environment emulation.
 - Add end-to-end scenarios that restart the process and discard local storage
   between steps. Test operation outcomes and persisted artifacts instead of
   relying primarily on recipe-text assertions.
 - Maintain synthetic expected facts and task outcomes for semantic evaluation.
   Measure interpretation quality separately from deterministic assembly and
   recovery.
-- Add benchmark runs for onboarding, backfill, ordinary daily updates, and
-  no-new-message days. Record available token usage, tool calls, bytes
-  transferred, runtime, peak memory, and repeated work; label unavailable or
-  estimated metrics.
-- Create explicit migrations for changed state, configuration, and record
-  formats. Preserve compatible extensions, stage the new release, verify
-  backups and migrations, and activate only after compatibility checks.
+- Record a small baseline for representative onboarding, bounded backfill,
+  daily-update, and no-new-message cases: observable input/output tokens, tool
+  calls, bytes, elapsed time, and repeated work after interruption. Label
+  unavailable or estimated values. Collect peak memory only when observable
+  and useful; broad benchmark infrastructure is deferred.
+- Create explicit migrations only for state, configuration, and record formats
+  actually changed by this release. Reuse the existing staged-upgrade protocol,
+  preserve compatible extensions, verify backups and migrations, and activate
+  only after compatibility checks. Defer a universal migration framework.
+- Treat fake-adapter tests as evidence of helper behavior. They do not establish
+  production capability conformance; selected real execution surfaces still
+  need observed validation before production claims.
 - Update CI and release gates. Each accepted repository milestone includes
   appropriate tests, privacy scanning, commit, push, and remote-commit
   verification.
@@ -354,6 +415,11 @@ instance upgrades safely, and measured results can be compared with a recorded
 baseline.
 
 ## 10. Additional adapters as independent extensions
+
+**Scope:** Independent follow-ups selected for concrete deployment needs, not
+collective prerequisites for alpha.13. Keep current optional behavior and
+contracts intact. A new adapter may be prioritized when it is needed to make a
+particular supported deployment usable.
 
 ### Work and deliverables
 
@@ -380,17 +446,50 @@ into core operations.
 **Impact if deferred:** Users have fewer integration options, but foundational
 reliability work can still ship.
 
-**Acceptance:** Each adapter passes its applicable contract tests and has
-observed capability evidence on the surface where it will run.
+**Acceptance:** Each adapter selected for delivery passes its applicable contract
+tests and has observed capability evidence on the surface where it will run.
+Unselected adapters and the offline speech bundle do not block the foundational
+release.
 
 ## Proposed implementation sequence
 
-1. Begin with shared interfaces and schemas from parts 1-4, while establishing
-   the test harness from part 9.
-2. Build one complete path from source retrieval through verified manual
-   delivery using parts 5-8.
-3. Expand coverage, run measurements and upgrade validation, and add the
-   independent extensions from part 10.
+The recommendation is to build and verify one connected implementation of an
+existing user journey early, then expand it. This sequence is being clarified
+with the user; it does not change operation permissions or make the first
+milestone the complete release scope.
+
+1. Select one supported runtime/provider combination and a small, fully specified
+   synthetic corpus. Reuse current adapters where they are adequate. Define only
+   the shared interfaces, state, and checks needed for this connected case.
+2. Install the packaged candidate into a clean test instance and verify its
+   references. Installation is a one-time lifecycle operation, not a phase to
+   repeat before each daily brief.
+3. Exercise the full normal sequence: discover the test sources, preserve and
+   verify the catalog, reconcile canonical knowledge and tasks, synchronize the
+   configured task provider, render the brief, verify delivery, and record the
+   completed operation. Start with fake providers and a send sink, then validate
+   real adapter behavior under the authorization appropriate to those effects.
+4. Interrupt that same sequence at write/effect boundaries, discard local
+   state, and resume from private-instance checkpoints. Verify unchanged-input
+   replay, no duplicate tasks/sends, and clear blocked outcomes when required.
+5. Extend the connected case to larger imports, repeated daily runs, supported
+   attachment cases, manual/scheduled overlap, materially different capability
+   paths, and actual upgrade changes. Add optional adapters independently when
+   needed. Tests and measurements grow alongside working behavior.
+
+Historical import remains a separate optional operation. An import must not
+send mail or mutate a task provider without authorization for those effects.
+A small development corpus is a test fixture, not permission to sample a
+parent's requested import; production completion still covers its entire scope.
+Provider boundaries remain generic throughout, and the first runtime does not
+define the system's compatibility ceiling.
+
+This sequence discovers integration defects early: configuration accepted by an
+installer but unreadable by the next step, facts that cannot be reconciled,
+lost parent edits, or delivery that cannot be resumed safely. If each subsystem
+is completed in isolation first, these defects emerge later and can require
+redesign of already-built abstractions. Omitting this sequence is not itself a
+correctness violation; it raises integration, rework, and time-to-feedback risk.
 
 Keep the design small: one active mutating operation per instance, short
 executable steps, compact remote checkpoints, and complete verification
@@ -408,6 +507,18 @@ evidence that does not need to be repeatedly printed into model context.
   capability checks. Do not silently skip a configured required phase.
 - Public development artifacts contain generic source and synthetic fixtures;
   private state and retrospective evidence remain outside the repository.
-- Revisit implementation scope after the requested simplicity review. This
-  document is a planning baseline, not an instruction to implement every
-  proposed abstraction before delivering a useful release.
+- Keep the historical-retrieval acceptance addition pending separate discussion
+  as requested by the user. Do not add a new retrieval work package or release
+  gate in this revision.
+- Reconsider deferred abstractions only when measured cost, repeated failures,
+  or a concrete deployment justifies them. This remains a plan, not an
+  instruction to implement every possible extension before shipping.
+
+## Revision history
+
+- Revision 1: captured the ten-part technical proposal and both approved product
+  decisions; preserved in Git at `3acd660`.
+- Revision 2: incorporated the simplicity review into the work packages and
+  narrowed the proposed build sequence. Deferred discussion of the additional
+  historical-retrieval acceptance case at the user's request. Implementation
+  has not started.

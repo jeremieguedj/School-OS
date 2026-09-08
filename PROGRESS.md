@@ -168,3 +168,23 @@
   removed, and no private-instance changes were made.
 - Next: incorporate accepted review refinements into a subsequent plan revision
   before implementation.
+
+## 2026-09-07 — alpha.13 plan revision 2
+
+- At the user's request, incorporated the simplicity-review findings and
+  recommendations into the ten work packages of the alpha.13 plan, preserving
+  their benefits, deferral impacts, and acceptance criteria.
+- Narrowed routing, capability/batch planning, recovery machinery, format/merge
+  support, rendering controls, and test infrastructure. New adapters remain
+  independent follow-ups rather than collective release prerequisites.
+- Kept both approved product decisions and the source/provenance, write
+  verification, task-history, and unknown-effect safeguards.
+- Deferred discussion of the proposed additional historical-retrieval acceptance
+  case. Existing retrieval requirements remain intact; no new retrieval gate or
+  implementation work is included.
+- Expanded the recommended connected-path sequence to explain its development
+  purpose, initial synthetic case, recovery checks, expansion, and integration
+  risks. It is not a new mandatory install/import/send operation for parents.
+- Updated the root plan and historical review to reflect revision 2. No runtime
+  code, release manifest, or private instance was changed.
+- Next: clarify the sequencing recommendation with the user before implementation.
