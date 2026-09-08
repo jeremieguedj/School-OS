@@ -704,3 +704,14 @@ requirements, then read this log from top to bottom.
   and the alpha.13 plan/specification. Validation/publication is pending.
   Exact next action: privacy-scan, commit/push/verify M2-007, then begin M3-001
   recovery/admission and fresh-process checkpoint-chain work.
+
+## 2026-09-07 — alpha.13 M2-007 verification and milestone handoff
+
+- M2-007 was accepted as `e862dc8e5ab67fbdc5c324ac06c10cf2d33dbdff`
+  (`Add alpha.13 connected daily journey`). The 115-test repository gate,
+  direct new-file privacy scan, and diff checks passed; `origin/main` was read
+  back at the exact same SHA.
+- Milestone 2 is complete with synthetic connected-path evidence only. Next:
+  M3-001, add durable recovery/admission behavior to the operation and daily
+  entrypoint, then prove a fresh process resumes one operation ID with a new
+  attempt after local-work loss.
