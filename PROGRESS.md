@@ -953,3 +953,16 @@ requirements, then read this log from top to bottom.
   Exact next action: publish this repository checkpoint; resume only with
   authorization and access for no-write observed conformance probes (then any
   separately authorized write/send probes required by the adapters).
+
+## 2026-09-08 — alpha.13 M4-003 repository-checkpoint verification
+
+- The M4-003 repository safeguard work was accepted as
+  `a230b6af9f8494f5df93d22f55e371033c56e187`
+  (`Require observed scheduled conformance evidence`). The 138-test repository
+  gate, privacy scan, and diff checks passed; `origin/main` was read back at
+  the same SHA.
+- M4-003 remains blocked, not complete: it needs current `observed` evidence
+  from the exact authorized private runtime, storage, mail, task, and scheduler
+  surfaces. M4-004–M4-006 remain dependency-blocked. Exact next action: obtain
+  that access/authorization, run no-write capability probes first, and record
+  private surface-specific evidence before any separately authorized mutation.
