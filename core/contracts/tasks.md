@@ -2,7 +2,10 @@
 
 ## Authority
 
-The private Drive task register is canonical for task identity, source provenance, durable history, and synchronization decisions. The selected task provider is the parent-facing interaction projection.
+The private Drive `canonical-tasks.json` register is canonical for task identity,
+source provenance, durable history, and synchronization decisions. The selected
+task provider is the parent-facing interaction projection. The Markdown table
+template is a legacy/readable view, never a second task authority.
 
 ## Logical task
 
@@ -23,6 +26,11 @@ A canonical task contains:
 - projection status.
 
 Provider identifiers are private state and never replace `task_id`.
+
+The register is canonical UTF-8 JSON. Its entries are ordered by immutable task
+ID and can be rebuilt from verified Facts. Source-created task IDs derive only
+from the opening action Fact ID. A title match never merges records; later task
+support requires an explicit validated relationship in the reconciliation path.
 
 ## Required semantics
 

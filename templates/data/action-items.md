@@ -1,4 +1,7 @@
-# Canonical task register
+# Legacy readable task view
+
+`canonical-tasks.json` is the authoritative task register for new instances.
+This table remains a supported migration input and optional human-facing view.
 
 ## Open tasks
 

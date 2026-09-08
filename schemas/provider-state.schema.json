@@ -1,14 +1,1 @@
-{
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://school-os.example/schemas/provider-state.schema.json",
-  "title": "School-OS private provider state",
-  "type": "object",
-  "additionalProperties": false,
-  "required": ["provider_id", "adapter_id", "bindings", "cursor"],
-  "properties": {
-    "provider_id": {"type": "string"},
-    "adapter_id": {"type": "string"},
-    "cursor": {"type": ["string", "null"]},
-    "bindings": {"type": "array", "items": {"type": "object", "required": ["task_id", "provider_object_id", "status"], "properties": {"task_id": {"type": "string"}, "provider_object_id": {"type": "string"}, "status": {"type": "string"}}}}
-  }
-}
+{"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://school-os.example/schemas/provider-state.schema.json","title":"School-OS private provider synchronization state","type":"object","additionalProperties":false,"required":["provider_id","adapter_id","provider_revision","bindings","cursor","cursor_evidence","verified_readback"],"properties":{"provider_id":{"type":"string","minLength":1},"adapter_id":{"type":"string","minLength":1},"provider_revision":{"type":["string","null"]},"cursor":{"type":["string","null"]},"cursor_evidence":{"type":"object"},"verified_readback":{"type":"object"},"bindings":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["task_id","provider_object_id","status","last_managed_projection","projection_sha256","verified_readback"],"properties":{"task_id":{"type":"string","minLength":1},"provider_object_id":{"type":"string","minLength":1},"status":{"type":"string","minLength":1},"last_managed_projection":{"type":"object"},"projection_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},"verified_readback":{"type":"object"}}}}}}

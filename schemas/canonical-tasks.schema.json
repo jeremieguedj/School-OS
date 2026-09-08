@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://school-os.example/schemas/canonical-tasks.schema.json","title":"School-OS canonical task register","type":"object","additionalProperties":false,"required":["schema_version","tasks"],"properties":{"schema_version":{"type":"integer","minimum":1},"tasks":{"type":"array","items":{"type":"object"}}}}

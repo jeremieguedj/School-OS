@@ -60,6 +60,10 @@ def validate_manifests() -> list[str]:
             ROOT / "templates" / "state" / "operation-checkpoint.json",
             ROOT / "schemas" / "operation-checkpoint.schema.json",
         ),
+        (
+            ROOT / "templates" / "data" / "canonical-tasks.json",
+            ROOT / "schemas" / "canonical-tasks.schema.json",
+        ),
         (ROOT / "templates" / "config" / "household.yaml", ROOT / "schemas" / "household.schema.json"),
         (ROOT / "templates" / "config" / "integrations.yaml", ROOT / "schemas" / "integrations.schema.json"),
         (ROOT / "templates" / "config" / "policies.yaml", ROOT / "schemas" / "policies.schema.json"),

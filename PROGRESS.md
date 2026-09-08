@@ -575,3 +575,18 @@ requirements, then read this log from top to bottom.
   passed 104 tests and the changed files passed privacy scanning and diff checks.
 - `origin/main` resolves to the same commit; no provider or private-instance
   effect occurred. Next: M2-003 canonical facts, tasks, and derived builders.
+
+## 2026-09-07 — alpha.13 M2-003 canonical task and knowledge builders
+
+- Completed M2-003. Expanded Fact provenance to require record/message IDs and
+  byte spans; expanded canonical task and provider-state contracts; added the
+  versioned `canonical-tasks.json` register and `school_os.tasks`.
+- Source Facts now deterministically build source-linked task candidates,
+  guidelines, and rolling updates. Guideline/action combinations fail, stable
+  task IDs derive only from opening Fact IDs, rebuilds are byte-stable, and no
+  title comparison is used as identity. The Markdown task table is explicitly a
+  legacy/readable view.
+- Added focused task tests and updated contract/template validation. No provider
+  or private-instance effect occurred. Validation/publication pending. Exact
+  next action: complete repository validation and privacy scan, commit/push/
+  verify M2-003, then implement M2-004 guarded provider reconciliation.

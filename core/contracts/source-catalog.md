@@ -33,6 +33,10 @@ Each fact has a stable `fact_id`, source-message reference, local received date,
 
 A guideline is never an action. Facts may not combine unrelated claims merely to reduce record count.
 
+New Facts carry the stable record ID, immutable message ID, and non-empty UTF-8
+byte span that supports the claim. Derived knowledge stores Fact and record IDs
+so it can be rebuilt without weakening source provenance.
+
 ## Coverage
 
 Every substantive sentence or clause in source text maps to one or more facts or an explicit no-fact outcome with a reason such as greeting, boilerplate, duplicate, or unavailable content. Attachments receive a separate presence/processing outcome. The catalog never invents attachment content it could not read.
