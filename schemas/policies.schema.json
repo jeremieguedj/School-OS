@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/policies.schema.json",
+  "title": "School-OS private policy configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "brief", "tasks", "attachments", "audio", "execution"],
+  "properties": {
+    "schema_version": {"type": "integer", "minimum": 1},
+    "brief": {
+      "type": "object", "additionalProperties": false,
+      "required": ["rolling_window_days", "group_by_received_day", "source_links_required_for_source_backed_tasks"],
+      "properties": {
+        "rolling_window_days": {"type": "integer", "minimum": 1},
+        "group_by_received_day": {"type": "boolean"},
+        "source_links_required_for_source_backed_tasks": {"type": "boolean"}
+      }
+    },
+    "tasks": {
+      "type": "object", "additionalProperties": false,
+      "required": ["completion_requires_parent_comment", "completion_comment_structure", "reopen_when_comment_missing"],
+      "properties": {
+        "completion_requires_parent_comment": {"type": "boolean"},
+        "completion_comment_structure": {"enum": ["freeform"]},
+        "reopen_when_comment_missing": {"type": "boolean"}
+      }
+    },
+    "attachments": {
+      "type": "object", "additionalProperties": false,
+      "required": ["excluded_content_policy", "unsupported_outcome"],
+      "properties": {
+        "excluded_content_policy": {"enum": ["do_not_catalogue_sensitive_unrelated_content"]},
+        "unsupported_outcome": {"enum": ["manual_review"]}
+      }
+    },
+    "audio": {
+      "type": "object", "additionalProperties": false,
+      "required": ["enabled", "unavailable_behavior"],
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "unavailable_behavior": {"enum": ["disclose_optional_degradation"]}
+      }
+    },
+    "execution": {
+      "type": "object", "additionalProperties": false,
+      "required": ["max_records_per_unit", "max_bytes_per_unit", "delivery_correction_policy", "manual_entrypoint_authorization", "serialization_mode"],
+      "properties": {
+        "max_records_per_unit": {"type": "integer", "minimum": 1},
+        "max_bytes_per_unit": {"type": "integer", "minimum": 1},
+        "delivery_correction_policy": {"enum": ["explicit_authorization_required"]},
+        "manual_entrypoint_authorization": {"enum": ["explicit_user_request_required"]},
+        "serialization_mode": {"enum": ["attended_single_writer", "runtime_serialized"]}
+      }
+    }
+  }
+}

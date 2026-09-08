@@ -15,6 +15,7 @@ configuration:
 state:
   file_map_reference: state/file-map.yaml
   operation_state_reference: state/operation-state.yaml
+  installation_manifest_reference: state/installation-manifest.json
 last_completed_migration: null
 latest_release_seen:
   version: null

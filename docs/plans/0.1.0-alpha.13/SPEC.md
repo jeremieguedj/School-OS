@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation in progress; M1-001, M1-003, and M1-002 complete
-- Approved plan: [PLAN.md](PLAN.md), revision 4
+- Status: implementation in progress; M1-001, M1-003, M1-002, and M1-004 complete
+- Approved plan: [PLAN.md](PLAN.md), revision 6
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
@@ -386,8 +386,8 @@ declared consistency window. Multiple matches or an inconclusive lookup is
 
 ## Milestone 1 — Install a minimal candidate in a clean test instance
 
-**Status:** in progress (M1-001, M1-003, and M1-002 complete; M1-004 through
-M1-006 pending).
+**Status:** in progress (M1-001, M1-003, M1-002, and M1-004 complete; M1-005
+and M1-006 pending).
 
 ### Deliverable
 
@@ -399,8 +399,8 @@ required capability is missing.
 
 ### Ordered tasks
 
-**Task status:** M1-001, M1-003, and M1-002 complete. M1-004 through M1-006
-are pending.
+**Task status:** M1-001, M1-003, M1-002, and M1-004 complete. M1-005 and
+M1-006 are pending.
 
 **Sequencing resolution (2026-09-07):** M1-002's installed validator must
 verify the registry as a required payload, but M1-003 creates the registry and
@@ -418,6 +418,15 @@ must fail if it attempts to invoke Git.
 | M1-004 | M1-003 | Add dedicated configuration schemas, YAML-front-matter validation for `daily-run-personal-values.md`, installation-manifest schema/template, `school_os/install.py`, and `scripts/scaffold_instance.py`. | Confirmed synthetic answers and observed references produce byte-stable, schema-valid files with no unresolved placeholders; missing answers or fabricated references fail before output acceptance. |
 | M1-005 | M1-001, M1-004 | Extend the capability schema/validator and add `school_os/capabilities.py`. Update templates and capability contracts for conditional scheduler requirements, auth health, network paths, structured limits, and manual execution. | A manual profile with storage/mail/tasks and no scheduler qualifies; a scheduled profile still requires scheduler evidence; unknown limits are constrained, never unlimited; missing required capability yields a named blocker. |
 | M1-006 | M1-002–M1-005 | Add synthetic installation answers/references/corpus, filesystem fake storage, fixture mail/task adapters, send sink, and reproducible setup in `tests/support/` and `tests/synthetic-fixtures/alpha13/`. | A fresh process installs and resolves the candidate using only extracted files. Test output identifies exact installed paths/hashes and the next operation; it performs no mail/task/send effect. |
+
+**M1-004 implementation note (2026-09-07):** `scaffold_instance.py` writes and
+validates only a local candidate directory. It requires an already verified
+package/archive pair, confirmed answers, and structural observed-reference
+evidence. `school_os.install.verify_candidate_readback` is the separate
+acceptance gate: it resolves every declared returned object and compares exact
+bytes through the storage port before changing the manifest outcome to
+`verified`. This keeps fabricated or unreadable provider references from being
+accepted without making the scaffolder perform provider effects.
 
 ### Milestone check
 

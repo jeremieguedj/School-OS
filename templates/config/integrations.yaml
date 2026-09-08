@@ -1,3 +1,4 @@
+schema_version: 1
 runtime_adapter: runtimes/REPLACE_WITH_RUNTIME.md
 mail_adapter: mail/REPLACE_WITH_MAIL.md
 task_adapter: tasks/REPLACE_WITH_TASK_PROVIDER.md
@@ -5,9 +6,18 @@ scheduler_adapter: null
 audio_adapter: null
 
 mail:
-  source_scope_reference: REPLACE_WITH_PRIVATE_SOURCE_SCOPE
-  delivery_configuration_reference: REPLACE_WITH_PRIVATE_DELIVERY_CONFIGURATION
+  source_scope_reference:
+    object_id: REPLACE_WITH_PRIVATE_SOURCE_SCOPE
+    kind: file
+    permitted_ancestor_id: REPLACE_WITH_PRIVATE_INSTANCE_ROOT
+  delivery_configuration_reference:
+    object_id: REPLACE_WITH_PRIVATE_DELIVERY_CONFIGURATION
+    kind: file
+    permitted_ancestor_id: REPLACE_WITH_PRIVATE_INSTANCE_ROOT
 
 task_provider:
   status: not_configured
-  selector_reference: REPLACE_WITH_PRIVATE_ACTIVE_TASK_PROVIDER
+  selector_reference:
+    object_id: REPLACE_WITH_PRIVATE_ACTIVE_TASK_PROVIDER
+    kind: file
+    permitted_ancestor_id: REPLACE_WITH_PRIVATE_INSTANCE_ROOT

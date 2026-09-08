@@ -1,3 +1,5 @@
+schema_version: 1
+
 brief:
   rolling_window_days: 7
   group_by_received_day: true
@@ -15,3 +17,10 @@ attachments:
 audio:
   enabled: false
   unavailable_behavior: disclose_optional_degradation
+
+execution:
+  max_records_per_unit: 25
+  max_bytes_per_unit: 262144
+  delivery_correction_policy: explicit_authorization_required
+  manual_entrypoint_authorization: explicit_user_request_required
+  serialization_mode: attended_single_writer

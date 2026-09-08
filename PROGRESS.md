@@ -380,3 +380,31 @@ requirements, then read this log from top to bottom.
   88 tests; no provider or private-instance effect occurred.
 - Next: M1-004, deterministic instance scaffolding with dedicated configuration
   and installation-manifest contracts.
+
+## 2026-09-07 — alpha.13 M1-004 deterministic instance scaffolding
+
+- Completed M1-004. Added dedicated household, integration, policy, daily-value,
+  and installation-manifest schemas; converted the private daily companion to
+  strict YAML front matter while retaining explanatory prose; and added the
+  installation-manifest template and instance reference.
+- Added `school_os.install` and `scripts/scaffold_instance.py`. The command
+  accepts confirmed JSON answers, an extracted package plus verified archive,
+  and observed/reference-return evidence; it writes a new local candidate only,
+  validates every generated file and hash on readback, and rejects missing
+  answers, unresolved placeholders, invalid package evidence, and malformed or
+  out-of-root references. A separate storage-port readback gate proves each
+  returned identity and complete byte sequence before a candidate becomes
+  `verified`; no provider mutation occurs in this work unit.
+- Added `tests/test_instance_scaffolding.py` (four tests): byte-stable candidate
+  generation, schema/hash validation, missing-answer rejection, unreadable
+  returned-reference rejection, and CLI coverage. Extended repository validation
+  to check each dedicated template/schema and daily front matter. Focused tests
+  and `python3 scripts/validate.py` passed 92 tests; the installed validator
+  passed against an exact-HEAD candidate archive in explicit candidate mode.
+- Consulted decisions: no new product or architectural decision was needed. The
+  specification's staged installation boundary is implemented as written: JSON
+  reference evidence is not treated as provider proof until exact storage
+  readback succeeds.
+- Unfinished: M1-005 and M1-006, then M2–M4, remain pending. Exact next action:
+  implement M1-005 capability-profile/capability-planning contracts, including a
+  scheduler-free qualified manual profile and named capability blockers.

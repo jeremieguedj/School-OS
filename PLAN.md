@@ -22,7 +22,7 @@ organized into four milestones: clean installation, a connected normal
 operation, verified recovery, and broader release coverage. The release plan now
 links the code-grounded [implementation specification](docs/plans/0.1.0-alpha.13/SPEC.md),
 which defines stable tasks and acceptance checks. M1 is in progress: M1-001,
-M1-003, and M1-002 are complete; M1-004 is next. M2–M4 remain pending.
+M1-003, M1-002, and M1-004 are complete; M1-005 is next. M2–M4 remain pending.
 The original snapshot remains in Git.
 
 ## Objective

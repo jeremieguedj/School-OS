@@ -53,6 +53,15 @@ def _parse_scalar(value: str, line_number: int) -> Any:
 
 def load_mapping_yaml(text: str) -> dict[str, Any]:
     """Parse the conservative mappings/sequences/scalars YAML subset we own."""
+    stripped = text.strip()
+    if stripped.startswith("{"):
+        try:
+            value = json.loads(stripped)
+        except json.JSONDecodeError as exc:
+            raise ContractError("invalid JSON-compatible YAML") from exc
+        if not isinstance(value, dict):
+            raise ContractError("manifest root must be an object")
+        return value
     tokens: list[tuple[int, str, int]] = []
     for line_number, raw_line in enumerate(text.splitlines(), 1):
         if not raw_line.strip() or raw_line.lstrip().startswith("#"):
@@ -68,22 +77,45 @@ def load_mapping_yaml(text: str) -> dict[str, Any]:
         if index >= len(tokens) or tokens[index][0] != indent:
             line = tokens[index][2] if index < len(tokens) else "end of file"
             raise ContractError(f"line {line}: unexpected indentation")
-        is_sequence = tokens[index][1].startswith("- ")
+        is_sequence = tokens[index][1] == "-" or tokens[index][1].startswith("- ")
         container: Any = [] if is_sequence else {}
         while index < len(tokens) and tokens[index][0] == indent:
             _current_indent, content, line_number = tokens[index]
             if is_sequence:
-                if not content.startswith("- "):
+                if content != "-" and not content.startswith("- "):
                     raise ContractError(f"line {line_number}: cannot mix mappings and sequences")
-                item = content[2:].strip()
+                item = content[1:].strip()
                 if not item:
                     if index + 1 >= len(tokens) or tokens[index + 1][0] != indent + 2:
                         raise ContractError(f"line {line_number}: empty sequence item")
                     value, index = parse_block(index + 1, indent + 2)
                     container.append(value)
                     continue
-                container.append(_parse_scalar(item, line_number))
-                index += 1
+                inline = re.fullmatch(r"([A-Za-z_][A-Za-z0-9_-]*):(?:[ ](.*))?", item)
+                if inline is None:
+                    container.append(_parse_scalar(item, line_number))
+                    index += 1
+                    continue
+                key, raw_value = inline.group(1), inline.group(2)
+                mapping: dict[str, Any] = {}
+                if raw_value:
+                    mapping[key] = _parse_scalar(raw_value, line_number)
+                    index += 1
+                else:
+                    if index + 1 >= len(tokens) or tokens[index + 1][0] != indent + 2:
+                        mapping[key] = {}
+                        index += 1
+                    else:
+                        mapping[key], index = parse_block(index + 1, indent + 2)
+                if index < len(tokens) and tokens[index][0] == indent + 2:
+                    continuation, index = parse_block(index, indent + 2)
+                    if not isinstance(continuation, dict):
+                        raise ContractError(f"line {line_number}: sequence mapping continuation must be an object")
+                    overlap = set(mapping) & set(continuation)
+                    if overlap:
+                        raise ContractError(f"line {line_number}: duplicate sequence mapping key {sorted(overlap)[0]!r}")
+                    mapping.update(continuation)
+                container.append(mapping)
                 continue
             if content.startswith("- "):
                 raise ContractError(f"line {line_number}: cannot mix mappings and sequences")
@@ -127,6 +159,51 @@ def load_mapping(path: Path) -> dict[str, Any]:
             raise ContractError("manifest root must be an object")
         return value
     return load_mapping_yaml(text)
+
+
+def dump_mapping_yaml(value: dict[str, Any]) -> bytes:
+    """Encode the owned YAML subset deterministically, without implicit scalars."""
+    def scalar(item: Any) -> str:
+        if item is None:
+            return "null"
+        if item is True:
+            return "true"
+        if item is False:
+            return "false"
+        if isinstance(item, int) and not isinstance(item, bool):
+            return str(item)
+        if isinstance(item, str):
+            return json.dumps(item, ensure_ascii=False)
+        raise ContractError("cannot encode non-scalar YAML value")
+
+    def encode(item: Any, indent: int) -> list[str]:
+        prefix = " " * indent
+        if isinstance(item, dict):
+            lines: list[str] = []
+            for key in sorted(item):
+                if not isinstance(key, str) or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_-]*", key):
+                    raise ContractError("YAML mapping keys must use the owned identifier subset")
+                nested = item[key]
+                if isinstance(nested, (dict, list)):
+                    lines.append(f"{prefix}{key}:")
+                    lines.extend(encode(nested, indent + 2))
+                else:
+                    lines.append(f"{prefix}{key}: {scalar(nested)}")
+            return lines
+        if isinstance(item, list):
+            lines = []
+            for nested in item:
+                if isinstance(nested, (dict, list)):
+                    lines.append(f"{prefix}-")
+                    lines.extend(encode(nested, indent + 2))
+                else:
+                    lines.append(f"{prefix}- {scalar(nested)}")
+            return lines
+        raise ContractError("YAML root/nested value must be a mapping or sequence")
+
+    if not isinstance(value, dict):
+        raise ContractError("YAML root must be an object")
+    return ("\n".join(encode(value, 0)) + "\n").encode("utf-8")
 
 
 def _type_matches(value: Any, expected: str) -> bool:

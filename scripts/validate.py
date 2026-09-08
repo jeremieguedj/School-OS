@@ -12,6 +12,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from school_os.contracts import ContractError, load_mapping as load_manifest, validate
+from school_os.install import InstallationError, parse_daily_values
 from build_release import BuildError, build_release, verify_release_archive
 from privacy_scan import scan_tracked_files
 
@@ -47,6 +48,13 @@ def validate_manifests() -> list[str]:
             ROOT / "core" / "operations" / "registry.json",
             ROOT / "schemas" / "operation-registry.schema.json",
         ),
+        (
+            ROOT / "templates" / "state" / "installation-manifest.json",
+            ROOT / "schemas" / "installation-manifest.schema.json",
+        ),
+        (ROOT / "templates" / "config" / "household.yaml", ROOT / "schemas" / "household.schema.json"),
+        (ROOT / "templates" / "config" / "integrations.yaml", ROOT / "schemas" / "integrations.schema.json"),
+        (ROOT / "templates" / "config" / "policies.yaml", ROOT / "schemas" / "policies.schema.json"),
     )
     for manifest_path, schema_path in pairs:
         try:
@@ -57,6 +65,12 @@ def validate_manifests() -> list[str]:
             )
         except (OSError, json.JSONDecodeError, ContractError) as exc:
             errors.append(f"{manifest_path.relative_to(ROOT)}: {exc}")
+    try:
+        daily = parse_daily_values((ROOT / "templates" / "config" / "daily-run-personal-values.md").read_bytes())
+        schema = json.loads((ROOT / "schemas" / "daily-values.schema.json").read_text(encoding="utf-8"))
+        errors.extend(f"templates/config/daily-run-personal-values.md {error}" for error in validate(daily, schema))
+    except (OSError, json.JSONDecodeError, InstallationError) as exc:
+        errors.append(f"templates/config/daily-run-personal-values.md: {exc}")
     return errors
 
 

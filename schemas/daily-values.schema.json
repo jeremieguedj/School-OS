@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/daily-values.schema.json",
+  "title": "School-OS daily-run private values front matter",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "timezone", "references", "presentation"],
+  "properties": {
+    "schema_version": {"type": "integer", "minimum": 1},
+    "timezone": {"type": "string", "minLength": 1},
+    "references": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_checkpoint", "source_catalog_folder", "source_catalog_index", "canonical_action_register", "guidelines", "rolling_updates", "brief_template", "delivery_state", "final_run_checkpoint", "runtime_profile"],
+      "properties": {
+        "source_checkpoint": {"type": "object"}, "source_catalog_folder": {"type": "object"}, "source_catalog_index": {"type": "object"}, "canonical_action_register": {"type": "object"}, "guidelines": {"type": "object"}, "rolling_updates": {"type": "object"}, "brief_template": {"type": "object"}, "delivery_state": {"type": "object"}, "final_run_checkpoint": {"type": "object"}, "runtime_profile": {"type": "object"}
+      }
+    },
+    "presentation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["brief_heading"],
+      "properties": {"brief_heading": {"type": "string", "minLength": 1}}
+    }
+  }
+}

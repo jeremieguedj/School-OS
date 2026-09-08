@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/integrations.schema.json",
+  "title": "School-OS integration selection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "runtime_adapter", "mail_adapter", "task_adapter", "scheduler_adapter", "audio_adapter", "mail", "task_provider"],
+  "properties": {
+    "schema_version": {"type": "integer", "minimum": 1},
+    "runtime_adapter": {"type": "string", "minLength": 1},
+    "mail_adapter": {"type": "string", "minLength": 1},
+    "task_adapter": {"type": "string", "minLength": 1},
+    "scheduler_adapter": {"type": ["string", "null"]},
+    "audio_adapter": {"type": ["string", "null"]},
+    "mail": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_scope_reference", "delivery_configuration_reference"],
+      "properties": {
+        "source_scope_reference": {"type": "object"},
+        "delivery_configuration_reference": {"type": "object"}
+      }
+    },
+    "task_provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "selector_reference"],
+      "properties": {
+        "status": {"enum": ["not_configured", "configured"]},
+        "selector_reference": {"type": "object"}
+      }
+    }
+  }
+}

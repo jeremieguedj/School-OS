@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/installation-manifest.schema.json",
+  "title": "School-OS installation manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "verification_status", "package", "instance_root_reference", "installation_manifest_reference", "files"],
+  "properties": {
+    "schema_version": {"type": "integer", "minimum": 1},
+    "verification_status": {"enum": ["candidate", "verified"]},
+    "package": {
+      "type": "object", "additionalProperties": false,
+      "required": ["version", "source_identity", "archive_sha256", "inventory_sha256"],
+      "properties": {
+        "version": {"type": "string", "minLength": 1},
+        "source_identity": {
+          "type": "object", "additionalProperties": false,
+          "required": ["repository", "commit"],
+          "properties": {"repository": {"type": "string", "minLength": 1}, "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}}
+        },
+        "archive_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "inventory_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "instance_root_reference": {"type": "object"},
+    "installation_manifest_reference": {"type": "object"},
+    "files": {
+      "type": "object",
+      "properties": {}
+    }
+  }
+}

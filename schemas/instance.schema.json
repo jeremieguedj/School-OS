@@ -46,10 +46,11 @@
     "state": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["file_map_reference", "operation_state_reference"],
+      "required": ["file_map_reference", "operation_state_reference", "installation_manifest_reference"],
       "properties": {
         "file_map_reference": {"type": "string", "minLength": 1},
-        "operation_state_reference": {"type": "string", "minLength": 1}
+        "operation_state_reference": {"type": "string", "minLength": 1},
+        "installation_manifest_reference": {"type": "string", "pattern": "^state/installation-manifest\\.json$"}
       }
     },
     "last_completed_migration": {"type": ["string", "null"]},

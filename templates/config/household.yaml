@@ -1,3 +1,4 @@
+schema_version: 1
 timezone: America/Los_Angeles
 entities:
   - entity_id: child_1
