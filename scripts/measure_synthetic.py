@@ -204,7 +204,31 @@ class DailyHarness:
             return {"verified": True, "artifacts": dict(self.artifacts), "fact_count": len(facts)}
 
         def task_sync(_: dict[str, Any]) -> dict[str, Any]:
-            result = self.call(calls, "tasks.reconcile_provider_tasks", reconcile_provider_tasks, self.provider, self.register, self.provider_state, task_schema=self.schemas["task.schema.json"], register_schema=self.schemas["canonical-tasks.schema.json"], provider_state_schema=self.schemas["provider-state.schema.json"])
+            state_path = f"run-{self.run_number}/provider-state.json"
+
+            def checkpoint_effect(intent: dict[str, Any]) -> dict[str, Any]:
+                state = read_json(Path(self.artifacts["provider_state"]["path"]))
+                state["effect_intents"] = [
+                    intent if item["effect_id"] == intent["effect_id"] else item
+                    for item in state["effect_intents"]
+                ]
+                self.artifacts["provider_state"] = self.write(state_path, canonical_json_bytes(state), calls)
+                self.provider_state = read_json(Path(self.artifacts["provider_state"]["path"]))
+                return next(item for item in self.provider_state["effect_intents"] if item["effect_id"] == intent["effect_id"])
+
+            def sync_current() -> Any:
+                return self.call(calls, "tasks.reconcile_provider_tasks", reconcile_provider_tasks, self.provider, self.register, self.provider_state, task_schema=self.schemas["task.schema.json"], register_schema=self.schemas["canonical-tasks.schema.json"], provider_state_schema=self.schemas["provider-state.schema.json"], checkpoint_effect_intent=checkpoint_effect)
+
+            result = sync_current()
+            if result.provider_state.get("effect_intents"):
+                task_bytes = self.call(calls, "tasks.serialize_canonical_tasks", serialize_canonical_tasks, result.tasks, self.schemas["canonical-tasks.schema.json"])
+                self.artifacts["tasks"] = self.write(f"run-{self.run_number}/canonical-tasks.json", task_bytes, calls)
+                self.register = read_json(Path(self.artifacts["tasks"]["path"]))
+                self.artifacts["provider_state"] = self.write(state_path, canonical_json_bytes(result.provider_state), calls)
+                self.provider_state = read_json(Path(self.artifacts["provider_state"]["path"]))
+                result = sync_current()
+                if result.provider_state.get("effect_intents"):
+                    raise AssertionError("synthetic task effect remains unresolved after its durable continuation")
             self.register = result.tasks
             task_bytes = self.call(calls, "tasks.serialize_canonical_tasks", serialize_canonical_tasks, self.register, self.schemas["canonical-tasks.schema.json"])
             self.artifacts["tasks"] = self.write(f"run-{self.run_number}/canonical-tasks.json", task_bytes, calls)

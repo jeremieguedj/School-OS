@@ -67,7 +67,8 @@ runtime performs authentication and native Google calls, then injects one
    with `=`. This keeps formula-looking action/progress/comment text literal.
 3. For every patch or claim, re-resolve the current row locator immediately
    before `batchUpdate` and compare the mutation's `guard_cells(columns)`:
-   `Managed By`, `Canonical Task ID`, and any packet-specific observed cells.
+   `Managed By`, `Canonical Task ID`, and the cached prior value of every cell
+   the mutation will overwrite (plus every admission-packet cell for a claim).
    A mismatch blocks the write. Translate only changed header keys to observed
    numeric Sheet column indexes, then issue the smallest native request. Append
    returns the new locator; patch or claim returns the guarded target locator.
@@ -91,12 +92,15 @@ atomic precondition.
    sync. Do not use an earlier sync's snapshot as authority. A verified exact
    readback advances this sync's index; observed drift invalidates it and the
    runtime explicitly reloads before recovery.
+   A complete empty snapshot alone does not establish that an earlier unknown
+   append was not applied. The runtime may return `definitely_not_applied` for
+   retry only with its declared post-consistency-window negative evidence.
 2. Validate marker, required system fields, and canonical-ID uniqueness.
    Before a write, the runtime passes unchanged fields from the prior verified
-   binding to `verify_expected_system_fields`; unexpected Context, Source Link,
-   Workflow State, or identity drift blocks. Fields that the canonical
-   reconciler has deliberately changed are excluded from that preflight and are
-   then verified through the normal exact-row write/readback path.
+   binding to `verify_expected_system_fields`; unexpected canonical ID, origin,
+   Context, Source Link, Source Due, or Workflow State drift blocks. The planned
+   canonical projection is supplied separately so only an explicit canonical
+   change or a recovered already-applied write is accepted.
 3. Build a canonical-ID projection. Generate only differing mapped cells; do
    not rewrite status, parent deadline/progress/comment, or unrelated cells
    during a system projection patch.
@@ -105,6 +109,14 @@ atomic precondition.
 5. Preserve parent Action/Group edits according to the canonical reconciliation
    policy. Record the parent fields, status, and comment observations separately
    for the core policy rather than treating them as source facts.
+
+Core persists a `task_create` intent containing the canonical ID, exact Sheet
+projection, and projection hash in provider state before `create_task` is ever
+called. Immediately before append, the runtime checkpoint callback persists and
+exactly reads back the same intent as `unknown` with its next dispatch attempt.
+Recovery searches the complete managed scope by canonical ID: it adopts
+one exact row, blocks multiple or conflicting rows, and does not repeat an
+unknown append after a merely empty snapshot.
 
 `apply_parent_state` is available to the runtime only after core policy has
 chosen an allowed status/reopen/review or parent-state update. `None` leaves a
@@ -119,19 +131,33 @@ comment. A completed Sheet status without one must be returned to core as a
 review/reopen case; the runtime uses the separate status and
 `Completion Comment` observation and does not manufacture text.
 
-When the selected connector exposes native Sheet comments, its comment bridge
-must use immutable effect IDs, verify exactly one matching comment after a
-write, and paginate reads to completion. If comment operations are unavailable,
+When the selected connector exposes native Drive comments for a Sheet, its
+comment bridge must re-resolve the canonical row immediately before lookup,
+write, and readback; include canonical task ID, provider object ID, immutable
+effect ID, current Sheet/range locator, quoted row text, and exact reminder text
+in the native comment body/evidence; and verify exactly one exact matching
+comment after a write. A native comment with no stable anchor may be used only
+with that explicit identity evidence and must never be described as row-anchored.
+Reads paginate to completion. If comment operations are unavailable,
 the runtime records that capability as unavailable and blocks any operation
 that requires a provider comment effect.
+The same core checkpoint callback marks the occurrence-stable reminder intent
+`unknown` and reads it back before `write_comment`. After interruption, one
+exact comment is adopted; a transiently empty complete comment lookup blocks
+rather than writing a second reminder.
 
 ## Required observed capabilities
 
 Before an attended or scheduled mutation, the private capability profile for
 the exact runtime/provider/authentication surface must establish the relevant
-task capabilities: scoped snapshot completeness, row identity/configuration
-read, native create/update, status/reopen when selected, comment operations
-when selected, and exact row readback. Synthetic tests demonstrate only the
+task capabilities: `tasks.read_identity`, `tasks.discover_configuration`,
+`tasks.list_complete`, `tasks.read_comments`, `tasks.create`, `tasks.update`,
+`tasks.write_comment`, and `tasks.verify`. The complete snapshot carries current
+status and all mapped parent fields. Guarded `tasks.update` covers Action/Group
+and the core-authorized status/reopen change; this adapter does not claim
+separate activity, completed-list, move, complete, or reopen endpoints. Comment
+lookup is complete/paginated when comment policy needs it, and every mutation
+has exact row readback. Synthetic tests demonstrate only the
 mapping behavior; they do not claim Google authentication, background
 authorization, atomic version preconditions, or production conformance.
 

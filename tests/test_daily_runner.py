@@ -1,5 +1,5 @@
 from __future__ import annotations
-import copy,json,sys,unittest
+import copy,json,subprocess,sys,unittest
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
 from school_os.daily import DailyError,PHASES,run_daily  # noqa:E402
@@ -93,8 +93,10 @@ class DailyRunnerTests(unittest.TestCase):
   self.assertEqual('COMPLETE',resumed.outcome);self.assertEqual(list(PHASES[2:]),[phase for phase,_ in seen]);self.assertEqual(PHASES,resumed.completed_phases)
   with self.assertRaisesRegex(DailyError,'verified durable predecessor output'):
    run_daily(profile=self.profile('manual'),capability_schema=self.schema,entrypoint='manual',operation_id='daily-resume',attempt_id='attempt-3',stages=stages,resume_after='catalog',durable_predecessor_output={'verified':False})
- def test_measurement_baseline_records_exercised_paths_and_scope(self):
-  baseline=json.loads((ROOT/'tests/synthetic-fixtures/alpha13/measurement-baseline.json').read_text())
+ def test_measurement_command_executes_paths_and_records_scope(self):
+  execution=subprocess.run([sys.executable,str(ROOT/'scripts/measure_synthetic.py')],cwd=ROOT,capture_output=True,text=True,check=False)
+  self.assertEqual(0,execution.returncode,execution.stderr)
+  baseline=json.loads(execution.stdout)
   operations={item['name']:item for item in baseline['operations']}
   self.assertEqual({'onboarding','bounded_import','daily_update','no_new_message','interrupted','fresh_attempt_resume'},set(operations))
   self.assertIsNone(baseline['unavailable']['model_tokens']);self.assertIsNone(baseline['unavailable']['host_deadline_ns']);self.assertIn('does not establish observed runtime or provider conformance',baseline['evidence_scope'])
@@ -102,6 +104,8 @@ class DailyRunnerTests(unittest.TestCase):
    self.assertEqual('COMPLETE',operations[name]['result']['outcome']);self.assertEqual(list(PHASES),operations[name]['completed_units']);self.assertGreater(operations[name]['provider_fake_calls'],0)
   self.assertEqual(1,operations['daily_update']['helper_calls']['importer.admit_exact_plaintext_representation']);self.assertEqual(1,operations['daily_update']['helper_calls']['catalog.build_catalog_message'])
   self.assertEqual(1,operations['daily_update']['result']['phase_evidence']['task_sync']['canonical_provider_bindings'])
+  self.assertEqual(2,operations['daily_update']['helper_calls']['tasks.reconcile_provider_tasks']);self.assertEqual(1,operations['daily_update']['helper_calls']['provider_fake.tasks.create'])
+  self.assertNotIn('provider_fake.tasks.create',operations['no_new_message']['helper_calls'])
   self.assertEqual(0,operations['no_new_message']['result']['phase_evidence']['discover']['new_conversations'])
   self.assertEqual('NEEDS_CONTINUATION',operations['interrupted']['result']['outcome']);self.assertEqual('COMPLETE',operations['fresh_attempt_resume']['result']['outcome']);self.assertEqual([],operations['fresh_attempt_resume']['repeated_units']);self.assertIn('same-process continuation under a new attempt ID',operations['fresh_attempt_resume']['evidence_scope'])
 if __name__=='__main__':unittest.main()

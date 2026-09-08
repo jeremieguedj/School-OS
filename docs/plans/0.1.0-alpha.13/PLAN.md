@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
 - Status: approved completion plan; M1–M3 require chained revalidation after the installer correction, and M4 implementation plus observed fresh-test-instance evidence remains
-- Revision: 34, updated 2026-09-08
+- Revision: 35, updated 2026-09-08
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -98,6 +98,17 @@ guarded writes could overwrite a changed target cell. M2-003, M2-004, M3-003,
 and M4-008 remain reopened until the bounded correction is reviewed, integrated,
 and revalidated. The accepted correction stays within the existing task/register
 and provider-state contracts; it does not add a generic task engine.
+
+**Accepted task correction (2026-09-08):** The bounded repository repair is
+integrated after independent review. Incremental source relations retain their
+history and common source projection, accepted parent edits survive, and create
+and reminder effects persist/read back an unknown outcome before dispatch.
+Independent hard-process-exit checks used four fresh processes per effect and
+proved transient empty lookups block, then adopt exactly one original effect.
+Sheets declares complete current snapshots and guarded updates without claiming
+unobserved historical activity. M2/M3 chained package and M4-008/M4-009 observed
+acceptance remain open. The measurement command now executes the actual task
+intent/continuation path; final runtime/brief changes require another refresh.
 
 **Source custody and semantic audit correction (2026-09-08):** The reopened
 M4-001/M4-007 repository correction is implemented and regression-tested.
@@ -752,7 +763,8 @@ successful uninterrupted run alone is insufficient.
 **Status:** in progress (M4-001 and M4-007 corrected generic implementations
 complete pending authenticated observed binding; M4-002 complete for synthetic
 alpha.12 input; M4-004's measured runner/baseline implementation is complete
-but must be refreshed after the open task-core correction; remaining M4 tasks
+has been refreshed for the accepted task repair but needs final runtime/brief
+integration measurements; remaining M4 tasks
 are pending or in progress under the fresh-test-instance authorization; M4-006
 remains the final release gate).
 
@@ -976,3 +988,6 @@ evidence that does not need to be repeatedly printed into model context.
 - Revision 34: integrated the reviewed repository release preparation and
   corrected Python package-cache portability, keeping actual CI, remote
   release, visual, connected runtime, and private acceptance gates explicit.
+- Revision 35: accepted the bounded task repair after independent hard-process
+  recovery, reconciled the Sheets capability baseline, and repaired/refreshed
+  the executable measurements. Chained package and observed acceptance remain.

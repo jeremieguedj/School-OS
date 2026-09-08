@@ -1732,3 +1732,194 @@ requirements, then read this log from top to bottom.
 - Next: validate and publish this integration, verify actual CI, then review
   the task candidate with independent hard-process-death recovery. No email,
   schedule, production-instance change, or formal release was performed.
+
+## 2026-09-08 — alpha.13 task reconciliation independent-review repair
+
+- Repaired the reopened canonical/provider reconciliation after independent
+  failure reproduction. Source and parent Action/Group changes now use a true
+  field-level base/canonical/provider comparison; local-only corrections
+  project, parent-only edits enter canonical state, equal changes converge, and
+  divergent changes remain explicit review cases without overwrite. Workflow,
+  origin, source context/link/due, and canonical identity receive full managed
+  drift checks. Actual canonical changes advance revision/evidence, and binding
+  validation enforces one object per task/provider globally.
+- Source task relationships now use stable source/message/content chronology
+  with Fact ID only as the final tie, reject conflicting changes at one source
+  coordinate, preserve a monotonic support date, and persist current completion
+  resolution. Completed source actions do not create provider tasks or enter the
+  connected brief; an explicit reopen restores eligibility.
+- Parent-row admission now issues an immutable canonical ID independent of its
+  mutable Sheet locator. The durable claim intent carries complete candidate and
+  canonical-task evidence, so either half of an interrupted checkpoint can be
+  reconstructed before a guarded claim. Unknown managed IDs, missing durable
+  bindings, and inconsistent canonical/provider state block rather than create
+  a duplicate.
+- Missing-completion-comment handling now returns a durable occurrence-stable
+  reminder intent before effects. Recovery verifies the exact effect ID/text,
+  writes or adopts one reminder, then reopens and exactly reads the provider
+  object even when it is already open. Tests cover lost comment responses,
+  failures before and after reopen, lost returned state, later repeated
+  completion, qualifying completion, and parent reopen history.
+- Tightened the Google Sheets adapter so every overwritten cell is guarded by
+  its cached prior value in addition to canonical identity. Native comment
+  operations re-resolve canonical identity around lookup/write/readback and
+  require explicit canonical task, provider object, effect, and exact-text
+  evidence; unanchored native comments are not claimed as stable row anchors.
+  Updated the generic task/Sheet contracts accordingly.
+- The connected installed-run test now persists and verifies both returned
+  canonical tasks and provider state in recovery order, then supplies the
+  refreshed canonical task artifact to brief generation. Synthetic evidence
+  remains repository behavior only and does not establish authenticated or
+  unattended provider conformance.
+- Validation passed the complete repository gate with 182 tests plus JSON
+  schema/template/release-smoke checks; the direct privacy scan and
+  `git diff --check` passed. No private value, provider effect, release, or push
+  occurred. Next: integrate this isolated candidate with the coordinated source
+  chronology schema changes, rerun the complete gate, and independently review
+  the combined diff before publication.
+
+## 2026-09-08 — alpha.13 task independent-review blocker repair in progress
+
+- Reproduced all three follow-up review failures against `95eb0bd`: a
+  relation-only incremental Fact could not target an existing source task, a
+  source Action correction silently replaced an accepted parent Action edit,
+  and a lost accepted create followed by one empty snapshot could create a
+  duplicate provider row.
+- Canonical task reconciliation now retains compact opening and ordered source
+  relation evidence, merges new relationship Facts without requiring historical
+  Facts to be resent, preserves source Fact/lifecycle evidence and monotonic
+  support dates, and resolves late-arriving evidence by source chronology.
+  `source_projection` is now the explicit common base: source-only changes
+  apply, parent-only values remain, equal changes converge, and divergent
+  source/parent values block before mutation or provider projection.
+- Provider state now admits a narrow `task_create` effect intent with canonical
+  ID, exact managed projection, projection hash, effect outcome, and verification.
+  The first reconciliation journals only the intent; continuation performs the
+  create. Unknown responses retain the intent, adopt exactly one exact later
+  match, and block on an empty snapshot unless the adapter supplies explicit
+  `definitely_not_applied` evidence. Focused regressions cover the one-empty-
+  snapshot duplicate case and evidence-authorized retry.
+- Focused task/provider tests pass, and the complete unit suite currently passes
+  188 tests after updating the connected and Sheets synthetic flows to persist
+  create intent before mutation. Contracts and the alpha.13 specification now
+  describe the incremental merge, source/parent three-way rule, and create
+  effect recovery semantics. No live provider, private data, delivery, schedule,
+  release, or push was touched.
+- Next: rerun the connected hash fixture and all 188 tests after documentation
+  updates, exercise exact standalone reproductions for all three blockers,
+  inspect the scoped diff, run `scripts/validate.py`, privacy and diff checks,
+  then append final evidence and create one scoped local commit.
+
+## 2026-09-08 — alpha.13 task independent-review blockers repaired
+
+- Completed the bounded follow-up repair without changing Fact/source schemas,
+  the existing parent-claim and missing-comment recovery design, private data,
+  any provider, delivery, schedule, release, or remote branch. The permanent
+  regression matrix now covers relation-only correction/completion, omission of
+  historical Facts, late older lifecycle evidence, accepted-parent/source
+  divergence before projection, durable create-intent journaling, one invisible
+  snapshot after a lost accepted create, exact-match adoption, conflicting and
+  multiple matches, missing intent, and explicit negative-evidence retry.
+- `PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate.py` passed the complete
+  repository gate with 190 tests plus JSON schema, template-manifest, and
+  release-smoke checks. The direct privacy scan and `git diff --check` passed.
+  The connected synthetic run persists and reads back provider create state
+  before its create call; fresh-process recovery starts from a durable unknown
+  create intent and adopts exactly one verified provider row.
+- Changed scope is limited to `school_os/tasks.py`, provider-state schema,
+  task/Sheets contracts and alpha.13 specification, connected/recovery/task/
+  provider/Sheets tests and one synthetic expected-hash fixture, plus this
+  append-only log. The coordinated brief decision remains untouched.
+- Next: create one scoped local commit in this isolated worktree and return its
+  exact SHA to the coordinator. The coordinator should integrate it with the
+  separate source-chronology work, rerun the complete combined gate and an
+  independent diff review, then handle any authorized publication.
+
+## 2026-09-08 — alpha.13 abrupt-stop task-effect recovery repair
+
+- Follow-up process-death reproduction rejected `f696443`: although ordinary
+  create exceptions returned an unknown intent, `SystemExit` after an accepted
+  create could leave only the older durable `pending` state, and the same gap
+  existed between an accepted missing-comment reminder and returned state.
+- Added one bounded `checkpoint_effect_intent` callback used by both effects.
+  Immediately before every initial or evidence-authorized retry dispatch, core
+  changes the exact intent to `unknown`, increments `dispatch_attempt`, adds
+  effect-specific identity/hash evidence, and requires the callback's exact
+  durable readback. A stop before dispatch is therefore conservative; a stop
+  after provider acceptance cannot restore retryable `pending` state.
+- Unknown create recovery still adopts exactly one exact canonical-ID/projection
+  match and blocks zero, multiple, or conflicting matches. Unknown reminder
+  recovery now adopts one exact occurrence-ID/text match and blocks a zero-match
+  lookup. Either zero may retry only after the adapter supplies explicit
+  `definitely_not_applied` evidence, followed by another durable pre-dispatch
+  checkpoint. Existing parent-claim, occurrence IDs, reopen/readback, binding,
+  and Sheet guard behavior was retained.
+- Permanent Python 3.12 regressions write provider state to a durable temporary
+  file, raise `SystemExit` after provider acceptance, restore the pre-dispatch
+  `unknown` intent, expose one temporarily empty complete lookup, verify no
+  duplicate create/comment, and then adopt the original exact effect. The
+  focused task/provider/Sheets/connected/fresh-process matrix passed 53 tests.
+- On bundled CPython 3.12.14, the complete validation with
+  `PYTHONDONTWRITEBYTECODE=1` passed 192 tests plus schemas, template manifests,
+  and release smoke checks. The unsuppressed reference-runtime run passed all
+  task/effect tests but retained the separately owned three packaging failures
+  caused by generated `__pycache__` entries making the release inventory
+  incomplete; no installer/release CLI files were changed or workaround added.
+- Next: run the privacy and diff gates, inspect the superseding scoped diff,
+  commit the abrupt-stop repair locally, and return the new exact SHA. The
+  coordinator should integrate it with source chronology and the separate
+  packaging fix before the final unsuppressed combined release gate.
+
+## 2026-09-08 — alpha.13 task capability alignment and final isolated validation
+
+- Reconciled the daily task capability list with the implemented complete-
+  snapshot core and selected Sheets adapter. The unconditional baseline is now
+  identity/configuration read, complete current snapshot, complete comments,
+  create, guarded update, comment write, and exact verification. Current status
+  and parent fields come from that snapshot; comparison with the durable prior
+  snapshot records only the observed current transition and does not claim
+  unavailable intermediate activity.
+- Guarded `tasks.update` explicitly covers Action/Group and core-authorized
+  status/reopen changes for Sheets. Distinct completed-list, activity, move,
+  complete, and reopen capabilities remain catalogued as adapter-specific
+  requirements for providers such as Todoist rather than fictitious Sheets or
+  unconditional daily-run endpoints. A focused contract regression enforces
+  this boundary.
+- Bundled CPython 3.12.14 validation with
+  `PYTHONDONTWRITEBYTECODE=1` passed the complete 193-test repository gate plus
+  schemas, template manifests, and release-smoke checks. The earlier unsuppressed
+  reference-runtime run passed every then-present task and effect test; its three
+  failures remain the separately owned generated-`__pycache__`
+  release-inventory issue, for which candidate `7165056` is under coordinator
+  review. This work did not change installer/release code or suppress that known
+  integration dependency in source.
+- Next: run direct privacy and diff checks, inspect all changes since `f696443`,
+  create the superseding local commit, and return its exact SHA and the bounded
+  runtime callback/capability interface to the coordinator.
+
+## 2026-09-08 — alpha.13 task correction independently accepted
+
+- Integrated task candidate `c2e94ea7a3bbfc4bba0d0f7404c29014f8fd7384`,
+  preserving main's current source/semantic contract and both progress
+  histories. Root passed 48 focused task/Sheets tests and independent hard-exit
+  recovery: four fresh processes per task create/reminder, exit immediately
+  after provider acceptance, one transient empty lookup that blocks, then one
+  exact adoption. Each case issued its effect exactly once and cleared its
+  reconciled intent. These are synthetic process-reset checks, not private
+  provider acceptance.
+- The combined tree passed 212 tests on ordinary CPython 3.12.14. Separately
+  executing the measurement command exposed its stale immediate-create
+  assumption. Adapted it to persist/read back canonical and provider intent
+  state, invoke the new pre-dispatch checkpoint, and measure the real second
+  reconciliation call. The regenerated scenario creates one task, creates no
+  task on the unchanged run, and resumes without repeated completed phases.
+  Its regression now executes the command instead of trusting a saved fixture.
+- GitHub CI for the preceding release-preparation commit
+  `22ae5f1cf920f65b3f36ec76e2cc50a56fe9c9bb` completed successfully, confirming
+  the package-bytecode correction on the actual CI surface.
+- Plan revision 35 records accepted repository task correction while keeping
+  chained package, concrete runtime workers, pending brief policy, and private
+  source/Sheet/manual/scheduled acceptance open. Next: publish this validated
+  task integration, review the isolated runtime primitives, then implement the
+  concrete connected workers. No provider effect, test send, or schedule was
+  performed by this repository work.

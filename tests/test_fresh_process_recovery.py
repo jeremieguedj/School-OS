@@ -65,6 +65,7 @@ class FreshProcessRecoveryTests(unittest.TestCase):
 
     def test_catalog_task_comment_and_delivery_recover_in_new_processes(self) -> None:
         from school_os.catalog import serialize_v2_record, stable_record_id
+        from school_os.contracts import canonical_json_bytes, sha256_bytes
 
         conversation = {
             "schema_version": 1, "adapter_id": "synthetic-mail", "conversation_id": "restart-001", "scope": {},
@@ -73,8 +74,9 @@ class FreshProcessRecoveryTests(unittest.TestCase):
         schema = json.loads((ROOT / "schemas" / "source-conversation.schema.json").read_text(encoding="utf-8"))
         record = serialize_v2_record(conversation, schema)
         task = {"task_id": "task-1", "origin": "source", "action": "Return form", "task_context": "school", "entity_scope": "household", "workflow_state": "needs_action", "owner": None, "source_opened_date": "2026-09-07", "last_supporting_source_date": "2026-09-07", "source_due": None, "parent_planned_due": None, "source_link": "record-1#fact-1", "source_facts": ["fact-1"], "latest_progress": None, "provider_bindings": [], "lifecycle_history": [], "projection_state": {}, "revision": 1, "last_modified_evidence": {}}
-        projection = {"canonical_task_id": "task-1", "title": "Return form", "description": "school", "group": "household", "workflow_state": "needs_action", "source_link": "record-1#fact-1"}
-        state = {"provider_id": "synthetic", "adapter_id": "synthetic-tasks", "provider_revision": None, "bindings": [], "cursor": None, "cursor_evidence": {}, "verified_readback": {}}
+        projection = {"canonical_task_id": "task-1", "origin": "source", "title": "Return form", "description": "school", "group": "household", "workflow_state": "needs_action", "source_link": "record-1#fact-1", "source_due": ""}
+        projection_hash = sha256_bytes(canonical_json_bytes(projection))
+        state = {"provider_id": "synthetic", "adapter_id": "synthetic-tasks", "provider_revision": None, "bindings": [], "effect_intents": [{"effect_id": "effect-task-create-restart", "kind": "task_create", "task_id": "task-1", "projection_sha256": projection_hash, "projection": projection, "outcome": "unknown", "dispatch_attempt": 1, "verification": {"prior_attempt": "lost_response"}}], "cursor": None, "cursor_evidence": {}, "verified_readback": {}}
         content = b"synthetic durable delivery"
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

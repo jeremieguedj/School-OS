@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation and observed validation in progress; M1–M3 are reopened for chained revalidation, M4-001/M4-007 implementations are complete pending observed binding, M4-002 remains complete for its declared synthetic input, and M4-004 is implemented pending a final post-task-repair refresh
-- Approved plan: [PLAN.md](PLAN.md), revision 34
+- Status: implementation and observed validation in progress; M1–M3 require chained revalidation, M4-001/M4-007 implementations await observed binding, the task repair is integrated, M4-002 is complete for its declared synthetic input, and M4-004 is refreshed for the task repair pending final runtime/brief integration
+- Approved plan: [PLAN.md](PLAN.md), revision 35
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
@@ -60,6 +60,15 @@ ordinary-CPython package-cache defect reproduced from CI, pending the new CI
 run. Actual remote release readback, visual brief evidence, optional audio
 degradation, and M4-003/M4-009 observed execution remain outstanding. Adapter
 ports and bootstrap readback do not substitute for concrete daily phase workers.
+
+The task-core correction is now integrated and independently checked, including
+four fresh processes per create/reminder effect with a hard exit after provider
+acceptance. Pending outcomes are durably marked before dispatch and a transient
+empty read cannot authorize another write. The measurement command now persists
+and reads back canonical/provider intent state before its continuation, and its
+regression executes the command instead of only inspecting saved metrics.
+M1–M3 chained exact-package and M4-008/M4-009 observed acceptance remain open;
+final runtime/brief integration still requires refreshed measurements.
 
 ## Existing implementation inventory
 
@@ -573,6 +582,27 @@ repair is reviewed, integrated, and revalidated. The repair must preserve the
 accepted task/register/provider-state shapes and use optional source chronology
 from Facts; it does not authorize title matching or a new task engine.
 
+**Task-core independent-review repair (2026-09-08):** Canonical source tasks
+retain compact ordered relation evidence and merge relation-only incremental
+calls without dropping prior Fact IDs, lifecycle events, resolution, or the
+monotonic support date. The stored `source_projection` is the common base for
+source-vs-accepted-parent Action/Group changes; divergent values block before
+mutation/projection. Provider task creation is now a two-checkpoint operation:
+the first reconciliation persists an exact canonical-ID/projection-hash intent,
+and only a continuation may create from it. Before every provider-effect
+dispatch, the bounded checkpoint callback persists and exactly reads back the
+intent as `unknown` with an incremented attempt, closing the abrupt-process-stop
+window. Unknown create outcomes adopt exactly one verified canonical-ID match;
+unknown reminder outcomes adopt exactly one occurrence-stable comment. Both
+block ambiguity or an inconclusive zero match and retry only after explicit
+adapter `definitely_not_applied` evidence.
+The daily task capability baseline now matches this complete-snapshot path:
+current completion and parent fields come from the scoped snapshot, parent
+changes are comparisons with the durable prior snapshot rather than claimed
+activity history, and guarded updates cover Group/status/reopen. Providers that
+need distinct completed/activity/move/complete/reopen operations declare them
+as adapter-specific additions rather than imposing them on Google Sheets.
+
 **M4-001/M4-007 custody correction (2026-09-08):** Source admission requires an
 explicit complete MIME-tree assertion, exact raw-part hash/length/locator,
 strict transfer/charset decode equal to provider Unicode, and rejects high-bit
@@ -771,10 +801,11 @@ repeated units, and explicitly unavailable model-token/host-deadline values.
 between complete phases using measured nonnegative estimates plus a reserve. It
 returns `NEEDS_CONTINUATION` only with a concrete durable checkpoint and retains
 predecessor phase history without replay. The regenerated baseline exercises the
-corrected source boundary. Because the task-core repair is still open, regenerate
-the same command after that integration before treating its task-sync timing as
-final release evidence. This baseline is synthetic and establishes no provider
-or runtime conformance.
+corrected source boundary and accepted two-stage task create with durable
+pre-dispatch readback. Its executable regression also checks exactly one create
+and no new create on unchanged input. Regenerate after final runtime/brief
+integration before treating timings as final release evidence. This baseline
+is synthetic and establishes no provider or runtime conformance.
 
 **M4-007 implementation (2026-09-08):** `school_os.semantic` provides the
 narrow live-interpreter boundary. It supplies bounded source/body/attachment/

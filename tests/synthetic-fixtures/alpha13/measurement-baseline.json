@@ -1,16 +1,16 @@
 {
   "budget_rule_evidence": {
     "clock": "injected monotonic replay of measured component durations",
-    "max_elapsed_ms": 5,
-    "observed_admission_and_checkpoint_overhead_ns": 287123,
+    "max_elapsed_ms": 3,
+    "observed_admission_and_checkpoint_overhead_ns": 158792,
     "phase_estimates_ms": {
       "brief_delivery": 1,
       "catalog": 1,
       "commit": 1,
       "discover": 1,
-      "preflight": 3,
+      "preflight": 1,
       "reconcile": 1,
-      "task_sync": 1
+      "task_sync": 2
     },
     "practical_limit": "the boundary check runs only between complete phases and cannot preempt an in-progress phase or provider call",
     "reserve_ms": 0,
@@ -20,7 +20,7 @@
   "environment": {
     "platform": "macOS-26.6.2-arm64-arm-64bit",
     "python_implementation": "CPython",
-    "python_version": "3.9.6"
+    "python_version": "3.12.14"
   },
   "evidence_scope": "Synthetic helper and provider-fake behavior only; this does not establish observed runtime or provider conformance.",
   "method": "perf_counter_ns around each named existing synthetic operation; canonical JSON lengths of serialized operation inputs and raw outputs; top-level helper and provider-fake calls counted at invocation; package build/extraction excluded from operation timings",
@@ -35,7 +35,7 @@
         "state/file-map.yaml",
         "state/operation-state.json"
       ],
-      "elapsed_ns": 25909250,
+      "elapsed_ns": 25739167,
       "helper_calls": {
         "install.scaffold_instance": 1,
         "install.validate_candidate": 1
@@ -64,7 +64,7 @@
         "conversation-001",
         "conversation-002"
       ],
-      "elapsed_ns": 101708,
+      "elapsed_ns": 77417,
       "helper_calls": {
         "importer.enumerate_conversations": 1,
         "importer.next_import_batch": 2
@@ -110,7 +110,7 @@
     },
     {
       "checkpoint_count": 7,
-      "checkpoint_elapsed_ns": 949417,
+      "checkpoint_elapsed_ns": 998457,
       "completed_units": [
         "preflight",
         "discover",
@@ -120,7 +120,7 @@
         "brief_delivery",
         "commit"
       ],
-      "elapsed_ns": 5398917,
+      "elapsed_ns": 4709000,
       "helper_calls": {
         "brief.confirm_delivery": 1,
         "brief.render_brief": 1,
@@ -133,28 +133,28 @@
         "provider_fake.delivery.send": 1,
         "provider_fake.mail.search": 1,
         "provider_fake.tasks.create": 1,
-        "provider_fake.tasks.list": 1,
+        "provider_fake.tasks.list": 2,
         "provider_fake.tasks.read": 1,
         "storage.checkpoint_write_readback": 7,
-        "storage.write_readback": 9,
+        "storage.write_readback": 12,
         "tasks.build_derived_knowledge": 1,
         "tasks.reconcile_canonical_tasks": 1,
-        "tasks.reconcile_provider_tasks": 1,
-        "tasks.serialize_canonical_tasks": 2
+        "tasks.reconcile_provider_tasks": 2,
+        "tasks.serialize_canonical_tasks": 3
       },
       "input_bytes": 2211,
       "name": "daily_update",
       "output_bytes": 6283,
       "phase_elapsed_ns": {
-        "brief_delivery": 371375,
-        "catalog": 384584,
-        "commit": 112667,
-        "discover": 208875,
-        "preflight": 2064459,
-        "reconcile": 482834,
-        "task_sync": 537583
+        "brief_delivery": 343250,
+        "catalog": 380667,
+        "commit": 114125,
+        "discover": 198083,
+        "preflight": 946209,
+        "reconcile": 510917,
+        "task_sync": 1058500
       },
-      "provider_fake_calls": 5,
+      "provider_fake_calls": 6,
       "repeated_units": [],
       "result": {
         "artifact_count": 8,
@@ -197,7 +197,7 @@
     },
     {
       "checkpoint_count": 7,
-      "checkpoint_elapsed_ns": 791459,
+      "checkpoint_elapsed_ns": 1051207,
       "completed_units": [
         "preflight",
         "discover",
@@ -207,7 +207,7 @@
         "brief_delivery",
         "commit"
       ],
-      "elapsed_ns": 3589541,
+      "elapsed_ns": 4067000,
       "helper_calls": {
         "brief.confirm_delivery": 1,
         "brief.render_brief": 1,
@@ -229,13 +229,13 @@
       "name": "no_new_message",
       "output_bytes": 12279,
       "phase_elapsed_ns": {
-        "brief_delivery": 301958,
-        "catalog": 76958,
-        "commit": 105500,
-        "discover": 1541,
-        "preflight": 1253375,
-        "reconcile": 537250,
-        "task_sync": 371125
+        "brief_delivery": 379042,
+        "catalog": 90417,
+        "commit": 97666,
+        "discover": 2042,
+        "preflight": 1284625,
+        "reconcile": 561708,
+        "task_sync": 448166
       },
       "provider_fake_calls": 4,
       "repeated_units": [],
@@ -279,95 +279,81 @@
       }
     },
     {
-      "checkpoint_count": 5,
-      "checkpoint_elapsed_ns": 646917,
+      "checkpoint_count": 2,
+      "checkpoint_elapsed_ns": 335791,
       "completed_units": [
-        "preflight",
+        "preflight"
+      ],
+      "continuation_checkpoint_reference": "synthetic-recovery-attempt-1-2.json",
+      "elapsed_ns": 1416209,
+      "helper_calls": {
+        "install.validate_candidate": 1,
+        "storage.checkpoint_write_readback": 2
+      },
+      "input_bytes": 516,
+      "name": "interrupted",
+      "output_bytes": 470,
+      "phase_elapsed_ns": {
+        "preflight": 942583
+      },
+      "provider_fake_calls": 0,
+      "repeated_units": [],
+      "result": {
+        "artifact_count": 0,
+        "attempt_id": "attempt-1",
+        "completed_phases": [
+          "preflight"
+        ],
+        "current_phase": "preflight",
+        "outcome": "NEEDS_CONTINUATION",
+        "phase_evidence": {}
+      }
+    },
+    {
+      "checkpoint_count": 6,
+      "checkpoint_elapsed_ns": 613708,
+      "completed_units": [
         "discover",
         "catalog",
-        "reconcile"
+        "reconcile",
+        "task_sync",
+        "brief_delivery",
+        "commit"
       ],
-      "continuation_checkpoint_reference": "synthetic-recovery-attempt-1-5.json",
-      "elapsed_ns": 3360875,
+      "elapsed_ns": 2910042,
+      "evidence_scope": "same-process continuation under a new attempt ID; fresh-process and environment-reset recovery remain separate M3/M4-009 evidence",
       "helper_calls": {
+        "brief.confirm_delivery": 1,
+        "brief.render_brief": 1,
         "catalog.build_catalog_message": 1,
         "catalog.parse_v2_record": 1,
         "catalog.serialize_v2_record": 1,
         "catalog.verify_persisted_record": 1,
         "importer.admit_exact_plaintext_representation": 1,
-        "install.validate_candidate": 1,
+        "provider_fake.delivery.send": 1,
         "provider_fake.mail.search": 1,
-        "storage.checkpoint_write_readback": 5,
-        "storage.write_readback": 4,
+        "provider_fake.tasks.create": 1,
+        "provider_fake.tasks.list": 2,
+        "provider_fake.tasks.read": 1,
+        "storage.checkpoint_write_readback": 6,
+        "storage.write_readback": 12,
         "tasks.build_derived_knowledge": 1,
         "tasks.reconcile_canonical_tasks": 1,
-        "tasks.serialize_canonical_tasks": 1
+        "tasks.reconcile_provider_tasks": 2,
+        "tasks.serialize_canonical_tasks": 3
       },
-      "input_bytes": 516,
-      "name": "interrupted",
-      "output_bytes": 2110,
-      "phase_elapsed_ns": {
-        "catalog": 376208,
-        "discover": 174875,
-        "preflight": 1108625,
-        "reconcile": 896334
-      },
-      "provider_fake_calls": 1,
-      "repeated_units": [],
-      "result": {
-        "artifact_count": 4,
-        "attempt_id": "attempt-1",
-        "completed_phases": [
-          "preflight",
-          "discover",
-          "catalog",
-          "reconcile"
-        ],
-        "current_phase": "reconcile",
-        "outcome": "NEEDS_CONTINUATION",
-        "phase_evidence": {
-          "catalog": {
-            "new_records": 1,
-            "verified": true
-          },
-          "discover": {
-            "new_conversations": 1,
-            "verified": true
-          }
-        }
-      }
-    },
-    {
-      "checkpoint_count": 3,
-      "checkpoint_elapsed_ns": 330542,
-      "completed_units": [
-        "task_sync",
-        "brief_delivery",
-        "commit"
-      ],
-      "elapsed_ns": 1283250,
-      "evidence_scope": "same-process continuation under a new attempt ID; fresh-process and environment-reset recovery remain separate M3/M4-009 evidence",
-      "helper_calls": {
-        "brief.confirm_delivery": 1,
-        "brief.render_brief": 1,
-        "provider_fake.delivery.send": 1,
-        "provider_fake.tasks.create": 1,
-        "provider_fake.tasks.list": 1,
-        "provider_fake.tasks.read": 1,
-        "storage.checkpoint_write_readback": 3,
-        "storage.write_readback": 5,
-        "tasks.reconcile_provider_tasks": 1,
-        "tasks.serialize_canonical_tasks": 1
-      },
-      "input_bytes": 971,
+      "input_bytes": 165,
       "name": "fresh_attempt_resume",
-      "output_bytes": 4690,
+      "output_bytes": 6297,
       "phase_elapsed_ns": {
-        "brief_delivery": 305709,
-        "commit": 98333,
-        "task_sync": 415334
+        "brief_delivery": 255958,
+        "catalog": 259000,
+        "commit": 95209,
+        "discover": 189750,
+        "reconcile": 460166,
+        "task_sync": 911917
       },
-      "provider_fake_calls": 4,
+      "provider_fake_calls": 6,
       "repeated_units": [],
       "result": {
         "artifact_count": 8,
@@ -388,8 +374,16 @@
             "delivery_count": 1,
             "verified": true
           },
+          "catalog": {
+            "new_records": 1,
+            "verified": true
+          },
           "commit": {
             "committed": true,
+            "verified": true
+          },
+          "discover": {
+            "new_conversations": 1,
             "verified": true
           },
           "task_sync": {
