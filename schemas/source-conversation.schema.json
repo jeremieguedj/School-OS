@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/source-conversation.schema.json",
+  "title": "School-OS complete source conversation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "adapter_id", "conversation_id", "scope", "pagination", "messages"],
+  "properties": {
+    "schema_version": {"type": "integer", "minimum": 1},
+    "adapter_id": {"type": "string", "minLength": 1},
+    "conversation_id": {"type": "string", "minLength": 1},
+    "scope": {"type": "object"},
+    "pagination": {"type": "object"},
+    "messages": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["message_id", "received_at", "body", "attachments"],
+        "properties": {
+          "message_id": {"type": "string", "minLength": 1},
+          "received_at": {"type": "string", "minLength": 1},
+          "body": {"type": "string"},
+          "attachments": {"type": "array", "items": {"type": "object"}}
+        }
+      }
+    }
+  }
+}

@@ -553,3 +553,17 @@ requirements, then read this log from top to bottom.
   resolved to the same SHA and the worktree was clean.
 - Next: continue M2-002 immediately with v2 lossless source/extraction
   contracts and the catalog codec.
+
+## 2026-09-07 — alpha.13 M2-002 lossless v2 catalog codec
+
+- Completed M2-002. Added source-conversation and extraction-result schemas,
+  plus `school_os.catalog` with stable record IDs, exact UTF-8 byte-counted
+  Markdown frames, strict v2 parsing, source-to-record comparison, and the
+  independent intended-to-persisted readback gate. Updated the legacy validator
+  to select the v2 codec for new records while retaining its legacy reader.
+- Added delimiter-like-heading, Unicode, no-final-newline, truncation,
+  reordering, source mismatch, and persisted-byte mismatch tests. Updated the
+  source contract and daily recipe to make v2 framing authoritative for new
+  records. No private source or provider effect was used.
+- Validation/publication pending. Exact next action: run complete validation and
+  privacy scan, commit/push/verify M2-002, then continue M2-003.

@@ -1,6 +1,6 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation in progress; M1 and M2-001 complete, M2-002 next
+- Status: implementation in progress; M1 and M2-001–M2-002 complete, M2-003 next
 - Approved plan: [PLAN.md](PLAN.md), revision 9
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
@@ -434,7 +434,7 @@ or any real provider is conformant.
 
 ## Milestone 2 — Connect a complete normal operation
 
-**Status:** in progress (M2-001 complete; M2-002 next).
+**Status:** in progress (M2-001–M2-002 complete; M2-003 next).
 
 ### Deliverable
 
@@ -464,6 +464,11 @@ validates the approved transition table, recipe-supplied completion phases, and
 pending/unknown-effect gates without duplicating daily-operation policy. This
 does not advance `data_schema_version` or claim alpha.12 upgrade compatibility:
 Migration 0002 remains M4 work.
+
+**M2-002 implementation note (2026-09-07):** `school_os.catalog` uses a
+byte-counted v2 Markdown frame for each adapter-returned UTF-8 body. It proves
+source-to-record equality separately from intended-to-persisted byte equality;
+legacy heading framing remains readable only for migration input.
 
 ### Milestone check
 

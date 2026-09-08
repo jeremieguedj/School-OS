@@ -5,6 +5,12 @@ from __future__ import annotations
 
 import re
 from collections.abc import Mapping
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from school_os.catalog import RECORD_PREFIX, validate_source_to_record
 
 
 RAW_SECTION = "## Raw message text (verbatim)"
@@ -36,6 +42,9 @@ def extract_raw_message_bodies(record: str) -> dict[str, str]:
 
 def validate_lossless_bodies(record: str, source_bodies: Mapping[str, str]) -> list[str]:
     """Compare catalogued bodies directly with complete adapter-returned bodies."""
+    encoded = record.encode("utf-8")
+    if encoded.startswith(RECORD_PREFIX):
+        return validate_source_to_record(encoded, source_bodies)
     catalogued = extract_raw_message_bodies(record)
     errors: list[str] = []
     if list(catalogued) != list(source_bodies):

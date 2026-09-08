@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/extraction-result.schema.json",
+  "title": "School-OS bounded extraction result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "conversation_id", "candidates", "coverage", "attachment_outcomes", "review_cases"],
+  "properties": {
+    "schema_version": {"type": "integer", "minimum": 1},
+    "conversation_id": {"type": "string", "minLength": 1},
+    "candidates": {"type": "array", "items": {"type": "object"}},
+    "coverage": {"type": "array", "items": {"type": "object"}},
+    "attachment_outcomes": {"type": "array", "items": {"type": "object"}},
+    "review_cases": {"type": "array", "items": {"type": "object"}}
+  }
+}

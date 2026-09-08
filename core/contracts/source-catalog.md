@@ -39,6 +39,14 @@ Every substantive sentence or clause in source text maps to one or more facts or
 
 ## Lossless acceptance gate
 
+New records use the v2 raw-UTF-8 Markdown codec in `school_os.catalog`. Its
+header records stable record/conversation identity, ordered message metadata,
+scope, and pagination evidence. Each body is preceded by a compact JSON frame
+with its immutable message ID and exact UTF-8 byte length. The parser reads that
+many bytes before looking for another frame, so headings, HTML comments, and
+delimiter-like text inside a source body are data, not structure. V1 heading
+framing remains a fail-closed migration input and is not used for new records.
+
 For each ordered source message, the catalog record identifies the immutable message ID and contains a distinct raw-message section. Before accepting a new or changed record, compare that section directly with the complete plaintext body returned for the same message ID by the selected mail adapter. The strings must be equal without deletion, substitution, summarization, reordering, ellipsis, or whitespace normalization. Headers and metadata exposed separately by the adapter remain required provenance fields but are not invented when the adapter does not expose them.
 
 The complete raw Markdown file must then be read back byte-for-byte. A record is verified only when both comparisons pass: source body to raw-message section, and intended Markdown bytes to persisted Markdown bytes. Comparing persisted content only with an agent-authored draft is circular and does not prove losslessness. An unverified record must not enter the catalog index or drive any Fact, derived record, task, brief, delivery, or cursor change.
