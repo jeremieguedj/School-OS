@@ -463,3 +463,16 @@ requirements, then read this log from top to bottom.
   touched.
 - Next: M2-001, versioned operation state/checkpoint contracts and legal
   transition validation.
+
+## 2026-09-07 — alpha.13 M1 completion verification and handoff
+
+- M1 implementation was pushed as
+  `22fac8ad116849629189fe5245b46527ebd6f313`
+  (`Add alpha.13 synthetic installation fixture`). Its exact archive passed the
+  94-test repository gate and offline installed validation in candidate mode;
+  `origin/main` was verified at that commit.
+- Corrected the release-plan/specification milestone wording in follow-up commit
+  `c3590efc25fb29c32a6f3a08a531bf1621491e77`: M1 is complete and M2 remains
+  pending until M2-001 begins. No implementation scope changed.
+- Working tree is clean. Next: begin M2-001 with the operation-state and
+  operation-checkpoint schemas/templates plus legal transition validation.
