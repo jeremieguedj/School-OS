@@ -71,6 +71,12 @@ Interactive evidence does not prove scheduled-surface conformance. If authentica
 3. Validate the approved runtime-profile revision/fingerprint and resolve the selected adapter only when entering its phase. A mismatch requires setup/health validation before side effects.
 4. Require operation admission and serialization evidence. A manual run uses its attended-single-writer evidence; a scheduled run uses verified scheduler/runtime serialization. Both invoke the same daily sequence. The scheduled runtime relies on its conformance record and need not require fresh run-now provenance. Do not create or wait for a separate Drive lease.
 5. Require operation state and private policy to permit the intended reads, writes, provider actions, delivery, and cursor advancement. A cutover must use one supervised first-production run before ordinary recurring delivery is considered verified. When a scheduler exposes its authenticated **Run now** control only while the task is enabled, that single owner-approved supervised invocation may run with the one production schedule enabled; the schedule remains subject to full post-run verification before it is treated as normally active.
+6. At a planned boundary, checkpoint the verified predecessor output and return
+   `NEEDS_CONTINUATION`; do not describe later phases as complete. A resumed
+   invocation uses the same operation ID with a new attempt ID, verifies the
+   exact predecessor and matching release/configuration evidence, then begins
+   at the next phase. Reconcile every pending or unknown effect before any
+   repeated provider action.
 
 ### 2. Discover
 
@@ -109,6 +115,12 @@ Execute `brief-rendering.md` from declared derived inputs; do not repeat source 
 1. Advance discovery/provider cursors only after every required canonical write and external effect has verified.
 2. Write one concise final run checkpoint containing the bounded window, counts, attachment outcomes, Fact/derived/task changes, provider actions, optional degradation, every verified write, and delivery result.
 3. If any required phase fails, preserve the last verified checkpoint, record the blocking phase without overstating progress, and leave later cursors/effects untouched.
+
+An execution limit, environment loss, or handoff is not permission to skip
+required work. Persist the next safe unit and recover from durable state in a
+new invocation. Local extraction and working files are discardable and cannot
+substitute for installed instructions, checkpoint evidence, or provider
+readback.
 
 A scheduled invocation must not return after a successful intermediate phase. It has only two valid terminal outcomes: `COMPLETE`, after all seven required phases and their readbacks succeed, or `BLOCKED`, after an observed tool, provider, authorization, or source-integrity failure is recorded with concrete evidence. Finishing because the agent has completed a working pass, consumed substantial effort, or chosen to defer later phases is invalid. After a phase passes, continue immediately to the next phase.
 

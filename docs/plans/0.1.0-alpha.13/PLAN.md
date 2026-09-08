@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
-- Status: approved plan with linked implementation specification; M1–M2 complete, M3 in progress
-- Revision: 17, updated 2026-09-07
+- Status: approved plan with linked implementation specification; M1–M3 complete, M4 in progress
+- Revision: 18, updated 2026-09-07
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -21,8 +21,8 @@ verify its recovery behavior, then expand coverage. This revision records that
 approach as implementation milestones with deliverables and completion checks.
 The linked [implementation specification](SPEC.md) grounds those milestones in
 the alpha.12 codebase and defines the implementation tasks, interfaces, state
-transitions, migrations, and behavioral checks. Implementation is in progress
-at M3-006 after completing M3-005.
+transitions, migrations, and behavioral checks. M3 is complete; implementation
+continues at M4-001.
 Implementation is limited to this reusable repository. It does not activate a
 private instance or authorize private onboarding, import, delivery, release
 publication, or real runtime/provider effects.
@@ -587,7 +587,7 @@ check but do not replace it.
 
 ### Milestone 3 — Prove recovery and safe repeated execution
 
-**Status:** in progress (M3-001–M3-005 complete; M3-006 next).
+**Status:** complete (M3-001–M3-006).
 
 **Work and deliverables:** Extend the same scenario with focused failure cases.
 Restart in a fresh process and discard the simulated agent's local files while
@@ -714,3 +714,13 @@ evidence that does not need to be repeatedly printed into model context.
   new-attempt recovery, and fresh-process local-work-loss proof.
 - Revision 14: completed M3-002 catalog/index write-fault recovery with
   lossless re-verification, one-row adoption, Fact-ID preservation, and replay.
+- Revision 15: completed M3-003 task/comment effect recovery and parent-edit
+  preservation through canonical IDs, complete lookup, and review cases.
+- Revision 16: completed M3-004 durable delivery intent and lost-send recovery;
+  duplicate keys, ambiguous lookup, and correction variants remain guarded.
+- Revision 17: completed M3-005 lifecycle safeguards for release/configuration
+  drift, stale authentication, constrained capacity, non-progress, and
+  terminal unknown effects.
+- Revision 18: completed M3-006 with compact synthetic recovery evidence,
+  recovery-contract/recipe documentation, and fresh child-process checks for
+  catalog, task/comment, and delivery durable-state adoption. M4-001 is next.

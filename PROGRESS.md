@@ -821,3 +821,36 @@ requirements, then read this log from top to bottom.
   alpha.13 plan/spec. Validation/publication pending. Exact next action:
   privacy-scan, commit/push/verify M3-005, then finish M3-006 recovery docs and
   compact expected evidence.
+
+## 2026-09-07 — alpha.13 M3-005 verification
+
+- M3-005 was accepted as `9c333ee914e0e8c39d7c988e56af8f47f192a5ad`
+  (`Implement alpha.13 lifecycle safety`). The 126-test repository gate,
+  privacy scan, and diff checks passed; `origin/main` was read back at the same
+  SHA. Next: complete M3-006 documentation and fresh-process recovery evidence.
+
+## 2026-09-07 — alpha.13 M3-006 recovery evidence and documentation
+
+- Completed M3-006. Added the compact synthetic recovery-evidence manifest and
+  its assertion, then extended the fresh-process harness to delete local work
+  and recover catalog/index, provider task creation/update, immutable comments,
+  and a pending delivery ledger from durable JSON in child processes. Lost
+  update responses now adopt a matching provider projection instead of issuing
+  a second patch. The existing
+  fresh-process daily case continues to prove planned-boundary continuation
+  with one operation ID and a new attempt ID.
+- Updated the operation-state contract, daily-run recipe, state-template
+  guidance, test strategy, README, root summary, and release plan/specification
+  to state immutable longest-chain selection, fingerprint-gated resumption,
+  checkpoint boundaries, unknown-effect safety, and the synthetic-evidence
+  boundary. M3 is now complete; M4-001 is next.
+- Focused recovery tests passed 7 tests (including the lost update response),
+  and the complete `PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate.py` gate
+  passed 129 tests plus schema/template and release-smoke validation. Direct
+  privacy scanning of both new files and `git diff --check` passed.
+  Changed files: `tests/test_fresh_process_recovery.py`,
+  `tests/support/fresh_process_recovery.py`,
+  `tests/synthetic-fixtures/alpha13/recovery-evidence.json`, recovery docs,
+  `README.md`, `PLAN.md`, and alpha.13 plan/specification. Commit/push/remote
+  verification remain pending. Exact next action: publish and verify this
+  M3-006 checkpoint before starting M4-001.

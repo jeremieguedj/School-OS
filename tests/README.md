@@ -15,6 +15,16 @@ The five `legacy-rolling-*` fixtures exercise the deterministic provenance migra
 
 Every future behavior change should add a synthetic fixture or expected-output case before modifying a release contract.
 
+## Alpha.13 recovery evidence
+
+`synthetic-fixtures/alpha13/recovery-evidence.json` names the compact expected
+durable outcomes for planned-boundary, catalog, task/comment, and delivery
+recovery. `test_fresh_process_recovery.py` deletes local working files and
+starts child Python processes that read only durable synthetic JSON for each
+recovery class. The broader state, authentication, capacity, cancellation, and
+ambiguity tests remain required; all evidence is synthetic and does not claim
+real provider or private-instance conformance.
+
 ## Executable validation
 
 Run the complete dependency-free validation gate from the repository root:

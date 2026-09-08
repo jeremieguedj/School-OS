@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation in progress; M1–M2 and M3-001–M3-005 complete, M3-006 next
-- Approved plan: [PLAN.md](PLAN.md), revision 17
+- Status: implementation in progress; M1–M3 complete, M4-001 next
+- Approved plan: [PLAN.md](PLAN.md), revision 18
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
@@ -509,7 +509,7 @@ Gmail, Todoist, Drive, or a scheduled runtime conforms.
 
 ## Milestone 3 — Prove recovery and safe repeated execution
 
-**Status:** in progress (M3-001–M3-005 complete; M3-006 next).
+**Status:** complete (M3-001–M3-006).
 
 ### Deliverable
 
@@ -554,6 +554,14 @@ Correction variants derive distinct deterministic delivery keys.
 pinned release/configuration evidence; stale auth blocks qualification, limits
 remain conservative, resumed non-progress blocks, and cancellation cannot
 terminalize an unknown effect.
+
+**M3-006 implementation note (2026-09-07):** The operation-state contract,
+daily recipe, and private-state guidance now state the exact immutable-chain,
+new-attempt, fingerprint, checkpoint, and unknown-effect requirements. The
+compact synthetic evidence manifest is checked by the fresh-process suite;
+child processes discard local work and recover catalog, task create/update/
+comment, and delivery durable state without a duplicate effect. This remains synthetic
+repository evidence, not provider or private-instance conformance.
 
 ### Required behavioral matrix
 

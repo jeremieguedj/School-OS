@@ -12,4 +12,11 @@ admission checkpoint; the runner replaces its generic values and never mutates
 an accepted checkpoint. The legacy `operation-state.yaml` remains a migration
 input only until M4 verifies Migration 0002.
 
+On restart, use the active pointer only to scope immutable-chain discovery.
+Continue only from one valid longest chain, with a new attempt ID and matching
+release/configuration evidence; ambiguity, drift, or an unknown external effect
+blocks for reconciliation. Local run files are recoverable caches, not state.
+Persist only compact checkpoint references, hashes, and verification outcomes;
+keep raw sources and rendered bytes in their declared durable artifacts.
+
 State is not reusable source code and must never be copied into the GitHub repository.

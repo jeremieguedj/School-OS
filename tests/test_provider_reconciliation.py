@@ -35,6 +35,20 @@ class ProviderReconciliationTests(unittest.TestCase):
   provider.tasks[0].update({'title':'Parent title','group':'parent-group','parent_planned_due':'2026-09-10','progress':'done'})
   preserved=reconcile_provider_tasks(provider,register,recovered.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
   self.assertEqual('Parent title',provider.tasks[0]['title']);self.assertEqual('parent-group',provider.tasks[0]['group']);self.assertEqual(2,len(preserved.review_cases))
+ def test_lost_update_response_is_adopted_without_a_second_patch(self):
+  class LostPatchTasks(FixtureTasks):
+   def __init__(self): super().__init__();self.lose=True
+   def apply_patch(self,object_id,patch):
+    result=super().apply_patch(object_id,patch)
+    if self.lose: self.lose=False;raise ConnectionError('synthetic lost patch response')
+    return result
+  provider=LostPatchTasks();old=self.task();register={"schema_version":1,"tasks":[old]}
+  initial=reconcile_provider_tasks(provider,register,self.state(),task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+  updated=self.task();updated['action']='Return the revised form';register={"schema_version":1,"tasks":[updated]}
+  with self.assertRaises(ConnectionError):reconcile_provider_tasks(provider,register,initial.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+  self.assertEqual('Return the revised form',provider.tasks[0]['title']);self.assertEqual(1,provider.calls.count('patch'))
+  recovered=reconcile_provider_tasks(provider,register,initial.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+  self.assertEqual(1,provider.calls.count('patch'));self.assertEqual('adopt',recovered.effects[0]['kind']);self.assertEqual((),recovered.review_cases)
  def test_lost_comment_response_is_adopted_without_duplicate(self):
   class LostCommentTasks(FixtureTasks):
    def write_comment(self,object_id,effect_id,text):

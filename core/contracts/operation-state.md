@@ -10,6 +10,15 @@ one newline; a successor records the predecessor checkpoint ID and SHA-256 of
 those exact bytes. A pointer update is permitted only after the new checkpoint
 has been read back and its chain has validated.
 
+After a reset or uncertain pointer update, recovery searches the scoped durable
+checkpoints for the active operation and accepts only one valid longest
+predecessor chain. Equal longest chains, duplicate immutable pointers, a missing
+predecessor, or a hash mismatch are `BLOCKED`; it never chooses a branch by
+recency or filename. A planned stop is `needs_continuation`, not completion.
+Its next invocation keeps the operation ID, uses a new attempt ID, points to the
+exact recovered tip, and requires matching pinned-release and configuration
+fingerprint evidence (or explicit reconciliation before progress resumes).
+
 The legal transitions are enforced by `school_os.operations`:
 
 - no active operation, `complete`, or `cancelled` to `running` after admission;
@@ -23,3 +32,10 @@ Completion additionally requires every recipe-declared phase, no remaining
 work, no blocker, and no pending/unknown effect. A cancelled operation keeps a
 durable terminal checkpoint and never implies rollback. The legacy YAML state
 file is an alpha.12 migration input, not active new-install state.
+
+Checkpoint before and after every consequential provider effect, after every
+verified bounded unit, and before a known limit, handoff, or planned pause.
+Unknown effects must be reconciled from durable intent plus complete provider
+readback; they prevent completion and cancellation and are never blindly
+retried. The durable checkpoint stores compact identity, hash, outcome, and
+reference evidence rather than source or rendered-content bytes.

@@ -165,12 +165,24 @@ def reconcile_provider_tasks(
             object_id = current["provider_object_id"]
             previous = previous_bindings.get(task_id, {})
             previous_projection = previous.get("last_managed_projection", {})
-            for field in ("title", "group"):
-                if field in previous_projection and current.get(field) != previous_projection[field]:
-                    projection.pop(field)
-                    review_cases.append({"task_id": task_id, "field": field, "reason": "parent-owned provider edit preserved"})
-            created = dict(provider.apply_patch(object_id, projection))
-            effect_kind = "patch"
+            if all(current.get(field) == value for field, value in projection.items()):
+                created = current
+                effect_kind = "adopt"
+            else:
+                for field in ("title", "group"):
+                    if (
+                        field in previous_projection
+                        and current.get(field) != previous_projection[field]
+                        and current.get(field) != projection[field]
+                    ):
+                        projection.pop(field)
+                        review_cases.append({"task_id": task_id, "field": field, "reason": "parent-owned provider edit preserved"})
+                if all(current.get(field) == value for field, value in projection.items()):
+                    created = current
+                    effect_kind = "adopt"
+                else:
+                    created = dict(provider.apply_patch(object_id, projection))
+                    effect_kind = "patch"
         readback = provider.read_task(object_id)
         if readback is None:
             raise TaskError("provider task readback is unavailable")

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "scope": "synthetic alpha.13 recovery evidence",
+  "fresh_process_cases": [
+    "planned-boundary resume after deleted local output",
+    "catalog record before durable index",
+    "task create/update after provider persistence",
+    "system comment after provider persistence",
+    "delivery after provider acceptance before confirmation"
+  ],
+  "required_durable_outcomes": {
+    "catalog": "one verified index row with unchanged Fact IDs",
+    "task": "one canonical-ID binding with no duplicate task or repeated managed patch",
+    "comment": "one immutable effect comment",
+    "delivery": "one confirmed ledger entry and no resend"
+  },
+  "non_conformance_notice": "Synthetic fakes demonstrate repository behavior only; they do not establish private-instance or provider conformance."
+}

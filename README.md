@@ -37,3 +37,11 @@ GitHub is the reusable upstream. A user's Google Drive contains the active insta
 ## Current status
 
 This repository is being built from an existing private deployment. It intentionally contains no real names, domains, email messages, Drive IDs, provider IDs, recipients, or secrets. Alpha packages are prereleases; `release.yaml` is authoritative about whether the checked-out source is an installable released version.
+
+### Alpha.13 recovery evidence
+
+The alpha.13 synthetic suite exercises planned continuation, immutable
+checkpoint-chain recovery, lossless catalog adoption, canonical task/comment
+recovery, and delivery-ledger reconciliation after local work is discarded.
+These are repository-level behavioral checks; they do not establish production
+provider, scheduler, or private-instance conformance.
