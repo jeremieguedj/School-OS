@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
-- Status: approved plan with linked implementation specification; M1–M3 complete, M4 blocked at observed-surface evidence and a private alpha.11 predecessor audit
-- Revision: 22, updated 2026-09-08
+- Status: approved plan with linked implementation specification; M1–M3 complete, M4 blocked at observed-surface evidence and an alpha.11 private migration incompatibility
+- Revision: 23, updated 2026-09-08
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -26,8 +26,10 @@ complete. M4-003's repository safety work is complete, but its required
 observed-surface evidence remains incomplete. The user has authorized a
 read-only private-instance inventory and upgrade assessment, not activation or
 external sends. That inventory reports an alpha.11 predecessor, whereas M4-002
-supports only alpha.12 input; direct private writes remain paused pending the
-documented staged-path audit or a new approved migration scope.
+supports only alpha.12 input. Its alpha.12-compatibility audit found native
+document source-catalog storage alongside raw Markdown, so direct private
+writes remain paused pending an approved preservation mapping or new migration
+scope.
 
 The user has deferred discussion of the review's historical-retrieval acceptance
 case. That proposed addition is not part of the current work or release gates.
@@ -746,3 +748,9 @@ evidence that does not need to be repeatedly printed into model context.
   user approval. It also identified a missing source-version guard in the
   transformer; that in-scope fail-closed correction is covered by regression
   testing. No private file, provider, scheduler, or release was changed.
+- Revision 23: the authorized read-only alpha.12-compatibility audit found
+  native-document source-catalog storage in the alpha.11 instance. Alpha.12
+  requires raw UTF-8 Markdown and direct byte-level source comparison, so the
+  staged alpha.11-to-alpha.12 route fails closed. No content was converted,
+  copied, or activated; an approved preservation mapping or explicit new
+  alpha.11 migration scope is required before upgrade work can resume.

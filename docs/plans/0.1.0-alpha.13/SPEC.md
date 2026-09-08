@@ -644,6 +644,14 @@ also found a missing explicit source-version check in the transformer; that
 fail-closed defect is corrected and regression-tested without broadening the
 migration scope.
 
+**Alpha.12 compatibility-audit result (2026-09-08):** The authorized read-only
+private audit found native-document source-catalog storage alongside raw
+Markdown. Because alpha.12 requires raw UTF-8 Markdown storage and direct
+byte-level source-to-catalog comparison, the conditional staged route does not
+pass. No content was converted or written. A preservation mapping that proves
+lossless source equivalence, or a separately approved alpha.11 migration
+scope, is required before any private upgrade can resume.
+
 Optional adapters from work package 10 receive independent IDs only when the
 user selects a concrete deployment need. They do not become dependencies of
 M4-001 through M4-006 and do not block alpha.13 otherwise.

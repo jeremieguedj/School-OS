@@ -1011,3 +1011,20 @@ requirements, then read this log from top to bottom.
 - Next: run focused migration tests and the full repository/privacy gate; if
   accepted, publish this guard checkpoint, then perform only the authorized
   read-only alpha.12-compatibility audit of the existing instance.
+
+## 2026-09-08 — alpha.11-to-alpha.12 compatibility audit blocker
+
+- Per the accepted consultation path, performed the authorized read-only
+  alpha.12-compatibility audit after publishing the alpha.13 source-version
+  guard. The existing alpha.11 source-catalog area contains native-document
+  storage alongside raw Markdown. Alpha.12 requires raw UTF-8 Markdown and
+  direct byte-level source-to-catalog comparison, so the conditional staged
+  alpha.11-to-alpha.12 route fails closed.
+- No catalog content, metadata, source message, provider binding, credential,
+  scheduler, or file bytes were copied into the repository or changed in the
+  private instance. The root plan, alpha.13 plan, and specification record the
+  generic incompatibility without private identifiers.
+- Next: validate and publish this evidence checkpoint. Direct upgrade remains
+  blocked until the user either approves a new alpha.11 preservation/migration
+  scope or supplies a separately verified compatible intermediate release and
+  mapping; alpha.13 remains unreleased and cannot be activated in either case.

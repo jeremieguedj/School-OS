@@ -30,7 +30,9 @@ M4 is in progress with M4-001–M4-002 complete. M4-003 requires observed
 runtime/provider evidence; M4-004–M4-006 depend on it. The existing alpha.11
 private instance is not a direct alpha.13 migration source; its upgrade remains
 paused pending the separately documented compatible staged-path audit or new
-approved migration scope.
+approved migration scope. That audit has now failed because the existing source
+catalog includes native-document storage; no conversion or activation is
+permitted without an approved preservation mapping.
 The original snapshot remains in Git.
 
 ## Objective
