@@ -65,6 +65,11 @@ M4-004 now has a reproducible synthetic measurement command and measured
 checkpoint-before-limit behavior refreshed against the corrected source path.
 Its task-sync measurements must be regenerated after the separately open
 task-core correction before final release evidence.
+M4-005's repository release preparation is now integrated, including exact
+remote asset verification, audio delta regression, and the ordinary-Python
+package-cache correction. Actual CI, remote release, visual, connected daily
+worker bindings, and private acceptance remain open; brief integration/sending
+also await the existing missing-date decision.
 The original snapshot remains in Git.
 
 ## Objective

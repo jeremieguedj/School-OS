@@ -1710,3 +1710,25 @@ requirements, then read this log from top to bottom.
   privacy checks are clean. Next: commit this final evidence record and hand
   root the resulting isolated SHA. Real GitHub draft/published readback and
   all separate private/provider acceptance gates remain intentionally unrun.
+
+## 2026-09-08 — alpha.13 release preparation independently accepted
+
+- Integrated the isolated release candidate through
+  `d8194d955aa47f31a23d94e5787fe706d29519b2`. Root independently passed 23
+  focused package/connected-install/release/audio tests on CPython 3.12.14,
+  then 11 release/installed-validation tests after correcting final-manifest
+  assumptions. The worker's final full suite passed 189 tests and its exact
+  final archive passed installed candidate validation.
+- This fixes the three extracted-package failures reproduced from the prior
+  main CI run: ordinary Python wrote bytecode before immutable inventory
+  verification. The entrypoints now prevent that mutation before imports;
+  inventory checks remain strict. Tests no longer rely on the committed
+  manifest remaining unreleased, and the release creation recipe passes the
+  exact target commit required by readback verification.
+- Plan revision 34 preserves pending brief-policy, task, runtime and private
+  acceptance gates. Runtime work currently supplies isolated adapter/bootstrap
+  primitives; the concrete daily worker bindings are still required and no
+  bootstrap-only result is accepted as a connected daily run.
+- Next: validate and publish this integration, verify actual CI, then review
+  the task candidate with independent hard-process-death recovery. No email,
+  schedule, production-instance change, or formal release was performed.

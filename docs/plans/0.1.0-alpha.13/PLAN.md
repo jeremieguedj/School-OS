@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
 - Status: approved completion plan; M1–M3 require chained revalidation after the installer correction, and M4 implementation plus observed fresh-test-instance evidence remains
-- Revision: 33, updated 2026-09-08
+- Revision: 34, updated 2026-09-08
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -756,6 +756,15 @@ but must be refreshed after the open task-core correction; remaining M4 tasks
 are pending or in progress under the fresh-test-instance authorization; M4-006
 remains the final release gate).
 
+M4-005's repository release preparation is integrated: read-only draft/published
+asset verification, exact commit/tag/manifest binding, optional audio delta
+regression, and package-entrypoint bytecode prevention. Independent CPython 3.12
+checks confirm the extracted-package failures found in CI are corrected. The
+post-integration CI run, actual remote release readback, visual brief checks,
+and optional-audio degradation in the connected path remain acceptance work.
+Runtime adapter/bootstrap primitives also remain distinct from the unfinished
+concrete daily worker bindings; bootstrap readback alone is not M4-003 acceptance.
+
 **Work and deliverables:** Extend the working scenario to the complete 14-day
 school-mail scope in the new test instance, repeated daily runs, supported
 attachment cases, actual semantic interpretation, Google Sheets task
@@ -961,3 +970,9 @@ evidence that does not need to be repeatedly printed into model context.
   daily/no-new runs, and one pause/new-attempt resume without repeated phases.
   It remains synthetic and must be regenerated once more after the separately
   open task-core correction before final release evidence.
+- Revision 33: recorded the source/measurement handoff and the pending
+  parent-origin missing-date policy question; brief integration and sending
+  remain paused while independent task/runtime work continues.
+- Revision 34: integrated the reviewed repository release preparation and
+  corrected Python package-cache portability, keeping actual CI, remote
+  release, visual, connected runtime, and private acceptance gates explicit.
