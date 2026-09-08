@@ -15,6 +15,24 @@
     "entity_scope": {"type": "string"},
     "category": {"type": "string"},
     "text": {"type": "string", "minLength": 1},
-    "flags": {"type": "object", "additionalProperties": false, "required": ["is_update", "is_durable", "is_guideline", "is_action"], "properties": {"is_update": {"type": "boolean"}, "is_durable": {"type": "boolean"}, "is_guideline": {"type": "boolean"}, "is_action": {"type": "boolean"}}}
+    "flags": {"type": "object", "additionalProperties": false, "required": ["is_update", "is_durable", "is_guideline", "is_action"], "properties": {"is_update": {"type": "boolean"}, "is_durable": {"type": "boolean"}, "is_guideline": {"type": "boolean"}, "is_action": {"type": "boolean"}}},
+    "attachment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["attachment_id", "origin", "mime_type", "original_content_sha256", "extracted_text_sha256", "locator"],
+      "properties": {
+        "attachment_id": {"type": "string", "minLength": 1},
+        "origin": {"enum": ["mime_attachment", "html_embedded", "html_linked"]},
+        "mime_type": {"type": "string", "minLength": 1},
+        "original_content_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "extracted_text_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "locator": {
+          "oneOf": [
+            {"type": "object", "additionalProperties": false, "required": ["kind", "byte_start", "byte_end"], "properties": {"kind": {"const": "extracted_text_span"}, "byte_start": {"type": "integer", "minimum": 0}, "byte_end": {"type": "integer", "minimum": 1}}},
+            {"type": "object", "additionalProperties": false, "required": ["kind", "page", "region"], "properties": {"kind": {"const": "provider_page_region"}, "page": {"type": "integer", "minimum": 1}, "region": {"type": "string", "minLength": 1}}}
+          ]
+        }
+      }
+    }
   }
 }

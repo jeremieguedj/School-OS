@@ -1343,3 +1343,57 @@ requirements, then read this log from top to bottom.
   discovery may continue, but the two pending view/delivery choices still gate
   their dependent brief and send steps. Formal tag/release publication and
   production activation remain separately authorized.
+
+## 2026-09-08 — alpha.13 direct HTML-resource scope correction
+
+- The user subsequently granted explicit authorization to push accepted
+  in-scope commits and, only after all gates pass, create formal alpha.13
+  releases. The earlier publication rejection remains historical context; the
+  reconciled documentation checkpoint was then published and verified on
+  `origin/main`. Production activation, migration, existing-instance changes,
+  and still-unresolved delivery/schedule effects remain outside that grant.
+- A bounded GPT-5.6 Sol High read-only consultation found that direct image/PDF
+  references in complete HTML alternatives cannot be silently omitted because
+  they lack a mail attachment identity. The approved narrow correction preserves
+  HTML-part and occurrence provenance, retrieves only exact source-linked
+  direct resources under bounded verification, and accounts for each resource.
+  It forbids HTML-to-text conversion, raw-MIME/HTML canonical storage, link
+  following, crawling, and authenticated web navigation. An ambiguous or
+  unreadable substantive resource blocks; evidence-backed decorative/tracking
+  exclusions are visible. No source content, private identifiers, provider
+  object, delivery, schedule, or production instance was changed by the review.
+- Changed files for this planning checkpoint: root `PLAN.md`, the alpha.13 plan
+  and specification, and this append-only log. M4-001 normalized-body and
+  attachment implementation is underway locally; direct-resource implementation
+  starts only from these recorded boundaries. Next: finish its regression matrix
+  and additive provenance contracts, then validate, commit, push, and verify the
+  accepted M4-001 work unit.
+
+## 2026-09-08 — alpha.13 M4-001 normalized source admission
+
+- Implemented the bounded M4-001 adapter-side admission contract in
+  `school_os.importer`. A complete MIME tree must designate exactly one body
+  `text/plain` part; identity, quoted-printable, and base64 transfer decoding
+  plus declared-charset decoding are strict and produce the catalog's exact
+  canonical UTF-8 bytes. HTML conversion, HTML-only content, multiple plausible
+  plain bodies, malformed/incomplete parts, unavailable bytes, invalid
+  transport/charset input, and decoding loss remain non-admitting.
+- Kept attachments separate and added selected PDF/image extraction hooks with
+  distinct original/extracted hashes and exact-text or page/region locators.
+  Added direct HTML image/PDF resource inventory and bounded processing: stable
+  identity, HTML-part hash/occurrence, origin, exact HTTPS source URL, bounded
+  redirect/byte checks, MIME/signature agreement, and mandatory provenance.
+  Resources are never crawled or treated as HTML body text; unresolved direct
+  resources block message coverage. Fact/operation contracts now carry the
+  additive attachment/resource provenance without changing body-Fact meaning.
+- Focused import/catalog/task regression tests passed (15 tests). Complete
+  `PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate.py` passed 149 tests plus
+  schema/template and release-smoke checks; `git diff --check` and the privacy
+  scan passed. Local commit, push, and remote verification remain pending this
+  accepted work unit. No private source, connector, Drive, Sheet, delivery,
+  scheduler, or production-instance action occurred. Changed files: importer,
+  source and attachment contracts/operation, Fact/extraction schemas, alpha.13
+  and root plans, this log, and focused tests. Next: commit, push, and verify
+  the generic M4-001 checkpoint; then implement M4-007's live semantic/audit
+  plumbing while holding M4-008 shared task-core work for the coordinator's
+  consultation result.

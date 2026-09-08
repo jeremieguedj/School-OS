@@ -10,7 +10,22 @@
     "conversation_id": {"type": "string", "minLength": 1},
     "candidates": {"type": "array", "items": {"type": "object"}},
     "coverage": {"type": "array", "items": {"type": "object"}},
-    "attachment_outcomes": {"type": "array", "items": {"type": "object"}},
+    "attachment_outcomes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["attachment_id", "outcome", "mime_type", "original_content_sha256", "extracted_text_sha256", "locator"],
+        "properties": {
+          "attachment_id": {"type": "string", "minLength": 1},
+          "outcome": {"enum": ["extracted", "duplicate", "unsupported", "inaccessible", "excluded_by_policy", "manual_review"]},
+          "mime_type": {"type": ["string", "null"]},
+          "original_content_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+          "extracted_text_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+          "locator": {"type": ["object", "null"]}
+        }
+      }
+    },
     "review_cases": {"type": "array", "items": {"type": "object"}}
   }
 }

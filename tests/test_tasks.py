@@ -23,4 +23,14 @@ class TaskTests(unittest.TestCase):
   first=reconcile_canonical_tasks({"schema_version":1,"tasks":[]},self.facts(),fact_schema=self.fact,task_schema=self.task,register_schema=self.register)
   second=reconcile_canonical_tasks(first,self.facts(),fact_schema=self.fact,task_schema=self.task,register_schema=self.register)
   self.assertEqual(serialize_canonical_tasks(first,self.register),serialize_canonical_tasks(second,self.register))
+ def test_attachment_fact_keeps_origin_hashes_and_a_verifiable_locator(self):
+  facts=self.facts(); facts[0]['attachment']={
+   "attachment_id":"resource-001", "origin":"html_embedded", "mime_type":"image/png",
+   "original_content_sha256":"a"*64, "extracted_text_sha256":"b"*64,
+   "locator":{"kind":"extracted_text_span","byte_start":0,"byte_end":3},
+  }
+  build_derived_knowledge(facts,fact_schema=self.fact,task_schema=self.task)
+  del facts[0]['attachment']['origin']
+  with self.assertRaisesRegex(TaskError,"invalid Fact"):
+   build_derived_knowledge(facts,fact_schema=self.fact,task_schema=self.task)
 if __name__=='__main__': unittest.main()

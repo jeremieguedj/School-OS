@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
 - Status: approved completion plan; M1–M3 require chained revalidation after the installer correction, and M4 implementation plus observed fresh-test-instance evidence remains
-- Revision: 28, updated 2026-09-08
+- Revision: 29, updated 2026-09-08
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -27,9 +27,10 @@ The linked [implementation specification](SPEC.md) grounds those milestones in
 the alpha.12 codebase and defines the implementation tasks, interfaces, state
 transitions, migrations, and behavioral checks. M1–M3 have previously accepted
 synthetic implementation, but their release claims are reopened for one chained
-exact-package revalidation after the installer correction. M4-001 is reopened
-for the adapter/plaintext admission correction described below; M4-002 remains
-complete for its declared synthetic alpha.12 input. M4-003's repository safety
+exact-package revalidation after the installer correction. M4-001's generic
+adapter/plaintext/resource admission correction is implemented and awaits its
+observed binding; M4-002 remains complete for its declared synthetic alpha.12
+input. M4-003's repository safety
 work is complete, but its required observed-surface evidence remains incomplete.
 The existing-instance inventory reports an alpha.11 predecessor, whereas
 M4-002 supports only alpha.12 input. Its alpha.12-compatibility audit found
@@ -58,6 +59,23 @@ plain-text alternative after standards-conformant transport decoding, then
 proves exact UTF-8 catalog equality. It still blocks HTML-to-text conversion,
 HTML-only bodies, incomplete content, or ambiguous plain alternatives. Raw MIME
 storage is neither required nor authorized for this path.
+
+**Direct HTML resource correction (2026-09-08):** A bounded GPT-5.6 Sol High
+read-only consultation found that direct image/PDF resources referenced by a
+complete HTML MIME alternative are source material that cannot be silently
+ignored merely because they have no mail-provider attachment identity. Under
+the user's authorized complete source-coverage test scope, M4-001 may add only
+direct, source-linked resource discovery and retrieval: preserve the HTML-part
+identity/hash and occurrence locator; assign a stable resource identity and
+`html_embedded` or `html_linked` origin; and keep original/extracted hashes and
+an exact-text or page/region locator distinct. Fetches are bounded to those
+exact URLs with redirect, byte, MIME/signature, and readback checks. No link
+following inside a resource, arbitrary crawling, authenticated web navigation,
+HTML-to-text conversion, or canonical raw HTML/MIME storage is allowed. A
+decorative/tracking exclusion needs evidence; an ambiguous or unreadable
+substantive resource blocks the affected import. A complete empty plaintext
+body cannot establish message coverage while an embedded substantive resource
+remains unprocessed.
 
 The user has authorized the new test instance to ingest the last 14 days of the
 grounded school-mail scope; execute real manual and temporary scheduled brief
@@ -682,8 +700,8 @@ successful uninterrupted run alone is insufficient.
 
 ### Milestone 4 — Expand coverage and establish release readiness
 
-**Status:** in progress (M4-001 reopened for source-adapter admission correction;
-M4-002 complete for synthetic alpha.12 input; M4-003–M4-009 pending or in
+**Status:** in progress (M4-001 implementation complete pending observed
+binding; M4-002 complete for synthetic alpha.12 input; M4-003–M4-009 pending or in
 progress under the fresh-test-instance authorization; M4-006 remains the final
 release gate).
 
@@ -874,3 +892,7 @@ evidence that does not need to be repeatedly printed into model context.
   Google Sheets task adapter, real manual/scheduled delivery, visual/audio
   regression, observed-budget checkpointing, and corrected release-task
   dependencies. The existing instance and earlier candidate remain unchanged.
+- Revision 29: recorded the bounded direct-HTML-resource correction from the
+  authorized GPT-5.6 Sol High consultation. It extends M4-001 source accounting
+  only for exact image/PDF references in complete HTML alternatives and retains
+  all no-crawler, no-HTML-conversion, provenance, and blocker boundaries.

@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation and observed validation in progress; M1–M3 are reopened for chained revalidation, M4-001 is reopened, M4-002 remains complete for its declared synthetic input, and M4-003–M4-009 remain
-- Approved plan: [PLAN.md](PLAN.md), revision 28
+- Status: implementation and observed validation in progress; M1–M3 are reopened for chained revalidation, M4-001 implementation is complete pending observed binding, M4-002 remains complete for its declared synthetic input, and M4-003–M4-009 remain
+- Approved plan: [PLAN.md](PLAN.md), revision 29
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
@@ -37,6 +37,12 @@ synthetic `--stage-results` entrypoint and checked-in interpreter results cannot
 establish it. Optional audio delivery may remain disabled, but its existing
 current-run-delta input and worker regression remain release checks. The core
 does not depend on these providers.
+
+The user has explicitly authorized accepted in-scope repository pushes and,
+only after every release gate is met, formal alpha.13 tags/releases. This does
+not authorize production activation, migration, existing-instance changes, or
+test delivery/scheduling before their remaining private choices and acceptance
+conditions are satisfied.
 
 ## Existing implementation inventory
 
@@ -630,8 +636,9 @@ state removed. A passing uninterrupted operation is insufficient.
 
 ## Milestone 4 — Expand coverage and establish release readiness
 
-**Status:** in progress. M4-001 is reopened, M4-002 is complete for its declared
-synthetic alpha.12 input, M4-003–M4-009 remain, and M4-006 is the final release
+**Status:** in progress. M4-001 implementation is complete pending observed
+binding, M4-002 is complete for its declared synthetic alpha.12 input,
+M4-003–M4-009 remain, and M4-006 is the final release
 gate.
 
 M4 is sufficiently specified to bound later work, but concrete real-provider
@@ -740,11 +747,10 @@ observation may not claim a clean candidate-root inventory or clean-instance
 acceptance. It remains private evidence only and must not be renamed, repaired,
 or deleted under the current authorization.
 
-`school_os.importer.admit_exact_plaintext_representation` currently violates
-that boundary by rejecting every multipart message, every attachment-bearing
-message, every non-identity transfer encoding, and every non-UTF-8 source
-charset before adapter normalization. M4-001 is reopened to replace that
-behavior with the bounded normalized-body gate. The regression matrix must
+`school_os.importer.admit_exact_plaintext_representation` now implements the
+bounded normalized-body gate: one provider-designated complete plain body may
+pass strict transport/charset decoding while separately inventoried attachments
+and direct HTML resources remain distinct. The regression matrix proves
 prove: identity UTF-8; quoted-printable/base64 transport decoding; strict
 declared-charset decoding followed by canonical UTF-8 encoding; one selected
 plain alternative beside an HTML alternative; one body plus separately
@@ -771,6 +777,22 @@ and independent audit must inspect the same source locator. Do not add a
 general document-processing framework. If a selected readable format cannot
 produce one of these verifiable locators, the operation blocks rather than
 claiming full acceptance or inferring from the filename/surrounding message.
+
+**Direct HTML resource correction (2026-09-08):** The user-authorized complete
+source-coverage path and a bounded GPT-5.6 Sol High read-only consultation
+allow the following compatible M4-001 extension. The adapter may parse direct
+image/PDF URLs from a complete HTML MIME alternative without using that HTML as
+body text. It records the HTML part identity/hash, message association,
+attribute/occurrence locator, origin (`html_embedded` or `html_linked`), and a
+stable resource identity. It may fetch only those exact URLs through the
+observed surface, with bounded redirects/bytes plus MIME and signature checks,
+then retains original/extracted hashes and an exact-text or page/region locator.
+It never follows nested document links, crawls arbitrary URLs, uses
+authenticated web navigation, converts HTML to text, or persists raw HTML/MIME
+as canonical source. Every discovered resource receives an audited processing
+or evidence-backed decorative/tracking exclusion outcome; ambiguous or
+unreadable substantive content blocks. Empty plaintext does not establish
+coverage while a substantive embedded resource is outstanding.
 
 **Private-upgrade consultation (2026-09-08):** A bounded GPT-5.6 Sol High
 read-only review confirmed that there is no approved direct alpha.11-to-

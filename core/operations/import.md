@@ -17,9 +17,14 @@ Optionally backfill a private source catalog without changing the meaning of the
    Never split or truncate a single conversation; an oversized single record is
    blocked with its identity. Checkpoint the completed IDs and exact remaining
    IDs after verified writes, so a resumed batch selects the same next records.
-4. Create/refresh source records through the source-catalog contract. Process
-   declared attachments through `attachment-processing.md` and persist their
-   explicit outcome with the source record.
+4. Before source-record creation, require the selected mail adapter to expose
+   one complete provider-designated `text/plain` body after strict transport
+   and declared-charset decoding. HTML conversion, an incomplete MIME tree,
+   multiple plausible plain bodies, or unprovable decoding blocks without a
+   cursor move. Create/refresh source records through the source-catalog
+   contract, then process separately inventoried attachments and direct HTML
+   image/PDF resources through `attachment-processing.md` and persist their
+   explicit outcomes with the source record.
 5. Reconcile derived private data only after verified source batches.
 6. Do not send a daily brief or mutate the task provider unless the user explicitly authorizes those separate operations.
 7. Record completed and blocked source identities, enumeration evidence, and

@@ -33,13 +33,20 @@ Each fact has a stable `fact_id`, source-message reference, local received date,
 
 A guideline is never an action. Facts may not combine unrelated claims merely to reduce record count.
 
-New Facts carry the stable record ID, immutable message ID, and non-empty UTF-8
-byte span that supports the claim. Derived knowledge stores Fact and record IDs
+New body Facts carry the stable record ID, immutable message ID, and non-empty
+UTF-8 byte span that supports the claim. Attachment Facts retain those record
+and message identities and add the immutable attachment/resource ID, origin
+(`mime_attachment`, `html_embedded`, or `html_linked`), declared MIME type,
+separate original-content and extracted-text hashes, and one verified locator:
+an exact byte span in preserved extracted UTF-8 text or a provider-backed
+page/region. For an attachment Fact, the byte span is in that attachment's
+extracted text rather than the message body. An unavailable original-byte hash
+is recorded as unavailable, never synthesized. Derived knowledge stores Fact and record IDs
 so it can be rebuilt without weakening source provenance.
 
 ## Coverage
 
-Every substantive sentence or clause in source text maps to one or more facts or an explicit no-fact outcome with a reason such as greeting, boilerplate, duplicate, or unavailable content. Attachments receive a separate presence/processing outcome. The catalog never invents attachment content it could not read.
+Every substantive sentence or clause in source text maps to one or more facts or an explicit no-fact outcome with a reason such as greeting, boilerplate, duplicate, or unavailable content. Attachments and direct HTML image/PDF references receive separate presence/processing outcomes. The catalog never invents attachment/resource content it could not read.
 
 ## Lossless acceptance gate
 

@@ -11,13 +11,20 @@ packages, deliverables, benefits, deferral impacts, and acceptance criteria,
 including the approved manual-sender and cross-session continuation decisions.
 Implementation has completed the repository safety portion of M4-003. The
 create-only installer correction reopens M1-004/M1-006 clean-instance evidence;
-M2–M3 require chained revalidation from that repaired generation. M4-001 is
-reopened because the current importer rejects MIME transport decoding,
-multipart alternatives, and attachment-bearing messages below the adapter
-boundary. The compatible correction admits a strictly decoded, provider-
-designated complete plaintext body and keeps attachments separate; ambiguous,
-incomplete, HTML-derived, or lossy content still blocks. No raw-MIME canonical
-architecture is selected.
+M2–M3 require chained revalidation from that repaired generation. M4-001's
+generic correction is implemented and regression-tested: it admits a strictly
+decoded, provider-designated complete plaintext body and keeps attachments and
+direct resources separate; ambiguous, incomplete, HTML-derived, or lossy
+content still blocks. Observed binding and source acceptance remain M4-003/M4-009
+work. No raw-MIME canonical architecture is selected.
+
+Direct image/PDF resources referenced by complete HTML alternatives are also
+in-scope source material for the authorized test path. They are separately
+inventoried and fetched only from exact source-linked URLs under bounded
+redirect, byte, MIME/signature, and provenance checks; no arbitrary link
+following, crawler, HTML-to-text conversion, or raw-MIME canonical store is
+authorized. Every discovered direct resource must be audited, excluded with
+evidence, or block the affected import.
 
 The authorized completion target is a new empty private Drive test instance.
 The existing alpha.11 instance may supply source-domain/configuration evidence
