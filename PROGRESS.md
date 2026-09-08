@@ -800,3 +800,11 @@ requirements, then read this log from top to bottom.
   plan/specification. Validation/publication pending. Exact next action:
   privacy-scan, commit/push/verify M3-004, then implement M3-005 transition,
   stale-auth, capacity, cancellation, and non-progress cases.
+
+## 2026-09-07 — alpha.13 M3-004 verification
+
+- M3-004 was accepted as `133b96a81433ab0661da027a5823398fe4632284`
+  (`Implement alpha.13 delivery recovery`). The 124-test gate and direct
+  privacy scan passed; `origin/main` was read back at the exact same SHA.
+- Next: M3-005 lifecycle safety cases for configuration/release drift, stale
+  authentication, capacity/non-progress, cancellation, and terminal effects.
