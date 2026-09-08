@@ -1042,3 +1042,28 @@ requirements, then read this log from top to bottom.
 - Next: validate and publish this checkpoint. The upgrade remains blocked on a
   user-approved alpha.11 preservation/migration scope; alpha.13 release and
   real-surface conformance gates remain separately unfinished.
+
+## 2026-09-08 — alpha.13 inactive candidate observation planning
+
+- Confirmed a newly supplied private Drive root is a folder, private to the
+  owner, and empty. No existing private instance was read or changed in this
+  work unit; no Gmail message body, task, delivery, scheduler, release, or
+  activation effect occurred.
+- Completed the user-authorized bounded GPT-5.6 Terra High read-only review.
+  It found that a Drive/Gmail mapping can be a compatible expansion when it
+  preserves the existing storage/mail contracts unchanged. The approved
+  candidate boundary requires an explicit Gmail scope, create-only byte files
+  under the exact root with complete readback, lossless UTF-8-only source
+  admission, and a fresh-process catalog/index recovery proof. It cannot
+  establish delivery, task, scheduler, full daily-run, production, migration,
+  or release-readiness conformance.
+- Changed files: `PLAN.md`, `docs/plans/0.1.0-alpha.13/PLAN.md`,
+  `docs/plans/0.1.0-alpha.13/SPEC.md`, and this append-only log. No private
+  identifiers, queries, source content, credentials, or provider records were
+  added to the repository.
+- Blocker: the required source scope is not yet explicit. The onboarding
+  contract requires a direct user source-scope answer; choosing a Gmail query,
+  label, window, or target message would risk importing unrelated mail.
+  Next: validate and publish this generic planning checkpoint, then obtain the
+  bounded Gmail scope before re-listing the candidate root and performing any
+  private write.

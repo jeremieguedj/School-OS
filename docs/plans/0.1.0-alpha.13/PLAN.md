@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
-- Status: approved plan with linked implementation specification; M1–M3 complete, M4 blocked at observed-surface evidence and an alpha.11 private migration incompatibility
-- Revision: 24, updated 2026-09-08
+- Status: approved plan with linked implementation specification; M1–M3 complete, M4 awaits observed-surface evidence and an alpha.11 private migration incompatibility
+- Revision: 25, updated 2026-09-08
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -24,12 +24,13 @@ the alpha.12 codebase and defines the implementation tasks, interfaces, state
 transitions, migrations, and behavioral checks. M3 and M4-001–M4-002 are
 complete. M4-003's repository safety work is complete, but its required
 observed-surface evidence remains incomplete. The user has authorized a
-read-only private-instance inventory and upgrade assessment, not activation or
-external sends. That inventory reports an alpha.11 predecessor, whereas M4-002
-supports only alpha.12 input. Its alpha.12-compatibility audit found native
-document source-catalog storage alongside raw Markdown, so direct private
-writes remain paused pending an approved preservation mapping or new migration
-scope.
+read-only private-instance inventory and upgrade assessment, plus one inactive
+candidate-only Drive/Gmail observation, not activation or external sends. That
+inventory reports an alpha.11 predecessor, whereas M4-002 supports only
+alpha.12 input. Its alpha.12-compatibility audit found native document
+source-catalog storage alongside raw Markdown, so direct private writes to that
+existing instance remain paused pending an approved preservation mapping or new
+migration scope.
 
 The user has deferred discussion of the review's historical-retrieval acceptance
 case. That proposed addition is not part of the current work or release gates.
@@ -759,3 +760,7 @@ evidence that does not need to be repeatedly printed into model context.
   `observed` evidence classification. It cannot qualify an attended upgrade
   surface or satisfy M4-003's runtime/scheduler evidence requirement. No
   private capability record or provider object was modified.
+- Revision 25: recorded the authorized inactive candidate-only Drive/Gmail
+  observation boundary and bounded GPT-5.6 Terra High review. Candidate work
+  may collect only the specified storage/mail catalog and recovery evidence;
+  all other M4-003 surfaces and dependent tasks remain incomplete.

@@ -631,6 +631,22 @@ task, or scheduler conformance, and the alpha.11 predecessor is outside
 Migration 0002's explicit alpha.12 input. M4-003 is not complete, and
 M4-004–M4-006 remain blocked by its dependency.
 
+**Inactive candidate observation boundary (2026-09-08):** A new empty private
+Drive root may be used for one candidate-only test under explicit user
+authorization, with bounded read-only Gmail input and no existing-instance,
+task, delivery, scheduler, activation, or publication effects. It must recheck
+the exact empty root before the first write and use create-only regular-byte
+objects with identity, parent, MIME, hash, and byte-for-byte readback. The
+source scope must be explicit and fixed before Gmail enumeration. Record all
+pagination and inclusion/duplicate/blocked dispositions; read complete thread
+membership and block out-of-scope members. Accept only complete unambiguous
+UTF-8 plaintext adapter bodies, never snippets, reconstructed content, or
+silently omitted multipart/attachment material. The v2 catalog's independent
+source-to-record and intended-to-persisted checks remain required. A fresh
+invocation may prove catalog/index adoption after local state loss. This is
+partial observed evidence for the exact manual storage/mail surface only; it
+does not qualify the `daily-run` capability profile or complete M4-003.
+
 **Private-upgrade consultation (2026-09-08):** A bounded GPT-5.6 Sol High
 read-only review confirmed that there is no approved direct alpha.11-to-
 alpha.13 path. Extending Migration 0002 to support alpha.11 would alter the
