@@ -67,7 +67,8 @@ runtime performs authentication and native Google calls, then injects one
    with `=`. This keeps formula-looking action/progress/comment text literal.
 3. For every patch or claim, re-resolve the current row locator immediately
    before `batchUpdate` and compare the mutation's `guard_cells(columns)`:
-   `Managed By`, `Canonical Task ID`, and any packet-specific observed cells.
+   `Managed By`, `Canonical Task ID`, and the cached prior value of every cell
+   the mutation will overwrite (plus every admission-packet cell for a claim).
    A mismatch blocks the write. Translate only changed header keys to observed
    numeric Sheet column indexes, then issue the smallest native request. Append
    returns the new locator; patch or claim returns the guarded target locator.
@@ -93,10 +94,10 @@ atomic precondition.
    runtime explicitly reloads before recovery.
 2. Validate marker, required system fields, and canonical-ID uniqueness.
    Before a write, the runtime passes unchanged fields from the prior verified
-   binding to `verify_expected_system_fields`; unexpected Context, Source Link,
-   Workflow State, or identity drift blocks. Fields that the canonical
-   reconciler has deliberately changed are excluded from that preflight and are
-   then verified through the normal exact-row write/readback path.
+   binding to `verify_expected_system_fields`; unexpected canonical ID, origin,
+   Context, Source Link, Source Due, or Workflow State drift blocks. The planned
+   canonical projection is supplied separately so only an explicit canonical
+   change or a recovered already-applied write is accepted.
 3. Build a canonical-ID projection. Generate only differing mapped cells; do
    not rewrite status, parent deadline/progress/comment, or unrelated cells
    during a system projection patch.
@@ -119,9 +120,14 @@ comment. A completed Sheet status without one must be returned to core as a
 review/reopen case; the runtime uses the separate status and
 `Completion Comment` observation and does not manufacture text.
 
-When the selected connector exposes native Sheet comments, its comment bridge
-must use immutable effect IDs, verify exactly one matching comment after a
-write, and paginate reads to completion. If comment operations are unavailable,
+When the selected connector exposes native Drive comments for a Sheet, its
+comment bridge must re-resolve the canonical row immediately before lookup,
+write, and readback; include canonical task ID, provider object ID, immutable
+effect ID, current Sheet/range locator, quoted row text, and exact reminder text
+in the native comment body/evidence; and verify exactly one exact matching
+comment after a write. A native comment with no stable anchor may be used only
+with that explicit identity evidence and must never be described as row-anchored.
+Reads paginate to completion. If comment operations are unavailable,
 the runtime records that capability as unavailable and blocks any operation
 that requires a provider comment effect.
 

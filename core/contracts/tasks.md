@@ -23,9 +23,11 @@ A canonical task contains:
 - latest parent progress;
 - provider bindings;
 - lifecycle/completion history; and
-- projection status.
+- current `unresolved`/`completed` resolution and projection status.
 
 Provider identifiers are private state and never replace `task_id`.
+Parent-origin task IDs are newly issued in the durable admission intent. A
+provider row locator, title, or current cell content never becomes task identity.
 
 The register is canonical UTF-8 JSON. Its entries are ordered by immutable task
 ID and can be rebuilt from verified Facts. Source-created task IDs derive only
@@ -40,8 +42,14 @@ support requires an explicit validated relationship in the reconciliation path.
 - Source due dates are evidence; parent planned dates are working plans.
 - Provider-created tasks without source evidence are allowed but must remain distinguishable from source-derived tasks.
 - Completion history is append-only in intent. The configured completion-comment policy belongs to the core task operation and private policy configuration.
+- Source support, correction, completion, and reopen relations are applied in
+  stable source/message/content chronology. Fact ID is only the final ordering
+  tie. Last-support date is monotonic, and contradictory changes at one source
+  coordinate block for review.
+- Only an unresolved action projects as a new provider task or appears in a
+  task brief. A later explicit reopen restores eligibility.
 - Absence, silence, elapsed time, and overdue status do not prove completion.
 
 ## Projection
 
-The task operation must use immutable task identity and stored bindings; it must not establish identity through title matching. Provider grouping and workflow are separate logical dimensions. An adapter declares its representation limits and verifies every managed write.
+The task operation must use immutable task identity and stored bindings; it must not establish identity through title matching. Each provider has at most one binding per canonical task, and each provider object is bound globally at most once. Provider grouping and workflow are separate logical dimensions. An adapter declares its representation limits and verifies every managed write.

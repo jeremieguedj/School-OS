@@ -1513,3 +1513,48 @@ requirements, then read this log from top to bottom.
   this final repository custody checkpoint; selected runtime must still provide
   actual complete provider reads/fetches/page extraction before private M4-009
   acceptance. No provider or private instance was touched.
+
+## 2026-09-08 — alpha.13 task reconciliation independent-review repair
+
+- Repaired the reopened canonical/provider reconciliation after independent
+  failure reproduction. Source and parent Action/Group changes now use a true
+  field-level base/canonical/provider comparison; local-only corrections
+  project, parent-only edits enter canonical state, equal changes converge, and
+  divergent changes remain explicit review cases without overwrite. Workflow,
+  origin, source context/link/due, and canonical identity receive full managed
+  drift checks. Actual canonical changes advance revision/evidence, and binding
+  validation enforces one object per task/provider globally.
+- Source task relationships now use stable source/message/content chronology
+  with Fact ID only as the final tie, reject conflicting changes at one source
+  coordinate, preserve a monotonic support date, and persist current completion
+  resolution. Completed source actions do not create provider tasks or enter the
+  connected brief; an explicit reopen restores eligibility.
+- Parent-row admission now issues an immutable canonical ID independent of its
+  mutable Sheet locator. The durable claim intent carries complete candidate and
+  canonical-task evidence, so either half of an interrupted checkpoint can be
+  reconstructed before a guarded claim. Unknown managed IDs, missing durable
+  bindings, and inconsistent canonical/provider state block rather than create
+  a duplicate.
+- Missing-completion-comment handling now returns a durable occurrence-stable
+  reminder intent before effects. Recovery verifies the exact effect ID/text,
+  writes or adopts one reminder, then reopens and exactly reads the provider
+  object even when it is already open. Tests cover lost comment responses,
+  failures before and after reopen, lost returned state, later repeated
+  completion, qualifying completion, and parent reopen history.
+- Tightened the Google Sheets adapter so every overwritten cell is guarded by
+  its cached prior value in addition to canonical identity. Native comment
+  operations re-resolve canonical identity around lookup/write/readback and
+  require explicit canonical task, provider object, effect, and exact-text
+  evidence; unanchored native comments are not claimed as stable row anchors.
+  Updated the generic task/Sheet contracts accordingly.
+- The connected installed-run test now persists and verifies both returned
+  canonical tasks and provider state in recovery order, then supplies the
+  refreshed canonical task artifact to brief generation. Synthetic evidence
+  remains repository behavior only and does not establish authenticated or
+  unattended provider conformance.
+- Validation passed the complete repository gate with 182 tests plus JSON
+  schema/template/release-smoke checks; the direct privacy scan and
+  `git diff --check` passed. No private value, provider effect, release, or push
+  occurred. Next: integrate this isolated candidate with the coordinated source
+  chronology schema changes, rerun the complete gate, and independently review
+  the combined diff before publication.

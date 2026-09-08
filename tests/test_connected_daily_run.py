@@ -18,7 +18,7 @@ from school_os.brief import confirm_delivery, render_brief
 from school_os.catalog import parse_v2_record, serialize_v2_record, verify_persisted_record
 from school_os.contracts import canonical_json_bytes, sha256_bytes
 from school_os.daily import PHASES, run_daily
-from school_os.tasks import build_derived_knowledge, reconcile_canonical_tasks, reconcile_provider_tasks, serialize_canonical_tasks
+from school_os.tasks import build_derived_knowledge, reconcile_canonical_tasks, reconcile_provider_tasks, serialize_canonical_tasks, unresolved_tasks
 from tests.support.fakes import FixtureTasks, SendSink
 
 
@@ -145,13 +145,24 @@ class ConnectedDailyRunTests(unittest.TestCase):
         def task_sync(previous: dict[str, Any]) -> dict[str, Any]:
             register = json.loads(Path(previous["artifacts"]["tasks"]["path"]).read_text(encoding="utf-8"))
             reconciled = reconcile_provider_tasks(provider, register, {"provider_id": "synthetic", "adapter_id": "synthetic-tasks", "provider_revision": None, "bindings": [], "cursor": None, "cursor_evidence": {}, "verified_readback": {}}, task_schema=self.schemas["task.schema.json"], register_schema=self.schemas["canonical-tasks.schema.json"], provider_state_schema=self.schemas["provider-state.schema.json"])
+            # Canonical state is the first recoverable half of the checkpoint;
+            # provider state is admitted only after its canonical bindings read back.
+            tasks_artifact = self._write_checked(
+                work / "canonical-tasks.json",
+                serialize_canonical_tasks(reconciled.tasks, self.schemas["canonical-tasks.schema.json"]),
+                writes,
+            )
             provider_artifact = self._write_checked(work / "provider-state.json", canonical_json_bytes(reconciled.provider_state), writes)
-            return {"verified": True, "artifacts": {**previous["artifacts"], "provider_state": provider_artifact}}
+            persisted_tasks = json.loads(Path(tasks_artifact["path"]).read_text(encoding="utf-8"))
+            persisted_provider = json.loads(Path(provider_artifact["path"]).read_text(encoding="utf-8"))
+            if persisted_tasks != reconciled.tasks or persisted_provider != reconciled.provider_state:
+                raise AssertionError("task reconciliation checkpoint readback changed")
+            return {"verified": True, "artifacts": {**previous["artifacts"], "tasks": tasks_artifact, "provider_state": provider_artifact}}
 
         def brief_delivery(previous: dict[str, Any]) -> dict[str, Any]:
             knowledge = json.loads(Path(previous["artifacts"]["knowledge"]["path"]).read_text(encoding="utf-8"))
             register = json.loads(Path(previous["artifacts"]["tasks"]["path"]).read_text(encoding="utf-8"))
-            brief_input = {"schema_version": 1, "window": {"end": "2026-09-07"}, "entity_order": ["child_1", "household"], "news": [{"date": "2026-09-07", "entity_scope": "child_1", "text": item["text"]} for item in knowledge["rolling_updates"]], "guidelines": [{"date": "2026-09-07", "entity_scope": "child_1", "text": item["text"]} for item in knowledge["guidelines"]], "tasks": [{"date": task["source_opened_date"], "entity_scope": task["entity_scope"], "text": task["action"], "source_link": task["source_link"]} for task in register["tasks"]], "labels": {"news": "News", "guidelines": "Guidelines", "tasks": "Action Items"}, "theme": {}, "input_hashes": {"tasks": previous["artifacts"]["tasks"]["sha256"]}}
+            brief_input = {"schema_version": 1, "window": {"end": "2026-09-07"}, "entity_order": ["child_1", "household"], "news": [{"date": "2026-09-07", "entity_scope": "child_1", "text": item["text"]} for item in knowledge["rolling_updates"]], "guidelines": [{"date": "2026-09-07", "entity_scope": "child_1", "text": item["text"]} for item in knowledge["guidelines"]], "tasks": [{"date": task["source_opened_date"], "entity_scope": task["entity_scope"], "text": task["action"], "source_link": task["source_link"]} for task in unresolved_tasks(register)], "labels": {"news": "News", "guidelines": "Guidelines", "tasks": "Action Items"}, "theme": {}, "input_hashes": {"tasks": previous["artifacts"]["tasks"]["sha256"]}}
             rendered = render_brief(brief_input, self.schemas["brief-input.schema.json"])
             html = self._write_checked(work / "brief.html", rendered["html"], writes)
             text = self._write_checked(work / "brief.txt", rendered["text"], writes)
@@ -181,6 +192,11 @@ class ConnectedDailyRunTests(unittest.TestCase):
         artifacts = result.outputs["commit"]["artifacts"]
         self.assertIn("candidate_manifest", artifacts)
         self.assertEqual(state["candidate_manifest_sha256"], artifacts["candidate_manifest"])
+        persisted_tasks = json.loads(Path(artifacts["tasks"]["path"]).read_text(encoding="utf-8"))
+        persisted_provider = json.loads(Path(artifacts["provider_state"]["path"]).read_text(encoding="utf-8"))
+        binding = persisted_provider["bindings"][0]
+        self.assertEqual(binding["provider_object_id"], persisted_tasks["tasks"][0]["provider_bindings"][0]["provider_object_id"])
+        self.assertLess(max(index for index, name in enumerate(writes) if name == "canonical-tasks.json"), writes.index("provider-state.json"))
         self.assertEqual(self.fixture["expected_artifact_sha256"], {name: value["sha256"] for name, value in artifacts.items() if isinstance(value, dict)})
 
     def test_substituted_catalog_artifact_blocks_before_task_or_delivery(self) -> None:

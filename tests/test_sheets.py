@@ -89,11 +89,11 @@ class FixtureComments:
     def __init__(self) -> None:
         self.items: list[dict[str, str]] = []
 
-    def list_comments(self, scope: SheetScope, row_id: str, effect_id: str):
-        return [dict(item) for item in self.items if item["row_id"] == row_id and item["effect_id"] == effect_id]
+    def list_comments(self, scope: SheetScope, row_id: str, canonical_task_id: str, provider_object_id: str, effect_id: str):
+        return [dict(item) for item in self.items if item["row_id"] == row_id and item["canonical_task_id"] == canonical_task_id and item["provider_object_id"] == provider_object_id and item["effect_id"] == effect_id]
 
-    def write_comment(self, scope: SheetScope, row_id: str, effect_id: str, text: str):
-        item = {"row_id": row_id, "effect_id": effect_id, "text": text}
+    def write_comment(self, scope: SheetScope, row_id: str, canonical_task_id: str, provider_object_id: str, effect_id: str, text: str):
+        item = {"row_id": row_id, "canonical_task_id": canonical_task_id, "provider_object_id": provider_object_id, "effect_id": effect_id, "text": text}
         self.items.append(item)
         return dict(item)
 
@@ -410,6 +410,62 @@ class GoogleSheetsTaskAdapterTests(unittest.TestCase):
 
         self.assertEqual("effect-1", written["effect_id"])
         self.assertEqual([written], adapter.find_comments("sheets:canonical:task-1", "effect-1"))
+
+    def test_targeted_cell_guards_block_cached_parent_and_managed_drift(self) -> None:
+        adapter, port = self.adapter([self.managed_row()])
+        adapter.list_tasks()
+        port.rows[0]["cells"]["Parent Progress"] = "concurrent edit"
+        with self.assertRaisesRegex(TaskError, "row guard"):
+            adapter.apply_parent_state("sheets:canonical:task-1", parent_progress="stale overwrite")
+        self.assertEqual("concurrent edit", port.rows[0]["cells"]["Parent Progress"])
+        adapter, port = self.adapter([self.managed_row()])
+        adapter.list_tasks()
+        port.rows[0]["cells"]["Task Context"] = "concurrent managed drift"
+        with self.assertRaisesRegex(TaskError, "row guard"):
+            adapter.apply_patch("sheets:canonical:task-1", {"description": "source update"})
+        self.assertEqual("concurrent managed drift", port.rows[0]["cells"]["Task Context"])
+
+    def test_full_managed_preflight_includes_origin_due_and_system_workflow(self) -> None:
+        expected = {**self.candidate(), "origin": "source", "source_due": "2026-09-12"}
+        for column, drift in (("Task Origin", "parent"), ("Source Due", "unexpected"), ("Workflow State", "unexpected")):
+            row = self.managed_row()
+            row["cells"][column] = drift
+            adapter, port = self.adapter([row])
+            with self.assertRaisesRegex(TaskError, "unexpected system-managed"):
+                adapter.verify_expected_system_fields({"task-1": expected})
+            self.assertEqual([], port.mutations)
+
+    def test_claim_checkpoint_recovers_either_missing_half_without_duplicate(self) -> None:
+        parent_row = {"row_id": "row-1", "cells": {"Action": "Parent task", "Group": "household", "Status": "open"}}
+        factory, port = self.adapter_factory([copy.deepcopy(parent_row)])
+        first = reconcile_provider_tasks(factory.begin_sync(), {"schema_version": 1, "tasks": []}, self.state(), task_schema=self.task_schema, register_schema=self.register_schema, provider_state_schema=self.state_schema)
+        intent_only = reconcile_provider_tasks(factory.begin_sync(), {"schema_version": 1, "tasks": []}, first.provider_state, task_schema=self.task_schema, register_schema=self.register_schema, provider_state_schema=self.state_schema)
+        self.assertEqual(1, len(intent_only.tasks["tasks"]));self.assertEqual(1, len(port.rows))
+
+        factory, port = self.adapter_factory([copy.deepcopy(parent_row)])
+        first = reconcile_provider_tasks(factory.begin_sync(), {"schema_version": 1, "tasks": []}, self.state(), task_schema=self.task_schema, register_schema=self.register_schema, provider_state_schema=self.state_schema)
+        lost_intent = copy.deepcopy(first.provider_state);lost_intent["claim_intents"] = []
+        repaired = reconcile_provider_tasks(factory.begin_sync(), first.tasks, lost_intent, task_schema=self.task_schema, register_schema=self.register_schema, provider_state_schema=self.state_schema)
+        self.assertEqual(1, len(repaired.provider_state["claim_intents"]));self.assertEqual(1, len(port.rows))
+        claimed = reconcile_provider_tasks(factory.begin_sync(), repaired.tasks, repaired.provider_state, task_schema=self.task_schema, register_schema=self.register_schema, provider_state_schema=self.state_schema)
+        self.assertEqual(1, len(port.rows));self.assertEqual(1, len(claimed.provider_state["bindings"]))
+
+        factory, port = self.adapter_factory([copy.deepcopy(parent_row)])
+        first = reconcile_provider_tasks(factory.begin_sync(), {"schema_version": 1, "tasks": []}, self.state(), task_schema=self.task_schema, register_schema=self.register_schema, provider_state_schema=self.state_schema)
+        port.rows[0]["row_id"] = "row-moved"
+        moved = reconcile_provider_tasks(factory.begin_sync(), first.tasks, first.provider_state, task_schema=self.task_schema, register_schema=self.register_schema, provider_state_schema=self.state_schema)
+        self.assertEqual(1, len(port.rows));self.assertEqual(1, len(moved.provider_state["bindings"]))
+
+    def test_unknown_managed_canonical_id_is_rejected(self) -> None:
+        adapter, _ = self.adapter([self.managed_row(task_id="task-unknown")])
+        with self.assertRaisesRegex(TaskError, "unknown managed canonical"):
+            reconcile_provider_tasks(adapter, {"schema_version": 1, "tasks": []}, self.state(), task_schema=self.task_schema, register_schema=self.register_schema, provider_state_schema=self.state_schema)
+
+    def test_comments_re_resolve_canonical_identity_on_each_operation(self) -> None:
+        comments = FixtureComments();adapter, port = self.adapter([self.managed_row()], comments=comments)
+        adapter.list_tasks();before = port.complete_reads
+        adapter.write_comment("sheets:canonical:task-1", "effect-1", "Exact generic reminder")
+        self.assertGreaterEqual(port.complete_reads, before + 2)
 
 
 if __name__ == "__main__":

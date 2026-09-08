@@ -73,7 +73,7 @@ class FreshProcessRecoveryTests(unittest.TestCase):
         schema = json.loads((ROOT / "schemas" / "source-conversation.schema.json").read_text(encoding="utf-8"))
         record = serialize_v2_record(conversation, schema)
         task = {"task_id": "task-1", "origin": "source", "action": "Return form", "task_context": "school", "entity_scope": "household", "workflow_state": "needs_action", "owner": None, "source_opened_date": "2026-09-07", "last_supporting_source_date": "2026-09-07", "source_due": None, "parent_planned_due": None, "source_link": "record-1#fact-1", "source_facts": ["fact-1"], "latest_progress": None, "provider_bindings": [], "lifecycle_history": [], "projection_state": {}, "revision": 1, "last_modified_evidence": {}}
-        projection = {"canonical_task_id": "task-1", "title": "Return form", "description": "school", "group": "household", "workflow_state": "needs_action", "source_link": "record-1#fact-1"}
+        projection = {"canonical_task_id": "task-1", "origin": "source", "title": "Return form", "description": "school", "group": "household", "workflow_state": "needs_action", "source_link": "record-1#fact-1", "source_due": ""}
         state = {"provider_id": "synthetic", "adapter_id": "synthetic-tasks", "provider_revision": None, "bindings": [], "cursor": None, "cursor_evidence": {}, "verified_readback": {}}
         content = b"synthetic durable delivery"
         with tempfile.TemporaryDirectory() as temporary:

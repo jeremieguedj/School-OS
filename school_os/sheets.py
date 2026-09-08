@@ -167,9 +167,15 @@ class GoogleSheetsRowsPort(Protocol):
 class GoogleSheetsCommentsPort(Protocol):
     """Optional native-comment bridge when the selected surface supports it."""
 
-    def list_comments(self, scope: SheetScope, row_id: str, effect_id: str) -> Sequence[Mapping[str, Any]]: ...
+    def list_comments(
+        self, scope: SheetScope, row_id: str, canonical_task_id: str,
+        provider_object_id: str, effect_id: str,
+    ) -> Sequence[Mapping[str, Any]]: ...
 
-    def write_comment(self, scope: SheetScope, row_id: str, effect_id: str, text: str) -> Mapping[str, Any]: ...
+    def write_comment(
+        self, scope: SheetScope, row_id: str, canonical_task_id: str,
+        provider_object_id: str, effect_id: str, text: str,
+    ) -> Mapping[str, Any]: ...
 
 
 def normalized_snapshot(
@@ -313,6 +319,7 @@ class GoogleSheetsTaskSync:
                     changes,
                     expected_canonical_task_id=canonical_id,
                     expected_managed_by=MANAGED_BY_VALUE,
+                    expected_cells={column: current.cells.get(column) for column in changes},
                 )
             )
         else:
@@ -320,18 +327,39 @@ class GoogleSheetsTaskSync:
         return self._verified_projection(row_id, proposed)
 
     def find_comments(self, provider_object_id: str, effect_id: str) -> list[dict[str, Any]]:
-        row = self._required_row(provider_object_id)
+        row = self._fresh_required_row(provider_object_id)
         if self.comments is None:
             raise TaskError("selected Sheets surface does not provide comment operations")
-        return [dict(comment) for comment in self.comments.list_comments(self.scope, row.row_id, effect_id)]
+        canonical_id = self._canonical_from_object_id(provider_object_id)
+        comments = [dict(comment) for comment in self.comments.list_comments(
+            self.scope, row.row_id, canonical_id, provider_object_id, effect_id
+        )]
+        for comment in comments:
+            if comment.get("effect_id") != effect_id:
+                raise TaskError("Sheet comment lookup returned the wrong effect ID")
+            if comment.get("canonical_task_id") != canonical_id:
+                raise TaskError("Sheet comment lookup returned the wrong canonical task ID")
+            if comment.get("provider_object_id") != provider_object_id:
+                raise TaskError("Sheet comment lookup returned the wrong provider object ID")
+        self._fresh_required_row(provider_object_id)
+        return comments
 
     def write_comment(self, provider_object_id: str, effect_id: str, text: str) -> dict[str, Any]:
-        row = self._required_row(provider_object_id)
+        row = self._fresh_required_row(provider_object_id)
         if self.comments is None:
             raise TaskError("selected Sheets surface does not provide comment operations")
-        written = dict(self.comments.write_comment(self.scope, row.row_id, effect_id, text))
+        canonical_id = self._canonical_from_object_id(provider_object_id)
+        written = dict(self.comments.write_comment(
+            self.scope, row.row_id, canonical_id, provider_object_id, effect_id, text
+        ))
+        if (
+            written.get("canonical_task_id") != canonical_id
+            or written.get("provider_object_id") != provider_object_id
+            or written.get("effect_id") != effect_id or written.get("text") != text
+        ):
+            raise TaskError("Sheet comment write returned the wrong immutable effect")
         matches = self.find_comments(provider_object_id, effect_id)
-        if len(matches) != 1 or matches[0] != written:
+        if len(matches) != 1 or matches[0] != written or matches[0].get("text") != text:
             raise TaskError("Sheet comment readback does not establish one immutable effect")
         return written
 
@@ -453,7 +481,8 @@ class GoogleSheetsTaskSync:
         return self._verified_projection(row_id, projection)
 
     def verify_expected_system_fields(
-        self, expected_projections: Mapping[str, Mapping[str, str]]
+        self, expected_projections: Mapping[str, Mapping[str, str]],
+        planned_projections: Mapping[str, Mapping[str, str]] | None = None,
     ) -> None:
         """Fail closed on unplanned managed-field drift before a runtime writes.
 
@@ -463,13 +492,18 @@ class GoogleSheetsTaskSync:
         compared here.
         """
 
+        planned_projections = planned_projections or expected_projections
         for canonical_id, expected in expected_projections.items():
             row = self._find_managed_row(canonical_id)
             if row is None:
                 raise TaskError("expected canonical Sheet row is absent")
             actual = self._provider_task(row)
-            for field in ("canonical_task_id", "description", "source_link", "workflow_state"):
-                if field in expected and actual[field] != expected[field]:
+            planned = planned_projections.get(canonical_id, expected)
+            for field in (
+                "canonical_task_id", "origin", "description", "source_link",
+                "workflow_state", "source_due",
+            ):
+                if field in expected and actual[field] not in {expected[field], planned.get(field)}:
                     raise TaskError("unexpected system-managed Sheet field drift")
 
     def apply_parent_state(
@@ -515,6 +549,7 @@ class GoogleSheetsTaskSync:
                     changes,
                     expected_canonical_task_id=self._canonical_from_object_id(provider_object_id),
                     expected_managed_by=MANAGED_BY_VALUE,
+                    expected_cells={column: row.cells.get(column) for column in changes},
                 )
             )
         exact = self.rows.read_exact(self.scope, row_id)
@@ -629,6 +664,21 @@ class GoogleSheetsTaskSync:
         if row is None:
             raise TaskError("Sheet task row is absent")
         return row
+
+    def _fresh_required_row(self, provider_object_id: str) -> SheetRow:
+        """Re-resolve canonical identity from a fresh complete scope snapshot."""
+        self._invalidate_snapshot()
+        row = self._required_row(provider_object_id)
+        exact = self.rows.read_exact(self.scope, row.row_id)
+        if exact is None:
+            self._invalidate_snapshot()
+            raise TaskError("Sheet task row is absent during fresh identity guard")
+        canonical_id = self._canonical_from_object_id(provider_object_id)
+        if self._provider_task(exact)["canonical_task_id"] != canonical_id:
+            self._invalidate_snapshot()
+            raise TaskError("fresh Sheet identity guard resolved a different canonical task")
+        self._replace_verified_row(exact)
+        return exact
 
     def _provider_task(self, row: SheetRow) -> dict[str, Any]:
         cells = row.cells
