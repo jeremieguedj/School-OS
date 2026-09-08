@@ -1550,3 +1550,31 @@ requirements, then read this log from top to bottom.
   privacy-scan the staged new test, commit/push/verify this source checkpoint,
   then integrate and refresh the separately accepted bounded M4-004 measurement
   delta without touching task/Sheets/brief/runtime work.
+
+## 2026-09-08 — alpha.13 M4-004 measured continuation integration
+
+- Published and remotely verified the preceding source/semantic checkpoint at
+  `64dbc3b1a5af60ed9da2d40c94c3a139640708f3`. Root independently reran its
+  focused 13-test source/import/semantic matrix successfully and accepted the
+  stable interfaces for later authenticated runtime binding.
+- Integrated the complete accepted M4-004 measurement delta, then regenerated
+  it from the current source path with `PYTHONPATH=. python3
+  scripts/measure_synthetic.py`. The command now exercises strict plaintext
+  admission and typed catalog construction as well as onboarding, complete
+  paginated enumeration, bounded import selection, full daily/no-new runs, and
+  a measured interruption followed by a new attempt. The baseline records
+  actual elapsed nanoseconds, canonical input/output byte counts, helper and
+  provider-fake calls, checkpoint time, completed units, and zero repeated
+  phases; unavailable model-token and host-deadline values remain explicit.
+- `school_os.daily` now starts elapsed accounting before admission and uses a
+  measured estimate plus reserve before each next complete phase. It creates and
+  verifies a concrete continuation checkpoint before returning
+  `NEEDS_CONTINUATION`; a resumed attempt retains predecessor history and does
+  not replay completed phases. The boundary cannot interrupt an active phase or
+  provider call, which remains an explicit practical limit.
+- `python3 scripts/validate.py` passes 179 tests after regeneration. M4-004's
+  generic implementation is complete, but the same command must run once more
+  after the separately open task-core repair before its task-sync timing becomes
+  final release evidence. This run used only synthetic fixtures/fakes and made
+  no private or provider effects. Next: staged privacy/diff checks, commit/push/
+  remote verification, then hand off main to the queued task/brief/runtime work.

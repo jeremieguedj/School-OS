@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
 - Status: approved completion plan; M1–M3 require chained revalidation after the installer correction, and M4 implementation plus observed fresh-test-instance evidence remains
-- Revision: 31, updated 2026-09-08
+- Revision: 32, updated 2026-09-08
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -738,10 +738,11 @@ successful uninterrupted run alone is insufficient.
 ### Milestone 4 — Expand coverage and establish release readiness
 
 **Status:** in progress (M4-001 and M4-007 corrected generic implementations
-complete pending authenticated observed binding; M4-002 complete for synthetic alpha.12 input;
-M4-003–M4-009 otherwise pending or in
-progress under the fresh-test-instance authorization; M4-006 remains the final
-release gate).
+complete pending authenticated observed binding; M4-002 complete for synthetic
+alpha.12 input; M4-004's measured runner/baseline implementation is complete
+but must be refreshed after the open task-core correction; remaining M4 tasks
+are pending or in progress under the fresh-test-instance authorization; M4-006
+remains the final release gate).
 
 **Work and deliverables:** Extend the working scenario to the complete 14-day
 school-mail scope in the new test instance, repeated daily runs, supported
@@ -942,3 +943,9 @@ evidence that does not need to be repeatedly printed into model context.
   Fact provenance, and independent exact-result audit. Authenticated accuracy
   and source acceptance remain M4-003/M4-009 work; task-core gates remain open
   pending their separately reviewed correction.
+- Revision 32: integrated M4-004's reproducible synthetic measurement command
+  and conservative elapsed-budget continuation boundary. The refreshed baseline
+  exercises strict source admission/catalog custody, bounded import, complete
+  daily/no-new runs, and one pause/new-attempt resume without repeated phases.
+  It remains synthetic and must be regenerated once more after the separately
+  open task-core correction before final release evidence.

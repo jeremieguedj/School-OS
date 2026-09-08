@@ -122,7 +122,26 @@ new invocation. Local extraction and working files are discardable and cannot
 substitute for installed instructions, checkpoint evidence, or provider
 readback.
 
-A scheduled invocation must not return after a successful intermediate phase. It has only two valid terminal outcomes: `COMPLETE`, after all seven required phases and their readbacks succeed, or `BLOCKED`, after an observed tool, provider, authorization, or source-integrity failure is recorded with concrete evidence. Finishing because the agent has completed a working pass, consumed substantial effort, or chosen to defer later phases is invalid. After a phase passes, continue immediately to the next phase.
+A scheduled invocation must normally return `COMPLETE` after all seven required
+phases and their readbacks, or `BLOCKED` after an observed tool, provider,
+authorization, or source-integrity failure. A measured conservative budget
+boundary may instead return `NEEDS_CONTINUATION` only after a verified durable
+checkpoint, before the next minimum unit begins; a fresh attempt resumes from
+that predecessor. Without that bounded exception, a scheduled invocation must not return after a successful intermediate phase.
+Finishing because the agent has completed a working pass, consumed substantial
+effort, or chosen to defer later phases is invalid. After a phase passes,
+continue immediately to the next phase unless the measured durable boundary
+applies.
+
+The elapsed budget begins before capability and entrypoint admission. Its
+conservative projection includes elapsed admission and checkpoint time, an
+explicit reserve, and a measured nonnegative estimate for the next complete
+phase. A missing estimate is not zero. The check runs only between phases: it
+cannot preempt a phase or provider call already in progress, so phase bounds
+and reserve must cover that practical limit. `NEEDS_CONTINUATION` is invalid
+unless the continuation checkpoint was durably created and returned a concrete
+reference. Resumption starts a new attempt after the verified predecessor and
+retains the already completed phase history without replaying those phases.
 
 ## Cutover rule
 

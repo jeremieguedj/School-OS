@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation and observed validation in progress; M1–M3 are reopened for chained revalidation, M4-001 and M4-007 implementations are complete pending observed binding, M4-002 remains complete for its declared synthetic input, and M4-003–M4-009 otherwise remain
-- Approved plan: [PLAN.md](PLAN.md), revision 31
+- Status: implementation and observed validation in progress; M1–M3 are reopened for chained revalidation, M4-001/M4-007 implementations are complete pending observed binding, M4-002 remains complete for its declared synthetic input, and M4-004 is implemented pending a final post-task-repair refresh
+- Approved plan: [PLAN.md](PLAN.md), revision 32
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
@@ -682,9 +682,10 @@ state removed. A passing uninterrupted operation is insufficient.
 ## Milestone 4 — Expand coverage and establish release readiness
 
 **Status:** in progress. M4-001 and M4-007 corrected generic implementations
-are complete pending authenticated observed binding, M4-002 is complete for its declared synthetic alpha.12 input,
-M4-003–M4-009 remain, and M4-006 is the final release
-gate.
+are complete pending authenticated observed binding; M4-002 is complete for its
+declared synthetic alpha.12 input; M4-004 is implemented with a current
+post-source-correction baseline but requires one refresh after task-core repair;
+the other M4 tasks remain, and M4-006 is the final release gate.
 
 M4 is sufficiently specified to bound later work, but concrete real-provider
 limits and migrations must be based on observed authorized surfaces and private
@@ -741,6 +742,22 @@ that carries real connector reads into the checked-in helpers and carries their
 verified outputs to provider writes. Do not build a generic orchestration
 framework. M4-004 measurement and the implementation/package portion of M4-005
 proceed independently; only final M4-006 waits for all observed evidence.
+
+**M4-004 implementation (2026-09-08):** `scripts/measure_synthetic.py` runs the
+existing scaffolder/package verifier, complete paginated enumeration, bounded
+import selection, strict plaintext admission and typed catalog framing, all
+daily/no-new phases, and one elapsed-budget interruption followed by a new
+attempt. It records actual monotonic/performance-clock durations, canonical
+input/output bytes, helper/provider-fake calls, checkpoint cost, completed and
+repeated units, and explicitly unavailable model-token/host-deadline values.
+`school_os.daily` begins elapsed accounting before admission and checks only
+between complete phases using measured nonnegative estimates plus a reserve. It
+returns `NEEDS_CONTINUATION` only with a concrete durable checkpoint and retains
+predecessor phase history without replay. The regenerated baseline exercises the
+corrected source boundary. Because the task-core repair is still open, regenerate
+the same command after that integration before treating its task-sync timing as
+final release evidence. This baseline is synthetic and establishes no provider
+or runtime conformance.
 
 **M4-007 implementation (2026-09-08):** `school_os.semantic` provides the
 narrow live-interpreter boundary. It supplies bounded source/body/attachment/

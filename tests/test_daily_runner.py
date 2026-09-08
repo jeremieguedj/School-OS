@@ -49,4 +49,59 @@ class DailyRunnerTests(unittest.TestCase):
   stages['brief_delivery']=lambda previous: seen.append(('brief_delivery',previous)) or {'verified':True,'brief_regenerated':True}
   result=run_daily(profile=self.profile('manual'),capability_schema=self.schema,entrypoint='manual',operation_id='daily-empty-001',attempt_id='attempt-001',stages=stages)
   self.assertEqual('COMPLETE',result.outcome);self.assertTrue(result.outputs['reconcile']['rolling_regenerated']);self.assertTrue(result.outputs['brief_delivery']['brief_regenerated']);self.assertEqual(['reconcile','brief_delivery'],[phase for phase,_ in seen if phase in {'reconcile','brief_delivery'}])
+ def test_measured_budget_stops_before_next_phase_and_resumes(self):
+  stages,_=self.stages(); checkpoints=[]
+  paused=run_daily(profile=self.profile('manual'),capability_schema=self.schema,entrypoint='manual',operation_id='daily-budget',attempt_id='attempt-1',stages=stages,max_elapsed_ms=4,estimated_phase_ms={'preflight':1,'discover':1,'catalog':4},monotonic_clock=lambda:0.0,checkpoint=lambda phase,result,outcome:checkpoints.append((phase,result,outcome)) or phase)
+  self.assertEqual('NEEDS_CONTINUATION',paused.outcome);self.assertEqual('discover',paused.current_phase);self.assertEqual('needs_continuation',checkpoints[-1][2])
+  resumed=run_daily(profile=self.profile('manual'),capability_schema=self.schema,entrypoint='manual',operation_id='daily-budget',attempt_id='attempt-2',stages=stages,resume_after='discover',durable_predecessor_output=checkpoints[-1][1])
+  self.assertEqual('COMPLETE',resumed.outcome)
+ def test_budget_counts_admission_and_checkpoint_elapsed(self):
+  stages,seen=self.stages(); admission_times=iter((0.0,0.004))
+  with self.assertRaisesRegex(DailyError,'cannot complete the next minimum unit'):
+   run_daily(profile=self.profile('manual'),capability_schema=self.schema,entrypoint='manual',operation_id='daily-budget',attempt_id='attempt-1',stages=stages,max_elapsed_ms=5,estimated_phase_ms={'preflight':1},monotonic_clock=lambda:next(admission_times))
+  self.assertEqual([],seen)
+  stages,seen=self.stages(); clock=[0.0]; checkpoints=[]
+  def checkpoint(phase,result,outcome):
+   checkpoints.append((phase,result,outcome));clock[0] += 0.003;return f'checkpoint-{len(checkpoints)}'
+  paused=run_daily(profile=self.profile('manual'),capability_schema=self.schema,entrypoint='manual',operation_id='daily-budget',attempt_id='attempt-1',stages=stages,max_elapsed_ms=6,estimated_phase_ms={'preflight':1,'discover':2},reserve_ms=1,monotonic_clock=lambda:clock[0],checkpoint=checkpoint)
+  self.assertEqual('NEEDS_CONTINUATION',paused.outcome);self.assertEqual(['preflight'],[phase for phase,_ in seen]);self.assertEqual('needs_continuation',checkpoints[-1][2])
+ def test_budget_validation_rejects_unknown_negative_and_bad_numeric_types(self):
+  stages,_=self.stages()
+  base=dict(profile=self.profile('manual'),capability_schema=self.schema,entrypoint='manual',operation_id='daily-budget',attempt_id='attempt-1',stages=stages,monotonic_clock=lambda:0.0)
+  for value in (True,0,-1,1.5,'5'):
+   with self.subTest(max_elapsed_ms=value),self.assertRaisesRegex(DailyError,'elapsed budget must be a positive integer'):
+    run_daily(**base,max_elapsed_ms=value,estimated_phase_ms={'preflight':1})
+  for value in (True,-1,1.5,'1'):
+   with self.subTest(reserve_ms=value),self.assertRaisesRegex(DailyError,'budget reserve must be a nonnegative integer'):
+    run_daily(**base,reserve_ms=value)
+  with self.assertRaisesRegex(DailyError,'requires a measured next-phase estimate'):
+   run_daily(**base,max_elapsed_ms=5,estimated_phase_ms={})
+  for value in (True,-1,1.5,'1'):
+   with self.subTest(estimated_phase_ms=value),self.assertRaisesRegex(DailyError,'phase estimate must be a nonnegative integer'):
+    run_daily(**base,max_elapsed_ms=5,estimated_phase_ms={'preflight':value})
+ def test_budget_and_planned_boundaries_require_durable_checkpoint(self):
+  stages,_=self.stages();base=dict(profile=self.profile('manual'),capability_schema=self.schema,entrypoint='manual',operation_id='daily-budget',attempt_id='attempt-1',stages=stages)
+  with self.assertRaisesRegex(DailyError,'requires a durable checkpoint'):
+   run_daily(**base,max_elapsed_ms=2,estimated_phase_ms={'preflight':0,'discover':2},monotonic_clock=lambda:0.0)
+  with self.assertRaisesRegex(DailyError,'requires a durable checkpoint reference'):
+   run_daily(**base,stop_after='preflight',checkpoint=lambda _phase,_result,_outcome:None)
+ def test_resumed_budget_preserves_history_without_replaying_predecessors(self):
+  stages,seen=self.stages();checkpoints=[]
+  paused=run_daily(profile=self.profile('manual'),capability_schema=self.schema,entrypoint='manual',operation_id='daily-resume',attempt_id='attempt-2',stages=stages,resume_after='discover',durable_predecessor_output={'verified':True,'phase':'discover'},max_elapsed_ms=3,estimated_phase_ms={'catalog':1,'reconcile':3},monotonic_clock=lambda:0.0,checkpoint=lambda phase,result,outcome:checkpoints.append((phase,result,outcome)) or f'checkpoint-{phase}-{outcome}')
+  self.assertEqual(('preflight','discover','catalog'),paused.completed_phases);self.assertEqual(['catalog'],[phase for phase,_ in seen])
+  resumed=run_daily(profile=self.profile('manual'),capability_schema=self.schema,entrypoint='manual',operation_id='daily-resume',attempt_id='attempt-3',stages=stages,resume_after='catalog',durable_predecessor_output=checkpoints[-1][1])
+  self.assertEqual('COMPLETE',resumed.outcome);self.assertEqual(list(PHASES[2:]),[phase for phase,_ in seen]);self.assertEqual(PHASES,resumed.completed_phases)
+  with self.assertRaisesRegex(DailyError,'verified durable predecessor output'):
+   run_daily(profile=self.profile('manual'),capability_schema=self.schema,entrypoint='manual',operation_id='daily-resume',attempt_id='attempt-3',stages=stages,resume_after='catalog',durable_predecessor_output={'verified':False})
+ def test_measurement_baseline_records_exercised_paths_and_scope(self):
+  baseline=json.loads((ROOT/'tests/synthetic-fixtures/alpha13/measurement-baseline.json').read_text())
+  operations={item['name']:item for item in baseline['operations']}
+  self.assertEqual({'onboarding','bounded_import','daily_update','no_new_message','interrupted','fresh_attempt_resume'},set(operations))
+  self.assertIsNone(baseline['unavailable']['model_tokens']);self.assertIsNone(baseline['unavailable']['host_deadline_ns']);self.assertIn('does not establish observed runtime or provider conformance',baseline['evidence_scope'])
+  for name in ('daily_update','no_new_message'):
+   self.assertEqual('COMPLETE',operations[name]['result']['outcome']);self.assertEqual(list(PHASES),operations[name]['completed_units']);self.assertGreater(operations[name]['provider_fake_calls'],0)
+  self.assertEqual(1,operations['daily_update']['helper_calls']['importer.admit_exact_plaintext_representation']);self.assertEqual(1,operations['daily_update']['helper_calls']['catalog.build_catalog_message'])
+  self.assertEqual(1,operations['daily_update']['result']['phase_evidence']['task_sync']['canonical_provider_bindings'])
+  self.assertEqual(0,operations['no_new_message']['result']['phase_evidence']['discover']['new_conversations'])
+  self.assertEqual('NEEDS_CONTINUATION',operations['interrupted']['result']['outcome']);self.assertEqual('COMPLETE',operations['fresh_attempt_resume']['result']['outcome']);self.assertEqual([],operations['fresh_attempt_resume']['repeated_units']);self.assertIn('same-process continuation under a new attempt ID',operations['fresh_attempt_resume']['evidence_scope'])
 if __name__=='__main__':unittest.main()

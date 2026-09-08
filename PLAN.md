@@ -61,6 +61,10 @@ private recipient; those values remain outside Git. The corrected generic
 M4-001/M4-007 source-custody and semantic-audit implementation is complete and
 regression-tested; authenticated invocation, independent private accuracy, and
 view projection remain M4-003/M4-009 acceptance work.
+M4-004 now has a reproducible synthetic measurement command and measured
+checkpoint-before-limit behavior refreshed against the corrected source path.
+Its task-sync measurements must be regenerated after the separately open
+task-core correction before final release evidence.
 The original snapshot remains in Git.
 
 ## Objective
