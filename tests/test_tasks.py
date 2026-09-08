@@ -4,7 +4,7 @@ import sys
 import unittest
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]; sys.path.insert(0,str(ROOT))
-from school_os.tasks import TaskError, build_derived_knowledge, canonical_task_id, reconcile_canonical_tasks, serialize_canonical_tasks  # noqa: E402
+from school_os.tasks import TaskError, build_derived_knowledge, canonical_task_id, parent_task_from_provider, reconcile_canonical_tasks, serialize_canonical_tasks  # noqa: E402
 
 class TaskTests(unittest.TestCase):
  @classmethod
@@ -33,4 +33,20 @@ class TaskTests(unittest.TestCase):
   del facts[0]['attachment']['origin']
   with self.assertRaisesRegex(TaskError,"invalid Fact"):
    build_derived_knowledge(facts,fact_schema=self.fact,task_schema=self.task)
+ def test_explicit_parent_row_gets_stable_non_source_identity(self):
+  row={"provider_object_id":"row-1","managed_by":"parent","title":"Call school","group":"household","progress":"left voicemail"}
+  first=parent_task_from_provider("sheets",row);second=parent_task_from_provider("sheets",row)
+  self.assertEqual(first['task_id'],second['task_id']);self.assertEqual('parent',first['origin']);self.assertEqual([],first['source_facts']);self.assertIsNone(first['source_link'])
+  with self.assertRaisesRegex(TaskError,"explicit parent"):
+   parent_task_from_provider("sheets",{**row,"managed_by":None})
+ def test_explicit_source_relation_updates_only_its_target_and_keeps_opening_id(self):
+  register=reconcile_canonical_tasks({"schema_version":1,"tasks":[]},self.facts(),fact_schema=self.fact,task_schema=self.task,register_schema=self.register)
+  task_id=register["tasks"][0]["task_id"]
+  support={"fact_id":"fact-correction","record_id":"record-2","source_message_id":"message-2","source_byte_start":0,"source_byte_end":4,"received_date":"2026-09-08","entity_scope":"household","category":"school","text":"The deadline is Friday","flags":{"is_update":True,"is_durable":False,"is_guideline":False,"is_action":False},"task_relation":{"target_task_id":task_id,"relation":"correction","changed_source_fields":{"source_due":"2026-09-12"}}}
+  repaired=reconcile_canonical_tasks(register,[*self.facts(),support],fact_schema=self.fact,task_schema=self.task,register_schema=self.register)
+  task=repaired["tasks"][0]
+  self.assertEqual(task_id,task["task_id"]);self.assertEqual("2026-09-12",task["source_due"]);self.assertIn("fact-correction",task["source_facts"])
+  support["task_relation"]["target_task_id"]="task-unknown"
+  with self.assertRaisesRegex(TaskError,"unknown target"):
+   reconcile_canonical_tasks(register,[*self.facts(),support],fact_schema=self.fact,task_schema=self.task,register_schema=self.register)
 if __name__=='__main__': unittest.main()

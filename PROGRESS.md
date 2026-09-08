@@ -1458,3 +1458,27 @@ requirements, then read this log from top to bottom.
   source, delivery, scheduler, or private instance changed in this consultation.
   Next: record matching specification detail, implement the shared core and
   regression matrix, then validate and publish the reopened-task checkpoint.
+
+## 2026-09-08 — alpha.13 canonical task and Google Sheets reconciliation implementation
+
+- Implemented the reopened M2-003/M2-004/M3-003 repository correction and
+  integrated the reviewed isolated Google Sheets mapping. Canonical task state
+  now has explicit source relations, source-due evidence, append-only source
+  and parent lifecycle events, uniqueness checks for task/provider bindings,
+  and durable per-provider parent snapshots. Completion remains separate from
+  the three workflow states; a completed provider observation without a
+  nonempty parent comment is reopened with one recoverable immutable reminder.
+- The Sheets adapter takes one complete scoped snapshot per explicit sync,
+  re-resolves and guards mutable row locators before writes, verifies exact
+  readback, preserves unrelated cells, distinguishes source due from parent
+  planned due, and exposes/claims unbound parent rows only after core has
+  journaled the assigned canonical ID. Replays resolve by ID, never title.
+- Synthetic coverage now exercises same-title parent rows, intent-then-claim
+  recovery, source correction identity preservation, completion/reopen replay,
+  source/provider due separation, one-snapshot multi-task synchronization, and
+  guarded row reorder/retarget failures. `python3 -m unittest discover -s
+  tests` passed 169 tests; `git diff --check` passed. No live provider, Drive,
+  Sheet, mail, scheduler, or private instance was read or changed.
+- Next: run privacy/repository validation, commit this shared core/Sheets
+  checkpoint, push it to `origin/main`, and verify the remote SHA. Authenticated
+  runtime bridge and observed private test-Sheet acceptance remain M4-003/M4-009.

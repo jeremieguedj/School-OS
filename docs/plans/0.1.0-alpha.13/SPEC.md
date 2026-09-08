@@ -546,6 +546,18 @@ validated Fact-to-task relationships and block ambiguity. Both canonical task
 and provider state retain unique bindings. No title match, silent unbound-row
 admission, or generic task engine is permitted.
 
+**Task-core implementation (2026-09-08):** `school_os.tasks` now applies those
+rules mechanically. It records pending parent claim intents in provider state
+before the next sync can claim the exact provider packet, uses canonical IDs to
+recover claims, carries last parent snapshots in verified bindings, and keeps
+source due/provenance outside parent-field admission. `school_os.sheets`
+implements the selected adapter's one-snapshot session, guarded mutable row
+packets, exact readback, distinct source/parent due columns, and native comment
+bridge. Synthetic tests cover same-title parent tasks, claim/replay, source
+relations, completion/comment replay, field clearing, and guarded retargeting.
+This is repository evidence only; M4-003/M4-009 still require the actual
+runtime bridge and observed private-Sheet conformance.
+
 **M2-005 implementation note (2026-09-07):** `school_os.brief` deterministically
 renders the versioned input contract to escaped HTML/plain text. The delivery
 ledger confirms a content-hash/key once through the send sink and blocks repeats.

@@ -34,7 +34,7 @@ class ProviderReconciliationTests(unittest.TestCase):
   self.assertEqual(1,len(provider.tasks));self.assertEqual('task-1',recovered.provider_state['bindings'][0]['task_id'])
   provider.tasks[0].update({'title':'Parent title','group':'parent-group','parent_planned_due':'2026-09-10','progress':'done'})
   preserved=reconcile_provider_tasks(provider,register,recovered.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
-  self.assertEqual('Parent title',provider.tasks[0]['title']);self.assertEqual('parent-group',provider.tasks[0]['group']);self.assertEqual(2,len(preserved.review_cases))
+  self.assertEqual('Parent title',provider.tasks[0]['title']);self.assertEqual('parent-group',provider.tasks[0]['group']);self.assertEqual('Parent title',preserved.tasks['tasks'][0]['action']);self.assertEqual('parent-group',preserved.tasks['tasks'][0]['entity_scope'])
  def test_lost_update_response_is_adopted_without_a_second_patch(self):
   class LostPatchTasks(FixtureTasks):
    def __init__(self): super().__init__();self.lose=True
@@ -44,9 +44,9 @@ class ProviderReconciliationTests(unittest.TestCase):
     return result
   provider=LostPatchTasks();old=self.task();register={"schema_version":1,"tasks":[old]}
   initial=reconcile_provider_tasks(provider,register,self.state(),task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
-  updated=self.task();updated['action']='Return the revised form';register={"schema_version":1,"tasks":[updated]}
+  updated=self.task();updated['task_context']='Revised school context';register={"schema_version":1,"tasks":[updated]}
   with self.assertRaises(ConnectionError):reconcile_provider_tasks(provider,register,initial.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
-  self.assertEqual('Return the revised form',provider.tasks[0]['title']);self.assertEqual(1,provider.calls.count('patch'))
+  self.assertEqual('Revised school context',provider.tasks[0]['description']);self.assertEqual(1,provider.calls.count('patch'))
   recovered=reconcile_provider_tasks(provider,register,initial.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
   self.assertEqual(1,provider.calls.count('patch'));self.assertEqual('adopt',recovered.effects[0]['kind']);self.assertEqual((),recovered.review_cases)
  def test_lost_comment_response_is_adopted_without_duplicate(self):
@@ -58,4 +58,20 @@ class ProviderReconciliationTests(unittest.TestCase):
   with self.assertRaises(ConnectionError):recover_task_comment(provider,'task-1','comment-1','Parent progress')
   adopted=recover_task_comment(provider,'task-1','comment-1','Parent progress')
   self.assertEqual('Parent progress',adopted['text']);self.assertEqual(1,len(provider.comments))
+ def test_completion_requires_comment_and_replay_is_idempotent(self):
+  class CompletionTasks(FixtureTasks):
+   def apply_parent_state(self,object_id,*,status=None,**_):
+    return self.apply_patch(object_id,{"status":status})
+  provider=CompletionTasks();register={"schema_version":1,"tasks":[self.task()]}
+  initial=reconcile_provider_tasks(provider,register,self.state(),task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+  provider.tasks[0].update({"status":"completed","completion_comment":""})
+  reopened=reconcile_provider_tasks(provider,initial.tasks,initial.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+  self.assertEqual("open",provider.tasks[0]["status"]);self.assertEqual(1,len(provider.comments));self.assertEqual("reopened_missing_completion_comment",reopened.tasks["tasks"][0]["lifecycle_history"][0]["kind"])
+  replay=reconcile_provider_tasks(provider,reopened.tasks,reopened.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+  self.assertEqual(1,len(provider.comments));self.assertEqual(1,len(replay.tasks["tasks"][0]["lifecycle_history"]))
+  provider.tasks[0].update({"status":"completed","completion_comment":"Called the office"})
+  complete=reconcile_provider_tasks(provider,replay.tasks,replay.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+  self.assertEqual(2,len(complete.tasks["tasks"][0]["lifecycle_history"]))
+  repeated=reconcile_provider_tasks(provider,complete.tasks,complete.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+  self.assertEqual(2,len(repeated.tasks["tasks"][0]["lifecycle_history"]))
 if __name__=='__main__': unittest.main()

@@ -51,7 +51,8 @@ revalidation without discarding their accepted implementation history. M4-004
 synthetic measurement and M4-005 package preparation no longer wait for
 real-provider evidence; final M4-006 still does. M4-007's generic semantic
 packet/audit implementation is complete pending its authenticated binding.
-M4-008 Google Sheets and M4-009 full observed-path acceptance remain. Two
+M4-008 Google Sheets synthetic mapping/reconciliation is implemented; its
+observed private-Sheet acceptance, and M4-009 full observed-path acceptance, remain. Two
 delivery/view choices remain pending: whether the 14-day scope changes normal
 brief eligibility or only import/audit coverage, and the exact test recipient
 set. Independent implementation and no-send work continue while those are

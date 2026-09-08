@@ -89,6 +89,19 @@ records. Completion stays a lifecycle event, not a new workflow state; a
 missing required parent comment reopens with one recoverable reminder. No title
 matching, generic task engine, or unscoped provider mutation is authorized.
 
+**Task-core implementation checkpoint (2026-09-08):** The corrected canonical
+reconciler and selected Sheets mapping now have synthetic coverage. A complete
+scoped snapshot is indexed once per sync; the core journals a parent-origin
+task/claim intent before a guarded claim and resolves recovery by canonical ID.
+Source relations are explicit and validated, including support/correction/
+completion/reopen evidence. Parent action, group, planned date, progress,
+workflow, status, and qualifying completion comment observations use durable
+last-synchronized snapshots; source due and provenance remain source-owned.
+Completion remains append-only lifecycle history. This completes the repository
+implementation portion of the reopened M2-003/M2-004/M3-003 and M4-008 work;
+authenticated runtime binding and observed private test-Sheet evidence remain
+M4-003/M4-009 work.
+
 The user has authorized the new test instance to ingest the last 14 days of the
 grounded school-mail scope; execute real manual and temporary scheduled brief
 email runs; create and exercise a Google Sheets task projection; and validate
