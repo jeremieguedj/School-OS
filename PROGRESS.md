@@ -321,3 +321,24 @@ requirements, then read this log from top to bottom.
   whether M1-002 should validate a registry only when it is present, or depend
   on M1-003 / be reordered. Do not implement the disputed validator behavior
   until its recommendation is checked against the approved constraints.
+
+## 2026-09-07 — alpha.13 M1 sequencing consultation resolution
+
+- Consulted GPT-5.6 Sol with High reasoning in a read-only advisory role using
+  the M1-002/M1-003 dependency table, current no-registry code state, the clean
+  candidate acceptance, and the fail-closed/offline constraints. It confirmed
+  that optional registry validation would incorrectly permit an incomplete
+  package to pass.
+- Resolved without new product authorization: preserve task IDs, execute
+  `M1-001 -> M1-003 -> M1-002 -> M1-004 -> M1-005 -> M1-006`, and change
+  M1-002 to depend on M1-001 and M1-003. The installed-validation acceptance
+  now says Git must be unavailable without preventing validation; any attempted
+  Git invocation is a test failure.
+- Updated the release plan, implementation specification, and root summary to
+  record the defect, resolution, revised order, and M1-003 as the exact next
+  task. This restores the existing deterministic, offline, required-file gate;
+  it creates no new architecture, provider integration, external effect, or
+  release authorization.
+- Validation pending for this documentation-only correction. Next: run the
+  repository validation and privacy scan; commit and push the resolution; then
+  implement M1-003 before M1-002.

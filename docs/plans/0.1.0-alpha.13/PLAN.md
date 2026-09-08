@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
 - Status: approved plan with linked implementation specification; M1 in progress
-- Revision: 4, updated 2026-09-07
+- Revision: 5, updated 2026-09-07
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -475,8 +475,13 @@ alpha.13 release readiness or conformance for every runtime.
 
 ### Milestone 1 — Install a minimal candidate in a clean test instance
 
-**Status:** in progress (M1-001 complete; M1-002 blocked pending sequencing
-resolution; M1-003 through M1-006 pending).
+**Status:** in progress (M1-001 complete; M1-003 next; M1-002 then M1-004
+through M1-006 pending).
+
+**Sequencing correction:** M1-003 precedes M1-002. M1-002 validates the
+required registry and registry schema that M1-003 creates, so it cannot safely
+run first. This correction preserves the approved fail-closed package gate and
+stable task identifiers; it does not change product scope.
 
 **Work and deliverables:** Select one existing runtime/provider combination as
 the first conformance target. Define a small synthetic corpus containing a
