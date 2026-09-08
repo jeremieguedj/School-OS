@@ -590,3 +590,11 @@ requirements, then read this log from top to bottom.
   or private-instance effect occurred. Validation/publication pending. Exact
   next action: complete repository validation and privacy scan, commit/push/
   verify M2-003, then implement M2-004 guarded provider reconciliation.
+
+## 2026-09-07 — alpha.13 M2-003 verification
+
+- M2-003 was accepted as `1aaa9f028f4ec773fdff5b2333eae41372cc4153`
+  (`Implement alpha.13 canonical task builders`). The complete repository gate
+  passed 107 tests and every changed file passed privacy/diff checks.
+- `origin/main` resolves to the same commit. Next: M2-004 provider protocol,
+  pull-first reconciliation, guarded writes, bindings, and parent-edit safety.
