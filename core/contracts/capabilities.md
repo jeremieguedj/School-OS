@@ -66,6 +66,24 @@ audio.generate
 audio.retrieve
 ```
 
+`tasks.list_complete`, `tasks.read_comments`, `tasks.create`, `tasks.update`,
+and `tasks.verify` are the complete-snapshot reconciliation primitives.
+`tasks.list_complete` includes current status and every mapped parent/system
+field for the configured scope; `tasks.read_comments` is complete/paginated;
+and `tasks.update` includes guarded mapped-field and status updates followed by
+exact readback. A core-authorized Group change, completion-policy status change,
+or reopen does not require a fictitious separate move/complete/reopen endpoint
+when the selected adapter performs it through that guarded update surface.
+
+`tasks.list_completed`, `tasks.read_activity`, `tasks.move`, `tasks.complete`,
+and `tasks.reopen` remain valid adapter-specific capabilities for providers such
+as Todoist whose normal snapshot or mutation model needs those distinct
+operations. They are not unconditional daily-run requirements for an adapter
+whose complete current snapshot includes completed status and whose guarded
+update surface covers the required changes. Snapshot comparison establishes
+only observed current changes from the last durable parent snapshot; it must
+not be represented as complete historical activity.
+
 Release and upgrade operations use the `release.*` capabilities to read the supplied package, verify its archive checksum and complete payload inventory, and establish that its immutable tag, commit, version, and release status agree. `storage.copy_verified` is required to stage or back up files with readback evidence; `storage.restore_verified` is required before an operation may promise automatic rollback. `coordination.ensure_idle` is required before an upgrade can cross its first private-write gate.
 
 The `coordination.ensure_idle` capability entry and private upgrade journal together declare exactly one coordination mode without adding a private-state schema field. `native_conditional` means the storage adapter exposes a provider generation/revision precondition that is atomically bound to replace and restore calls. `supervised_operational_single_writer` is permitted only for a bounded attended upgrade when every mutating schedule is verified paused or disabled, one actor is identified, all other direct and automated mutators are explicitly excluded, and the storage surface can fetch complete bytes, compute SHA-256, read `modified_time`, create new exact-ID backup/checkpoint objects, replace an exact target file ID, and immediately read it back. The fallback records version evidence as the exact target file ID plus `modified_time` plus SHA-256 of the complete bytes; it does not claim provider-level conditional-write capability. The operation must stop if the exclusive guard or any evidence becomes unknown.

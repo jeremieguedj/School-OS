@@ -1,6 +1,7 @@
 from __future__ import annotations
 import json
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]; sys.path.insert(0,str(ROOT))
@@ -14,12 +15,19 @@ class ProviderReconciliationTests(unittest.TestCase):
  def task(self):
   return {"task_id":"task-1","origin":"source","action":"Return form","task_context":"school","entity_scope":"household","workflow_state":"needs_action","owner":None,"source_opened_date":"2026-09-07","last_supporting_source_date":"2026-09-07","source_due":None,"parent_planned_due":None,"source_link":"record-1#fact-1","source_facts":["fact-1"],"latest_progress":None,"provider_bindings":[],"lifecycle_history":[],"projection_state":{},"revision":1,"last_modified_evidence":{}}
  def state(self): return {"provider_id":"synthetic","adapter_id":"synthetic-tasks","provider_revision":None,"bindings":[],"cursor":None,"cursor_evidence":{},"verified_readback":{}}
- def sync(self,provider,register,state):
-  return reconcile_provider_tasks(provider,register,state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+ def checkpoint(self,intent): return json.loads(json.dumps(intent))
+ def checkpoint_into(self,state):
+  def persist(intent):
+   state["effect_intents"]=[intent if value["effect_id"]==intent["effect_id"] else value for value in state["effect_intents"]]
+   restored=json.loads(json.dumps(state));state.clear();state.update(restored)
+   return next(value for value in state["effect_intents"] if value["effect_id"]==intent["effect_id"])
+  return persist
+ def sync(self,provider,register,state,checkpoint=None):
+  return reconcile_provider_tasks(provider,register,state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema,checkpoint_effect_intent=checkpoint)
  def create_and_sync(self,provider,register,state=None):
   intent=self.sync(provider,register,state or self.state())
   self.assertEqual("create_intent",intent.effects[0]["kind"]);self.assertEqual([],provider.tasks)
-  return self.sync(provider,intent.tasks,intent.provider_state)
+  return self.sync(provider,intent.tasks,intent.provider_state,self.checkpoint)
  def test_pull_first_create_readback_and_binding_preserves_provider_fields(self):
   provider=FixtureTasks(); register={"schema_version":1,"tasks":[self.task()]}
   result=self.create_and_sync(provider,register)
@@ -34,7 +42,7 @@ class ProviderReconciliationTests(unittest.TestCase):
     if self.lose: self.lose=False;raise ConnectionError('synthetic lost response')
     return result
   provider=LostResponseTasks();register={"schema_version":1,"tasks":[self.task()]}
-  intent=self.sync(provider,register,self.state());unknown=self.sync(provider,intent.tasks,intent.provider_state)
+  intent=self.sync(provider,register,self.state());unknown=self.sync(provider,intent.tasks,intent.provider_state,self.checkpoint)
   self.assertEqual(1,len(provider.tasks))
   self.assertEqual("unknown",unknown.provider_state["effect_intents"][0]["outcome"])
   recovered=self.sync(provider,unknown.tasks,unknown.provider_state)
@@ -54,13 +62,33 @@ class ProviderReconciliationTests(unittest.TestCase):
     if self.first:self.first=False;self.hide_next=True;raise ConnectionError("lost accepted create")
     return value
   provider=InvisibleAfterLostCreate();register={"schema_version":1,"tasks":[self.task()]}
-  journaled=self.sync(provider,register,self.state());unknown=self.sync(provider,journaled.tasks,journaled.provider_state)
+  journaled=self.sync(provider,register,self.state());unknown=self.sync(provider,journaled.tasks,journaled.provider_state,self.checkpoint)
   self.assertEqual(1,len(provider.tasks));self.assertEqual("unknown",unknown.provider_state["effect_intents"][0]["outcome"])
   with self.assertRaisesRegex(TaskError,"remains unknown"):
    self.sync(provider,unknown.tasks,unknown.provider_state)
   self.assertEqual(1,len(provider.tasks));self.assertEqual(1,provider.calls.count("create"))
   adopted=self.sync(provider,unknown.tasks,unknown.provider_state)
   self.assertEqual(1,len(provider.tasks));self.assertEqual([],adopted.provider_state["effect_intents"]);self.assertEqual("task-1",adopted.provider_state["bindings"][0]["task_id"])
+ def test_process_death_after_create_uses_pre_dispatch_durable_unknown_state(self):
+  class ProcessDeathAfterCreate(FixtureTasks):
+   def __init__(self): super().__init__();self.hide_next=False
+   def list_tasks(self):
+    self.calls.append("list")
+    if self.hide_next:self.hide_next=False;return []
+    return [dict(task) for task in self.tasks]
+   def create_task(self,candidate):
+    value=super().create_task(candidate);self.hide_next=True
+    raise SystemExit("process died after accepted create")
+  provider=ProcessDeathAfterCreate();register={"schema_version":1,"tasks":[self.task()]};prepared=self.sync(provider,register,self.state())
+  with tempfile.TemporaryDirectory() as temporary:
+   durable=Path(temporary)/"provider-state.json";durable.write_text(json.dumps(prepared.provider_state))
+   def checkpoint(effect):
+    state=json.loads(durable.read_text());state["effect_intents"]=[effect];durable.write_text(json.dumps(state));return json.loads(durable.read_text())["effect_intents"][0]
+   with self.assertRaises(SystemExit):self.sync(provider,prepared.tasks,prepared.provider_state,checkpoint)
+   restored=json.loads(durable.read_text());self.assertEqual("unknown",restored["effect_intents"][0]["outcome"]);self.assertEqual(1,restored["effect_intents"][0]["dispatch_attempt"])
+   with self.assertRaisesRegex(TaskError,"remains unknown"):self.sync(provider,prepared.tasks,restored)
+   self.assertEqual(1,len(provider.tasks));self.assertEqual(1,provider.calls.count("create"))
+   adopted=self.sync(provider,prepared.tasks,restored);self.assertEqual([],adopted.provider_state["effect_intents"]);self.assertEqual(1,len(provider.tasks))
  def test_zero_match_create_retry_requires_explicit_definitely_not_applied(self):
   class DefinitelyAbsentCreate(FixtureTasks):
    def __init__(self): super().__init__();self.first=True
@@ -71,8 +99,8 @@ class ProviderReconciliationTests(unittest.TestCase):
     self.calls.append("reconcile_create")
     return {"outcome":"definitely_not_applied","verification":{"complete_lookup":True,"consistency_window_elapsed":True}}
   provider=DefinitelyAbsentCreate();register={"schema_version":1,"tasks":[self.task()]}
-  journaled=self.sync(provider,register,self.state());unknown=self.sync(provider,journaled.tasks,journaled.provider_state)
-  retried=self.sync(provider,unknown.tasks,unknown.provider_state)
+  journaled=self.sync(provider,register,self.state());unknown=self.sync(provider,journaled.tasks,journaled.provider_state,self.checkpoint)
+  retried=self.sync(provider,unknown.tasks,unknown.provider_state,self.checkpoint)
   self.assertEqual(1,len(provider.tasks));self.assertEqual(2,provider.calls.count("create"));self.assertIn("reconcile_create",provider.calls);self.assertEqual([],retried.provider_state["effect_intents"])
  def test_managed_row_without_binding_or_create_intent_blocks(self):
   provider=FixtureTasks();provider.tasks=[{**{"canonical_task_id":"task-1","origin":"source","title":"Return form","group":"household","description":"school","workflow_state":"needs_action","source_link":"record-1#fact-1","source_due":""},"provider_object_id":"synthetic-task-1"}]
@@ -119,7 +147,7 @@ class ProviderReconciliationTests(unittest.TestCase):
   provider.tasks[0].update({"status":"completed","completion_comment":""})
   intent=reconcile_provider_tasks(provider,initial.tasks,initial.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
   self.assertEqual("completed",provider.tasks[0]["status"]);self.assertEqual(1,len(intent.provider_state["effect_intents"]));self.assertEqual(0,len(provider.comments))
-  reopened=reconcile_provider_tasks(provider,intent.tasks,intent.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+  reopened=self.sync(provider,intent.tasks,intent.provider_state,self.checkpoint)
   self.assertEqual("open",provider.tasks[0]["status"]);self.assertEqual(1,len(provider.comments));self.assertEqual("reopened_missing_completion_comment",reopened.tasks["tasks"][0]["lifecycle_history"][0]["kind"])
   replay=reconcile_provider_tasks(provider,reopened.tasks,reopened.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
   self.assertEqual(1,len(provider.comments));self.assertEqual(1,len(replay.tasks["tasks"][0]["lifecycle_history"]))
@@ -161,18 +189,41 @@ class ProviderReconciliationTests(unittest.TestCase):
    def write_comment(self,object_id,effect_id,text):
     if self.fail_comment:self.fail_comment=False;raise ConnectionError("synthetic comment failure")
     return super().write_comment(object_id,effect_id,text)
+   def reconcile_comment_intent(self,intent): return {"outcome":"definitely_not_applied","verification":{"complete_lookup":True}}
    def apply_parent_state(self,object_id,*,status=None,**_): return self.apply_patch(object_id,{"status":status})
   provider=FaultyCompletion();initial=self.create_and_sync(provider,{"schema_version":1,"tasks":[self.task()]});provider.tasks[0].update({"status":"completed","completion_comment":""})
   intent=reconcile_provider_tasks(provider,initial.tasks,initial.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+  durable=json.loads(json.dumps(intent.provider_state))
   with self.assertRaises(ConnectionError):
-   reconcile_provider_tasks(provider,intent.tasks,intent.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+   self.sync(provider,intent.tasks,durable,self.checkpoint_into(durable))
   self.assertEqual("completed",provider.tasks[0]["status"])
-  recovered=reconcile_provider_tasks(provider,intent.tasks,intent.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+  recovered=self.sync(provider,intent.tasks,durable,self.checkpoint_into(durable))
   self.assertEqual("open",provider.tasks[0]["status"]);self.assertEqual(1,len(provider.comments));first_id=recovered.tasks["tasks"][0]["lifecycle_history"][-1]["event_id"]
   provider.tasks[0].update({"status":"completed","completion_comment":""})
   second_intent=reconcile_provider_tasks(provider,recovered.tasks,recovered.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
-  second=reconcile_provider_tasks(provider,second_intent.tasks,second_intent.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+  second=self.sync(provider,second_intent.tasks,second_intent.provider_state,self.checkpoint)
   self.assertEqual(2,len(provider.comments));self.assertNotEqual(first_id,second.tasks["tasks"][0]["lifecycle_history"][-1]["event_id"])
+ def test_process_death_after_comment_does_not_duplicate_after_empty_lookup(self):
+  class ProcessDeathAfterComment(FixtureTasks):
+   def __init__(self): super().__init__();self.hide_next=False
+   def find_comments(self,object_id,effect_id):
+    self.calls.append("find_comments")
+    if self.hide_next:self.hide_next=False;return []
+    return [dict(value) for value in self.comments if value["provider_object_id"]==object_id and value["effect_id"]==effect_id]
+   def write_comment(self,object_id,effect_id,text):
+    value=super().write_comment(object_id,effect_id,text);self.hide_next=True
+    raise SystemExit("process died after accepted comment")
+   def apply_parent_state(self,object_id,*,status=None,**_): return self.apply_patch(object_id,{"status":status})
+  provider=ProcessDeathAfterComment();initial=self.create_and_sync(provider,{"schema_version":1,"tasks":[self.task()]});provider.tasks[0].update({"status":"completed","completion_comment":""});intent=self.sync(provider,initial.tasks,initial.provider_state)
+  with tempfile.TemporaryDirectory() as temporary:
+   durable=Path(temporary)/"provider-state.json";durable.write_text(json.dumps(intent.provider_state))
+   def checkpoint(effect):
+    state=json.loads(durable.read_text());state["effect_intents"]=[effect];durable.write_text(json.dumps(state));return json.loads(durable.read_text())["effect_intents"][0]
+   with self.assertRaises(SystemExit):self.sync(provider,intent.tasks,intent.provider_state,checkpoint)
+   restored=json.loads(durable.read_text());self.assertEqual("unknown",restored["effect_intents"][0]["outcome"])
+   with self.assertRaisesRegex(TaskError,"comment outcome remains unknown"):self.sync(provider,intent.tasks,restored)
+   self.assertEqual(1,len(provider.comments));self.assertEqual(1,provider.calls.count("write_comment"))
+   recovered=self.sync(provider,intent.tasks,restored);self.assertEqual(1,len(provider.comments));self.assertEqual("open",provider.tasks[0]["status"]);self.assertEqual([],recovered.provider_state["effect_intents"])
  def test_completed_source_task_is_not_created_and_duplicate_provider_binding_blocks(self):
   completed=self.task();completed["lifecycle_history"]=[{"event_id":"source-complete","kind":"source_completion"}]
   provider=FixtureTasks();result=reconcile_provider_tasks(provider,{"schema_version":1,"tasks":[completed]},self.state(),task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
@@ -204,11 +255,12 @@ class ProviderReconciliationTests(unittest.TestCase):
    with self.subTest(provider=provider_type.__name__):
     provider=provider_type();initial=self.create_and_sync(provider,{"schema_version":1,"tasks":[self.task()]});provider.tasks[0].update({"status":"completed","completion_comment":""})
     intent=reconcile_provider_tasks(provider,initial.tasks,initial.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+    durable=json.loads(json.dumps(intent.provider_state))
     with self.assertRaises(ConnectionError):
-     reconcile_provider_tasks(provider,intent.tasks,intent.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+     self.sync(provider,intent.tasks,durable,self.checkpoint_into(durable))
     self.assertEqual(expected_status,provider.tasks[0]["status"])
-    recovered=reconcile_provider_tasks(provider,intent.tasks,intent.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+    recovered=self.sync(provider,intent.tasks,durable)
     self.assertEqual("open",provider.tasks[0]["status"]);self.assertEqual(1,len(provider.comments));self.assertEqual(1,len(recovered.tasks["tasks"][0]["lifecycle_history"]))
-    replay_lost_state=reconcile_provider_tasks(provider,intent.tasks,intent.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+    replay_lost_state=self.sync(provider,intent.tasks,durable)
     self.assertEqual(1,len(provider.comments));self.assertEqual(recovered.tasks["tasks"][0]["lifecycle_history"][0]["event_id"],replay_lost_state.tasks["tasks"][0]["lifecycle_history"][0]["event_id"])
 if __name__=='__main__': unittest.main()

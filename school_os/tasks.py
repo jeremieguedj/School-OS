@@ -4,7 +4,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from copy import deepcopy
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Callable, Protocol
 from typing import Any
 from uuid import uuid4
 
@@ -457,10 +457,14 @@ def _create_effect_id(task_id: str, projection_sha256: str) -> str:
     )
 
 
-def _create_recovery_outcome(
+def _effect_recovery_outcome(
     provider: TaskProviderPort, intent: Mapping[str, Any]
 ) -> tuple[str, dict[str, Any]]:
-    reconcile = getattr(provider, "reconcile_create_intent", None)
+    method = (
+        "reconcile_create_intent" if intent["kind"] == "task_create"
+        else "reconcile_comment_intent"
+    )
+    reconcile = getattr(provider, method, None)
     if reconcile is None:
         return "unknown", {}
     result = reconcile(deepcopy(dict(intent)))
@@ -471,10 +475,42 @@ def _create_recovery_outcome(
         outcome = getattr(result, "outcome", None)
         verification = getattr(result, "verification", {})
     if outcome not in {"confirmed", "definitely_not_applied", "unknown"}:
-        raise TaskError("task create recovery returned an invalid effect outcome")
+        raise TaskError("task effect recovery returned an invalid effect outcome")
     if not isinstance(verification, Mapping):
-        raise TaskError("task create recovery lacks structured verification evidence")
+        raise TaskError("task effect recovery lacks structured verification evidence")
     return outcome, deepcopy(dict(verification))
+
+
+def _checkpoint_effect_dispatch(
+    intent: Mapping[str, Any],
+    checkpoint: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None,
+) -> dict[str, Any]:
+    if checkpoint is None:
+        raise TaskError("task effect requires a durable pre-dispatch checkpoint callback")
+    candidate = deepcopy(dict(intent))
+    candidate["outcome"] = "unknown"
+    candidate["dispatch_attempt"] = int(candidate.get("dispatch_attempt", 0)) + 1
+    checkpoint_identity = {
+        "effect_id": candidate["effect_id"],
+        "dispatch_attempt": candidate["dispatch_attempt"],
+    }
+    if candidate["kind"] == "task_create":
+        checkpoint_identity["projection_sha256"] = candidate["projection_sha256"]
+    else:
+        checkpoint_identity.update({
+            "task_id": candidate["task_id"],
+            "provider_object_id": candidate["provider_object_id"],
+            "occurrence": candidate["occurrence"],
+            "text_sha256": sha256_bytes(candidate["text"].encode("utf-8")),
+        })
+    candidate["verification"] = {
+        **deepcopy(dict(candidate.get("verification", {}))),
+        "dispatch_checkpoint": checkpoint_identity,
+    }
+    readback = checkpoint(deepcopy(candidate))
+    if not isinstance(readback, Mapping) or dict(readback) != candidate:
+        raise TaskError("task effect dispatch checkpoint did not read back exactly")
+    return candidate
 
 
 def recover_task_comment(provider: TaskProviderPort, provider_object_id: str, effect_id: str, text: str) -> Mapping[str, Any]:
@@ -500,6 +536,7 @@ def reconcile_provider_tasks(
     *, task_schema: Mapping[str, Any], register_schema: Mapping[str, Any], provider_state_schema: Mapping[str, Any],
     completion_comment_required: bool = True,
     missing_comment_reminder: str = "Completion needs a parent comment before it can be recorded.",
+    checkpoint_effect_intent: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None,
 ) -> ProviderReconciliation:
     """Reconcile one complete snapshot with durable intents and field-level three-way rules."""
     _validated(register, register_schema, "canonical task register")
@@ -685,7 +722,22 @@ def reconcile_provider_tasks(
         task_id, object_id = intent["task_id"], intent["provider_object_id"]
         if task_id not in tasks or by_canonical.get(task_id, {}).get("provider_object_id") != object_id:
             raise TaskError("task effect intent does not resolve its canonical provider object")
-        recover_task_comment(provider, object_id, effect_id, intent["text"])
+        if intent["outcome"] == "unknown":
+            matches = [dict(comment) for comment in provider.find_comments(object_id, effect_id)]
+            if len(matches) > 1:
+                raise TaskError("multiple provider comments match one immutable effect ID")
+            if matches and matches[0].get("text") != intent["text"]:
+                raise TaskError("provider comment effect ID has unexpected text")
+            if not matches:
+                outcome, verification = _effect_recovery_outcome(provider, intent)
+                if outcome != "definitely_not_applied":
+                    raise TaskError("task comment outcome remains unknown after a zero-match lookup")
+                intent["outcome"] = "definitely_not_applied"
+                intent["verification"] = verification
+        if intent["outcome"] in {"pending", "definitely_not_applied"}:
+            intent = _checkpoint_effect_dispatch(intent, checkpoint_effect_intent)
+            effect_intents[effect_id] = intent
+            recover_task_comment(provider, object_id, effect_id, intent["text"])
         apply_state = getattr(provider, "apply_parent_state", None)
         if apply_state is None:
             raise TaskError("completion without comment needs a reopen-capable provider")
@@ -731,7 +783,8 @@ def reconcile_provider_tasks(
                 create_intent = {
                     "effect_id": effect_id, "kind": "task_create", "task_id": task_id,
                     "projection_sha256": intent["projection_sha256"],
-                    "projection": deepcopy(projection), "outcome": "pending", "verification": {},
+                    "projection": deepcopy(projection), "outcome": "pending",
+                    "dispatch_attempt": 0, "verification": {},
                 }
                 effect_intents[effect_id] = create_intent
                 create_intents[task_id] = create_intent
@@ -743,11 +796,16 @@ def reconcile_provider_tasks(
             ):
                 raise TaskError("task create intent no longer matches the canonical projection")
             if create_intent["outcome"] == "unknown":
-                outcome, verification = _create_recovery_outcome(provider, create_intent)
+                outcome, verification = _effect_recovery_outcome(provider, create_intent)
                 if outcome != "definitely_not_applied":
                     raise TaskError("task create outcome remains unknown after a zero-match lookup")
                 create_intent["outcome"] = "definitely_not_applied"
                 create_intent["verification"] = verification
+            create_intent = _checkpoint_effect_dispatch(
+                create_intent, checkpoint_effect_intent
+            )
+            effect_intents[create_intent["effect_id"]] = create_intent
+            create_intents[task_id] = create_intent
             try:
                 created = provider.create_task(create_projection(task))
             except Exception as exc:
@@ -889,6 +947,7 @@ def reconcile_provider_tasks(
                     "effect_id": effect_id, "kind": "reopen_missing_completion_comment",
                     "task_id": task_id, "provider_object_id": object_id,
                     "occurrence": occurrence, "text": missing_comment_reminder,
+                    "outcome": "pending", "dispatch_attempt": 0, "verification": {},
                 }
                 review_cases.append({"task_id": task_id, "reason": "completion requires a nonempty parent comment"})
                 effects.append({"kind": "reopen_reminder_intent", "intent": deepcopy(effect_intents[effect_id]), "outcome": "journaled"})

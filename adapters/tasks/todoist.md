@@ -17,7 +17,9 @@ Group and workflow are independent dimensions. Preserve unrelated user labels an
 
 ## Required Todoist operations
 
-The runtime profile must provide and verify:
+In addition to the daily complete-snapshot task baseline, this adapter's runtime
+profile must provide and verify the distinct completed/activity/move/complete/
+reopen capabilities required by Todoist's representation:
 
 1. authenticated-user and timezone read;
 2. project lookup by configured ID;

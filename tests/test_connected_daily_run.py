@@ -149,7 +149,16 @@ class ConnectedDailyRunTests(unittest.TestCase):
             persisted_intent = json.loads(Path(intent_artifact["path"]).read_text(encoding="utf-8"))
             if persisted_intent != create_intent.provider_state or not persisted_intent["effect_intents"]:
                 raise AssertionError("task create intent was not durable before provider mutation")
-            reconciled = reconcile_provider_tasks(provider, create_intent.tasks, persisted_intent, task_schema=self.schemas["task.schema.json"], register_schema=self.schemas["canonical-tasks.schema.json"], provider_state_schema=self.schemas["provider-state.schema.json"])
+            def checkpoint_effect(effect: dict[str, Any]) -> dict[str, Any]:
+                persisted_intent["effect_intents"] = [
+                    effect if value["effect_id"] == effect["effect_id"] else value
+                    for value in persisted_intent["effect_intents"]
+                ]
+                dispatch_artifact = self._write_checked(work / "provider-state-create-intent.json", canonical_json_bytes(persisted_intent), writes)
+                readback = json.loads(Path(dispatch_artifact["path"]).read_text(encoding="utf-8"))
+                persisted_intent.clear();persisted_intent.update(readback)
+                return next(value for value in readback["effect_intents"] if value["effect_id"] == effect["effect_id"])
+            reconciled = reconcile_provider_tasks(provider, create_intent.tasks, persisted_intent, task_schema=self.schemas["task.schema.json"], register_schema=self.schemas["canonical-tasks.schema.json"], provider_state_schema=self.schemas["provider-state.schema.json"], checkpoint_effect_intent=checkpoint_effect)
             # Canonical state is the first recoverable half of the checkpoint;
             # provider state is admitted only after its canonical bindings read back.
             tasks_artifact = self._write_checked(

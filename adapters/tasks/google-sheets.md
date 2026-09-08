@@ -112,7 +112,9 @@ atomic precondition.
 
 Core persists a `task_create` intent containing the canonical ID, exact Sheet
 projection, and projection hash in provider state before `create_task` is ever
-called. Recovery searches the complete managed scope by canonical ID: it adopts
+called. Immediately before append, the runtime checkpoint callback persists and
+exactly reads back the same intent as `unknown` with its next dispatch attempt.
+Recovery searches the complete managed scope by canonical ID: it adopts
 one exact row, blocks multiple or conflicting rows, and does not repeat an
 unknown append after a merely empty snapshot.
 
@@ -139,14 +141,23 @@ with that explicit identity evidence and must never be described as row-anchored
 Reads paginate to completion. If comment operations are unavailable,
 the runtime records that capability as unavailable and blocks any operation
 that requires a provider comment effect.
+The same core checkpoint callback marks the occurrence-stable reminder intent
+`unknown` and reads it back before `write_comment`. After interruption, one
+exact comment is adopted; a transiently empty complete comment lookup blocks
+rather than writing a second reminder.
 
 ## Required observed capabilities
 
 Before an attended or scheduled mutation, the private capability profile for
 the exact runtime/provider/authentication surface must establish the relevant
-task capabilities: scoped snapshot completeness, row identity/configuration
-read, native create/update, status/reopen when selected, comment operations
-when selected, and exact row readback. Synthetic tests demonstrate only the
+task capabilities: `tasks.read_identity`, `tasks.discover_configuration`,
+`tasks.list_complete`, `tasks.read_comments`, `tasks.create`, `tasks.update`,
+`tasks.write_comment`, and `tasks.verify`. The complete snapshot carries current
+status and all mapped parent fields. Guarded `tasks.update` covers Action/Group
+and the core-authorized status/reopen change; this adapter does not claim
+separate activity, completed-list, move, complete, or reopen endpoints. Comment
+lookup is complete/paginated when comment policy needs it, and every mutation
+has exact row readback. Synthetic tests demonstrate only the
 mapping behavior; they do not claim Google authentication, background
 authorization, atomic version preconditions, or production conformance.
 

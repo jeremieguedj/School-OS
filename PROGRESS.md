@@ -1615,3 +1615,65 @@ requirements, then read this log from top to bottom.
   exact SHA to the coordinator. The coordinator should integrate it with the
   separate source-chronology work, rerun the complete combined gate and an
   independent diff review, then handle any authorized publication.
+
+## 2026-09-08 — alpha.13 abrupt-stop task-effect recovery repair
+
+- Follow-up process-death reproduction rejected `f696443`: although ordinary
+  create exceptions returned an unknown intent, `SystemExit` after an accepted
+  create could leave only the older durable `pending` state, and the same gap
+  existed between an accepted missing-comment reminder and returned state.
+- Added one bounded `checkpoint_effect_intent` callback used by both effects.
+  Immediately before every initial or evidence-authorized retry dispatch, core
+  changes the exact intent to `unknown`, increments `dispatch_attempt`, adds
+  effect-specific identity/hash evidence, and requires the callback's exact
+  durable readback. A stop before dispatch is therefore conservative; a stop
+  after provider acceptance cannot restore retryable `pending` state.
+- Unknown create recovery still adopts exactly one exact canonical-ID/projection
+  match and blocks zero, multiple, or conflicting matches. Unknown reminder
+  recovery now adopts one exact occurrence-ID/text match and blocks a zero-match
+  lookup. Either zero may retry only after the adapter supplies explicit
+  `definitely_not_applied` evidence, followed by another durable pre-dispatch
+  checkpoint. Existing parent-claim, occurrence IDs, reopen/readback, binding,
+  and Sheet guard behavior was retained.
+- Permanent Python 3.12 regressions write provider state to a durable temporary
+  file, raise `SystemExit` after provider acceptance, restore the pre-dispatch
+  `unknown` intent, expose one temporarily empty complete lookup, verify no
+  duplicate create/comment, and then adopt the original exact effect. The
+  focused task/provider/Sheets/connected/fresh-process matrix passed 53 tests.
+- On bundled CPython 3.12.14, the complete validation with
+  `PYTHONDONTWRITEBYTECODE=1` passed 192 tests plus schemas, template manifests,
+  and release smoke checks. The unsuppressed reference-runtime run passed all
+  task/effect tests but retained the separately owned three packaging failures
+  caused by generated `__pycache__` entries making the release inventory
+  incomplete; no installer/release CLI files were changed or workaround added.
+- Next: run the privacy and diff gates, inspect the superseding scoped diff,
+  commit the abrupt-stop repair locally, and return the new exact SHA. The
+  coordinator should integrate it with source chronology and the separate
+  packaging fix before the final unsuppressed combined release gate.
+
+## 2026-09-08 — alpha.13 task capability alignment and final isolated validation
+
+- Reconciled the daily task capability list with the implemented complete-
+  snapshot core and selected Sheets adapter. The unconditional baseline is now
+  identity/configuration read, complete current snapshot, complete comments,
+  create, guarded update, comment write, and exact verification. Current status
+  and parent fields come from that snapshot; comparison with the durable prior
+  snapshot records only the observed current transition and does not claim
+  unavailable intermediate activity.
+- Guarded `tasks.update` explicitly covers Action/Group and core-authorized
+  status/reopen changes for Sheets. Distinct completed-list, activity, move,
+  complete, and reopen capabilities remain catalogued as adapter-specific
+  requirements for providers such as Todoist rather than fictitious Sheets or
+  unconditional daily-run endpoints. A focused contract regression enforces
+  this boundary.
+- Bundled CPython 3.12.14 validation with
+  `PYTHONDONTWRITEBYTECODE=1` passed the complete 193-test repository gate plus
+  schemas, template manifests, and release-smoke checks. The earlier unsuppressed
+  reference-runtime run passed every then-present task and effect test; its three
+  failures remain the separately owned generated-`__pycache__`
+  release-inventory issue, for which candidate `7165056` is under coordinator
+  review. This work did not change installer/release code or suppress that known
+  integration dependency in source.
+- Next: run direct privacy and diff checks, inspect all changes since `f696443`,
+  create the superseding local commit, and return its exact SHA and the bounded
+  runtime callback/capability interface to the coordinator.

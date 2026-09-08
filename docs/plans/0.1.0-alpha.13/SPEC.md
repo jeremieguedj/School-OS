@@ -565,9 +565,19 @@ monotonic support date. The stored `source_projection` is the common base for
 source-vs-accepted-parent Action/Group changes; divergent values block before
 mutation/projection. Provider task creation is now a two-checkpoint operation:
 the first reconciliation persists an exact canonical-ID/projection-hash intent,
-and only a continuation may create from it. Unknown outcomes adopt exactly one
-verified canonical-ID match, block ambiguity or an inconclusive zero match, and
-retry only after explicit adapter `definitely_not_applied` evidence.
+and only a continuation may create from it. Before every provider-effect
+dispatch, the bounded checkpoint callback persists and exactly reads back the
+intent as `unknown` with an incremented attempt, closing the abrupt-process-stop
+window. Unknown create outcomes adopt exactly one verified canonical-ID match;
+unknown reminder outcomes adopt exactly one occurrence-stable comment. Both
+block ambiguity or an inconclusive zero match and retry only after explicit
+adapter `definitely_not_applied` evidence.
+The daily task capability baseline now matches this complete-snapshot path:
+current completion and parent fields come from the scoped snapshot, parent
+changes are comparisons with the durable prior snapshot rather than claimed
+activity history, and guarded updates cover Group/status/reopen. Providers that
+need distinct completed/activity/move/complete/reopen operations declare them
+as adapter-specific additions rather than imposing them on Google Sheets.
 
 **M4-001/M4-007 custody correction (2026-09-08):** Source admission now requires
 an explicit complete MIME-tree assertion and rejects high-bit 7bit transport.

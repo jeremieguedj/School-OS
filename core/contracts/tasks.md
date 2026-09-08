@@ -46,6 +46,11 @@ opening Fact or every prior support/correction/completion/reopen Fact.
 - Source due dates are evidence; parent planned dates are working plans.
 - Provider-created tasks without source evidence are allowed but must remain distinguishable from source-derived tasks.
 - Completion history is append-only in intent. The configured completion-comment policy belongs to the core task operation and private policy configuration.
+- Before dispatching a missing-comment reminder, the runtime must durably mark
+  and exactly read back that occurrence-stable effect intent as `unknown`. After
+  an interrupted dispatch, one exact comment is adopted; an empty complete
+  comment lookup does not authorize a duplicate write without explicit
+  `definitely_not_applied` evidence.
 - Source support, correction, completion, and reopen relations are applied in
   stable source/message/content chronology. Fact ID is only the final ordering
   tie. Last-support date is monotonic, and contradictory changes at one source
@@ -69,8 +74,11 @@ The task operation must use immutable task identity and stored bindings; it must
 
 Before creating a missing provider task, persist a `task_create` effect intent
 containing the canonical task ID, exact managed projection, and projection hash.
-Creation occurs only from that recovered durable intent. If the result is
-unknown, a complete canonical-ID lookup may adopt exactly one exact match;
+Immediately before every initial or evidence-authorized retry dispatch, update
+that exact intent to `unknown`, increment its dispatch attempt, and durably read
+it back through the operation's checkpoint callback. Creation occurs only after
+that pre-dispatch readback. If the process stops after provider acceptance, a
+complete canonical-ID lookup may adopt exactly one exact match;
 multiple or conflicting matches block. Zero matches remains unknown and cannot
 be retried unless the adapter returns explicit `definitely_not_applied`
 evidence after its declared consistency window.

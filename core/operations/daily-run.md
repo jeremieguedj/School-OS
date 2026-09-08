@@ -44,17 +44,23 @@ mail.verify_send
 tasks.read_identity
 tasks.discover_configuration
 tasks.list_complete
-tasks.list_completed
-tasks.read_activity
 tasks.read_comments
 tasks.create
 tasks.update
-tasks.move
-tasks.complete
-tasks.reopen
 tasks.write_comment
 tasks.verify
 ```
+
+The task baseline above matches complete-snapshot reconciliation. The snapshot
+must expose current status, Action, Group, planned due, progress, and completion
+comment values for the entire configured scope. Core compares it with the last
+durable parent snapshot; it does not claim unobserved intermediate activity.
+`tasks.update` must cover guarded mapped-field updates, including Group and the
+core-authorized status changes used for completion policy and reopen. The
+selected adapter may declare additional required capabilities when its normal
+snapshot omits current completed tasks or another required current field; those
+adapter-specific additions do not become unconditional requirements for a
+complete-snapshot adapter.
 
 For a scheduler-issued run, `scheduler.inspect` and `scheduler.verify` are also required. Scheduler creation, cutover, pause, or replacement additionally requires `scheduler.ensure` and `scheduler.disable`. A qualified direct manual run requires no scheduler capability and invokes the same `school_os.daily.run_daily` sequence.
 
@@ -104,7 +110,7 @@ Interactive evidence does not prove scheduled-surface conformance. If authentica
 
 ### 5. Task sync
 
-Execute `task-sync.md` through the explicitly selected private task-provider configuration and installed adapter. Pull provider changes first, use immutable IDs and stored bindings, apply the configured completion-comment policy, read back every canonical/provider write, and advance provider state only after the entire reconciliation verifies.
+Execute `task-sync.md` through the explicitly selected private task-provider configuration and installed adapter. Pull one complete current provider snapshot first, use immutable IDs and stored bindings, and compare parent fields/status with the durable prior snapshot without inventing unobserved historical events. Apply the configured completion-comment policy through guarded updates and complete comment reads, read back every canonical/provider write, and advance provider state only after the entire reconciliation verifies.
 
 ### 6. Brief and delivery
 

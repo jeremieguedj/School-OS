@@ -182,6 +182,26 @@ class RuntimeConformanceTests(unittest.TestCase):
         }
         self.assertTrue(all(capability_id in capability_contract for capability_id in required))
 
+    def test_daily_task_capabilities_match_complete_snapshot_reconciliation(self) -> None:
+        daily_run = (ROOT / "core" / "operations" / "daily-run.md").read_text()
+        block = re.search(r"## Required capabilities.*?\x60\x60\x60text\n(.*?)\x60\x60\x60", daily_run, re.S)
+        self.assertIsNotNone(block)
+        declared = {line.strip() for line in block.group(1).splitlines() if line.strip()}
+        baseline = {
+            "tasks.read_identity", "tasks.discover_configuration",
+            "tasks.list_complete", "tasks.read_comments", "tasks.create",
+            "tasks.update", "tasks.write_comment", "tasks.verify",
+        }
+        distinct_provider_operations = {
+            "tasks.list_completed", "tasks.read_activity", "tasks.move",
+            "tasks.complete", "tasks.reopen",
+        }
+        self.assertTrue(baseline <= declared)
+        self.assertEqual(set(), distinct_provider_operations & declared)
+        sheets = (ROOT / "adapters" / "tasks" / "google-sheets.md").read_text()
+        self.assertTrue(all(capability_id in sheets for capability_id in baseline))
+        self.assertIn("does not claim", sheets)
+
     def test_chatgpt_work_has_runtime_and_scheduler_contracts(self) -> None:
         runtime = (ROOT / "adapters" / "runtimes" / "chatgpt-work.md").read_text()
         scheduler = (ROOT / "adapters" / "schedulers" / "chatgpt-work.md").read_text()

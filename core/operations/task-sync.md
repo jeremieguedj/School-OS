@@ -13,6 +13,10 @@ Synchronize the canonical private task register with exactly one explicitly sele
    durable create intent with the exact managed projection and hash before a
    create, writes only system-owned fields, and reads the exact provider object
    back before advancing a binding or cursor.
+   The snapshot includes current completion/status and every mapped parent field
+   in scope. Comparison with the durable prior snapshot establishes the observed
+   current transition only; do not invent or claim intermediate activity that
+   the provider did not expose.
 4. Resolve managed tasks through immutable system IDs and stored bindings, never title matching.
 5. Compare each parent-editable field against the last common snapshot. A
    local-only change projects, a parent-only change is admitted, equal changes
@@ -24,12 +28,17 @@ Synchronize the canonical private task register with exactly one explicitly sele
    and new-source value blocks here, before provider projection.
 6. Enforce the configured completion-comment policy. Before a missing-comment
    reminder or reopen, persist its exact occurrence-stable effect ID, canonical
-   and provider object IDs, and reminder text. Recovery finds that exact comment,
-   then reopens and performs exact readback even when the provider is already
+   and provider object IDs, and reminder text. Immediately before reminder
+   dispatch, checkpoint and exactly read back that intent as `unknown` with an
+   incremented dispatch attempt. Recovery adopts one exact comment; a zero-match
+   unknown lookup blocks unless the adapter proves `definitely_not_applied`.
+   It then reopens and performs exact readback even when the provider is already
    open. A later completion after a verified reopen is a new occurrence.
 7. For each missing unresolved task, first return and persist its `task_create`
-   intent without invoking the provider. On continuation, create from that
-   exact intent. An unknown response is retained as `unknown`; reconcile it by
+   intent without invoking the provider. On continuation, first use the bounded
+   effect-checkpoint callback to persist and exactly read back that intent as
+   `unknown` with an incremented dispatch attempt, then create from it. Reconcile
+   an interrupted dispatch by
    complete canonical-ID lookup, adopting one exact match and blocking zero,
    multiple, or conflicting matches. Retry a zero-match intent only after the
    adapter supplies explicit `definitely_not_applied` evidence. Preserve

@@ -288,6 +288,7 @@ class GoogleSheetsTaskAdapterTests(unittest.TestCase):
         second = reconcile_provider_tasks(
             factory.begin_sync(), register, first.provider_state, task_schema=self.task_schema,
             register_schema=self.register_schema, provider_state_schema=self.state_schema,
+            checkpoint_effect_intent=lambda intent: copy.deepcopy(dict(intent)),
         )
         third = reconcile_provider_tasks(
             factory.begin_sync(), second.tasks, second.provider_state, task_schema=self.task_schema,
@@ -323,6 +324,7 @@ class GoogleSheetsTaskAdapterTests(unittest.TestCase):
         second = reconcile_provider_tasks(
             factory.begin_sync(), register, first.provider_state, task_schema=self.task_schema,
             register_schema=self.register_schema, provider_state_schema=self.state_schema,
+            checkpoint_effect_intent=lambda intent: copy.deepcopy(dict(intent)),
         )
         self.assertEqual(["create", "create"], [effect["kind"] for effect in second.effects])
         self.assertEqual(2, port.complete_reads)
