@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
 - Status: implementation and observed validation in progress; M1–M3 are reopened for chained revalidation, M4-001 and M4-007 implementations are complete pending observed binding, M4-002 remains complete for its declared synthetic input, and M4-003–M4-009 otherwise remain
-- Approved plan: [PLAN.md](PLAN.md), revision 29
+- Approved plan: [PLAN.md](PLAN.md), revision 30
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
@@ -530,6 +530,21 @@ guidelines fail if treated as actions, and task titles are never identity.
 complete synthetic snapshot first, resolves canonical IDs without title matching,
 records a managed-projection hash before create/patch, and accepts bindings only
 after exact readback. Parent/provider-owned fields are not part of the patch.
+
+**Task-core correction (2026-09-08):** M2-003, M2-004, and M3-003 are reopened.
+Complete scoped provider snapshots must admit only explicitly marked parent
+candidates, bind them by a newly assigned canonical ID before marking the exact
+row, and recover an unknown claim through complete canonical-ID lookup. Store
+declared system/parent/provider ownership plus last-synced parent snapshots for
+three-way reconciliation; retain allowed parent title, group, planned-date,
+progress, and completion changes canonically without overwriting source due or
+provenance. Completion is an append-only lifecycle event, never a workflow
+state: a required missing freeform comment reopens the task with one recoverable
+reminder, while a qualifying comment is retained verbatim with provider
+evidence. Source support/correction/completion/reopen changes require explicit
+validated Fact-to-task relationships and block ambiguity. Both canonical task
+and provider state retain unique bindings. No title match, silent unbound-row
+admission, or generic task engine is permitted.
 
 **M2-005 implementation note (2026-09-07):** `school_os.brief` deterministically
 renders the versioned input contract to escaped HTML/plain text. The delivery
