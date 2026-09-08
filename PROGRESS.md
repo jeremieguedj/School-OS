@@ -854,3 +854,14 @@ requirements, then read this log from top to bottom.
   `README.md`, `PLAN.md`, and alpha.13 plan/specification. Commit/push/remote
   verification remain pending. Exact next action: publish and verify this
   M3-006 checkpoint before starting M4-001.
+
+## 2026-09-08 — alpha.13 M3-006 verification and M4 handoff
+
+- M3-006 was accepted as `811f03961da0101454a8ef7db6d0f33f3cf6d21c`
+  (`Complete alpha.13 recovery evidence`). The 129-test repository gate,
+  direct new-file privacy scan, and diff checks passed; `origin/main` was read
+  back at that exact SHA. M3 is complete with synthetic repository evidence.
+- Next: M4-001, inspect the import/catalog and attachment path against the
+  complete multi-page, bounded-resume, no-new-message, and explicit unsupported
+  content requirements before changing the design. Real-provider conformance
+  remains outside this evidence and is not authorized here.
