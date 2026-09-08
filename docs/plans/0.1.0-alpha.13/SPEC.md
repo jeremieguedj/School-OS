@@ -5,7 +5,7 @@
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
-- Milestone status: M1 complete; M2 in progress; M3 pending; M4 pending
+- Milestone status: M1 complete; M2 pending; M3 pending; M4 pending
 
 ## Authority and boundaries
 

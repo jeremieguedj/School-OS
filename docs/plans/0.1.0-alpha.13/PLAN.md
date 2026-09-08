@@ -1,6 +1,6 @@
 # School-OS 0.1.0-alpha.13 release plan
 
-- Status: approved plan with linked implementation specification; M1 complete, M2 in progress
+- Status: approved plan with linked implementation specification; M1 complete, M2 pending
 - Revision: 8, updated 2026-09-07
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
