@@ -152,6 +152,7 @@ def discover_recovery_chain(
 def resume_from_chain(
     state: Mapping[str, Any], chain: RecoveryChain, checkpoint: Mapping[str, Any], *,
     state_schema: Mapping[str, Any], checkpoint_schema: Mapping[str, Any],
+    pinned_release: Mapping[str, Any] | None = None, configuration_fingerprint: str | None = None,
 ) -> None:
     """Validate that a new attempt resumes the selected durable chain exactly."""
     validate_operation_state(state, state_schema)
@@ -167,6 +168,10 @@ def resume_from_chain(
         raise OperationError("resumption requires a new attempt_id")
     if checkpoint["predecessor"] != checkpoint_pointer(chain.tip):
         raise OperationError("resumed checkpoint must point to the recovered chain tip")
+    if pinned_release is not None and chain.tip["pinned_release"] != dict(pinned_release):
+        raise OperationError("recovery release changed and requires reconciliation")
+    if configuration_fingerprint is not None and chain.tip["configuration_fingerprint"] != configuration_fingerprint:
+        raise OperationError("recovery configuration changed and requires reconciliation")
 
 
 def _validate_state_shape(state: Mapping[str, Any]) -> None:

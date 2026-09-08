@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation in progress; M1–M2 and M3-001–M3-004 complete, M3-005 next
-- Approved plan: [PLAN.md](PLAN.md), revision 16
+- Status: implementation in progress; M1–M2 and M3-001–M3-005 complete, M3-006 next
+- Approved plan: [PLAN.md](PLAN.md), revision 17
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
@@ -509,7 +509,7 @@ Gmail, Todoist, Drive, or a scheduled runtime conforms.
 
 ## Milestone 3 — Prove recovery and safe repeated execution
 
-**Status:** in progress (M3-001–M3-004 complete; M3-005 next).
+**Status:** in progress (M3-001–M3-005 complete; M3-006 next).
 
 ### Deliverable
 
@@ -549,6 +549,11 @@ lookup. Parent-edited title/group remain untouched and become review cases.
 intent before sending, reconciles a lost response through exactly one matching
 delivery, blocks inconclusive/ambiguous lookup, and prevents duplicate intent.
 Correction variants derive distinct deterministic delivery keys.
+
+**M3-005 implementation note (2026-09-07):** Resumption requires matching
+pinned release/configuration evidence; stale auth blocks qualification, limits
+remain conservative, resumed non-progress blocks, and cancellation cannot
+terminalize an unknown effect.
 
 ### Required behavioral matrix
 

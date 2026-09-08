@@ -34,4 +34,12 @@ class DailyRunnerTests(unittest.TestCase):
   self.assertEqual('NEEDS_CONTINUATION',paused.outcome);self.assertEqual('catalog',paused.current_phase);self.assertEqual('checkpoint-catalog',paused.checkpoint_reference)
   resumed=run_daily(profile=self.profile('manual'),capability_schema=self.schema,entrypoint='manual',operation_id='daily-001',attempt_id='attempt-002',stages=stages,resume_after='catalog',durable_predecessor_output=checkpoints[-1][1])
   self.assertEqual('COMPLETE',resumed.outcome);self.assertEqual('reconcile',seen[-4][0])
+ def test_stale_auth_capacity_and_resumed_non_progress_block(self):
+  from school_os.capabilities import CapabilityError,qualify_execution
+  stale=self.profile('manual');stale['authentication']['status']='unavailable'
+  with self.assertRaisesRegex(CapabilityError,'authentication'):qualify_execution(stale,self.schema,operation='daily-run',entrypoint='manual')
+  plan=qualify_execution(self.profile('manual'),self.schema,operation='daily-run',entrypoint='manual',requested_records=99,requested_bytes=999999)
+  self.assertEqual(1,plan.max_records_per_unit);self.assertEqual(65536,plan.max_bytes_per_unit)
+  stages,_=self.stages();stages['reconcile']=lambda _:{'verified':True,'progressed':False}
+  with self.assertRaisesRegex(DailyError,'made no progress'):run_daily(profile=self.profile('manual'),capability_schema=self.schema,entrypoint='manual',operation_id='daily-001',attempt_id='attempt-002',stages=stages,resume_after='catalog',durable_predecessor_output={'verified':True,'phase':'catalog'},require_progress_after_resume=True)
 if __name__=='__main__':unittest.main()

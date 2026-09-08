@@ -53,6 +53,7 @@ def run_daily(
     durable_predecessor_output: Mapping[str, Any] | None = None,
     stop_after: str | None = None,
     checkpoint: Callable[[str, Mapping[str, Any], str], str | None] | None = None,
+    require_progress_after_resume: bool = False,
 ) -> OperationResult:
     """Run every required phase once, passing verified predecessor output onward.
 
@@ -85,6 +86,8 @@ def run_daily(
         result = dict(stage(previous))
         if result.get("verified") is not True:
             raise DailyError(f"daily phase is not verified: {phase}")
+        if start and require_progress_after_resume and result.get("progressed") is False:
+            raise DailyError("resumed operation made no progress at its minimum unit")
         outputs[phase] = result
         previous = result
         checkpoint_reference = checkpoint(phase, result, "running") if checkpoint else None

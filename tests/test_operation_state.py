@@ -202,6 +202,18 @@ class OperationStateTests(unittest.TestCase):
         with self.assertRaisesRegex(OperationError, "ambiguous"):
             discover_recovery_chain([first, left, right], first["operation_id"], self.checkpoint_schema)
 
+    def test_recovery_blocks_material_release_or_configuration_drift_and_cancel_with_unknown_effect(self) -> None:
+        first = self.checkpoint()
+        paused = self.active_state(first, "needs_continuation")
+        chain = discover_recovery_chain([first], first["operation_id"], self.checkpoint_schema)
+        resumed = self.checkpoint(sequence=1, predecessor=checkpoint_pointer(first), attempt_id="attempt-002")
+        resume_from_chain(paused, chain, resumed, state_schema=self.state_schema, checkpoint_schema=self.checkpoint_schema, pinned_release=first["pinned_release"], configuration_fingerprint=first["configuration_fingerprint"])
+        with self.assertRaisesRegex(OperationError, "release changed"):
+            resume_from_chain(paused, chain, resumed, state_schema=self.state_schema, checkpoint_schema=self.checkpoint_schema, pinned_release={"version": "changed", "source_commit": "a" * 40})
+        unknown = self.checkpoint(effects=[{"effect_id": "send", "kind": "mail.send", "outcome": "unknown", "verification": {}}])
+        with self.assertRaisesRegex(OperationError, "pending or unknown"):
+            validate_transition(self.active_state(unknown), self.terminal_state(unknown, "cancelled"), unknown, state_schema=self.state_schema, checkpoint_schema=self.checkpoint_schema)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -808,3 +808,16 @@ requirements, then read this log from top to bottom.
   privacy scan passed; `origin/main` was read back at the exact same SHA.
 - Next: M3-005 lifecycle safety cases for configuration/release drift, stale
   authentication, capacity/non-progress, cancellation, and terminal effects.
+
+## 2026-09-07 — alpha.13 M3-005 lifecycle safety
+
+- Completed M3-005. Recovery accepts matching release/configuration evidence
+  and blocks material drift; stale authentication stops qualification; bounded
+  limits remain conservative; a resumed minimum unit with no progress blocks;
+  and cancellation cannot hide an unknown provider effect.
+- Focused tests passed 14 tests and the complete gate passed 126 tests. No
+  private/provider effect occurred. Changed files: `school_os/operations.py`,
+  `school_os/daily.py`, operation-state/daily-run tests, root `PLAN.md`, and
+  alpha.13 plan/spec. Validation/publication pending. Exact next action:
+  privacy-scan, commit/push/verify M3-005, then finish M3-006 recovery docs and
+  compact expected evidence.
