@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from school_os.adapters import Page, ReadResult
-from school_os.importer import ImportError, enumerate_conversations, next_import_batch, process_attachments
+from school_os.importer import ImportError, admit_exact_plaintext_representation, enumerate_conversations, next_import_batch, process_attachments
 
 
 class ImportRunnerTests(unittest.TestCase):
@@ -52,6 +52,33 @@ class ImportRunnerTests(unittest.TestCase):
         self.assertEqual("Bring forms", outcomes[0].text)
         self.assertIsNone(outcomes[1].text)
         self.assertIsNone(outcomes[2].text)
+
+    def test_source_admission_blocks_alternative_or_unsupported_mime_content_before_catalogue(self) -> None:
+        accepted = admit_exact_plaintext_representation(({
+            "complete": True, "mime_type": "text/plain", "charset": "UTF-8", "content_transfer_encoding": "identity", "data": b"Exact\r\n",
+        },))
+        self.assertEqual("admitted", accepted.outcome)
+        self.assertEqual(b"Exact\r\n", accepted.plaintext)
+
+        equivalent_alternatives = (
+            {"complete": True, "mime_type": "text/plain", "charset": "utf-8", "content_transfer_encoding": "identity", "data": b"same"},
+            {"complete": True, "mime_type": "text/html", "charset": "utf-8", "content_transfer_encoding": "identity", "data": b"same"},
+        )
+        first = admit_exact_plaintext_representation(equivalent_alternatives)
+        replay = admit_exact_plaintext_representation(equivalent_alternatives)
+        self.assertEqual(("unsupported", "multiple available MIME representations", None), (first.outcome, first.reason, first.plaintext))
+        self.assertEqual(first, replay)
+
+        for parts in (
+            tuple(reversed(equivalent_alternatives)),
+            equivalent_alternatives + ({"complete": True, "mime_type": "image/png", "charset": "utf-8", "content_transfer_encoding": "identity", "data": b"image"},),
+            ({"complete": True, "mime_type": "text/plain", "charset": "utf-8", "content_transfer_encoding": "quoted-printable", "data": b"text"},),
+            ({"complete": True, "mime_type": "text/plain", "charset": "windows-1252", "content_transfer_encoding": "identity", "data": b"text"},),
+            ({"complete": True, "mime_type": "text/plain", "charset": "utf-8", "content_transfer_encoding": "identity", "data": b"text"}, {"complete": True, "mime_type": "application/pdf", "charset": "utf-8", "content_transfer_encoding": "identity", "data": b"attachment"}),
+        ):
+            outcome = admit_exact_plaintext_representation(parts)
+            self.assertIn(outcome.outcome, {"unsupported", "manual_review"})
+            self.assertIsNone(outcome.plaintext)
 
 
 if __name__ == "__main__":

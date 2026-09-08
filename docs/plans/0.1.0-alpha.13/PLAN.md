@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
-- Status: approved plan with linked implementation specification; M1 installation staging correction in progress, M2–M3 require revalidation, and M4 awaits observed-surface evidence
-- Revision: 26, updated 2026-09-08
+- Status: approved plan with linked implementation specification; M1 installation staging correction in progress, M2–M3 require revalidation, and M4 awaits observed-surface evidence with candidate source admission blocked
+- Revision: 27, updated 2026-09-08
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -40,6 +40,15 @@ verify immutable payloads first, then a non-self-referential content manifest,
 then an immutable admission receipt, then the stable bootstrap. M1-004 and
 M1-006 are reopened for this corrective validation; M2–M3 retain their accepted
 synthetic behavior but require revalidation against the repaired installer.
+
+The authorized inactive candidate has now exercised that create-only staging
+privately, but its first bounded Gmail message has both plain-text and HTML
+alternatives. Alpha.13's v2 catalog preserves exact plaintext only, so it has
+no approved lossless positive admission path for that message. The required
+GPT-5.6 Sol High consultation resolved the current scope as a fail-closed
+unsupported/manual-review disposition only. Admitting raw MIME as canonical
+source evidence would require a user-approved core source/provenance extension;
+no source, catalog, index, task, delivery, or activation write occurred.
 
 The user has deferred discussion of the review's historical-retrieval acceptance
 case. That proposed addition is not part of the current work or release gates.
@@ -534,7 +543,9 @@ explanation. The ten work packages describe what changes; the milestones below
 describe the order in which usable behavior and evidence are delivered. Do not
 finish all infrastructure packages in isolation before connecting the journey.
 
-M1 is in progress; M2–M4 remain pending. Completing milestones 1–3 establishes the first
+M1's create-only correction is in progress. M2 and M3 retain accepted synthetic
+implementation, but their revalidation against that repair is pending; M4 is
+blocked on observed evidence. Completing milestones 1–3 establishes the first
 connected implementation with recovery evidence. It does not establish full
 alpha.13 release readiness or conformance for every runtime.
 
@@ -568,7 +579,8 @@ this journey. Implement only the shared interfaces needed by the next milestone.
 
 ### Milestone 2 — Connect a complete normal operation
 
-**Status:** complete (M2-001–M2-007 complete).
+**Status:** synthetic implementation accepted (M2-001–M2-007); revalidation
+against the repaired create-only installer is pending.
 
 **Work and deliverables:** Use the installed candidate to execute this sequence:
 
@@ -602,7 +614,8 @@ check but do not replace it.
 
 ### Milestone 3 — Prove recovery and safe repeated execution
 
-**Status:** complete (M3-001–M3-006).
+**Status:** synthetic implementation accepted (M3-001–M3-006); revalidation
+against the repaired create-only installer is pending.
 
 **Work and deliverables:** Extend the same scenario with focused failure cases.
 Restart in a fresh process and discard the simulated agent's local files while
@@ -627,7 +640,8 @@ successful uninterrupted run alone is insufficient.
 ### Milestone 4 — Expand coverage and establish release readiness
 
 **Status:** blocked (M4-001–M4-002 complete; M4-003 awaits observed
-private-surface evidence; the authorized private instance is alpha.11 and is
+private-surface evidence and candidate source admission is fail-closed for the
+observed multipart message; the authorized private instance is alpha.11 and is
 outside Migration 0002's declared input).
 
 **Work and deliverables:** Extend the working scenario to larger complete

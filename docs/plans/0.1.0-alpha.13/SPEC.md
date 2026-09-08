@@ -676,6 +676,25 @@ invocation may prove catalog/index adoption after local state loss. This is
 partial observed evidence for the exact manual storage/mail surface only; it
 does not qualify the `daily-run` capability profile or complete M4-003.
 
+**Candidate multipart admission resolution (2026-09-08):** A bounded GPT-5.6
+Sol High read-only consultation confirmed that the approved alpha.13 scope
+supports only a fail-closed negative disposition here: a message with more than
+one available MIME representation is `unsupported`/`manual_review` and may not
+create a source record, catalog/index, knowledge, task, or derived output.
+Plain and HTML alternatives must still block even when they appear equivalent;
+the present contract has no approved exact equivalence rule. Persisting raw
+RFC822 as canonical source would be a core source/provenance extension requiring
+user approval, including a versioned raw-artifact contract and recovery/privacy
+rules. This candidate result is negative observed evidence only, not successful
+Gmail/catalog conformance or M4 completion.
+
+`school_os.importer.admit_exact_plaintext_representation` is the repository
+fail-closed gate for this current boundary. Only one complete identity-transfer
+UTF-8 `text/plain` byte sequence is eligible for downstream admission; multiple
+parts (including apparently equivalent alternatives), non-UTF-8 charsets,
+transfer decoding, malformed metadata, unavailable bytes, and attachments are
+non-admitting outcomes. The gate does not persist a source disposition itself.
+
 **Private-upgrade consultation (2026-09-08):** A bounded GPT-5.6 Sol High
 read-only review confirmed that there is no approved direct alpha.11-to-
 alpha.13 path. Extending Migration 0002 to support alpha.11 would alter the

@@ -12,9 +12,11 @@ including the approved manual-sender and cross-session continuation decisions.
 Implementation has completed the repository portion of M4-003. A create-only
 installation correction has reopened M1-004 and M1-006; M2–M3 require
 revalidation against that repair. An authorized
-inactive candidate-only Drive/Gmail observation may now exercise bounded source
-cataloguing and recovery, but observed runtime, mail, task, and scheduler
-evidence is still required. The candidate cannot establish production,
+inactive candidate-only Drive/Gmail observation has admitted a private
+create-only installation but is currently source-admission-blocked by an
+observed multipart Gmail message with no approved lossless representation;
+observed runtime, mail, task, and scheduler evidence is still required. The
+candidate cannot establish production,
 delivery, task, scheduler, migration, or release-readiness claims. The
 installed private instance is an
 alpha.11 predecessor, outside alpha.13's declared alpha.12 migration input, so
@@ -29,9 +31,10 @@ deferred for separate discussion. The user-approved complete-path approach is
 organized into four milestones: clean installation, a connected normal
 operation, verified recovery, and broader release coverage. The release plan now
 links the code-grounded [implementation specification](docs/plans/0.1.0-alpha.13/SPEC.md),
-which defines stable tasks and acceptance checks. M1 is complete (M1-001
-through M1-006). M2 and M3 are complete (M2-001–M2-007 and M3-001–M3-006);
-M4 is in progress with M4-001–M4-002 complete. M4-003 requires observed
+which defines stable tasks and acceptance checks. M1's create-only correction
+is still in progress (M1-004 and M1-006); M2 and M3 retain their accepted
+synthetic implementation but require their recorded revalidation against that
+repair. M4-001–M4-002 are complete, while M4-003 requires observed
 runtime/provider evidence; M4-004–M4-006 depend on it. The existing alpha.11
 private instance is not a direct alpha.13 migration source; its upgrade remains
 paused pending the separately documented compatible staged-path audit or new

@@ -43,11 +43,53 @@ class AttachmentOutcome:
     text: str | None
 
 
+@dataclass(frozen=True)
+class SourceAdmission:
+    """One fail-closed decision before a message can enter a source record."""
+
+    outcome: str
+    reason: str
+    plaintext: bytes | None
+
+
 def _conversation_id(value: Mapping[str, Any]) -> str:
     identity = value.get("conversation_id")
     if not isinstance(identity, str) or not identity:
         raise ImportError("enumerated conversation has no immutable conversation_id")
     return identity
+
+
+def admit_exact_plaintext_representation(parts: Sequence[Mapping[str, Any]]) -> SourceAdmission:
+    """Accept one complete UTF-8 plain part or return a non-admitting outcome.
+
+    The alpha.13 catalog owns only one exact plaintext representation. It must
+    not choose among alternative MIME bodies, decoding rules, attachments, or
+    rendered resources whose bytes have no canonical source representation.
+    Callers may record the returned outcome in private scope evidence, but only
+    ``admitted`` is eligible for a source/catalog/index write.
+    """
+    if len(parts) != 1:
+        return SourceAdmission("unsupported", "multiple available MIME representations", None)
+    part = parts[0]
+    if not isinstance(part, Mapping):
+        return SourceAdmission("manual_review", "MIME part metadata is malformed", None)
+    if part.get("complete") is not True:
+        return SourceAdmission("manual_review", "MIME part is incomplete", None)
+    if part.get("mime_type") != "text/plain":
+        return SourceAdmission("unsupported", "only text/plain has an approved source representation", None)
+    charset = part.get("charset")
+    if not isinstance(charset, str) or charset.lower() != "utf-8":
+        return SourceAdmission("unsupported", "plain-text charset is not UTF-8", None)
+    if part.get("content_transfer_encoding") != "identity":
+        return SourceAdmission("unsupported", "content-transfer decoding has no approved exact contract", None)
+    data = part.get("data")
+    if not isinstance(data, bytes):
+        return SourceAdmission("manual_review", "plain-text bytes are unavailable", None)
+    try:
+        data.decode("utf-8")
+    except UnicodeDecodeError:
+        return SourceAdmission("unsupported", "plain-text bytes are not valid UTF-8", None)
+    return SourceAdmission("admitted", "one complete exact UTF-8 plain-text representation", data)
 
 
 def enumerate_conversations(

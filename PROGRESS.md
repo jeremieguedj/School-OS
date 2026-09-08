@@ -1191,3 +1191,53 @@ requirements, then read this log from top to bottom.
   the bounded inactive candidate only after a final empty-root readback.
   Next: validate and publish the staged builder; afterwards perform the
   authorized candidate preflight without touching the existing instance.
+
+## 2026-09-08 — alpha.13 candidate multipart source-admission blocker
+
+- Created and read back a new inactive candidate's create-only private
+  installation generation under the user-authorized empty Drive root. The
+  package was built from the verified current commit; payloads, content
+  manifest, admission receipt, and final bootstrap were read back privately.
+  One incorrectly named initial state object was left as an unadmitted staging
+  orphan and was not renamed, replaced, or deleted; the correctly named state
+  object is the one admitted by the manifest. No existing instance, task,
+  delivery, scheduler, release, or Gmail object was modified.
+- The fixed, read-only Gmail test scope enumerated to its terminal page. Before
+  cataloguing the first selected message, complete thread inspection showed a
+  multipart message with both plain-text and HTML alternatives. Alpha.13's v2
+  catalog persists exact plaintext only and has neither a raw-MIME preservation
+  artifact nor an approved equivalence rule for alternatives. Treating the
+  plaintext part as lossless would contradict the source-preservation boundary.
+- Per the execution policy, stopped the affected import design and completed
+  one bounded GPT-5.6 Sol High read-only consultation. It found the approved
+  in-scope result is only an immutable `unsupported`/`manual_review`
+  disposition with no source/catalog/index/derived write; a positive raw-MIME
+  admission path is a core source/provenance decision requiring user approval.
+  No private IDs, queries, domains, message content, credentials, or provider
+  records were added to this repository. Next: either implement and validate
+  the negative disposition/retry coverage without source admission, or obtain
+  explicit approval for a versioned raw-source architecture before importing
+  any message; do not continue the 30-message positive import under the current
+  contract.
+
+## 2026-09-08 — alpha.13 fail-closed multipart admission gate
+
+- Implemented the consultation's in-scope negative resolution in
+  `school_os.importer`: only one complete identity-transfer UTF-8 `text/plain`
+  byte sequence may reach a source admission. Alternatives (even byte-equal),
+  nested/extra MIME content, attachments, charset or transfer-decoding
+  differences, malformed metadata, and unavailable bytes are non-admitting;
+  no helper creates catalog/index/derived output.
+- Focused importer tests passed (4 tests), including deterministic replay of
+  the blocked alternative disposition. No additional private Drive or Gmail
+  action occurred after the first-message inspection.
+- Complete validation passed: `PYTHONDONTWRITEBYTECODE=1 python3
+  scripts/validate.py` ran 145 tests and the schema/template and release-smoke
+  checks. `git diff --check` and `PYTHONDONTWRITEBYTECODE=1 python3
+  scripts/privacy_scan.py` also passed. Changed files: `school_os/importer.py`,
+  `tests/test_import_runner.py`, root plan, alpha.13 plan/specification, and
+  this append-only log. Unfinished: publish this safety checkpoint. The
+  30-message positive import remains blocked pending explicit approval for a
+  versioned lossless raw-source architecture; next: commit, push, verify the
+  remote, then report that exact architectural decision rather than import a
+  lossy message.
