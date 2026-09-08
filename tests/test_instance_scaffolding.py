@@ -23,6 +23,9 @@ from school_os.install import (  # noqa: E402
     INTEGRATION_REFERENCE_KINDS,
     InstallationError,
     MANAGED_PATHS,
+    OPERATION_STATE_PATH,
+    compose_create_only_candidate_payloads,
+    initial_operation_state_bytes,
     install_create_only_generation,
     recover_create_only_generation,
     scaffold_instance,
@@ -215,6 +218,38 @@ class InstanceScaffoldingTests(unittest.TestCase):
         )
         self.assertEqual("verified", result["admission"]["verification_status"])
         self.assertEqual(4, len(storage.calls))
+
+    def test_staged_payload_builder_uses_the_first_created_state_reference(self) -> None:
+        storage = CreateOnlyFakeStorage()
+        state_bytes = initial_operation_state_bytes(self.package_root)
+        state = storage.create_file("instance-root", OPERATION_STATE_PATH, state_bytes, "application/octet-stream")
+        state_reference = {
+            "object_id": state.object_id,
+            "kind": state.kind,
+            "permitted_ancestor_id": "instance-root",
+            "mime_type": state.mime_type,
+            "version": state.version,
+        }
+        package, payloads = compose_create_only_candidate_payloads(
+            self.answers,
+            instance_root=self.references["instance_root"],
+            observed=self.references["observed"],
+            operation_state_reference=state_reference,
+        )
+        self.assertEqual(state_bytes, payloads[OPERATION_STATE_PATH])
+        self.assertFalse(any(b"transient-create-only-" in data for data in payloads.values()))
+        result = install_create_only_generation(
+            storage,
+            root_reference=self.references["instance_root"],
+            package=package,
+            payloads=payloads,
+            existing_payloads={OPERATION_STATE_PATH: state},
+        )
+        self.assertEqual(
+            state_reference,
+            result["manifest"]["files"][OPERATION_STATE_PATH]["object_reference"],
+        )
+        self.assertEqual(1, storage.calls.count(OPERATION_STATE_PATH))
 
     def test_create_only_generation_blocks_ambiguous_lost_response(self) -> None:
         storage = CreateOnlyFakeStorage(lose_after_create=True, duplicate_after_loss=True)

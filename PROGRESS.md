@@ -1174,3 +1174,20 @@ requirements, then read this log from top to bottom.
   revalidate M1/M2/M3 from the repaired package before touching the candidate
   root. Next: implement that staged payload builder and its exact-reference
   tests; the candidate root remains untouched.
+
+## 2026-09-08 — alpha.13 staged candidate-payload composition
+
+- Added a create-only composition step for the real installation sequence. It
+  creates the final idle operation-state payload first, uses only that observed
+  reference to compose the remaining final private bytes, and then admits all
+  payloads through the immutable manifest/receipt/bootstrap sequence. Internal
+  validation-only references are discarded and regression-tested never to
+  enter payload bytes or provider writes.
+- Focused scaffolding tests passed (9 tests). No candidate folder, existing
+  instance, Gmail, task provider, delivery, scheduler, or release was changed.
+- Changed files: `school_os/install.py`, `tests/test_instance_scaffolding.py`,
+  the alpha.13 specification, and this append-only log. Unfinished: run the
+  full package/repository gate, publish this builder checkpoint, then create
+  the bounded inactive candidate only after a final empty-root readback.
+  Next: validate and publish the staged builder; afterwards perform the
+  authorized candidate preflight without touching the existing instance.

@@ -448,6 +448,12 @@ response, altered receipt/manifest/payload, or parent/MIME mismatch is an
 unadmitted generation and blocks; recovery never repairs it with an update or
 replace.
 
+The initial idle `operation-state.json` is the one payload whose final bytes do
+not require a provider object ID. A staged installer may create/read it first,
+then compose the remaining final configuration using its returned reference.
+Validation-only transient references may never appear in a returned payload,
+content manifest, admission receipt, or provider write.
+
 ### Milestone check
 
 M1 completes only when M1-001 through M1-006, including the reopened create-only

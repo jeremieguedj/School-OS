@@ -169,6 +169,20 @@ def _package_evidence(answers: dict[str, Any]) -> tuple[Path, dict[str, Any]]:
     }
 
 
+def initial_operation_state_bytes(package_root: Path) -> bytes:
+    """Return the final, schema-valid idle state before its provider ID exists."""
+    operation_state = {
+        "checkpoint": None,
+        "current_operation": None,
+        "last_terminal": None,
+        "schema_version": 1,
+        "serialization": None,
+        "status": "idle",
+    }
+    _validated(operation_state, package_root, "operation-state.schema.json", "operation state")
+    return canonical_json_bytes(operation_state)
+
+
 def _normalise_inputs(answers: dict[str, Any], references: dict[str, Any], package_root: Path, package: dict[str, Any]) -> tuple[dict[str, bytes], dict[str, Any]]:
     expected_answers = {
         "package_root", "package_archive", "package_source_identity", "instance_id", "release_channel",
@@ -288,15 +302,7 @@ def _normalise_inputs(answers: dict[str, Any], references: dict[str, Any], packa
         "It may customize only the approved references and presentation values. It must not contain adapter identity, provider bindings, credentials, or a replacement operation recipe.\n\n"
         "The generic daily operation still requires provenance, task reconciliation, provider readback, duplicate-delivery prevention, and sent-message verification.\n"
     ).encode("utf-8")
-    operation_state = {
-        "checkpoint": None,
-        "current_operation": None,
-        "last_terminal": None,
-        "schema_version": 1,
-        "serialization": None,
-        "status": "idle",
-    }
-    _validated(operation_state, package_root, "operation-state.schema.json", "operation state")
+    operation_state_bytes = initial_operation_state_bytes(package_root)
     file_map = {
         "schema_version": 1,
         "mapping_status": "partially_configured",
@@ -326,7 +332,7 @@ def _normalise_inputs(answers: dict[str, Any], references: dict[str, Any], packa
         "config/policies.yaml": dump_mapping_yaml(policies),
         "config/daily-run-personal-values.md": b"---\n" + dump_mapping_yaml(daily) + b"---\n\n" + prose,
         FILE_MAP_PATH: dump_mapping_yaml(file_map),
-        OPERATION_STATE_PATH: canonical_json_bytes(operation_state),
+        OPERATION_STATE_PATH: operation_state_bytes,
     }
     if any(_contains_placeholder(load_mapping_yaml(data.decode("utf-8"))) for path, data in files.items() if path.endswith(".yaml")) or b"REPLACE_WITH_" in files["config/daily-run-personal-values.md"]:
         raise InstallationError("candidate contains an unresolved placeholder")
@@ -342,6 +348,38 @@ def _normalise_inputs(answers: dict[str, Any], references: dict[str, Any], packa
     }
     _validated(manifest, package_root, "installation-manifest.schema.json", "installation manifest")
     return files, manifest
+
+
+def compose_create_only_candidate_payloads(
+    answers: dict[str, Any], *, instance_root: dict[str, Any], observed: dict[str, Any], operation_state_reference: dict[str, Any],
+) -> tuple[dict[str, Any], dict[str, bytes]]:
+    """Compose final candidate bytes after the immutable state object has an ID.
+
+    The returned bytes contain only the supplied, actual operation-state
+    reference. Temporary structurally valid references below exist solely to
+    reuse input validation while constructing a manifest that is discarded;
+    they cannot enter a returned payload or a provider write.
+    """
+    package_root, package = _package_evidence(answers)
+    root_mapping = _require_mapping(instance_root, "instance_root")
+    transient_returned = {
+        path: {
+            "object_id": f"transient-create-only-{index}",
+            "kind": "file",
+            "permitted_ancestor_id": root_mapping.get("object_id", ""),
+            "mime_type": "application/octet-stream",
+            "version": "transient",
+        }
+        for index, path in enumerate(MANAGED_PATHS, 1)
+    }
+    transient_returned[OPERATION_STATE_PATH] = operation_state_reference
+    files, _discarded_manifest = _normalise_inputs(
+        answers,
+        {"instance_root": root_mapping, "observed": observed, "returned_objects": transient_returned},
+        package_root,
+        package,
+    )
+    return package, files
 
 
 def validate_candidate(candidate_root: Path, package_root: Path) -> dict[str, Any]:
@@ -598,7 +636,12 @@ def recover_create_only_generation(
 
 
 def install_create_only_generation(
-    storage: CreateOnlyStorage, *, root_reference: dict[str, Any], package: dict[str, Any], payloads: dict[str, bytes],
+    storage: CreateOnlyStorage,
+    *,
+    root_reference: dict[str, Any],
+    package: dict[str, Any],
+    payloads: dict[str, bytes],
+    existing_payloads: dict[str, StoredObject] | None = None,
 ) -> dict[str, Any]:
     """Create and verify an immutable payload/manifest/admission/bootstrap generation.
 
@@ -619,8 +662,23 @@ def install_create_only_generation(
     ):
         raise InstallationError("create-only generation requires final non-empty payload mapping")
     objects: dict[str, StoredObject] = {}
+    for path, object_ in (existing_payloads or {}).items():
+        if path not in payloads:
+            raise InstallationError(f"existing payload is not declared: {path}")
+        reference = _stored_reference(object_, root.object_id)
+        readback = _read_admitted_object(
+            storage,
+            ObjectReference.from_mapping(reference),
+            root_id=root.object_id,
+            name=path,
+            mime_type=reference["mime_type"] or "application/octet-stream",
+        )
+        if readback.data != payloads[path]:
+            raise InstallationError(f"existing payload bytes disagree for {path}")
+        objects[path] = readback
     for path, data in sorted(payloads.items()):
-        objects[path] = _create_or_adopt(storage, parent_id=root.object_id, name=path, data=data, mime_type="application/octet-stream")
+        if path not in objects:
+            objects[path] = _create_or_adopt(storage, parent_id=root.object_id, name=path, data=data, mime_type="application/octet-stream")
     manifest = {
         "schema_version": 2,
         "verification_status": "candidate",
