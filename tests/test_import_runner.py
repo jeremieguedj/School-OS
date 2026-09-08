@@ -62,6 +62,10 @@ class ImportRunnerTests(unittest.TestCase):
                 "part_id": part_id, "role": "body", "selected_plaintext": True,
                 "complete": True, "mime_type": "text/plain", "charset": charset,
                 "content_transfer_encoding": encoding, "data": data,
+                "raw_part_sha256": __import__("hashlib").sha256(data).hexdigest(),
+                "raw_part_byte_length": len(data),
+                "raw_part_locator": {"kind": "raw_part_bytes", "byte_start": 0, "byte_end": len(data)},
+                "provider_unicode": __import__("school_os.importer", fromlist=["_decode_declared_charset", "_decode_transport"])._decode_declared_charset(__import__("school_os.importer", fromlist=["_decode_transport"])._decode_transport(data, encoding), charset).decode("utf-8"),
             }
 
         admissions = (
@@ -77,6 +81,13 @@ class ImportRunnerTests(unittest.TestCase):
         self.assertEqual(["admitted"] * 4, [item.outcome for item in admissions])
         self.assertEqual([b"Exact\r\n", "café".encode("utf-8"), "café".encode("utf-8"), b"Plain alternative"], [item.plaintext for item in admissions])
         self.assertEqual("body", admissions[3].selected_part_id)
+
+        literal = part("\ufffd".encode("utf-8"))
+        self.assertEqual("admitted", admit_exact_plaintext_representation((literal,), mime_tree_complete=True).outcome)
+        self.assertNotEqual("admitted", admit_exact_plaintext_representation(({**literal, "provider_unicode": "\ufffdx"},), mime_tree_complete=True).outcome)
+        seven_bit = part(b"x", encoding="7bit")
+        seven_bit.update({"data": b"\xff", "raw_part_sha256": __import__("hashlib").sha256(b"\xff").hexdigest(), "raw_part_byte_length": 1, "raw_part_locator": {"kind": "raw_part_bytes", "byte_start": 0, "byte_end": 1}})
+        self.assertNotEqual("admitted", admit_exact_plaintext_representation((seven_bit,), mime_tree_complete=True).outcome)
 
         body = admissions[1].plaintext.decode("utf-8")
         conversation = {
@@ -114,7 +125,7 @@ class ImportRunnerTests(unittest.TestCase):
             return ReadResult(raw[identity], identity, "file", None, mime, "1")
 
         def pdf(result: ReadResult) -> AttachmentExtraction:
-            return AttachmentExtraction("Return form", {"kind": "provider_page_region", "page": 1, "region": "body"})
+            return AttachmentExtraction("Return form", {"kind": "provider_page_region", "page": 1, "region": "body"}, ("1",))
 
         def image(_result: ReadResult) -> AttachmentExtraction:
             return AttachmentExtraction("Image text", {"kind": "extracted_text_span", "byte_start": 0, "byte_end": 10})
@@ -130,7 +141,7 @@ class ImportRunnerTests(unittest.TestCase):
             max_bytes=20,
             extractors={"application/pdf": pdf, "image/jpeg": image},
         )
-        self.assertEqual(["extracted", "extracted", "extracted"], [item.outcome for item in outcomes])
+        self.assertEqual(["extracted", "manual_review", "extracted"], [item.outcome for item in outcomes])
         self.assertNotEqual(outcomes[0].original_content_sha256, outcomes[0].extracted_text_sha256)
         self.assertIsNone(outcomes[1].original_content_sha256)
         self.assertEqual("provider_page_region", outcomes[0].locator["kind"])
@@ -165,7 +176,7 @@ class ImportRunnerTests(unittest.TestCase):
             return AttachmentExtraction("Image statement", {"kind": "extracted_text_span", "byte_start": 0, "byte_end": 15})
 
         def extract_pdf(_read: DirectResourceRead) -> AttachmentExtraction:
-            return AttachmentExtraction("PDF statement", {"kind": "provider_page_region", "page": 1, "region": "body"})
+            return AttachmentExtraction("PDF statement", {"kind": "provider_page_region", "page": 1, "region": "body"}, ("1",))
 
         outcomes = process_direct_html_resources(
             resources,

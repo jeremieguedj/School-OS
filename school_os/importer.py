@@ -51,6 +51,9 @@ class AttachmentOutcome:
     text: str | None
     locator: dict[str, Any] | None
     origin: str = "mime_attachment"
+    source_message_id: str | None = None
+    content_id: str | None = None
+    original_bytes_observed: bool = False
 
 
 @dataclass(frozen=True)
@@ -59,6 +62,7 @@ class AttachmentExtraction:
 
     text: str
     locator: Mapping[str, Any]
+    complete_units: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -131,6 +135,9 @@ class SourceAdmission:
     selected_part_id: str | None = None
     declared_charset: str | None = None
     content_transfer_encoding: str | None = None
+    raw_part_sha256: str | None = None
+    raw_part_byte_length: int | None = None
+    raw_part_locator: Mapping[str, Any] | None = None
 
 
 def _conversation_id(value: Mapping[str, Any]) -> str:
@@ -400,6 +407,18 @@ def admit_exact_plaintext_representation(
     data = part.get("data")
     if not isinstance(data, bytes):
         return SourceAdmission("manual_review", "selected body bytes are unavailable", None, part_id)
+    raw_hash = part.get("raw_part_sha256")
+    raw_length = part.get("raw_part_byte_length")
+    raw_locator = part.get("raw_part_locator")
+    provider_unicode = part.get("provider_unicode")
+    if (
+        not isinstance(raw_hash, str) or raw_hash != sha256_bytes(data)
+        or raw_length != len(data) or not isinstance(raw_locator, Mapping)
+        or raw_locator.get("kind") != "raw_part_bytes"
+        or raw_locator.get("byte_start") != 0 or raw_locator.get("byte_end") != len(data)
+        or not isinstance(provider_unicode, str)
+    ):
+        return SourceAdmission("manual_review", "selected body lacks complete raw-part custody evidence", None, part_id)
     other_plain_bodies = [
         candidate
         for candidate in parts
@@ -415,6 +434,8 @@ def admit_exact_plaintext_representation(
         plaintext = _decode_declared_charset(_decode_transport(data, encoding), charset)
     except ValueError as exc:
         return SourceAdmission("unsupported", str(exc), None, part_id, charset, encoding)
+    if plaintext.decode("utf-8", errors="strict") != provider_unicode:
+        return SourceAdmission("unsupported", "provider Unicode differs from strict selected-part decode", None, part_id, charset, encoding, raw_hash, raw_length, raw_locator)
     return SourceAdmission(
         "admitted",
         "one complete provider-designated plaintext body decoded strictly",
@@ -422,6 +443,9 @@ def admit_exact_plaintext_representation(
         part_id,
         charset,
         encoding,
+        raw_hash,
+        raw_length,
+        dict(raw_locator),
     )
 
 
@@ -503,10 +527,14 @@ def process_attachments(
     seen: set[str] = set()
     for attachment in attachments:
         attachment_id = attachment.get("attachment_id")
+        source_message_id = attachment.get("source_message_id")
+        content_id = attachment.get("content_id", attachment_id)
         mime_type = attachment.get("mime_type")
         byte_size = attachment.get("byte_size")
         if not isinstance(attachment_id, str) or not attachment_id:
             raise ImportError("attachment has no immutable attachment_id")
+        if source_message_id is not None and (not isinstance(source_message_id, str) or not source_message_id):
+            raise ImportError("attachment has malformed source_message_id")
         if attachment_id in seen:
             outcomes.append(AttachmentOutcome(attachment_id, "duplicate", None, None, None, None, None))
             continue
@@ -525,7 +553,8 @@ def process_attachments(
         if result.identity != attachment_id or result.mime_type != mime_type or len(result.data) != byte_size:
             outcomes.append(AttachmentOutcome(attachment_id, "inaccessible", mime_type, None, None, None, None))
             continue
-        original_hash = sha256_bytes(result.data) if attachment.get("original_bytes_observed", True) is True else None
+        original_observed = attachment.get("original_bytes_observed", True) is True
+        original_hash = sha256_bytes(result.data) if original_observed else None
         if mime_type == "text/plain":
             try:
                 text = result.data.decode("utf-8", errors="strict")
@@ -563,6 +592,15 @@ def process_attachments(
         if not valid_locator:
             outcomes.append(AttachmentOutcome(attachment_id, "manual_review", mime_type, original_hash, None, None, None))
             continue
+        if mime_type in {"application/pdf", "image/png", "image/jpeg"} and not original_observed:
+            outcomes.append(AttachmentOutcome(attachment_id, "manual_review", mime_type, None, None, None, None, source_message_id=source_message_id, content_id=content_id))
+            continue
+        if mime_type == "application/pdf" and not extracted.complete_units:
+            outcomes.append(AttachmentOutcome(attachment_id, "manual_review", mime_type, original_hash, None, None, None, source_message_id=source_message_id, content_id=content_id, original_bytes_observed=original_observed))
+            continue
+        if mime_type.startswith("image/") and not extracted.text:
+            outcomes.append(AttachmentOutcome(attachment_id, "manual_review", mime_type, original_hash, None, None, None, source_message_id=source_message_id, content_id=content_id, original_bytes_observed=original_observed))
+            continue
         outcomes.append(AttachmentOutcome(
             attachment_id,
             "extracted",
@@ -571,5 +609,8 @@ def process_attachments(
             sha256_bytes(extracted_bytes),
             extracted.text,
             locator,
+            source_message_id=source_message_id,
+            content_id=content_id,
+            original_bytes_observed=original_observed,
         ))
     return tuple(outcomes)

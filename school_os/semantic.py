@@ -177,12 +177,23 @@ def interpret_packet(
             raise SemanticError("covered source segment has no supported Fact")
     if any(not isinstance(entry, Mapping) for entry in review_cases):
         raise SemanticError("semantic review case is malformed")
+    verified_outcomes = []
+    for segment in sorted(segments.values(), key=lambda item: item["segment_id"]):
+        attachment = segment.get("attachment")
+        if attachment is not None:
+            verified_outcomes.append({
+                "attachment_id": attachment["attachment_id"], "outcome": "extracted",
+                "mime_type": attachment["mime_type"],
+                "original_content_sha256": attachment["original_content_sha256"],
+                "extracted_text_sha256": attachment["extracted_text_sha256"],
+                "locator": dict(attachment["locator"]),
+            })
     result = {
         "schema_version": 1,
         "conversation_id": frozen_packet.conversation_id,
         "candidates": [dict(candidate) for candidate in candidates],
         "coverage": [dict(entry) for entry in coverage],
-        "attachment_outcomes": [dict(item) for item in raw.get("attachment_outcomes", [])],
+        "attachment_outcomes": verified_outcomes,
         "review_cases": [dict(entry) for entry in review_cases],
     }
     _validated(result, extraction_schema, "semantic extraction result")

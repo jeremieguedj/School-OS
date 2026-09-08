@@ -1497,3 +1497,19 @@ requirements, then read this log from top to bottom.
 - Next: finish typed source-conversation custody evidence and complete-unit
   attachment/resource validation, run full validation/privacy, and publish the
   corrected checkpoint. No provider or private-instance action occurred.
+
+## 2026-09-08 — alpha.13 source custody completion
+
+- Required selected-body raw-part hash, byte length, full locator, explicit MIME
+  completion, and provider-Unicode equality before admission. Strict decoding
+  allows a literal replacement character only when it is present in the strict
+  decoded bytes; mismatched/provider-inserted substitution blocks.
+- Added source-message/content coordinates to attachment outcomes, requires
+  observed original bytes and complete PDF units or nonempty image text, carries
+  content IDs into semantic Facts, recomputes extracted-text hashes from frozen
+  source text, and derives semantic attachment outcomes from frozen provenance
+  rather than interpreter assertions.
+- Full validation passed 170 tests plus privacy and diff checks. Next: publish
+  this final repository custody checkpoint; selected runtime must still provide
+  actual complete provider reads/fetches/page extraction before private M4-009
+  acceptance. No provider or private instance was touched.

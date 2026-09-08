@@ -32,7 +32,7 @@ class SemanticTests(unittest.TestCase):
                     "received_date": "2026-09-08", "text": "Bring lunch",
                     "attachment": {
                         "attachment_id": "attachment-001", "origin": "mime_attachment", "mime_type": "application/pdf",
-                        "original_content_sha256": "a" * 64, "extracted_text_sha256": "b" * 64,
+                        "original_content_sha256": "a" * 64, "extracted_text_sha256": __import__("hashlib").sha256(b"Bring lunch").hexdigest(),
                         "locator": {"kind": "provider_page_region", "page": 1, "region": "body"},
                     },
                 },
