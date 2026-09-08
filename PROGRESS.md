@@ -408,3 +408,19 @@ requirements, then read this log from top to bottom.
 - Unfinished: M1-005 and M1-006, then M2–M4, remain pending. Exact next action:
   implement M1-005 capability-profile/capability-planning contracts, including a
   scheduler-free qualified manual profile and named capability blockers.
+
+## 2026-09-07 — alpha.13 M1-004 verification and handoff
+
+- Accepted and pushed the M1-004 implementation as
+  `0b81f56d061283cddfd3e48485fc39c2df54c6cf`
+  (`Implement alpha.13 deterministic instance scaffolding`) on `main`.
+- Post-commit evidence: `python3 scripts/validate.py` passed 92 tests, all
+  schema/template checks, the tracked-file privacy scan, and the exact-HEAD
+  release-package smoke check. An archive built from that exact commit passed
+  `python3 scripts/validate_installed.py … --candidate-test` offline.
+- Remote verification: `origin/main` resolved to the same commit; the working
+  tree is clean. A sandboxed repeat lookup encountered DNS restriction, then
+  the approved read-only GitHub lookup confirmed the same remote SHA.
+- Next: M1-005. Add the capability-planning module and structured profile
+  contracts; prove a scheduler-free manual profile qualifies while scheduled
+  execution still requires scheduler evidence.
