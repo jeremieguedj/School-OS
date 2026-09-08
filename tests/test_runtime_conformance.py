@@ -15,6 +15,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from validate_capability_profile import validate_capability_profile  # noqa: E402
 from validate_instance import validate  # noqa: E402
+from school_os.capabilities import CapabilityError, qualify_execution  # noqa: E402
 
 
 class RuntimeConformanceTests(unittest.TestCase):
@@ -25,14 +26,14 @@ class RuntimeConformanceTests(unittest.TestCase):
 
     def profile(self) -> dict:
         profile = copy.deepcopy(self.template)
+        profile["authentication"]["status"] = "available"
+        for name in profile["network_paths"]:
+            profile["network_paths"][name]["status"] = "available" if name != "scheduler" else "not_required"
+        for name in profile["observations"]:
+            profile["observations"][name]["status"] = "available"
         profile["capabilities"] = [
-            {
-                "capability_id": "storage.read_complete",
-                "status": "available",
-                "verification": "synthetic scheduled-surface probe",
-                "limits": "synthetic bounded input",
-                "degradation": "stop_before_side_effects",
-            }
+            {"capability_id": capability_id, "status": "available", "verification": {"method": "synthetic"}, "degradation": "stop_before_side_effects"}
+            for capability_id in ("storage.read_complete", "mail.search", "tasks.list_complete")
         ]
         profile["conformant_operations"] = ["daily-run"]
         return profile
@@ -40,23 +41,23 @@ class RuntimeConformanceTests(unittest.TestCase):
     def test_template_matches_schema(self) -> None:
         self.assertEqual([], validate(self.template, self.schema))
 
-    def test_complete_scheduled_profile_is_conformant(self) -> None:
+    def test_complete_manual_profile_is_conformant_without_scheduler(self) -> None:
         self.assertEqual(
             [],
             validate_capability_profile(
                 self.profile(),
                 self.schema,
-                required_capabilities=["storage.read_complete"],
+                required_capabilities=["storage.read_complete", "mail.search", "tasks.list_complete"],
                 operation="daily-run",
-                execution_surface="scheduled",
+                execution_surface="manual",
             ),
         )
 
     def test_missing_required_capability_blocks(self) -> None:
         errors = validate_capability_profile(
-            self.profile(), self.schema, required_capabilities=["mail.search"]
+            self.profile(), self.schema, required_capabilities=["mail.send"]
         )
-        self.assertIn("required capability 'mail.search' is missing", errors)
+        self.assertIn("missing required capability: mail.send", errors)
 
     def test_non_available_required_capability_blocks(self) -> None:
         for status in ("unknown", "unavailable"):
@@ -67,7 +68,7 @@ class RuntimeConformanceTests(unittest.TestCase):
                     profile, self.schema, required_capabilities=["storage.read_complete"]
                 )
                 self.assertIn(
-                    f"required capability 'storage.read_complete' is {status!r}, not 'available'",
+                    f"required capability is {status!r}: storage.read_complete",
                     errors,
                 )
 
@@ -75,27 +76,28 @@ class RuntimeConformanceTests(unittest.TestCase):
         profile = self.profile()
         profile["capabilities"].append(copy.deepcopy(profile["capabilities"][0]))
         errors = validate_capability_profile(profile, self.schema)
-        self.assertTrue(any("duplicate capability_id" in error for error in errors))
+        self.assertTrue(any("duplicate capability" in error for error in errors))
 
-    def test_interactive_evidence_does_not_satisfy_scheduled_surface(self) -> None:
+    def test_manual_evidence_does_not_satisfy_scheduled_surface(self) -> None:
         profile = self.profile()
-        profile["execution_surface"] = "interactive"
-        profile["selected_adapters"]["scheduler"] = None
-        profile["scheduler_behavior"] = None
         errors = validate_capability_profile(profile, self.schema, execution_surface="scheduled")
-        self.assertIn("execution surface is 'interactive', expected 'scheduled'", errors)
+        self.assertIn("execution surface is 'manual', expected 'scheduled'", errors)
 
     def test_scheduled_profile_requires_scheduler_adapter_and_behavior(self) -> None:
         profile = self.profile()
+        profile["execution_surface"] = "scheduled"
         profile["selected_adapters"]["scheduler"] = None
         profile["scheduler_behavior"] = None
-        errors = validate_capability_profile(profile, self.schema)
-        self.assertIn("scheduled profile requires a selected scheduler adapter", errors)
-        self.assertIn("scheduled profile requires observed scheduler behavior", errors)
+        profile["capabilities"].extend([
+            {"capability_id": capability_id, "status": "available", "verification": {"method": "synthetic"}, "degradation": "stop_before_side_effects"}
+            for capability_id in ("scheduler.inspect", "scheduler.verify")
+        ])
+        errors = validate_capability_profile(profile, self.schema, execution_surface="scheduled")
+        self.assertIn("scheduled execution requires scheduler evidence", errors)
 
     def test_undeclared_operation_blocks(self) -> None:
         errors = validate_capability_profile(self.profile(), self.schema, operation="task-sync")
-        self.assertIn("operation 'task-sync' is not declared conformant", errors)
+        self.assertIn("operation is not declared conformant: task-sync", errors)
 
     def test_cli_applies_required_scope(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -111,7 +113,7 @@ class RuntimeConformanceTests(unittest.TestCase):
                     "--operation",
                     "daily-run",
                     "--execution-surface",
-                    "scheduled",
+                    "manual",
                 ],
                 cwd=ROOT,
                 text=True,
@@ -120,6 +122,15 @@ class RuntimeConformanceTests(unittest.TestCase):
             )
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertIn("conformant:", result.stdout)
+
+    def test_unknown_limits_are_conservative_and_named_blockers_fail(self) -> None:
+        plan = qualify_execution(self.profile(), self.schema, operation="daily-run", entrypoint="manual")
+        self.assertEqual(1, plan.max_records_per_unit)
+        self.assertEqual(65536, plan.max_bytes_per_unit)
+        profile = self.profile()
+        profile["authentication"]["status"] = "unknown"
+        with self.assertRaisesRegex(CapabilityError, "authentication is 'unknown'"):
+            qualify_execution(profile, self.schema, operation="daily-run", entrypoint="manual")
 
     def test_every_daily_run_capability_is_in_core_catalog(self) -> None:
         daily_run = (ROOT / "core" / "operations" / "daily-run.md").read_text()

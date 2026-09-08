@@ -1,8 +1,8 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "profile_id": "REPLACE_WITH_PRIVATE_PROFILE_ID",
   "runtime_adapter": "runtimes/REPLACE_WITH_RUNTIME.md",
-  "execution_surface": "scheduled",
+  "execution_surface": "manual",
   "runtime_selector": {
     "model": "REPLACE_WITH_OBSERVED_MODEL",
     "reasoning_effort": "REPLACE_WITH_OBSERVED_REASONING_EFFORT"
@@ -14,15 +14,12 @@
     "audio": null
   },
   "verified_at": "REPLACE_WITH_PRIVATE_VERIFICATION_TIMESTAMP",
+  "adapter_versions": {"runtime": "REPLACE_WITH_OBSERVED_VERSION", "mail": "REPLACE_WITH_OBSERVED_VERSION", "tasks": "REPLACE_WITH_OBSERVED_VERSION", "scheduler": null},
+  "authentication": {"status": "unknown", "verified_at": "REPLACE_WITH_PRIVATE_VERIFICATION_TIMESTAMP", "recheck_trigger": "adapter_or_authorization_change"},
+  "network_paths": {"storage": {"status": "unknown"}, "mail": {"status": "unknown"}, "tasks": {"status": "unknown"}, "scheduler": {"status": "not_required"}},
+  "observations": {"local_execution": {"status": "unknown"}, "storage_read_complete": {"status": "unknown"}, "pagination": {"status": "unknown"}, "file_transfer": {"status": "unknown"}},
+  "limits": {"max_records_per_unit": null, "max_bytes_per_unit": null},
   "capabilities": [],
-  "scheduler_behavior": {
-    "connector_authorization": "REPLACE_WITH_OBSERVED_RESULT",
-    "invocation_payload": "REPLACE_WITH_OBSERVED_RESULT",
-    "retry_behavior": "REPLACE_WITH_OBSERVED_RESULT",
-    "run_now_behavior": "REPLACE_WITH_OBSERVED_RESULT",
-    "overlap_behavior": "REPLACE_WITH_OBSERVED_RESULT",
-    "status_inspection": "REPLACE_WITH_OBSERVED_RESULT",
-    "disable_verification": "REPLACE_WITH_OBSERVED_RESULT"
-  },
+  "scheduler_behavior": null,
   "conformant_operations": []
 }

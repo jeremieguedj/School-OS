@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
 - Status: approved plan with linked implementation specification; M1 in progress
-- Revision: 6, updated 2026-09-07
+- Revision: 7, updated 2026-09-07
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -22,7 +22,7 @@ approach as implementation milestones with deliverables and completion checks.
 The linked [implementation specification](SPEC.md) grounds those milestones in
 the alpha.12 codebase and defines the implementation tasks, interfaces, state
 transitions, migrations, and behavioral checks. Implementation is in progress
-at M1-005 after M1-001, M1-003, M1-002, and M1-004.
+at M1-006 after M1-001, M1-003, M1-002, M1-004, and M1-005.
 Implementation is limited to this reusable repository. It does not activate a
 private instance or authorize private onboarding, import, delivery, release
 publication, or real runtime/provider effects.
@@ -475,8 +475,8 @@ alpha.13 release readiness or conformance for every runtime.
 
 ### Milestone 1 — Install a minimal candidate in a clean test instance
 
-**Status:** in progress (M1-001, M1-003, M1-002, and M1-004 complete; M1-005
-and M1-006 pending).
+**Status:** in progress (M1-001, M1-003, M1-002, M1-004, and M1-005 complete;
+M1-006 pending).
 
 **Sequencing correction:** M1-003 precedes M1-002. M1-002 validates the
 required registry and registry schema that M1-003 creates, so it cannot safely

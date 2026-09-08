@@ -424,3 +424,24 @@ requirements, then read this log from top to bottom.
 - Next: M1-005. Add the capability-planning module and structured profile
   contracts; prove a scheduler-free manual profile qualifies while scheduled
   execution still requires scheduler evidence.
+
+## 2026-09-07 — alpha.13 M1-005 capability planning
+
+- Completed M1-005. Added `school_os.capabilities` with a fail-closed execution
+  planner; expanded the capability profile with authentication health, adapter
+  versions, network paths, local/read/pagination/file-transfer observations, and
+  explicit record/byte limits. Unknown limits yield one record and 65,536 bytes,
+  never an unlimited plan.
+- The default template is now a scheduler-free `manual` profile. Manual
+  qualification requires available storage/mail/task evidence; `scheduled`
+  qualification additionally requires scheduler capabilities, adapter,
+  network path, and observed scheduler behavior. Missing/unknown requirements
+  return named blockers before provider effects. The legacy `interactive` form
+  remains accepted only by the existing upgrade validator, not by the new
+  execution planner.
+- Updated the wrapper CLI, capability contract, and runtime-conformance tests.
+  Focused capability tests and `python3 scripts/validate.py` passed 93 tests;
+  no provider or private-instance action occurred.
+- Next: M1-006, a fresh-process synthetic installation fixture that uses the
+  extracted package and current scaffolder/capability contracts without mail,
+  task, or delivery effects.

@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from validate_instance import ContractError, load_manifest, validate
+from school_os.capabilities import CapabilityError, qualify_execution
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -29,36 +30,27 @@ def validate_capability_profile(
     if errors:
         return errors
 
-    capabilities: dict[str, dict[str, Any]] = {}
-    for index, record in enumerate(profile["capabilities"]):
-        capability_id = record["capability_id"]
-        if capability_id in capabilities:
-            errors.append(f"$.capabilities[{index}]: duplicate capability_id {capability_id!r}")
-        else:
-            capabilities[capability_id] = record
+    if execution_surface == "interactive" or profile["execution_surface"] == "interactive":
+        if execution_surface is not None and profile["execution_surface"] != execution_surface:
+            return [f"execution surface is {profile['execution_surface']!r}, expected {execution_surface!r}"]
+        capabilities = {record["capability_id"]: record for record in profile["capabilities"]}
+        for capability_id in required_capabilities:
+            record = capabilities.get(capability_id)
+            if record is None:
+                errors.append(f"required capability {capability_id!r} is missing")
+            elif record["status"] != "available":
+                errors.append(f"required capability {capability_id!r} is {record['status']!r}, not 'available'")
+        if operation is not None and operation not in profile["conformant_operations"]:
+            errors.append(f"operation {operation!r} is not declared conformant")
+        return errors
 
-    for capability_id in required_capabilities:
-        record = capabilities.get(capability_id)
-        if record is None:
-            errors.append(f"required capability {capability_id!r} is missing")
-        elif record["status"] != "available":
-            errors.append(
-                f"required capability {capability_id!r} is {record['status']!r}, not 'available'"
-            )
-
-    if operation is not None and operation not in profile["conformant_operations"]:
-        errors.append(f"operation {operation!r} is not declared conformant")
-
-    if execution_surface is not None and profile["execution_surface"] != execution_surface:
-        errors.append(
-            f"execution surface is {profile['execution_surface']!r}, expected {execution_surface!r}"
+    try:
+        qualify_execution(
+            profile, schema, operation=operation or profile["conformant_operations"][0],
+            entrypoint=execution_surface or profile["execution_surface"], required_capabilities=required_capabilities,
         )
-
-    if profile["execution_surface"] == "scheduled":
-        if profile["selected_adapters"]["scheduler"] is None:
-            errors.append("scheduled profile requires a selected scheduler adapter")
-        if profile["scheduler_behavior"] is None:
-            errors.append("scheduled profile requires observed scheduler behavior")
+    except (CapabilityError, IndexError) as exc:
+        errors.append(str(exc))
 
     return errors
 
@@ -69,7 +61,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--schema", type=Path, default=DEFAULT_SCHEMA)
     parser.add_argument("--required-capability", action="append", default=[])
     parser.add_argument("--operation")
-    parser.add_argument("--execution-surface", choices=("interactive", "scheduled"))
+    parser.add_argument("--execution-surface", choices=("manual", "scheduled"))
     args = parser.parse_args(argv)
     try:
         profile = load_manifest(args.profile)

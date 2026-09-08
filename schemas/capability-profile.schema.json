@@ -4,85 +4,22 @@
   "title": "School-OS observed capability profile",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "schema_version",
-    "profile_id",
-    "runtime_adapter",
-    "execution_surface",
-    "runtime_selector",
-    "selected_adapters",
-    "verified_at",
-    "capabilities",
-    "scheduler_behavior",
-    "conformant_operations"
-  ],
+  "required": ["schema_version", "profile_id", "runtime_adapter", "execution_surface", "runtime_selector", "selected_adapters", "verified_at", "adapter_versions", "authentication", "network_paths", "observations", "limits", "capabilities", "scheduler_behavior", "conformant_operations"],
   "properties": {
-    "schema_version": {"type": "integer", "minimum": 1},
+    "schema_version": {"type": "integer", "minimum": 2},
     "profile_id": {"type": "string", "minLength": 1},
     "runtime_adapter": {"type": "string", "minLength": 1},
-    "execution_surface": {"enum": ["interactive", "scheduled"]},
-    "runtime_selector": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["model", "reasoning_effort"],
-      "properties": {
-        "model": {"type": "string", "minLength": 1},
-        "reasoning_effort": {"type": "string", "minLength": 1}
-      }
-    },
-    "selected_adapters": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["mail", "tasks", "scheduler", "audio"],
-      "properties": {
-        "mail": {"type": "string", "minLength": 1},
-        "tasks": {"type": "string", "minLength": 1},
-        "scheduler": {"type": ["string", "null"], "minLength": 1},
-        "audio": {"type": ["string", "null"], "minLength": 1}
-      }
-    },
+    "execution_surface": {"enum": ["manual", "scheduled", "interactive"]},
+    "runtime_selector": {"type": "object", "additionalProperties": false, "required": ["model", "reasoning_effort"], "properties": {"model": {"type": "string", "minLength": 1}, "reasoning_effort": {"type": "string", "minLength": 1}}},
+    "selected_adapters": {"type": "object", "additionalProperties": false, "required": ["mail", "tasks", "scheduler", "audio"], "properties": {"mail": {"type": "string", "minLength": 1}, "tasks": {"type": "string", "minLength": 1}, "scheduler": {"type": ["string", "null"]}, "audio": {"type": ["string", "null"]}}},
     "verified_at": {"type": "string", "minLength": 1},
-    "capabilities": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["capability_id", "status", "verification", "limits", "degradation"],
-        "properties": {
-          "capability_id": {"type": "string", "minLength": 1},
-          "status": {"enum": ["available", "unavailable", "unknown"]},
-          "verification": {"type": "string", "minLength": 1},
-          "limits": {"type": "string", "minLength": 1},
-          "degradation": {"type": "string", "minLength": 1}
-        }
-      }
-    },
-    "scheduler_behavior": {
-      "type": ["object", "null"],
-      "additionalProperties": false,
-      "required": [
-        "connector_authorization",
-        "invocation_payload",
-        "retry_behavior",
-        "run_now_behavior",
-        "overlap_behavior",
-        "status_inspection",
-        "disable_verification"
-      ],
-      "properties": {
-        "connector_authorization": {"type": "string", "minLength": 1},
-        "invocation_payload": {"type": "string", "minLength": 1},
-        "retry_behavior": {"type": "string", "minLength": 1},
-        "run_now_behavior": {"type": "string", "minLength": 1},
-        "overlap_behavior": {"type": "string", "minLength": 1},
-        "status_inspection": {"type": "string", "minLength": 1},
-        "disable_verification": {"type": "string", "minLength": 1}
-      }
-    },
-    "conformant_operations": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": {"type": "string", "minLength": 1}
-    }
+    "adapter_versions": {"type": "object", "additionalProperties": false, "required": ["runtime", "mail", "tasks", "scheduler"], "properties": {"runtime": {"type": "string", "minLength": 1}, "mail": {"type": "string", "minLength": 1}, "tasks": {"type": "string", "minLength": 1}, "scheduler": {"type": ["string", "null"]}}},
+    "authentication": {"type": "object", "additionalProperties": false, "required": ["status", "verified_at", "recheck_trigger"], "properties": {"status": {"enum": ["available", "unavailable", "unknown"]}, "verified_at": {"type": "string", "minLength": 1}, "recheck_trigger": {"type": "string", "minLength": 1}}},
+    "network_paths": {"type": "object", "additionalProperties": false, "required": ["storage", "mail", "tasks", "scheduler"], "properties": {"storage": {"type": "object"}, "mail": {"type": "object"}, "tasks": {"type": "object"}, "scheduler": {"type": "object"}}},
+    "observations": {"type": "object", "additionalProperties": false, "required": ["local_execution", "storage_read_complete", "pagination", "file_transfer"], "properties": {"local_execution": {"type": "object"}, "storage_read_complete": {"type": "object"}, "pagination": {"type": "object"}, "file_transfer": {"type": "object"}}},
+    "limits": {"type": "object", "additionalProperties": false, "required": ["max_records_per_unit", "max_bytes_per_unit"], "properties": {"max_records_per_unit": {"type": ["integer", "null"], "minimum": 1}, "max_bytes_per_unit": {"type": ["integer", "null"], "minimum": 1}}},
+    "capabilities": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["capability_id", "status", "verification", "degradation"], "properties": {"capability_id": {"type": "string", "minLength": 1}, "status": {"enum": ["available", "unavailable", "unknown"]}, "verification": {"type": ["object", "string"]}, "limits": {"type": "string"}, "degradation": {"type": "string", "minLength": 1}}}},
+    "scheduler_behavior": {"type": ["object", "null"]},
+    "conformant_operations": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
   }
 }
