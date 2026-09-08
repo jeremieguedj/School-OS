@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
 - Status: approved plan with linked implementation specification; M1–M3 complete, M4 blocked at observed-surface evidence and an alpha.11 private migration incompatibility
-- Revision: 23, updated 2026-09-08
+- Revision: 24, updated 2026-09-08
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -754,3 +754,8 @@ evidence that does not need to be repeatedly printed into model context.
   staged alpha.11-to-alpha.12 route fails closed. No content was converted,
   copied, or activated; an approved preservation mapping or explicit new
   alpha.11 migration scope is required before upgrade work can resume.
+- Revision 24: a further authorized read-only check found that the alpha.11
+  capability profile is scheduled-only and predates alpha.13's explicit
+  `observed` evidence classification. It cannot qualify an attended upgrade
+  surface or satisfy M4-003's runtime/scheduler evidence requirement. No
+  private capability record or provider object was modified.

@@ -32,7 +32,9 @@ private instance is not a direct alpha.13 migration source; its upgrade remains
 paused pending the separately documented compatible staged-path audit or new
 approved migration scope. That audit has now failed because the existing source
 catalog includes native-document storage; no conversion or activation is
-permitted without an approved preservation mapping.
+permitted without an approved preservation mapping. Its legacy scheduled-only
+capability record also lacks alpha.13 observed-evidence qualification, so it
+cannot establish an attended upgrade surface.
 The original snapshot remains in Git.
 
 ## Objective

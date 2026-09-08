@@ -652,6 +652,11 @@ pass. No content was converted or written. A preservation mapping that proves
 lossless source equivalence, or a separately approved alpha.11 migration
 scope, is required before any private upgrade can resume.
 
+The same authorized read-only preflight found an alpha.11 scheduled-only
+capability profile that predates alpha.13's `observed` evidence classification.
+It cannot establish the attended upgrade surface or alpha.13 runtime/scheduler
+conformance; no profile or provider record was modified.
+
 Optional adapters from work package 10 receive independent IDs only when the
 user selects a concrete deployment need. They do not become dependencies of
 M4-001 through M4-006 and do not block alpha.13 otherwise.

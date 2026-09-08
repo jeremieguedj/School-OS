@@ -1028,3 +1028,17 @@ requirements, then read this log from top to bottom.
   blocked until the user either approves a new alpha.11 preservation/migration
   scope or supplies a separately verified compatible intermediate release and
   mapping; alpha.13 remains unreleased and cannot be activated in either case.
+
+## 2026-09-08 — alpha.11 capability-profile preflight blocker
+
+- Performed one further authorized read-only capability-profile check. The
+  alpha.11 profile is scheduled-only and uses an older evidence shape without
+  alpha.13's explicit `observed` classification. It therefore cannot qualify
+  the attended upgrade surface required by `system-upgrade.md` or establish
+  M4-003 runtime/scheduler conformance.
+- No private profile, scheduler, provider object, catalog, credential, or file
+  was changed. Updated only the generic root-plan/specification summaries and
+  this append-only log; no private identifiers or content were recorded.
+- Next: validate and publish this checkpoint. The upgrade remains blocked on a
+  user-approved alpha.11 preservation/migration scope; alpha.13 release and
+  real-surface conformance gates remain separately unfinished.
