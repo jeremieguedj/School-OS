@@ -1138,3 +1138,18 @@ requirements, then read this log from top to bottom.
   sequence; run the complete gate from the repaired exact package; then update
   M1/M2/M3 status only if that evidence passes. Next: publish this recoverable
   corrective checkpoint and continue those tests before private candidate work.
+
+## 2026-09-08 — alpha.13 create-only lost-response adoption
+
+- Extended the create-only installer to treat a failed create response as an
+  unknown outcome: it performs one exact scoped lookup by parent/name/kind/MIME,
+  adopts only a unique matching object after complete byte readback, and never
+  retries the create. Missing or ambiguous lookup remains a named blocker.
+- Focused validation: `python3 -m unittest tests.test_instance_scaffolding`
+  passed (6 tests), including the lost-response adoption path. No private Drive
+  or Gmail write occurred.
+- Changed files: `school_os/install.py`, `tests/test_instance_scaffolding.py`,
+  and this append-only log. Unfinished: ambiguity/tamper/fresh-bootstrap
+  recovery coverage and integration of the staged helper with real candidate
+  payload construction. Next: validate, publish this checkpoint, then continue
+  the remaining M1-004/M1-006 recovery cases before any candidate write.

@@ -19,7 +19,7 @@ from typing import Any, Protocol
 
 from .contracts import ContractError, canonical_json_bytes, dump_mapping_yaml, load_mapping, load_mapping_yaml, sha256_bytes, validate
 from .package import PackageError, verify_extracted_tree, verify_release_archive
-from .references import ObjectReference, ReferenceError, ReferenceStorage, StoredObject, resolve_reference
+from .references import ObjectReference, ReferenceError, ReferenceStorage, StoredObject, discover_unique, resolve_reference
 
 
 class InstallationError(ValueError):
@@ -436,6 +436,24 @@ def _stored_reference(object_: StoredObject, root_id: str) -> dict[str, Any]:
     }
 
 
+def _create_or_adopt(
+    storage: CreateOnlyStorage, *, parent_id: str, name: str, data: bytes, mime_type: str,
+) -> StoredObject:
+    """Adopt one exact scoped object after an uncertain create response, never retry."""
+    try:
+        object_ = storage.create_file(parent_id, name, data, mime_type)
+    except OSError as exc:
+        try:
+            object_ = discover_unique(storage, parent_id=parent_id, name=name, kind="file", mime_type=mime_type)
+        except ReferenceError as discover_exc:
+            raise InstallationError(f"create outcome is unknown for {name}: {discover_exc}") from exc
+    reference = _stored_reference(object_, parent_id)
+    readback = resolve_reference(storage, ObjectReference.from_mapping(reference), expected_kind="file", instance_root_id=parent_id)
+    if readback.data != data:
+        raise InstallationError(f"provider readback bytes disagree for {name}")
+    return readback
+
+
 def install_create_only_generation(
     storage: CreateOnlyStorage, *, root_reference: dict[str, Any], package: dict[str, Any], payloads: dict[str, bytes],
 ) -> dict[str, Any]:
@@ -455,12 +473,7 @@ def install_create_only_generation(
         raise InstallationError("create-only generation requires final non-empty payload mapping")
     objects: dict[str, StoredObject] = {}
     for path, data in sorted(payloads.items()):
-        object_ = storage.create_file(root.object_id, path, data, "application/octet-stream")
-        reference = _stored_reference(object_, root.object_id)
-        readback = resolve_reference(storage, ObjectReference.from_mapping(reference), expected_kind="file", instance_root_id=root.object_id)
-        if readback.data != data:
-            raise InstallationError(f"provider readback bytes disagree for {path}")
-        objects[path] = readback
+        objects[path] = _create_or_adopt(storage, parent_id=root.object_id, name=path, data=data, mime_type="application/octet-stream")
     manifest = {
         "schema_version": 2,
         "verification_status": "candidate",
@@ -472,11 +485,8 @@ def install_create_only_generation(
         },
     }
     manifest_bytes = canonical_json_bytes(manifest)
-    manifest_object = storage.create_file(root.object_id, MANIFEST_PATH, manifest_bytes, "application/json")
+    manifest_object = _create_or_adopt(storage, parent_id=root.object_id, name=MANIFEST_PATH, data=manifest_bytes, mime_type="application/json")
     manifest_reference = _stored_reference(manifest_object, root.object_id)
-    manifest_readback = resolve_reference(storage, ObjectReference.from_mapping(manifest_reference), expected_kind="file", instance_root_id=root.object_id)
-    if manifest_readback.data != manifest_bytes:
-        raise InstallationError("provider readback bytes disagree for content manifest")
     admission = {
         "schema_version": 1,
         "verification_status": "verified",
@@ -485,19 +495,13 @@ def install_create_only_generation(
         "content_manifest_sha256": sha256_bytes(manifest_bytes),
     }
     admission_bytes = canonical_json_bytes(admission)
-    admission_object = storage.create_file(root.object_id, ADMISSION_PATH, admission_bytes, "application/json")
+    admission_object = _create_or_adopt(storage, parent_id=root.object_id, name=ADMISSION_PATH, data=admission_bytes, mime_type="application/json")
     admission_reference = _stored_reference(admission_object, root.object_id)
-    admission_readback = resolve_reference(storage, ObjectReference.from_mapping(admission_reference), expected_kind="file", instance_root_id=root.object_id)
-    if admission_readback.data != admission_bytes:
-        raise InstallationError("provider readback bytes disagree for admission receipt")
     bootstrap_bytes = (
         "# School-OS instance bootstrap\n\n"
         f"instance_manifest_object_id: {objects.get('instance.yaml', manifest_object).object_id}\n"
         f"installation_admission_object_id: {admission_object.object_id}\n"
     ).encode("utf-8")
-    bootstrap_object = storage.create_file(root.object_id, BOOTSTRAP_PATH, bootstrap_bytes, "text/markdown")
+    bootstrap_object = _create_or_adopt(storage, parent_id=root.object_id, name=BOOTSTRAP_PATH, data=bootstrap_bytes, mime_type="text/markdown")
     bootstrap_reference = _stored_reference(bootstrap_object, root.object_id)
-    bootstrap_readback = resolve_reference(storage, ObjectReference.from_mapping(bootstrap_reference), expected_kind="file", instance_root_id=root.object_id)
-    if bootstrap_readback.data != bootstrap_bytes:
-        raise InstallationError("provider readback bytes disagree for bootstrap")
     return {"manifest": manifest, "manifest_reference": manifest_reference, "admission": admission, "admission_reference": admission_reference, "bootstrap_reference": bootstrap_reference}

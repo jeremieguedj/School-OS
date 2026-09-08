@@ -200,14 +200,16 @@ class InstanceScaffoldingTests(unittest.TestCase):
         self.assertEqual("verified", result["admission"]["verification_status"])
         self.assertEqual(["instance.yaml", "state/operation-state.json", "state/installation-manifest.json", "state/installation-admission.json", "BOOTSTRAP.md"], storage.calls)
 
-    def test_create_only_generation_stops_on_lost_response(self) -> None:
-        with self.assertRaisesRegex(OSError, "lost create response"):
-            install_create_only_generation(
-                CreateOnlyFakeStorage(lose_after_create=True),
-                root_reference={"object_id": "instance-root", "kind": "folder", "permitted_ancestor_id": "instance-root", "version": "1"},
-                package={"version": "0.1.0-alpha.13", "source_identity": {"repository": "example", "commit": "a" * 40}, "archive_sha256": "a" * 64, "inventory_sha256": "b" * 64},
-                payloads={"instance.yaml": b"instance\n"},
-            )
+    def test_create_only_generation_adopts_one_lost_response_without_retry(self) -> None:
+        storage = CreateOnlyFakeStorage(lose_after_create=True)
+        result = install_create_only_generation(
+            storage,
+            root_reference={"object_id": "instance-root", "kind": "folder", "permitted_ancestor_id": "instance-root", "version": "1"},
+            package={"version": "0.1.0-alpha.13", "source_identity": {"repository": "example", "commit": "a" * 40}, "archive_sha256": "a" * 64, "inventory_sha256": "b" * 64},
+            payloads={"instance.yaml": b"instance\n"},
+        )
+        self.assertEqual("verified", result["admission"]["verification_status"])
+        self.assertEqual(4, len(storage.calls))
 
 
 if __name__ == "__main__":
