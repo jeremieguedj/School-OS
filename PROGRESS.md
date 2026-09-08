@@ -668,3 +668,14 @@ requirements, then read this log from top to bottom.
   changed tracked and new files, commit/push/verify M2-006, then implement the
   M2-007 connected daily-run test using only installer output and predecessor
   artifacts.
+
+## 2026-09-07 — alpha.13 M2-006 verification
+
+- M2-006 was accepted as `8770bc505eaf28f956cc10d546db4029c1de0604`
+  (`Implement alpha.13 shared daily entrypoints`). The repository gate passed
+  113 tests, schema/template checks, and release-smoke validation; direct
+  privacy scanning included all four new files and `git diff --check` passed.
+- `origin/main` was read back at the exact same SHA. No real adapter, provider,
+  delivery, scheduler, or private instance was touched. Next: M2-007, compose
+  the connected daily-run fixture from M1 installer output and actual verified
+  predecessor artifacts, then prove substitution fails.
