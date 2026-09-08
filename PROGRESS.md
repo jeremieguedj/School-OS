@@ -2351,3 +2351,20 @@ requirements, then read this log from top to bottom.
   connected visual/audio acceptance, fresh-instance/manual/scheduled test
   acceptance, independent audits, and release readiness. Unaccepted ingestion,
   task, and MIME candidates remain isolated.
+
+## 2026-09-08 — Gmail full/raw MIME normalizer integrated
+
+- Integrated the independently accepted normalizer from
+  `973e5cb93b831646e4209ea22f435aa38a008085` as
+  `school_os.gmail_source`. It cross-binds observed Gmail snake-case full/raw
+  message and thread identities, strict RFC2822 base64url bytes, complete MIME
+  structure and headers, transport/charset bytes, provider Unicode, attachments,
+  and ordered full-thread raw membership before existing source admission.
+- The independent review replay closed the five prior unsafe inputs and
+  accepted valid ISO-8859-1 quoted-printable custody; its focused Gmail/privacy
+  suite passed 17 tests and its candidate full suite passed 237 tests. This
+  integration intentionally does not claim connected ingestion binding,
+  attachment/PDF/image extraction, direct-resource retrieval, provider access,
+  delivery, schedule, or private acceptance.
+- Next: run the focused normalizer/custody/semantic tests and repository privacy
+  checks on this integrated tree, then commit this scoped integration locally.

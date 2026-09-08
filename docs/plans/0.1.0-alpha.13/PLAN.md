@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
-- Status: approved completion plan; the deterministic v2 brief repository integration, synthetic measurement baseline, exact-package validation, and exact CI are complete. M1–M3 chained revalidation and M4 observed fresh-test-instance acceptance remain.
-- Revision: 38, updated 2026-09-08
+- Status: approved completion plan; the deterministic v2 brief and Gmail full/raw MIME normalizer repository implementations are accepted. M1–M3 chained revalidation and M4 observed fresh-test-instance acceptance remain.
+- Revision: 39, updated 2026-09-08
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -1023,3 +1023,7 @@ evidence that does not need to be repeatedly printed into model context.
   exact GitHub Validate run `34290495210` passed. This closes only repository
   integration evidence; observed runtime/provider, integrated visual/audio,
   fresh-instance, scheduler, and release gates remain open.
+- Revision 39: accepted the bounded Gmail full/raw MIME normalizer after
+  independent counterexample replay and review. It is repository-only source
+  normalization; connected binding, attachment/direct-resource extraction, and
+  private acceptance remain open.

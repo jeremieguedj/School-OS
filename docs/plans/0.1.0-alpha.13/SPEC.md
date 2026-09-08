@@ -87,6 +87,18 @@ plain-text body. The default full-content template renders household News;
 selected entry-slot templates without a matching household-News slot block
 instead of silently omitting it.
 
+### Gmail full/raw MIME normalizer (2026-09-08)
+
+`school_os.gmail_source.GmailMimeNormalizer` is the accepted repository-side
+normalizer for the observed Gmail full/raw connector shape. It requires exact
+snake-case message/thread identity, strict base64url raw RFC2822 bytes,
+complete matching MIME trees, reconciled technical headers and decoded byte
+sizes, exact provider Unicode text, and an ordered complete thread/raw-member
+set. It passes only an exact selected plaintext alternative and custody-preserved
+HTML/attachment inventory to existing import helpers; raw MIME is not canonical
+storage and HTML is never converted to text. Attachment extraction and direct
+resource retrieval require separate connected bindings and remain unaccepted.
+
 ## Existing implementation inventory
 
 The current repository is mostly contracts and recipes. Documented behavior is
