@@ -1442,3 +1442,19 @@ requirements, then read this log from top to bottom.
   begin M4-004's bounded synthetic measurement/checkpoint work; do not alter
   M4-008 shared task core while its consultation and isolated adapter handoff
   remain in progress.
+
+## 2026-09-08 — alpha.13 task-core reconciliation correction
+
+- A bounded GPT-5.6 Sol High read-only consultation reproduced a task-core
+  defect: canonical reconciliation is setdefault-only and provider reconciliation
+  ignores unbound rows, so parent-origin tasks, parent edits/completion history,
+  source corrections, and completion-comment policy cannot be preserved safely.
+  M2-003, M2-004, and M3-003 are reopened before accepting the Sheets adapter.
+- The accepted in-scope repair is complete scoped snapshot reconciliation with
+  explicit ownership/snapshots, stable identity/bindings, append-only lifecycle
+  events, explicit source relationships, and one recoverable missing-comment
+  reminder. Completion is not a workflow-state expansion. The isolated Sheets
+  worker remains mapping/port-only pending review; no shared task code, Sheet,
+  source, delivery, scheduler, or private instance changed in this consultation.
+  Next: record matching specification detail, implement the shared core and
+  regression matrix, then validate and publish the reopened-task checkpoint.

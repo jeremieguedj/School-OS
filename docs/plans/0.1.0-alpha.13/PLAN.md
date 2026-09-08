@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
 - Status: approved completion plan; M1–M3 require chained revalidation after the installer correction, and M4 implementation plus observed fresh-test-instance evidence remains
-- Revision: 29, updated 2026-09-08
+- Revision: 30, updated 2026-09-08
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -76,6 +76,18 @@ decorative/tracking exclusion needs evidence; an ambiguous or unreadable
 substantive resource blocks the affected import. A complete empty plaintext
 body cannot establish message coverage while an embedded substantive resource
 remains unprocessed.
+
+**Task-core correction (2026-09-08):** A bounded GPT-5.6 Sol High read-only
+consultation found that the existing canonical/provider reconciliation only
+projects source-created tasks. It neither admits an explicitly identified
+parent-origin row nor preserves parent edits/completion history canonically, and
+it cannot apply validated source support/correction/completion relationships.
+M2-003, M2-004, and M3-003 are therefore reopened. The smallest compatible
+repair uses complete scoped snapshots, immutable task/binding identity, declared
+field ownership with last-synced parent snapshots, and explicit relationship
+records. Completion stays a lifecycle event, not a new workflow state; a
+missing required parent comment reopens with one recoverable reminder. No title
+matching, generic task engine, or unscoped provider mutation is authorized.
 
 The user has authorized the new test instance to ingest the last 14 days of the
 grounded school-mail scope; execute real manual and temporary scheduled brief
