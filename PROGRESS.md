@@ -2333,3 +2333,21 @@ requirements, then read this log from top to bottom.
   changed.  Once confirmed, push the local commit, verify `origin/main` equals
   the resulting commit, and inspect the resulting GitHub CI run before treating
   publication as complete.
+
+## 2026-09-08 — alpha.13 brief integration published
+
+- The exact amended integration commit
+  `6cb12446a2b535646351c82fe5825e9b3d371bda` was fast-forwarded to
+  `origin/main`; remote SHA readback matched. GitHub Actions **Validate** run
+  `34290495210` completed successfully for that exact SHA. The prior local
+  publication-pending entry is superseded.
+- CI supplies the exact-commit validation after the final PROGRESS-only amend;
+  the earlier local ordinary-CPython suite passed all 238 tests, with schema,
+  template, package, privacy, and diff checks. The current working tree is
+  clean. No release/tag, provider, private-instance, email, or scheduler
+  action occurred.
+- Repository brief integration is complete. Remaining gates are unchanged:
+  observed authenticated runtime and source/provider execution, final
+  connected visual/audio acceptance, fresh-instance/manual/scheduled test
+  acceptance, independent audits, and release readiness. Unaccepted ingestion,
+  task, and MIME candidates remain isolated.

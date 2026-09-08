@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
-- Status: approved completion plan; M1–M3 require chained revalidation after the installer correction, and M4 implementation plus observed fresh-test-instance evidence remains
-- Revision: 36, updated 2026-09-08
+- Status: approved completion plan; the deterministic v2 brief repository integration, synthetic measurement baseline, exact-package validation, and exact CI are complete. M1–M3 chained revalidation and M4 observed fresh-test-instance acceptance remain.
+- Revision: 38, updated 2026-09-08
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -1017,3 +1017,9 @@ evidence that does not need to be repeatedly printed into model context.
   integrated the approved v2 brief measurement path. The refreshed synthetic
   baseline and exact-package validation remain required before acceptance;
   observed runtime, visual, provider, audio, and release gates remain open.
+- Revision 38: published the deterministic v2 brief repository integration at
+  `6cb12446a2b535646351c82fe5825e9b3d371bda`. The refreshed nine-artifact
+  synthetic baseline, ordinary CPython validation, package/privacy checks, and
+  exact GitHub Validate run `34290495210` passed. This closes only repository
+  integration evidence; observed runtime/provider, integrated visual/audio,
+  fresh-instance, scheduler, and release gates remain open.
