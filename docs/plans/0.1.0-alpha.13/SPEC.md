@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation in progress; M1–M2 and M3-001–M3-003 complete, M3-004 next
-- Approved plan: [PLAN.md](PLAN.md), revision 15
+- Status: implementation in progress; M1–M2 and M3-001–M3-004 complete, M3-005 next
+- Approved plan: [PLAN.md](PLAN.md), revision 16
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
@@ -509,7 +509,7 @@ Gmail, Todoist, Drive, or a scheduled runtime conforms.
 
 ## Milestone 3 — Prove recovery and safe repeated execution
 
-**Status:** in progress (M3-001–M3-003 complete; M3-004 next).
+**Status:** in progress (M3-001–M3-004 complete; M3-005 next).
 
 ### Deliverable
 
@@ -544,6 +544,11 @@ and blocks corrupted bytes, duplicate rows, or conflicting provenance.
 **M3-003 implementation note (2026-09-07):** Task replay adopts a lost create
 by canonical ID, and comment recovery adopts exactly one immutable effect after
 lookup. Parent-edited title/group remain untouched and become review cases.
+
+**M3-004 implementation note (2026-09-07):** Delivery now persists a pending
+intent before sending, reconciles a lost response through exactly one matching
+delivery, blocks inconclusive/ambiguous lookup, and prevents duplicate intent.
+Correction variants derive distinct deterministic delivery keys.
 
 ### Required behavioral matrix
 

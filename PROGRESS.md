@@ -787,3 +787,16 @@ requirements, then read this log from top to bottom.
   privacy scan passed; `origin/main` was read back at the exact same SHA.
 - Next: M3-004 delivery recovery, correction variants, and overlapping-entrypoint
   duplicate prevention.
+
+## 2026-09-07 — alpha.13 M3-004 delivery recovery and duplicate prevention
+
+- Completed M3-004. Delivery intent is durable before send; lost-send recovery
+  confirms one matching result, blocks unknown/ambiguous lookup, suppresses a
+  duplicate entrypoint from creating the same key, and uses distinct keys for
+  correction variants.
+- Focused delivery/connected tests passed 5 tests; the full gate passed 124
+  tests. No real send occurred. Changed files: `school_os/brief.py`,
+  `tests/support/fakes.py`, `tests/test_brief.py`, root `PLAN.md`, and alpha.13
+  plan/specification. Validation/publication pending. Exact next action:
+  privacy-scan, commit/push/verify M3-004, then implement M3-005 transition,
+  stale-auth, capacity, cancellation, and non-progress cases.

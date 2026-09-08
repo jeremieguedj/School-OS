@@ -9,7 +9,7 @@ The current revised plan for the next release, `0.1.0-alpha.13`, is
 [the alpha.13 release plan](docs/plans/0.1.0-alpha.13/PLAN.md). It records ten work
 packages, deliverables, benefits, deferral impacts, and acceptance criteria,
 including the approved manual-sender and cross-session continuation decisions.
-Implementation is in progress at M3-004 after completing M3-003. This planning reference does not
+Implementation is in progress at M3-005 after completing M3-004. This planning reference does not
 authorize private-instance activation.
 
 The [simplicity review](docs/plans/0.1.0-alpha.13/REVIEW.md) evaluates the original
@@ -23,7 +23,7 @@ operation, verified recovery, and broader release coverage. The release plan now
 links the code-grounded [implementation specification](docs/plans/0.1.0-alpha.13/SPEC.md),
 which defines stable tasks and acceptance checks. M1 is complete (M1-001
 through M1-006). M2 is complete (M2-001–M2-007); M3 is in progress with M3-001
-complete through M3-003; M3-004 is next; M4 remains pending.
+complete through M3-004; M3-005 is next; M4 remains pending.
 The original snapshot remains in Git.
 
 ## Objective

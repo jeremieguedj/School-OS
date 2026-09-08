@@ -79,3 +79,6 @@ class SendSink:
     def send(self, content: bytes) -> str:
         self.deliveries.append(content)
         return f"synthetic-send-{len(self.deliveries)}"
+
+    def find_delivery(self, content: bytes) -> list[str]:
+        return [f"synthetic-send-{index}" for index, value in enumerate(self.deliveries, 1) if value == content]
