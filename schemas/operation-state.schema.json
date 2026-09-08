@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/operation-state.schema.json",
+  "title": "School-OS operation admission state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status", "current_operation", "serialization", "checkpoint", "last_terminal"],
+  "properties": {
+    "schema_version": {"type": "integer", "minimum": 1},
+    "status": {"enum": ["idle", "running", "needs_continuation", "blocked", "complete", "cancelled"]},
+    "current_operation": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["operation_id", "attempt_id"],
+      "properties": {
+        "operation_id": {"type": "string", "minLength": 1},
+        "attempt_id": {"type": "string", "minLength": 1}
+      }
+    },
+    "serialization": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["mode", "evidence"],
+      "properties": {
+        "mode": {"enum": ["native_conditional", "runtime_serialized", "attended_single_writer"]},
+        "evidence": {"type": "object"}
+      }
+    },
+    "checkpoint": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["checkpoint_id", "sha256"],
+      "properties": {
+        "checkpoint_id": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "last_terminal": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["operation_id", "status", "checkpoint", "reason"],
+      "properties": {
+        "operation_id": {"type": "string", "minLength": 1},
+        "status": {"enum": ["complete", "cancelled"]},
+        "checkpoint": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["checkpoint_id", "sha256"],
+          "properties": {
+            "checkpoint_id": {"type": "string", "minLength": 1},
+            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          }
+        },
+        "reason": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

@@ -5,6 +5,8 @@ schema_version: 1
 mapping_status: not_configured
 files:
   capability_profile: {}
+  operation_state: {}
+  operation_checkpoints_folder: {}
   current_index: {}
   source_catalog_folder: {}
   source_catalog_index: {}

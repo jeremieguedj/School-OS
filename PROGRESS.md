@@ -476,3 +476,38 @@ requirements, then read this log from top to bottom.
   pending until M2-001 begins. No implementation scope changed.
 - Working tree is clean. Next: begin M2-001 with the operation-state and
   operation-checkpoint schemas/templates plus legal transition validation.
+
+## 2026-09-07 — alpha.13 M2-001 operation state and immutable checkpoints
+
+- Completed M2-001. Added `schemas/operation-state.schema.json`,
+  `schemas/operation-checkpoint.schema.json`, initial JSON state/checkpoint
+  templates, `core/contracts/operation-state.md`, and
+  `school_os/operations.py`. The module validates the approved transition
+  table, canonical checkpoint SHA-256 pointers, exact predecessor chains,
+  resumption attempt IDs, recipe-supplied completion phases, and
+  pending/unknown-effect gates.
+- Updated `schemas/instance.schema.json`, `templates/instance.yaml`,
+  `templates/state/file-map.yaml`, `templates/state/README.md`, and
+  `school_os/install.py`. New synthetic candidates now include a schema-valid
+  `state/operation-state.json` and file map, each declared in the installation
+  manifest and proved by the existing exact readback gate. The old YAML state
+  remains a migration input only; `data_schema_version` and alpha.12 upgrade
+  claims remain unchanged for M4 Migration 0002.
+- Added `tests/test_operation_state.py` and manifest validation for both new
+  templates. Focused state/scaffolding/synthetic-installation tests passed 17
+  tests. The complete `PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate.py`
+  gate passed 100 tests, schema/template checks, the exact-HEAD release smoke
+  build, and tracked-file privacy scan. A direct privacy scan of every changed
+  file and `git diff --check` passed.
+- Consulted decisions: none. The state-format version is independent of the
+  deferred instance data-schema migration, exactly as the specification allows;
+  no contradiction, provider effect, private-instance access, or architectural
+  escalation occurred.
+- Unfinished: M2-002 through M4-006 remain pending; M2 is in progress. Exact
+  next action: commit, push, and verify this M2-001 work unit, then implement
+  M2-002's lossless v2 source/extraction contracts and catalog codec.
+- Post-commit exact-HEAD validation initially found that the extracted
+  synthetic-installation fixture lacked return references for the newly managed
+  file map and operation-state files. No provider effect occurred. Added those
+  synthetic references and an idle-state assertion; the M2-001 commit will be
+  amended only after the exact-HEAD package gate passes.

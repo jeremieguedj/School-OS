@@ -52,6 +52,7 @@ class SyntheticInstallationTests(unittest.TestCase):
             self.assertEqual(0, resolved.returncode, resolved.stderr)
             self.assertEqual("core/operations/daily-run.md", resolved.stdout.strip())
             self.assertTrue((candidate / "state" / "installation-manifest.json").is_file())
+            self.assertEqual("idle", json.loads((candidate / "state" / "operation-state.json").read_text(encoding="utf-8"))["status"])
             self.assertEqual([], json.loads((FIXTURE / "source-corpus.json").read_text(encoding="utf-8"))["conversations"])
             self.assertEqual([], FixtureMail().search())
             self.assertEqual([], FixtureTasks().tasks)

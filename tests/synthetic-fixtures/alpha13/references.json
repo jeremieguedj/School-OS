@@ -21,6 +21,8 @@
     "config/integrations.yaml": {"object_id": "synthetic-integrations", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
     "config/policies.yaml": {"object_id": "synthetic-policies", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
     "config/daily-run-personal-values.md": {"object_id": "synthetic-daily-values", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
+    "state/file-map.yaml": {"object_id": "synthetic-file-map", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
+    "state/operation-state.json": {"object_id": "synthetic-operation-state", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
     "state/installation-manifest.json": {"object_id": "synthetic-install-manifest", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"}
   }
 }

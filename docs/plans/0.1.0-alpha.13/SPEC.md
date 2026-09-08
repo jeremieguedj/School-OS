@@ -1,11 +1,11 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation in progress; M1 complete, M2-001 next
-- Approved plan: [PLAN.md](PLAN.md), revision 8
+- Status: implementation in progress; M1 and M2-001 complete, M2-002 next
+- Approved plan: [PLAN.md](PLAN.md), revision 9
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
-- Milestone status: M1 complete; M2 pending; M3 pending; M4 pending
+- Milestone status: M1 complete; M2 in progress; M3 pending; M4 pending
 
 ## Authority and boundaries
 
@@ -434,7 +434,7 @@ or any real provider is conformant.
 
 ## Milestone 2 — Connect a complete normal operation
 
-**Status:** pending.
+**Status:** in progress (M2-001 complete; M2-002 next).
 
 ### Deliverable
 
@@ -455,6 +455,15 @@ may make the scenario pass.
 | M2-005 | M2-003 | Add brief-input/delivery-ledger schemas, `school_os/brief.py`, default HTML/plain templates/theme, expected files, and brief/delivery recipe updates. | Identical inputs render byte-identical HTML/text with separate ordered sections, escaped unusual text, source links, empty states, and mobile-readable fixtures. Send sink returns one verified message and ledger entry. |
 | M2-006 | M2-001–M2-005 | Add adapter protocols and `school_os/daily.py`; add/update thin `run_operation` entrypoint; revise `daily-run.md`, `manual-daily-run.md`, capability/adapter docs, and manual contract tests so manual and scheduled triggers share the same operation. | A scheduler-free qualified manual run executes every required phase. Scheduler capability is not requested. A scheduled entrypoint uses the same function and adds scheduler-specific admission checks. |
 | M2-007 | M2-006 | Add `tests/test_connected_daily_run.py` using only M1 installer output and predecessor artifacts. Record expected artifact/effect hashes in synthetic fixtures. | The connected run accounts for every in-scope source and phase, verifies catalog/task/brief/delivery, commits cursors last, ends `COMPLETE`, and fails if any intermediate artifact is substituted. |
+
+**M2-001 implementation note (2026-09-07):** New candidate instances carry a
+schema-valid `operation-state.json` and file-map entry, both covered by the
+installation-manifest hash/readback gate. Checkpoints are create-only records;
+their canonical bytes are hashed into the successor pointer. The state module
+validates the approved transition table, recipe-supplied completion phases, and
+pending/unknown-effect gates without duplicating daily-operation policy. This
+does not advance `data_schema_version` or claim alpha.12 upgrade compatibility:
+Migration 0002 remains M4 work.
 
 ### Milestone check
 

@@ -14,7 +14,8 @@ configuration:
   daily_run_personal_values_reference: config/daily-run-personal-values.md
 state:
   file_map_reference: state/file-map.yaml
-  operation_state_reference: state/operation-state.yaml
+  operation_state_reference: state/operation-state.json
+  operation_checkpoints_reference: state/operation-checkpoints
   installation_manifest_reference: state/installation-manifest.json
 last_completed_migration: null
 latest_release_seen:

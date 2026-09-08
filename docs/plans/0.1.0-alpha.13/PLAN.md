@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
-- Status: approved plan with linked implementation specification; M1 complete, M2 pending
-- Revision: 8, updated 2026-09-07
+- Status: approved plan with linked implementation specification; M1 complete, M2 in progress
+- Revision: 9, updated 2026-09-07
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -22,7 +22,7 @@ approach as implementation milestones with deliverables and completion checks.
 The linked [implementation specification](SPEC.md) grounds those milestones in
 the alpha.12 codebase and defines the implementation tasks, interfaces, state
 transitions, migrations, and behavioral checks. Implementation is in progress
-at M2-001 after completing M1-001 through M1-006.
+at M2-002 after completing M1-001 through M1-006 and M2-001.
 Implementation is limited to this reusable repository. It does not activate a
 private instance or authorize private onboarding, import, delivery, release
 publication, or real runtime/provider effects.
@@ -502,7 +502,7 @@ this journey. Implement only the shared interfaces needed by the next milestone.
 
 ### Milestone 2 — Connect a complete normal operation
 
-**Status:** pending.
+**Status:** in progress (M2-001 complete; M2-002 next).
 
 **Work and deliverables:** Use the installed candidate to execute this sequence:
 
@@ -646,3 +646,6 @@ evidence that does not need to be repeatedly printed into model context.
   repository. All four milestones remain pending; no runtime, manifest, release,
   or private instance changed. The additional historical-retrieval acceptance
   case and independent optional adapters remain deferred as previously approved.
+- Revision 9: completed M2-001's operation-state/checkpoint contracts and
+  validation. M2 is now in progress; M2-002 is next. The data-schema migration
+  and alpha.12 compatibility claim remain deferred to M4 as specified.

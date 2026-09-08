@@ -27,12 +27,16 @@ class InstallationError(ValueError):
 
 
 MANIFEST_PATH = "state/installation-manifest.json"
+FILE_MAP_PATH = "state/file-map.yaml"
+OPERATION_STATE_PATH = "state/operation-state.json"
 MANAGED_PATHS = (
     "instance.yaml",
     "config/household.yaml",
     "config/integrations.yaml",
     "config/policies.yaml",
     "config/daily-run-personal-values.md",
+    FILE_MAP_PATH,
+    OPERATION_STATE_PATH,
 )
 DAILY_REFERENCE_KINDS = {
     "source_checkpoint": "file",
@@ -261,8 +265,9 @@ def _normalise_inputs(answers: dict[str, Any], references: dict[str, Any], packa
             "daily_run_personal_values_reference": "config/daily-run-personal-values.md",
         },
         "state": {
-            "file_map_reference": "state/file-map.yaml",
-            "operation_state_reference": "state/operation-state.yaml",
+            "file_map_reference": FILE_MAP_PATH,
+            "operation_state_reference": OPERATION_STATE_PATH,
+            "operation_checkpoints_reference": "state/operation-checkpoints",
             "installation_manifest_reference": MANIFEST_PATH,
         },
         "last_completed_migration": None,
@@ -275,12 +280,45 @@ def _normalise_inputs(answers: dict[str, Any], references: dict[str, Any], packa
         "It may customize only the approved references and presentation values. It must not contain adapter identity, provider bindings, credentials, or a replacement operation recipe.\n\n"
         "The generic daily operation still requires provenance, task reconciliation, provider readback, duplicate-delivery prevention, and sent-message verification.\n"
     ).encode("utf-8")
+    operation_state = {
+        "checkpoint": None,
+        "current_operation": None,
+        "last_terminal": None,
+        "schema_version": 1,
+        "serialization": None,
+        "status": "idle",
+    }
+    _validated(operation_state, package_root, "operation-state.schema.json", "operation state")
+    file_map = {
+        "schema_version": 1,
+        "mapping_status": "partially_configured",
+        "files": {
+            "capability_profile": {},
+            "operation_state": returned_references[OPERATION_STATE_PATH],
+            "operation_checkpoints_folder": {},
+            "current_index": {},
+            "source_catalog_folder": {},
+            "source_catalog_index": {},
+            "canonical_tasks": {},
+            "guidelines": {},
+            "rolling_updates": {},
+            "brief_template": {},
+            "family_scope": {},
+            "active_task_provider": {},
+            "task_sync_state": {},
+            "delivery_state": {},
+            "manual_run_recipe": {},
+            "durable_profiles": {},
+        },
+    }
     files = {
         "instance.yaml": dump_mapping_yaml(instance),
         "config/household.yaml": dump_mapping_yaml(household),
         "config/integrations.yaml": dump_mapping_yaml(integrations),
         "config/policies.yaml": dump_mapping_yaml(policies),
         "config/daily-run-personal-values.md": b"---\n" + dump_mapping_yaml(daily) + b"---\n\n" + prose,
+        FILE_MAP_PATH: dump_mapping_yaml(file_map),
+        OPERATION_STATE_PATH: canonical_json_bytes(operation_state),
     }
     if any(_contains_placeholder(load_mapping_yaml(data.decode("utf-8"))) for path, data in files.items() if path.endswith(".yaml")) or b"REPLACE_WITH_" in files["config/daily-run-personal-values.md"]:
         raise InstallationError("candidate contains an unresolved placeholder")
@@ -331,6 +369,10 @@ def validate_candidate(candidate_root: Path, package_root: Path) -> dict[str, An
     _validated(load_mapping(candidate_root / "config" / "integrations.yaml"), package_root, "integrations.schema.json", "integration selection")
     _validated(load_mapping(candidate_root / "config" / "policies.yaml"), package_root, "policies.schema.json", "policy configuration")
     _validated(parse_daily_values((candidate_root / "config" / "daily-run-personal-values.md").read_bytes()), package_root, "daily-values.schema.json", "daily values")
+    _validated(load_mapping(candidate_root / OPERATION_STATE_PATH), package_root, "operation-state.schema.json", "operation state")
+    file_map = load_mapping(candidate_root / FILE_MAP_PATH)
+    if file_map.get("files", {}).get("operation_state") != manifest["files"][OPERATION_STATE_PATH]["object_reference"]:
+        raise InstallationError("file map operation state reference disagrees with installation manifest")
     return manifest
 
 

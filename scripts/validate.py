@@ -52,6 +52,14 @@ def validate_manifests() -> list[str]:
             ROOT / "templates" / "state" / "installation-manifest.json",
             ROOT / "schemas" / "installation-manifest.schema.json",
         ),
+        (
+            ROOT / "templates" / "state" / "operation-state.json",
+            ROOT / "schemas" / "operation-state.schema.json",
+        ),
+        (
+            ROOT / "templates" / "state" / "operation-checkpoint.json",
+            ROOT / "schemas" / "operation-checkpoint.schema.json",
+        ),
         (ROOT / "templates" / "config" / "household.yaml", ROOT / "schemas" / "household.schema.json"),
         (ROOT / "templates" / "config" / "integrations.yaml", ROOT / "schemas" / "integrations.schema.json"),
         (ROOT / "templates" / "config" / "policies.yaml", ROOT / "schemas" / "policies.schema.json"),
