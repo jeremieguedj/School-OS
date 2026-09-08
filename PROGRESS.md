@@ -779,3 +779,11 @@ requirements, then read this log from top to bottom.
   `PLAN.md`, and alpha.13 plan/specification. Validation/publication pending.
   Exact next action: privacy-scan, commit/push/verify M3-003, then implement
   M3-004 delivery recovery and duplicate-entrypoint safety.
+
+## 2026-09-07 — alpha.13 M3-003 verification
+
+- M3-003 was accepted as `8fd22f01e04665e5807c970e6973c71e917a832a`
+  (`Implement alpha.13 task recovery`). The 123-test repository gate and direct
+  privacy scan passed; `origin/main` was read back at the exact same SHA.
+- Next: M3-004 delivery recovery, correction variants, and overlapping-entrypoint
+  duplicate prevention.
