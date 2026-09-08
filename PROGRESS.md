@@ -543,3 +543,13 @@ requirements, then read this log from top to bottom.
 - Validation/publication is pending for this documentation checkpoint. Exact
   next action: validate, privacy scan, commit, push, and verify it; then resume
   M2-002 without a routine stop.
+
+## 2026-09-07 — alpha.13 execution-policy verification
+
+- The execution policy was validated by the 100-test repository gate and its
+  changed files passed a direct privacy scan and `git diff --check`.
+- Published as `3bb832db93e9e6c06d973621649ff2ecce679f38`
+  (`Record alpha.13 development execution policy`) on `main`; `origin/main`
+  resolved to the same SHA and the worktree was clean.
+- Next: continue M2-002 immediately with v2 lossless source/extraction
+  contracts and the catalog codec.
