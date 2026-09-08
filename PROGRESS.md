@@ -631,3 +631,11 @@ requirements, then read this log from top to bottom.
   action occurred. Validation/publication pending. Exact next action: validate,
   privacy scan, commit/push/verify M2-005, then implement M2-006 shared daily
   entrypoints and operation pipeline.
+
+## 2026-09-07 — alpha.13 M2-005 verification
+
+- M2-005 was accepted as `475219335754a6a12f5758412b71f74e7e6378a4`
+  (`Implement alpha.13 deterministic briefs`). The repository gate passed 110
+  tests and changed files passed privacy/diff checks.
+- `origin/main` resolves to the same commit. Next: M2-006 shared daily runner,
+  adapter protocols, and manual/scheduled entrypoint alignment.
