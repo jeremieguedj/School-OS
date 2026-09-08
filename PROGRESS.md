@@ -1397,3 +1397,16 @@ requirements, then read this log from top to bottom.
   the generic M4-001 checkpoint; then implement M4-007's live semantic/audit
   plumbing while holding M4-008 shared task-core work for the coordinator's
   consultation result.
+
+## 2026-09-08 — alpha.13 M4-001 publication verification
+
+- Published the accepted normalized source-admission/provenance checkpoint as
+  `f7f3dc8600fdd9fed27d9f85c41e989d38a7be4e` on `main`; `origin/main` was read
+  back at that exact commit. The remote work contains only generic source
+  handling, schemas/contracts, tests, and continuity records, with no private
+  source, URL, configuration, recipient, or provider object.
+- M4-001's reusable implementation is complete. Its private authenticated
+  binding and full source acceptance remain M4-003/M4-009 evidence, not a
+  claim from synthetic tests. Next: begin M4-007 live semantic/audit plumbing;
+  leave M4-008 shared task-core changes to the coordinator's consultation and
+  isolated adapter handoff.
