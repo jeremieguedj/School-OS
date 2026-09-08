@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation and observed validation in progress; M1–M3 require chained revalidation, M4-001/M4-007 implementations await observed binding, the task repair is integrated, M4-002 is complete for its declared synthetic input, and M4-004 is refreshed for the task repair pending final runtime/brief integration
-- Approved plan: [PLAN.md](PLAN.md), revision 36
+- Status: implementation and observed validation in progress; M1–M3 require chained revalidation, M4-001/M4-007 implementations await observed binding, the task repair is integrated, M4-002 is complete for its declared synthetic input, and M4-004's brief path is integrated pending refreshed-baseline and exact-package validation
+- Approved plan: [PLAN.md](PLAN.md), revision 37
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
@@ -72,8 +72,19 @@ acceptance. Pending outcomes are durably marked before dispatch and a transient
 empty read cannot authorize another write. The measurement command now persists
 and reads back canonical/provider intent state before its continuation, and its
 regression executes the command instead of only inspecting saved metrics.
-M1–M3 chained exact-package and M4-008/M4-009 observed acceptance remain open;
-final runtime/brief integration still requires refreshed measurements.
+M1–M3 chained exact-package and M4-008/M4-009 observed acceptance remain open.
+The integrated brief measurement now persists the canonical Fact predecessor and
+uses the v2 builder with explicit synthetic source/task/guideline inputs; its
+baseline must be refreshed from the final committed source. This synthetic
+evidence does not substitute for final runtime or visual brief acceptance.
+
+The v2 brief contract keeps each item's exact canonical scope display separate
+from its configured entity route, so a multi-entity guideline routed to the
+household remains visibly multi-entity rather than being relabeled `Family`.
+Every declared template placeholder must occur exactly once in each HTML and
+plain-text body. The default full-content template renders household News;
+selected entry-slot templates without a matching household-News slot block
+instead of silently omitting it.
 
 ## Existing implementation inventory
 

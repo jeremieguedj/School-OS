@@ -1,1 +1,1 @@
-{{content}}
+{{BRIEF_CONTENT}}

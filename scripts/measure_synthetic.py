@@ -10,6 +10,7 @@ import tarfile
 import tempfile
 from collections import Counter
 from dataclasses import asdict
+from datetime import datetime
 from pathlib import Path
 from time import monotonic, perf_counter_ns
 from typing import Any, Callable
@@ -21,14 +22,14 @@ FIXTURE = ROOT / "tests" / "synthetic-fixtures" / "alpha13"
 sys.path.insert(0, str(ROOT))
 
 from school_os.adapters import Page  # noqa: E402
-from school_os.brief import confirm_delivery, render_brief  # noqa: E402
+from school_os.brief import build_brief_input, confirm_delivery, render_brief  # noqa: E402
 from school_os.catalog import build_catalog_message, parse_v2_record, serialize_v2_record, verify_persisted_record  # noqa: E402
 from school_os.contracts import canonical_json_bytes, sha256_bytes  # noqa: E402
 from school_os.daily import PHASES, run_daily  # noqa: E402
 from school_os.importer import admit_exact_plaintext_representation, enumerate_conversations, next_import_batch  # noqa: E402
 from school_os.install import scaffold_instance, validate_candidate  # noqa: E402
 from school_os.package import verify_release_archive  # noqa: E402
-from school_os.tasks import build_derived_knowledge, reconcile_canonical_tasks, reconcile_provider_tasks, serialize_canonical_tasks  # noqa: E402
+from school_os.tasks import build_derived_knowledge, reconcile_canonical_tasks, reconcile_provider_tasks, serialize_canonical_tasks, unresolved_tasks  # noqa: E402
 from scripts.build_release import build_release  # noqa: E402
 from tests.support.fakes import FixtureMail, FixtureMessage, FixtureTasks, SendSink  # noqa: E402
 
@@ -196,6 +197,7 @@ class DailyHarness:
         def reconcile(_: dict[str, Any]) -> dict[str, Any]:
             record = self.call(calls, "catalog.parse_v2_record", parse_v2_record, Path(self.artifacts["catalog"]["path"]).read_bytes())
             facts = [{**item, "record_id": record.header["record_id"]} for item in self.fixture["facts"]]
+            self.artifacts["facts"] = self.write(f"run-{self.run_number}/facts.json", canonical_json_bytes({"facts": facts}), calls)
             derived = self.call(calls, "tasks.build_derived_knowledge", build_derived_knowledge, facts, fact_schema=self.schemas["fact.schema.json"], task_schema=self.schemas["task.schema.json"])
             self.register = self.call(calls, "tasks.reconcile_canonical_tasks", reconcile_canonical_tasks, self.register, facts, fact_schema=self.schemas["fact.schema.json"], task_schema=self.schemas["task.schema.json"], register_schema=self.schemas["canonical-tasks.schema.json"])
             task_bytes = self.call(calls, "tasks.serialize_canonical_tasks", serialize_canonical_tasks, self.register, self.schemas["canonical-tasks.schema.json"])
@@ -242,14 +244,31 @@ class DailyHarness:
 
         def brief_delivery(_: dict[str, Any]) -> dict[str, Any]:
             knowledge = read_json(Path(self.artifacts["knowledge"]["path"]))
-            brief_input = {
-                "schema_version": 1, "window": {"end": "2026-09-08"}, "entity_order": ["child_1", "household"],
-                "news": [{"date": "2026-09-07", "entity_scope": "child_1", "text": item["text"]} for item in knowledge["rolling_updates"]],
-                "guidelines": [{"date": "2026-09-07", "entity_scope": "child_1", "text": item["text"]} for item in knowledge["guidelines"]],
-                "tasks": [{"date": item["source_opened_date"], "entity_scope": item["entity_scope"], "text": item["action"], "source_link": item["source_link"]} for item in self.register["tasks"]],
-                "labels": {"news": "News", "guidelines": "Guidelines", "tasks": "Action Items"}, "theme": {},
-                "input_hashes": {"tasks": self.artifacts["tasks"]["sha256"]},
+            facts = read_json(Path(self.artifacts["facts"]["path"]))["facts"]
+            messages = {item["message_id"]: item for item in conversation["messages"]}
+            source_record_map = {
+                fact["fact_id"]: {
+                    "record_id": fact["record_id"], "source_message_id": fact["source_message_id"],
+                    "gmail_internal_date_ms": int(datetime.fromisoformat(messages[fact["source_message_id"]]["received_at"].replace("Z", "+00:00")).timestamp() * 1000),
+                    "source_message_ordinal": list(messages).index(fact["source_message_id"]),
+                    "source_content_ordinal": index,
+                    "verified_link": "https://example.invalid/source/" + fact["source_message_id"],
+                }
+                for index, fact in enumerate(facts)
             }
+            # The synthetic corpus explicitly declares its one current guideline;
+            # this fixture selection is not a real-provider currentness decision.
+            brief_input = self.call(
+                calls, "brief.build_brief_input", build_brief_input,
+                run_local_date="2026-09-08", timezone="America/Los_Angeles",
+                entities=[{"entity_id": "child_1", "display_name": "Child One", "kind": "child"}, {"entity_id": "household", "display_name": "Family", "kind": "household"}],
+                scope_to_entity={"child_1": "child_1", "household": "household"},
+                facts=facts, source_record_map=source_record_map,
+                current_guideline_selection=[{"fact_id": item["fact_id"], "is_current": True, "latest_source_received_date": "2026-09-07", "verified_link": "https://example.invalid/source/message-001"} for item in knowledge["guidelines"]],
+                unresolved_task_view={"selection": "all_unresolved_finite", "tasks": unresolved_tasks(self.register)},
+                task_source_links={item["task_id"]: "https://example.invalid/source/task" for item in self.register["tasks"]},
+                input_hashes={"tasks": self.artifacts["tasks"]["sha256"]},
+            )
             rendered = self.call(calls, "brief.render_brief", render_brief, brief_input, self.schemas["brief-input.schema.json"])
             self.artifacts["brief_html"] = self.write(f"run-{self.run_number}/brief.html", rendered["html"], calls)
             deliveries = len(self.sink.deliveries)

@@ -166,6 +166,13 @@ and continue from the first unfinished dependency; read narrowly after that
 recovery rather than relying on conversation memory or repeatedly loading
 unrelated history.
 
+Delegate feasible implementation, routine integration, tests, and documentation
+to lower-cost agents: use Terra High by default and Sol High for difficult
+fixes or focused reviews. Reserve Astra for coordination or genuine escalation
+after those routes are insufficient. This is a development-workflow constraint,
+not a School-OS runtime dependency or authorization for a vendor, provider, or
+external effect.
+
 After every meaningful work unit, update task/milestone status in this plan,
 implementation details in `SPEC.md` when needed, the root `PLAN.md` summary,
 and append `PROGRESS.md` with completed and unfinished work, changed files,
@@ -1006,3 +1013,7 @@ evidence that does not need to be repeatedly printed into model context.
 - Revision 36: recorded direct user approval of provider-independent user-added
   tasks and their undated Parent-added tasks group. Lifted the policy pause
   while retaining source provenance, eligibility, and acceptance gates.
+- Revision 37: recorded the development delegation cost constraint and
+  integrated the approved v2 brief measurement path. The refreshed synthetic
+  baseline and exact-package validation remain required before acceptance;
+  observed runtime, visual, provider, audio, and release gates remain open.

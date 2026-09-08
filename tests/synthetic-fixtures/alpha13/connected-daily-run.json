@@ -21,14 +21,14 @@
     {"fact_id": "fact-action", "source_message_id": "message-001", "source_byte_start": 60, "source_byte_end": 76, "received_date": "2026-09-07", "entity_scope": "child_1", "category": "school", "text": "Return the form", "flags": {"is_update": false, "is_durable": false, "is_guideline": false, "is_action": true}}
   ],
   "expected_artifact_sha256": {
-    "brief_html": "5702c3d60cc32e2f54952f090802e695f0103a200f6e4aef0a392d1808bdf65b",
-    "brief_text": "0f5ab9522c35db44eeb27a8702c896fa9860a4b383449c69f61ca5dbc315af08",
+    "brief_html": "d6debb567cc0e60a82e6c72486d3b2a21bd4ba5202e5523d0396f2d6f005aa7a",
+    "brief_text": "97db272ea977acbf671b5cd8e30dc104aeeadb0929a87650c88f4b99a04db539",
     "catalog": "e38a799e4bc65be10dfa202afcc26b5cd434463913e1d9dfa72604487d1a3682",
-    "cursors": "85a6f69384d1f7b413e4dc87c1fe1b4b7ede417f05efe572b160b496644406ee",
-    "delivery_ledger": "e2cdb3d0387e824f2bda8403ec0c5b178ac6aa4a478cf41d286319667c920f74",
+    "cursors": "6d0d9123b0819f249373172f62454e0ef5accde05385f874ad3686ec2b2a4975",
+    "delivery_ledger": "dd16f54b3246daafa4328a25a75bd2db0dd87a681bc633433c72bac958ae271a",
     "discovery": "c58dad1e02c4b656de6192a112798195ea579234d667bfc28d33a8dc57d155cb",
     "facts": "98c329ec54f203a52e32c224c02f14a1b6640bad18c190851270b97dabe9bfd0",
-    "final_evidence": "f0268ea55b1a150b01a02cc2ad0d67719680f520d042400469836bb73a30ce15",
+    "final_evidence": "004fc8ccbc386c96198e833ef5783a92021d731d236fd4f5e62ca34b3572c443",
     "knowledge": "50ab599d07ffbc45bffcc777f8edf59acf09f7be697d369bdcab496662450d9c",
     "provider_state": "c4e0ffe989cfe768ae9065343d5f4c3304c998a83c7c07af45080ac108415159",
     "tasks": "fba611da058f41bf10f55df5d391ce763f678204ba553e50733a7e1616fe5f6e"

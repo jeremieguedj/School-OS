@@ -1,1 +1,21 @@
-{"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://school-os.example/schemas/brief-input.schema.json","title":"School-OS brief input","type":"object","additionalProperties":false,"required":["schema_version","window","entity_order","news","guidelines","tasks","labels","theme","input_hashes"],"properties":{"schema_version":{"type":"integer","minimum":1},"window":{"type":"object"},"entity_order":{"type":"array","items":{"type":"string"}},"news":{"type":"array","items":{"type":"object"}},"guidelines":{"type":"array","items":{"type":"object"}},"tasks":{"type":"array","items":{"type":"object"}},"labels":{"type":"object"},"theme":{"type":"object"},"input_hashes":{"type":"object"}}}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/brief-input.schema.json",
+  "title": "School-OS brief input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "window", "entity_order", "news", "guidelines", "tasks", "labels", "theme", "input_hashes"],
+  "properties": {
+    "schema_version": {"type": "integer", "minimum": 1},
+    "window": {"type": "object"},
+    "entity_order": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "entities": {"type": "array", "items": {"type": "object"}},
+    "news": {"type": "array", "items": {"type": "object"}},
+    "guidelines": {"type": "array", "items": {"type": "object"}},
+    "tasks": {"type": "array", "items": {"type": "object"}},
+    "labels": {"type": "object"},
+    "theme": {"type": "object"},
+    "template": {"type": "object"},
+    "input_hashes": {"type": "object"}
+  }
+}

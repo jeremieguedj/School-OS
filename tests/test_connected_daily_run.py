@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "tests" / "synthetic-fixtures" / "alpha13"
 sys.path.insert(0, str(ROOT))
 
-from school_os.brief import confirm_delivery, render_brief
+from school_os.brief import build_brief_input, confirm_delivery, render_brief
 from school_os.catalog import parse_v2_record, serialize_v2_record, verify_persisted_record
 from school_os.contracts import canonical_json_bytes, sha256_bytes
 from school_os.daily import PHASES, run_daily
@@ -174,9 +174,27 @@ class ConnectedDailyRunTests(unittest.TestCase):
             return {"verified": True, "artifacts": {**previous["artifacts"], "tasks": tasks_artifact, "provider_state": provider_artifact}}
 
         def brief_delivery(previous: dict[str, Any]) -> dict[str, Any]:
-            knowledge = json.loads(Path(previous["artifacts"]["knowledge"]["path"]).read_text(encoding="utf-8"))
+            facts = json.loads(Path(previous["artifacts"]["facts"]["path"]).read_text(encoding="utf-8"))["facts"]
             register = json.loads(Path(previous["artifacts"]["tasks"]["path"]).read_text(encoding="utf-8"))
-            brief_input = {"schema_version": 1, "window": {"end": "2026-09-07"}, "entity_order": ["child_1", "household"], "news": [{"date": "2026-09-07", "entity_scope": "child_1", "text": item["text"]} for item in knowledge["rolling_updates"]], "guidelines": [{"date": "2026-09-07", "entity_scope": "child_1", "text": item["text"]} for item in knowledge["guidelines"]], "tasks": [{"date": task["source_opened_date"], "entity_scope": task["entity_scope"], "text": task["action"], "source_link": task["source_link"]} for task in unresolved_tasks(register)], "labels": {"news": "News", "guidelines": "Guidelines", "tasks": "Action Items"}, "theme": {}, "input_hashes": {"tasks": previous["artifacts"]["tasks"]["sha256"]}}
+            source_record_map = {
+                fact["fact_id"]: {
+                    "record_id": fact["record_id"], "source_message_id": fact["source_message_id"],
+                    "gmail_internal_date_ms": 1788768000000,
+                    "source_message_ordinal": 0, "source_content_ordinal": index,
+                    "verified_link": "https://example.invalid/source/" + fact["source_message_id"],
+                }
+                for index, fact in enumerate(facts)
+            }
+            brief_input = build_brief_input(
+                run_local_date="2026-09-07", timezone="UTC",
+                entities=[{"entity_id": "child_1", "display_name": "Child 1", "kind": "child"}, {"entity_id": "household", "display_name": "Family", "kind": "household"}],
+                scope_to_entity={"child_1": "child_1", "household": "household"}, facts=facts,
+                source_record_map=source_record_map,
+                current_guideline_selection=[{"fact_id": "fact-guideline", "is_current": True, "latest_source_received_date": "2026-09-07", "verified_link": "https://example.invalid/source/message-001"}],
+                unresolved_task_view={"selection": "all_unresolved_finite", "tasks": [dict(task) for task in unresolved_tasks(register)]},
+                task_source_links={task["task_id"]: "https://example.invalid/source/task" for task in register["tasks"]},
+                input_hashes={"tasks": previous["artifacts"]["tasks"]["sha256"]},
+            )
             rendered = render_brief(brief_input, self.schemas["brief-input.schema.json"])
             html = self._write_checked(work / "brief.html", rendered["html"], writes)
             text = self._write_checked(work / "brief.txt", rendered["text"], writes)

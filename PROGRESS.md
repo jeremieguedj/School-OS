@@ -2127,3 +2127,209 @@ requirements, then read this log from top to bottom.
   operation or any actual provider acceptance.
 - Next: publish the validated primitive integration and verify its exact CI;
   review/integrate the concrete workers, then complete fresh-instance acceptance.
+
+## 2026-09-08 — alpha.13 isolated brief input/rendering correction (in progress)
+
+- In isolated worktree `schoolos-alpha13-brief-worktree` at base
+  `b24855c350048a08efbba318da97b08679f094d0`, replaced the minimal brief
+  rendering boundary with a deterministic v2 input builder and renderer.
+  It derives a displayed source day from a mapped mail internal timestamp in
+  the configured timezone; filters News to the inclusive seven-day window
+  using only `is_update && !is_action && !is_guideline`; preserves canonical
+  Fact/Action text; requires an explicit upstream current-guideline selection;
+  and requires an explicit all-unresolved-finite task view rather than reading
+  workflow labels as resolution.
+- The renderer now preserves configured children before the household, groups
+  visible Received days newest-first with stable input order inside a day,
+  renders an undated parent-origin task group, emits explicit empty lists,
+  escapes text/ordinary hrefs, avoids internal-ID links, and supports only an
+  exact declared template placeholder map. The packaged default is fluid with
+  16px horizontal padding and tonal banners. Delivery helpers remain unchanged.
+- Focused synthetic brief tests cover eligibility, canonical wording,
+  received/undated groups, escaping/link preservation, template mapping and
+  empty fallbacks, and the required current-guideline dependency. The connected
+  synthetic path now assembles a v2 brief input from predecessor artifacts.
+  No private source, recipient, provider, delivery, scheduler, or production
+  instance was accessed or changed.
+- **Exact remaining work:** run focused and complete validation; inspect and
+  correct any failures; perform synthetic desktop/mobile visual inspection of
+  the rendered default HTML if local tooling permits; run privacy/diff checks;
+  review the isolated diff for private leakage; commit only this bounded brief
+  candidate in this isolated worktree; then report its commit, changed files,
+  validation, visual-check limitation/evidence, and the explicit upstream
+  current-guideline-selection dependency to the coordinator. Do not push,
+  release, send, schedule, alter delivery code, modify `/Users/jguedj/School-OS`,
+  or read coordination/source-baseline material. If a genuine unresolved design
+  flaw appears, stop the affected work and report it for the coordinator's
+  independent Sol consultation rather than inventing policy.
+
+## 2026-09-08 — alpha.13 undated parent-task presentation approval blocker
+
+- The coordinator supplied a grounded correction: the selected existing brief
+  recipe treats a missing/malformed source received date as a rendering blocker,
+  so this acceptance path must not use the earlier generic undated-parent
+  presentation. The intended generic boundary is a small explicit
+  `undated_parent_task_policy`, with `render` available only when explicitly
+  selected and the acceptance recipe selecting `block`.
+- Automatic approval review rejected the attempted implementation because it
+  classified the blocking default as a new policy requiring direct user
+  approval. No workaround or indirect policy change was attempted. The current
+  isolated renderer still supports undated parent-origin presentation and is
+  therefore not ready to commit for the selected recipe.
+- **Exact remaining work:** obtain a coordinator/user-approved API/default for
+  the explicit undated-parent-task policy; then implement only that approved
+  boundary, update focused synthetic tests and the operation recipe, run visual
+  inspection if tooling permits, complete validation/privacy/diff checks, and
+  commit this isolated candidate only. Keep the original isolation/no-send/no-
+  scheduler/no-push instructions from the prior entry in force. If approval is
+  not supplied, stop the affected implementation and hand off this exact
+  blocker; do not silently omit the parent task, invent a date, or infer a
+  different policy.
+
+## 2026-09-08 — alpha.13 explicit missing-date policy rejected
+
+- Following the coordinator's safer direction, attempted a required (no
+  default) `undated_parent_task_policy` input field, allowing only explicit
+  `block` or `render`. Automatic approval review rejected that shape as well:
+  it called the mandatory field a changed brief contract and required direct
+  user approval. No code from either rejected patch was applied.
+- **Exact remaining work:** wait for direct user approval of the explicit
+  selected-recipe missing-date-policy field, or a different directly approved
+  product contract. Until then, do not commit the current renderer because it
+  would render an undated parent-origin task contrary to the selected recipe.
+  The prior isolation, no-send, no-scheduler, no-push, privacy, validation,
+  visual-check, and handoff requirements remain in force.
+
+## 2026-09-08 — alpha.13 approved parent-added brief presentation
+
+- Direct user approval resolved the presentation gate. The v2 brief contract
+  now renders only explicitly `parent`-origin, unresolved-finite tasks with no
+  source-received date under the exact `Parent-added tasks` heading inside their
+  configured child or household action section. The renderer does not derive
+  origin from absent source data, invent a received date or URL, or relax the
+  existing source-origin date/link requirements.
+- Corrected the selected-template entry fragments to render a visible em dash
+  before `Source`/`Link` anchors and a bold guideline-scope prefix. Added
+  provider-independent parent-task coverage across child and household groups,
+  absent-link behavior, completed-task rejection from the explicit unresolved
+  view, malformed/missing source-date blockers, and refreshed synthetic
+  connected-run output hashes.
+- Focused CPython 3.12.14 validation passed: `tests.test_brief` and
+  `tests.test_tasks` (18 tests). A visible desktop and narrow-mobile selected-
+  template inspection confirmed both Parent-added groups, unlinked parent
+  items, bold scope, visible separators, correct order, and no horizontal
+  overflow. Privacy scan and `git diff --check` passed.
+- Complete CPython validation exercised 178 tests; 175 passed. The three
+  failures are pre-existing in this isolated base package path: connected-run
+  and synthetic-installation extraction reject an incomplete
+  `RELEASE-INVENTORY.sha256`. That package-cache correction is already accepted
+  on main and is outside this isolated brief candidate; no brief regression was
+  reported by the full suite. Next: review the final brief-scope diff, commit
+  only the isolated candidate, and hand off its local SHA. Observed provider,
+  delivery, scheduler, and private acceptance remain separate work.
+
+## 2026-09-08 — alpha.13 brief omission and scope hardening
+
+- The v2 builder now retains an item's exact canonical scope in
+  `scope_display` separately from its configured presentation route. A
+  multi-child guideline routed to the household visibly keeps its original
+  multi-child prefix, while a single configured child keeps the friendly
+  display name. The generic full-content renderer now includes household News
+  instead of silently omitting it.
+- Template validation now requires each declared placeholder exactly once in
+  both HTML and text. A selected entry-slot template still blocks when
+  household News has no declared slot, so support in the generic default does
+  not weaken selected-template fail-closed routing. Connected synthetic output
+  hashes were refreshed for the intended generic layout change.
+- Focused CPython 3.12.14 validation passed: `tests.test_brief` and
+  `tests.test_tasks` (19 tests). A new selected-template desktop rendering
+  visibly preserved the bold multi-child guideline prefix, Parent-added groups,
+  separators, ordering, and no horizontal overflow. The responsive source
+  template itself is unchanged from the earlier narrow-mobile inspection.
+  No private source, recipient, provider, delivery, scheduler, or production
+  instance was accessed or changed.
+- Connected synthetic regression remained blocked before brief execution by the
+  existing incomplete `RELEASE-INVENTORY.sha256` package root (the same two
+  installed-candidate failures); privacy scan and `git diff --check` passed.
+  **Exact remaining work:** review the isolated delta; create a local
+  superseding commit only in this worktree; then report the final SHA and the
+  full `b248..final` delta to the coordinator. Do not push, release, send,
+  schedule, modify `/Users/jguedj/School-OS`, or access private/provider state.
+
+## 2026-09-08 — reviewed brief renderer integrated
+
+- Integrated the complete brief candidate through `71c7493`, retaining accepted
+  source/task/runtime work and both progress histories. Root reran 24 brief/task
+  tests and directly confirmed the three review corrections: generic household
+  news remains visible, duplicate template placeholders block, and multi-child
+  guideline scope survives household routing. The approved Parent-added tasks
+  exception, strict source dates, visible link separators, and bold guideline
+  scope are now implemented.
+- The selected private template passed worker desktop/mobile visual inspection;
+  final integrated connected content and visual acceptance remain outstanding.
+  No private template, recipient, or source content was added to Git.
+- Combined validation reached 237/238 tests; its executable measurement exposed
+  the obsolete brief-v1 input without verified links. Adapted measurements to
+  persist the synthetic Fact predecessor and invoke the actual v2 builder with
+  explicit fixture current-guideline/unresolved-task selection and source
+  metadata. Refresh measurements and rerun the exact combined package before
+  accepting/publishing this integration. The synthetic connected journey itself
+  reaches COMPLETE; refreshed dependent artifact hashes preserve task evidence.
+- Independent review rejected initial concrete ingestion/task candidates on
+  restart and real connector-shape defects. Isolated repair workers own those
+  corrections and actual MIME normalization. They remain unaccepted; no live
+  installation, send, schedule, or release has occurred.
+
+## 2026-09-08 — alpha.13 brief measurement integration
+
+- Integrated the reviewed v2 brief path into the synthetic connected daily run
+  and measurement command. The measurement now persists the canonical Facts
+  predecessor, supplies explicit synthetic source metadata, current guideline
+  selection, and unresolved-task selection to `build_brief_input`, then renders
+  the actual v2 brief. It creates no provider, delivery, scheduler, or private
+  side effect.
+- Bundled CPython 3.12.14 executed the adapted synthetic measurement
+  successfully. Its evidence is synthetic only: the observed path now includes
+  one `brief.build_brief_input` call and nine persisted artifacts, including
+  `facts.json`. Regenerate the checked baseline from the final committed source
+  before accepting the integration, then run full repository and installed
+  candidate validation.
+- Recorded the user’s development cost constraint: delegate feasible
+  implementation, routine integration, tests, and documentation to lower-cost
+  agents; use Terra High by default, Sol High for difficult fixes or focused
+  reviews, and reserve Astra for coordination or genuine escalation. This
+  constrains development workflow only and adds no runtime vendor dependency.
+- Integrated real-source content and selected-template visual acceptance,
+  optional-audio degradation, observed runtime/provider execution, remote
+  release verification, and all pending ingestion/task/MIME candidates remain
+  separate and unaccepted.
+
+## 2026-09-08 — alpha.13 brief integration validated
+
+- Regenerated the checked synthetic measurement baseline from the integrated
+  v2 source path.  The synthetic journey persists nine artifacts, including
+  `facts.json`, invokes `brief.build_brief_input` exactly once per rendered
+  daily path, and records the corrected pause after `reconcile` before the
+  resumed task, brief, and commit phases.  This is synthetic evidence only;
+  it does not establish runtime, provider, delivery, scheduler, or private
+  acceptance.
+- Ordinary CPython 3.12.14 validation passed all 238 repository tests.  The
+  full validator also passed schemas, templates, package smoke checks, and the
+  tracked-file privacy scan.  `git diff --check` passed.  No private source,
+  recipient, credential, provider mutation, delivery, schedule, tag, or
+  release action occurred.
+- Next: publish this exact accepted repository integration, verify the remote
+  commit and its CI, then retain the remaining observed-runtime, live/provider,
+  visual, audio, and release gates as separate work.
+
+## 2026-09-08 — alpha.13 brief integration publication pending
+
+- Committed the validated integration locally as `d40f781` (`feat: integrate
+  deterministic v2 daily brief rendering`).  The working tree was clean and
+  the branch was one commit ahead of `origin/main` immediately afterward.
+- Publishing to the shared default branch is pending direct confirmation in
+  this task.  The repository-side guard rejected the push request, so no
+  remote branch, CI run, tag, release, provider, or private-instance state was
+  changed.  Once confirmed, push the local commit, verify `origin/main` equals
+  the resulting commit, and inspect the resulting GitHub CI run before treating
+  publication as complete.
