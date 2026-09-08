@@ -7,7 +7,7 @@ class DailyRunnerTests(unittest.TestCase):
  @classmethod
  def setUpClass(cls):cls.schema=json.loads((ROOT/'schemas/capability-profile.schema.json').read_text());cls.template=json.loads((ROOT/'templates/state/capability-profile.json').read_text())
  def profile(self,entrypoint):
-  p=copy.deepcopy(self.template);p['execution_surface']=entrypoint;p['authentication']['status']='available';p['conformant_operations']=['daily-run']
+  p=copy.deepcopy(self.template);p['execution_surface']=entrypoint;p['evidence_class']='observed' if entrypoint=='scheduled' else 'synthetic';p['authentication']['status']='available';p['conformant_operations']=['daily-run']
   for name in p['network_paths']:p['network_paths'][name]['status']='available' if name!='scheduler' or entrypoint=='scheduled' else 'not_required'
   for name in p['observations']:p['observations'][name]['status']='available'
   p['capabilities']=[{'capability_id':x,'status':'available','verification':{},'degradation':'stop_before_side_effects'} for x in ('storage.read_complete','mail.search','tasks.list_complete')]

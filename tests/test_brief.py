@@ -26,4 +26,8 @@ class BriefTests(unittest.TestCase):
   self.assertEqual(recovered,recover_delivery(sink,recovered,delivery_key=key,content=content,ledger_schema=self.ledger_schema))
   self.assertNotEqual(key,delivery_key('instance','daily-run','2026-09-07','correction-1'))
   with self.assertRaisesRegex(BriefError,'inconclusive'):recover_delivery(SendSink(),pending,delivery_key=key,content=content,ledger_schema=self.ledger_schema)
+ def test_manual_and_scheduled_entrypoints_share_one_delivery_key(self):
+  content=render_brief(self.brief(),self.input_schema)['html'];key=delivery_key('instance','daily-run','2026-09-07','normal')
+  manual=begin_delivery({'schema_version':1,'entries':[]},delivery_key=key,variant='normal',content=content,recipients_fingerprint='a'*64,ledger_schema=self.ledger_schema)
+  with self.assertRaisesRegex(BriefError,'already exists'):begin_delivery(manual,delivery_key=key,variant='normal',content=content,recipients_fingerprint='a'*64,ledger_schema=self.ledger_schema)
 if __name__=='__main__':unittest.main()

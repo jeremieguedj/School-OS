@@ -26,6 +26,7 @@ class RuntimeConformanceTests(unittest.TestCase):
 
     def profile(self) -> dict:
         profile = copy.deepcopy(self.template)
+        profile["evidence_class"] = "synthetic"
         profile["authentication"]["status"] = "available"
         for name in profile["network_paths"]:
             profile["network_paths"][name]["status"] = "available" if name != "scheduler" else "not_required"
@@ -93,7 +94,28 @@ class RuntimeConformanceTests(unittest.TestCase):
             for capability_id in ("scheduler.inspect", "scheduler.verify")
         ])
         errors = validate_capability_profile(profile, self.schema, execution_surface="scheduled")
-        self.assertIn("scheduled execution requires scheduler evidence", errors)
+        self.assertIn("scheduled execution requires observed-surface evidence", errors)
+
+    def test_scheduled_profile_requires_observed_evidence_and_each_network_path(self) -> None:
+        profile = self.profile()
+        profile["execution_surface"] = "scheduled"
+        profile["selected_adapters"]["scheduler"] = "schedulers/synthetic.md"
+        profile["scheduler_behavior"] = {"overlap": "blocked", "retry": "observed"}
+        profile["network_paths"]["scheduler"]["status"] = "available"
+        profile["capabilities"].extend([
+            {"capability_id": capability_id, "status": "available", "verification": {"method": "synthetic"}, "degradation": "stop_before_side_effects"}
+            for capability_id in ("scheduler.inspect", "scheduler.verify")
+        ])
+        with self.assertRaisesRegex(CapabilityError, "observed-surface"):
+            qualify_execution(profile, self.schema, operation="daily-run", entrypoint="scheduled")
+        profile["evidence_class"] = "observed"
+        self.assertEqual("scheduled", qualify_execution(profile, self.schema, operation="daily-run", entrypoint="scheduled").entrypoint)
+        for path in ("storage", "mail", "tasks", "scheduler"):
+            with self.subTest(path=path):
+                unavailable = copy.deepcopy(profile)
+                unavailable["network_paths"][path]["status"] = "unavailable"
+                with self.assertRaisesRegex(CapabilityError, path):
+                    qualify_execution(unavailable, self.schema, operation="daily-run", entrypoint="scheduled")
 
     def test_undeclared_operation_blocks(self) -> None:
         errors = validate_capability_profile(self.profile(), self.schema, operation="task-sync")
@@ -163,9 +185,11 @@ class RuntimeConformanceTests(unittest.TestCase):
     def test_chatgpt_work_has_runtime_and_scheduler_contracts(self) -> None:
         runtime = (ROOT / "adapters" / "runtimes" / "chatgpt-work.md").read_text()
         scheduler = (ROOT / "adapters" / "schedulers" / "chatgpt-work.md").read_text()
-        self.assertIn("production-capable reference profile", runtime)
+        self.assertIn("reference profile only", runtime)
+        self.assertIn("no scheduled ChatGPT Work support claim", runtime)
         self.assertIn("scheduled execution", runtime.lower())
-        self.assertIn("production-capable reference adapter", scheduler)
+        self.assertIn("reference adapter only", scheduler)
+        self.assertIn("synthetic", scheduler)
         self.assertIn("single writer", scheduler.lower())
 
 

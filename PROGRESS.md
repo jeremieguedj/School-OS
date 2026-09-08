@@ -926,3 +926,30 @@ requirements, then read this log from top to bottom.
   direct new-file privacy scan, and diff checks passed; `origin/main` was read
   back at the same SHA. Next: M4-003, distinguish synthetic adapter coverage
   from claims requiring observed authorized runtime/provider surfaces.
+
+## 2026-09-08 — alpha.13 M4-003 conformance safety preparation
+
+- Completed the authorized repository portion of M4-003. Capability profiles
+  now identify `unverified`, `synthetic`, or `observed` evidence, and scheduled
+  qualification fails unless evidence is explicitly observed. The public
+  ChatGPT Work runtime/scheduler mappings now identify themselves as reference
+  material rather than scheduled-support claims without a private record.
+- Added synthetic checks for separate storage/mail/task/scheduler network-path
+  failure, authentication/limit qualification, observed-surface gating, and a
+  shared manual/scheduled delivery key. Focused conformance/brief/connected
+  tests passed 20 tests; the complete
+  `PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate.py` gate passed 138 tests
+  plus schema/template and release-smoke validation. Privacy scan and
+  `git diff --check` passed. No provider, scheduler, delivery, or private
+  instance was contacted.
+- **Blocker:** M4-003 requires current observed evidence for the exact private
+  runtime, storage, mail, task, and scheduled surfaces. The current
+  authorization explicitly excludes private-instance inspection and real
+  provider/scheduler actions, and this repository contains only synthetic
+  evidence. M4-003 therefore remains incomplete; M4-004–M4-006 are dependent
+  and cannot start. Changed files: capability schema/template/qualification,
+  runtime/scheduler mappings, conformance/daily/brief tests, root `PLAN.md`,
+  and alpha.13 plan/specification. Commit/push/remote verification is pending.
+  Exact next action: publish this repository checkpoint; resume only with
+  authorization and access for no-write observed conformance probes (then any
+  separately authorized write/send probes required by the adapters).

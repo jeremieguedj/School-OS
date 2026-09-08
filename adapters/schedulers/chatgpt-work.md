@@ -1,6 +1,7 @@
 # ChatGPT Work scheduler adapter
 
-Status: production-capable reference adapter when paired with a passing private scheduled-surface conformance record.
+Status: reference adapter only. It becomes production-capable only when paired
+with a current private `observed` scheduled-surface conformance record.
 
 ## Invocation contract
 
@@ -21,6 +22,7 @@ Before activation, observe and record:
 - the durable evidence used to prove the schedule is disabled or enabled.
 
 The private record contains account/task IDs and observations. This public adapter contains none.
+The checked-in tests are synthetic and cannot substitute for that record.
 
 ## Safety and single writer
 

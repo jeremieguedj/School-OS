@@ -3,6 +3,7 @@
   "profile_id": "REPLACE_WITH_PRIVATE_PROFILE_ID",
   "runtime_adapter": "runtimes/REPLACE_WITH_RUNTIME.md",
   "execution_surface": "manual",
+  "evidence_class": "unverified",
   "runtime_selector": {
     "model": "REPLACE_WITH_OBSERVED_MODEL",
     "reasoning_effort": "REPLACE_WITH_OBSERVED_REASONING_EFFORT"

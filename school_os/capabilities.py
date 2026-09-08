@@ -69,6 +69,8 @@ def qualify_execution(
         if record["status"] != "available":
             raise CapabilityError(f"required capability is {record['status']!r}: {capability_id}")
     if entrypoint == "scheduled":
+        if profile["evidence_class"] != "observed":
+            raise CapabilityError("scheduled execution requires observed-surface evidence")
         if profile["selected_adapters"]["scheduler"] is None or profile["scheduler_behavior"] is None:
             raise CapabilityError("scheduled execution requires scheduler evidence")
         if profile["network_paths"]["scheduler"].get("status") != "available":

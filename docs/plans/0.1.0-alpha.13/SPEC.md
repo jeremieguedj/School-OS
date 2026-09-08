@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation in progress; M1–M3 and M4-001–M4-002 complete, M4-003 next
-- Approved plan: [PLAN.md](PLAN.md), revision 20
+- Status: implementation blocked; M1–M3 and M4-001–M4-002 complete, M4-003 awaits observed private-surface evidence
+- Approved plan: [PLAN.md](PLAN.md), revision 21
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
@@ -584,7 +584,7 @@ state removed. A passing uninterrupted operation is insufficient.
 
 ## Milestone 4 — Expand coverage and establish release readiness
 
-**Status:** in progress (M4-001–M4-002 complete; M4-003 next).
+**Status:** blocked (M4-001–M4-002 complete; M4-003 awaits observed private-surface evidence).
 
 M4 is sufficiently specified to bound later work, but concrete real-provider
 limits and migrations must be based on observed authorized surfaces and private
@@ -616,6 +616,16 @@ schema-2 alpha.13 candidates. It requires an explicit target release version,
 preserves convertible task/history fields, is byte-stable from the same backup
 inputs, and blocks active state or undocumented legacy shapes. Upgrade backup,
 exact-ID write, readback, and activation remain governed by `system-upgrade.md`.
+
+**M4-003 status (2026-09-08):** Repository work now marks capability evidence
+as `unverified`, `synthetic`, or `observed`; scheduled mutation qualification
+requires `observed`. Synthetic tests cover independent network paths,
+authentication/limits, manual/scheduled delivery-key overlap, and the
+observed-evidence gate, but cannot establish a real execution surface. Current
+authorization excludes private-instance/provider inspection and real scheduler
+or connector probes, so the required observed runtime, storage, mail, task, and
+scheduler evidence is unavailable. M4-003 is not complete, and M4-004–M4-006
+remain blocked by its dependency.
 
 Optional adapters from work package 10 receive independent IDs only when the
 user selects a concrete deployment need. They do not become dependencies of
