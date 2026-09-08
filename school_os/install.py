@@ -454,6 +454,149 @@ def _create_or_adopt(
     return readback
 
 
+def _canonical_json_object(data: bytes, label: str) -> dict[str, Any]:
+    """Decode an immutable JSON payload without accepting alternate bytes."""
+    try:
+        value = json.loads(data.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise InstallationError(f"{label} is not UTF-8 JSON") from exc
+    if not isinstance(value, dict) or canonical_json_bytes(value) != data:
+        raise InstallationError(f"{label} is not canonical JSON")
+    return value
+
+
+def _exact_reference(value: Any, *, root: ObjectReference, label: str) -> ObjectReference:
+    try:
+        reference = ObjectReference.from_mapping(_require_mapping(value, label))
+    except ReferenceError as exc:
+        raise InstallationError(f"invalid {label}: {exc}") from exc
+    if reference.kind != "file" or reference.permitted_ancestor_id != root.object_id:
+        raise InstallationError(f"{label} is not a file under the declared instance root")
+    return reference
+
+
+def _read_admitted_object(
+    storage: ReferenceStorage, reference: ObjectReference, *, root_id: str, name: str, mime_type: str,
+) -> StoredObject:
+    try:
+        object_ = resolve_reference(
+            storage, reference, expected_kind="file", required_mime_type=mime_type, instance_root_id=root_id,
+        )
+    except ReferenceError as exc:
+        raise InstallationError(f"admitted {name} reference failed: {exc}") from exc
+    if object_.parent_id != root_id or object_.name != name or object_.data is None:
+        raise InstallationError(f"admitted {name} is incomplete or outside the declared root")
+    return object_
+
+
+def _parse_bootstrap(data: bytes) -> tuple[str, str]:
+    try:
+        text = data.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise InstallationError("bootstrap must be UTF-8") from exc
+    match = re.fullmatch(
+        r"# School-OS instance bootstrap\n\n"
+        r"instance_manifest_object_id: ([^\s]+)\n"
+        r"installation_admission_object_id: ([^\s]+)\n",
+        text,
+    )
+    if match is None:
+        raise InstallationError("bootstrap has an invalid immutable admission format")
+    return match.group(1), match.group(2)
+
+
+def recover_create_only_generation(
+    storage: ReferenceStorage, *, root_reference: dict[str, Any], bootstrap_reference: dict[str, Any],
+) -> dict[str, Any]:
+    """Recover only a complete, immutable generation from its bootstrap anchor."""
+    try:
+        root = ObjectReference.from_mapping(root_reference)
+    except ReferenceError as exc:
+        raise InstallationError(f"invalid instance_root: {exc}") from exc
+    if root.kind != "folder" or root.permitted_ancestor_id != root.object_id:
+        raise InstallationError("instance root must be a self-contained folder")
+    bootstrap = _exact_reference(bootstrap_reference, root=root, label="bootstrap_reference")
+    bootstrap_object = _read_admitted_object(
+        storage, bootstrap, root_id=root.object_id, name=BOOTSTRAP_PATH, mime_type="text/markdown",
+    )
+    instance_id, admission_id = _parse_bootstrap(bootstrap_object.data)
+    admission_object = storage.read(admission_id)
+    if admission_object is None:
+        raise InstallationError("bootstrap names a missing admission receipt")
+    admission_reference = _stored_reference(admission_object, root.object_id)
+    if admission_object.name != ADMISSION_PATH or admission_object.mime_type != "application/json":
+        raise InstallationError("bootstrap names an invalid admission receipt")
+    admission_object = _read_admitted_object(
+        storage, ObjectReference.from_mapping(admission_reference), root_id=root.object_id,
+        name=ADMISSION_PATH, mime_type="application/json",
+    )
+    admission = _canonical_json_object(admission_object.data, "admission receipt")
+    _required_keys(
+        admission,
+        {"schema_version", "verification_status", "instance_root_reference", "content_manifest_reference", "content_manifest_sha256"},
+        "admission receipt",
+    )
+    if admission["schema_version"] != 1 or admission["verification_status"] != "verified":
+        raise InstallationError("admission receipt is not verified version 1")
+    try:
+        admitted_root = ObjectReference.from_mapping(_require_mapping(admission["instance_root_reference"], "admission root"))
+    except ReferenceError as exc:
+        raise InstallationError(f"invalid admission root: {exc}") from exc
+    if admitted_root != root:
+        raise InstallationError("admission receipt names a different instance root")
+    manifest_reference = _exact_reference(admission["content_manifest_reference"], root=root, label="content_manifest_reference")
+    manifest_object = _read_admitted_object(
+        storage, manifest_reference, root_id=root.object_id, name=MANIFEST_PATH, mime_type="application/json",
+    )
+    if admission["content_manifest_sha256"] != sha256_bytes(manifest_object.data):
+        raise InstallationError("admission receipt hash disagrees with content manifest")
+    manifest = _canonical_json_object(manifest_object.data, "content manifest")
+    _required_keys(manifest, {"schema_version", "verification_status", "package", "instance_root_reference", "files"}, "content manifest")
+    if manifest["schema_version"] != 2 or manifest["verification_status"] != "candidate":
+        raise InstallationError("content manifest is not a candidate version 2 manifest")
+    try:
+        manifest_root = ObjectReference.from_mapping(_require_mapping(manifest["instance_root_reference"], "content manifest root"))
+    except ReferenceError as exc:
+        raise InstallationError(f"invalid content manifest root: {exc}") from exc
+    if manifest_root != root:
+        raise InstallationError("content manifest names a different instance root")
+    package = _require_mapping(manifest["package"], "content manifest package")
+    _required_keys(package, {"version", "source_identity", "archive_sha256", "inventory_sha256"}, "content manifest package")
+    source_identity = _require_mapping(package["source_identity"], "content manifest source identity")
+    _required_keys(source_identity, {"repository", "commit"}, "content manifest source identity")
+    if not isinstance(package["version"], str) or not isinstance(source_identity["repository"], str) or re.fullmatch(r"[0-9a-f]{40}", source_identity.get("commit", "")) is None:
+        raise InstallationError("content manifest package identity is invalid")
+    if any(re.fullmatch(r"[0-9a-f]{64}", package.get(key, "")) is None for key in ("archive_sha256", "inventory_sha256")):
+        raise InstallationError("content manifest package hashes are invalid")
+    files = _require_mapping(manifest["files"], "content manifest files")
+    if not files:
+        raise InstallationError("content manifest has no payload files")
+    admitted_objects: dict[str, StoredObject] = {}
+    for path, record in files.items():
+        if not isinstance(path, str) or not path or path in {MANIFEST_PATH, ADMISSION_PATH, BOOTSTRAP_PATH}:
+            raise InstallationError("content manifest declares an unsafe payload path")
+        entry = _require_mapping(record, f"content manifest file {path}")
+        _required_keys(entry, {"object_reference", "sha256"}, f"content manifest file {path}")
+        if not isinstance(entry["sha256"], str) or re.fullmatch(r"[0-9a-f]{64}", entry["sha256"]) is None:
+            raise InstallationError(f"content manifest hash is invalid for {path}")
+        reference = _exact_reference(entry["object_reference"], root=root, label=f"content manifest file {path}")
+        object_ = _read_admitted_object(
+            storage, reference, root_id=root.object_id, name=path, mime_type=reference.mime_type or "application/octet-stream",
+        )
+        if sha256_bytes(object_.data) != entry["sha256"]:
+            raise InstallationError(f"content manifest hash disagrees for {path}")
+        admitted_objects[path] = object_
+    if "instance.yaml" not in admitted_objects or admitted_objects["instance.yaml"].object_id != instance_id:
+        raise InstallationError("bootstrap instance identity is not admitted by the content manifest")
+    return {
+        "manifest": manifest,
+        "manifest_reference": dict(admission["content_manifest_reference"]),
+        "admission": admission,
+        "admission_reference": admission_reference,
+        "bootstrap_reference": dict(bootstrap_reference),
+    }
+
+
 def install_create_only_generation(
     storage: CreateOnlyStorage, *, root_reference: dict[str, Any], package: dict[str, Any], payloads: dict[str, bytes],
 ) -> dict[str, Any]:
@@ -469,7 +612,11 @@ def install_create_only_generation(
         raise InstallationError(f"invalid instance_root: {exc}") from exc
     if root.kind != "folder" or root.permitted_ancestor_id != root.object_id:
         raise InstallationError("instance root must be a self-contained folder")
-    if not payloads or any(not path or data is None for path, data in payloads.items()):
+    if (
+        not payloads
+        or any(not isinstance(path, str) or not path or not isinstance(data, bytes) for path, data in payloads.items())
+        or any(path in {MANIFEST_PATH, ADMISSION_PATH, BOOTSTRAP_PATH} for path in payloads)
+    ):
         raise InstallationError("create-only generation requires final non-empty payload mapping")
     objects: dict[str, StoredObject] = {}
     for path, data in sorted(payloads.items()):
@@ -504,4 +651,6 @@ def install_create_only_generation(
     ).encode("utf-8")
     bootstrap_object = _create_or_adopt(storage, parent_id=root.object_id, name=BOOTSTRAP_PATH, data=bootstrap_bytes, mime_type="text/markdown")
     bootstrap_reference = _stored_reference(bootstrap_object, root.object_id)
-    return {"manifest": manifest, "manifest_reference": manifest_reference, "admission": admission, "admission_reference": admission_reference, "bootstrap_reference": bootstrap_reference}
+    return recover_create_only_generation(
+        storage, root_reference=root_reference, bootstrap_reference=bootstrap_reference,
+    )

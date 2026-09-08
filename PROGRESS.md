@@ -1153,3 +1153,24 @@ requirements, then read this log from top to bottom.
   recovery coverage and integration of the staged helper with real candidate
   payload construction. Next: validate, publish this checkpoint, then continue
   the remaining M1-004/M1-006 recovery cases before any candidate write.
+
+## 2026-09-08 — alpha.13 immutable bootstrap recovery gate
+
+- Extended the corrected create-only installer with a fresh-bootstrap recovery
+  gate. It accepts only the exact bootstrap reference, immutable admission
+  receipt, content-manifest hash, root-contained payload references, and exact
+  payload bytes. It blocks ambiguous lost creates, altered manifest/receipt or
+  payload bytes, parent/MIME disagreement, and incomplete generations; it has
+  no replace operation.
+- Focused installation/scaffolding, synthetic-installation, and installed
+  validation tests passed (12 tests). The complete
+  `PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate.py` gate passed 143
+  tests plus schema/template and release-smoke validation. `git diff --check`
+  and `scripts/privacy_scan.py` passed. No private Drive or Gmail write
+  occurred.
+- Changed files: `school_os/install.py`, `tests/test_instance_scaffolding.py`,
+  the alpha.13 specification, and this append-only log. Unfinished: integrate
+  the staged installer with a real candidate payload/layout builder and
+  revalidate M1/M2/M3 from the repaired package before touching the candidate
+  root. Next: implement that staged payload builder and its exact-reference
+  tests; the candidate root remains untouched.

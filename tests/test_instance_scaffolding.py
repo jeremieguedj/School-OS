@@ -10,6 +10,7 @@ import tempfile
 import unittest
 from io import BytesIO
 from pathlib import Path
+from dataclasses import replace
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -23,6 +24,7 @@ from school_os.install import (  # noqa: E402
     InstallationError,
     MANAGED_PATHS,
     install_create_only_generation,
+    recover_create_only_generation,
     scaffold_instance,
     validate_candidate,
     verify_candidate_readback,
@@ -42,9 +44,10 @@ class FakeStorage:
 
 
 class CreateOnlyFakeStorage(FakeStorage):
-    def __init__(self, *, lose_after_create: bool = False) -> None:
+    def __init__(self, *, lose_after_create: bool = False, duplicate_after_loss: bool = False) -> None:
         super().__init__([])
         self.lose_after_create = lose_after_create
+        self.duplicate_after_loss = duplicate_after_loss
         self.calls: list[str] = []
 
     def create_file(self, parent_id: str, name: str, data: bytes, mime_type: str) -> StoredObject:
@@ -52,6 +55,8 @@ class CreateOnlyFakeStorage(FakeStorage):
         object_ = StoredObject(f"created-{len(self.objects) + 1}", "file", parent_id, (parent_id,), mime_type, str(len(self.objects) + 1), name, data)
         self.objects.append(object_)
         if self.lose_after_create:
+            if self.duplicate_after_loss:
+                self.objects.append(replace(object_, object_id=f"duplicate-{len(self.objects) + 1}"))
             raise OSError("lost create response")
         return object_
 
@@ -210,6 +215,66 @@ class InstanceScaffoldingTests(unittest.TestCase):
         )
         self.assertEqual("verified", result["admission"]["verification_status"])
         self.assertEqual(4, len(storage.calls))
+
+    def test_create_only_generation_blocks_ambiguous_lost_response(self) -> None:
+        storage = CreateOnlyFakeStorage(lose_after_create=True, duplicate_after_loss=True)
+        with self.assertRaisesRegex(InstallationError, "ambiguous"):
+            install_create_only_generation(
+                storage,
+                root_reference={"object_id": "instance-root", "kind": "folder", "permitted_ancestor_id": "instance-root", "version": "1"},
+                package={"version": "0.1.0-alpha.13", "source_identity": {"repository": "example", "commit": "a" * 40}, "archive_sha256": "a" * 64, "inventory_sha256": "b" * 64},
+                payloads={"instance.yaml": b"instance\n"},
+            )
+        self.assertEqual(["instance.yaml"], storage.calls)
+
+    def test_fresh_bootstrap_recovery_rejects_tamper_metadata_and_incomplete_generation(self) -> None:
+        root = {"object_id": "instance-root", "kind": "folder", "permitted_ancestor_id": "instance-root", "version": "1"}
+        package = {"version": "0.1.0-alpha.13", "source_identity": {"repository": "example", "commit": "a" * 40}, "archive_sha256": "a" * 64, "inventory_sha256": "b" * 64}
+        storage = CreateOnlyFakeStorage()
+        result = install_create_only_generation(storage, root_reference=root, package=package, payloads={"instance.yaml": b"instance\n", "state/operation-state.json": b"{}\n"})
+        recovered = recover_create_only_generation(storage, root_reference=root, bootstrap_reference=result["bootstrap_reference"])
+        self.assertEqual(result["manifest"], recovered["manifest"])
+        manifest_id = result["manifest_reference"]["object_id"]
+        storage.objects = [replace(item, data=b"{}\n") if item.object_id == manifest_id else item for item in storage.objects]
+        with self.assertRaisesRegex(InstallationError, "hash disagrees"):
+            recover_create_only_generation(storage, root_reference=root, bootstrap_reference=result["bootstrap_reference"])
+
+        storage = CreateOnlyFakeStorage()
+        result = install_create_only_generation(storage, root_reference=root, package=package, payloads={"instance.yaml": b"instance\n"})
+        instance_id = result["manifest"]["files"]["instance.yaml"]["object_reference"]["object_id"]
+        storage.objects = [replace(item, data=b"changed\n") if item.object_id == instance_id else item for item in storage.objects]
+        with self.assertRaisesRegex(InstallationError, "hash disagrees"):
+            recover_create_only_generation(storage, root_reference=root, bootstrap_reference=result["bootstrap_reference"])
+
+        storage = CreateOnlyFakeStorage()
+        result = install_create_only_generation(storage, root_reference=root, package=package, payloads={"instance.yaml": b"instance\n"})
+        instance_id = result["manifest"]["files"]["instance.yaml"]["object_reference"]["object_id"]
+        storage.objects = [replace(item, mime_type="text/plain") if item.object_id == instance_id else item for item in storage.objects]
+        with self.assertRaisesRegex(InstallationError, "reference failed"):
+            recover_create_only_generation(storage, root_reference=root, bootstrap_reference=result["bootstrap_reference"])
+
+        storage = CreateOnlyFakeStorage()
+        result = install_create_only_generation(storage, root_reference=root, package=package, payloads={"instance.yaml": b"instance\n"})
+        instance_id = result["manifest"]["files"]["instance.yaml"]["object_reference"]["object_id"]
+        storage.objects = [replace(item, parent_id="outside-root", ancestor_ids=("instance-root", "outside-root")) if item.object_id == instance_id else item for item in storage.objects]
+        with self.assertRaisesRegex(InstallationError, "outside the declared root"):
+            recover_create_only_generation(storage, root_reference=root, bootstrap_reference=result["bootstrap_reference"])
+
+        storage = CreateOnlyFakeStorage()
+        result = install_create_only_generation(storage, root_reference=root, package=package, payloads={"instance.yaml": b"instance\n"})
+        admission_id = result["admission_reference"]["object_id"]
+        storage.objects = [replace(item, data=b"{}\n") if item.object_id == admission_id else item for item in storage.objects]
+        with self.assertRaisesRegex(InstallationError, "admission receipt"):
+            recover_create_only_generation(storage, root_reference=root, bootstrap_reference=result["bootstrap_reference"])
+
+        incomplete = CreateOnlyFakeStorage()
+        incomplete.create_file("instance-root", "instance.yaml", b"instance\n", "application/octet-stream")
+        with self.assertRaisesRegex(InstallationError, "referenced object was not found"):
+            recover_create_only_generation(
+                incomplete, root_reference=root,
+                bootstrap_reference={"object_id": "missing-bootstrap", "kind": "file", "permitted_ancestor_id": "instance-root", "mime_type": "text/markdown", "version": "1"},
+            )
+        self.assertFalse(hasattr(incomplete, "replace_file"))
 
 
 if __name__ == "__main__":

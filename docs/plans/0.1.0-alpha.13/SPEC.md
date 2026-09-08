@@ -439,6 +439,15 @@ installation/readback contract without changing canonical source, task,
 bootstrap, upgrade, or provider-effect authority; it does not authorize any
 private write by itself.
 
+**M1-004/M1-006 recovery detail (2026-09-08):** The returned bootstrap object
+reference is the only fresh-session anchor. Recovery must read that exact
+object, resolve the named immutable admission receipt, verify the receipt's
+manifest identity and exact hash, then resolve every declared payload and its
+exact bytes under the declared root. A missing bootstrap, ambiguous lost create
+response, altered receipt/manifest/payload, or parent/MIME mismatch is an
+unadmitted generation and blocks; recovery never repairs it with an update or
+replace.
+
 ### Milestone check
 
 M1 completes only when M1-001 through M1-006, including the reopened create-only
