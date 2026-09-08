@@ -918,3 +918,11 @@ requirements, then read this log from top to bottom.
   documentation, root `PLAN.md`, and alpha.13 plan/specification. Commit/push/
   remote verification remain pending. Exact next action: publish M4-002, then
   inspect M4-003's conformance claims against available authorized surfaces.
+
+## 2026-09-08 — alpha.13 M4-002 verification
+
+- M4-002 was accepted as `285124cf486e870b16df61222c31a4a62c84a226`
+  (`Add alpha.13 structured state migration`). The 136-test repository gate,
+  direct new-file privacy scan, and diff checks passed; `origin/main` was read
+  back at the same SHA. Next: M4-003, distinguish synthetic adapter coverage
+  from claims requiring observed authorized runtime/provider surfaces.
