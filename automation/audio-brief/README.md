@@ -17,6 +17,22 @@ AM America/Los_Angeles. It should include only source-received facts and
 action/guideline events that occurred in that window. The scheduled task must
 keep a small send ledger so it does not deliver the same window twice.
 
+## Current-run delta input contract
+
+The connected runtime owns delta construction. It must pass this worker only
+one record per newly created or changed eligible News, Guideline, or Action
+item from the completed run. Every record has `delta_kind` set to exactly
+`new` or `changed`, along with the existing `section`, `voice_role`,
+`subject_label`, `spoken_text`, `source_tid`, and `fact_or_row_id` fields.
+The worker fails closed for any other kind. In particular, the regenerated
+seven-day HTML display set and unchanged open actions are not delta records and
+must never be sent here.
+
+When audio is disabled or its capabilities are unavailable, the runtime records
+the documented optional-degradation outcome and still completes the HTML/text
+brief path. It does not invoke this worker or synthesize a substitute. This
+local worker neither rebuilds a delta nor decides HTML eligibility.
+
 ## Secret setup: macOS Keychain
 
 Use Keychain Access rather than a shell command, so the API key never enters

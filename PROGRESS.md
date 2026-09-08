@@ -1611,3 +1611,33 @@ requirements, then read this log from top to bottom.
   authorized fresh-package/instance/manual/scheduled/Sheet acceptance. Source
   evidence and exact private references remain outside Git. No test email or
   temporary schedule has been created, and no release-completion claim is made.
+
+## 2026-09-08 — alpha.13 M4-005 release-preparation and audio-delta regression
+
+- Added a read-only `scripts/verify_release.py` verifier and a manually
+  dispatchable readback job on the existing validation workflow. The verifier
+  builds from one exact local commit, validates the archive/checksum, requires
+  a matching GitHub release/tag/commit/manifest status, requires exactly the
+  archive and checksum assets, resolves an annotated tag to the same commit,
+  and compares downloaded bytes with the local candidate. It fails on source
+  mismatch, missing/duplicate/unexpected assets, truncated bytes, lightweight
+  tags, or mutable published releases. It creates no tag/release and performs
+  no upload, publish, replacement, deletion, push, or provider action.
+- Documented the alpha.12-only structured-state migration boundary and explicit
+  alpha.11 fail-closed behavior. Added the alpha.13 `UNRELEASED` changelog
+  entry; `release.yaml` remains `0.1.0-alpha.13`, schema 2, migration 0002,
+  and `status: unreleased`.
+- The optional local audio worker now accepts only upstream-provided
+  current-run `new`/`changed` records. Synthetic worker coverage includes new
+  News and changed Guidelines/Actions, while regenerated seven-day rolling
+  display records and unchanged open actions fail closed. The connected runtime
+  still owns delta construction and must record optional audio degradation while
+  completing HTML/text when disabled or unavailable; no second delta generator,
+  API call, or delivery was added.
+- Validation before the final local commit: `python3 scripts/validate.py`
+  passed 187 tests; focused release/audio/upgrade tests, diff check, and the
+  staged tracked-file privacy scan passed. Next: commit this isolated unit,
+  rebuild and validate the exact resulting candidate with `--candidate-test`,
+  then hand the SHA and the remaining real draft/published, runtime-delta,
+  visual, private upgrade, and M4-003/M4-009 evidence gates to root. No release
+  readiness or M4-005 completion claim follows from this preparation alone.

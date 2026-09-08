@@ -15,6 +15,7 @@ SPEC.loader.exec_module(worker)
 def record(**overrides):
     value = {
         "section": "news",
+        "delta_kind": "new",
         "voice_role": "voice_b",
         "subject_label": "Student A",
         "spoken_text": "A source-linked update.",
@@ -88,6 +89,34 @@ class AudioBriefWorkerTests(unittest.TestCase):
 
         with self.assertRaisesRegex(worker.BriefError, "unsupported action due_status"):
             worker.build_inputs(manifest)
+
+    def test_current_run_new_and_changed_news_guidelines_and_actions_feed_audio(self):
+        manifest = {
+            "run_date": "2026-09-02",
+            "records": [
+                record(section="news", delta_kind="new", spoken_text="New school update."),
+                record(section="guideline", delta_kind="changed", fact_or_row_id="fact-2", spoken_text="Updated guideline."),
+                record(section="action", delta_kind="changed", fact_or_row_id="fact-3", spoken_text="Action status changed."),
+            ],
+        }
+
+        inputs, omitted = worker.build_inputs(manifest)
+
+        self.assertEqual(omitted, 0)
+        self.assertEqual(
+            [turn["text"] for turn in inputs[1:-1]],
+            [
+                "[warmly] News: New school update.",
+                "[clear, calm] School guideline: Updated guideline.",
+                "[clear, matter-of-fact] Action update: Action status changed.",
+            ],
+        )
+
+    def test_regenerated_rolling_window_and_unchanged_open_actions_are_not_audio_delta(self):
+        for delta_kind in ("rolling_window", "unchanged"):
+            with self.subTest(delta_kind=delta_kind):
+                with self.assertRaisesRegex(worker.BriefError, "current-run new or changed delta"):
+                    worker.build_inputs({"run_date": "2026-09-02", "records": [record(delta_kind=delta_kind)]})
 
 
 if __name__ == "__main__":

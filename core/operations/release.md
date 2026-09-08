@@ -16,4 +16,60 @@ Publish a reusable tagged source release without private-instance material.
 8. Require the hosting provider's immutable-release control to be enabled before publication. Create the release as a draft, attach the archive and checksum asset, verify the complete draft, and only then publish it as one prerelease or release.
 9. Read back the release metadata and require it to report immutable. A mutable or partially published release must be withdrawn from installation and superseded with a new version; never repair it in place.
 
+## Draft and published readback verification
+
+Use `scripts/verify_release.py` after an operator has created a draft with the
+existing GitHub release surface, and again after publication. The command is
+read-only: it builds from the supplied local exact ref, reads the GitHub release
+and annotated tag with `gh`, downloads the declared assets, and compares their
+bytes. It neither creates tags/releases nor uploads, replaces, publishes, or
+deletes assets.
+
+For a candidate that still declares `status: unreleased`, draft verification is
+allowed only as a preparation check and must explicitly request that status:
+
+```sh
+python3 scripts/verify_release.py verify-draft \
+  --repo jeremieguedj/School-OS \
+  --source-repo . \
+  --ref 0123456789abcdef0123456789abcdef01234567 \
+  --commit 0123456789abcdef0123456789abcdef01234567 \
+  --version 0.1.0-alpha.13 \
+  --manifest-status unreleased
+```
+
+Final publication requires a separately reviewed exact commit whose manifest
+declares `status: released`, as required above. After it is published, rerun
+the matching `verify-published` command with `--manifest-status released`.
+Both modes reject a wrong ref/commit/version, missing, duplicate, or unexpected
+assets, incorrect archive/checksum bytes, a lightweight/mismatched tag, or a
+mutable published release. A failed check leaves the release unverified; never
+replace assets or move an existing published tag to repair it.
+
+After M4-006 has current acceptance evidence, the authorized release operator
+uses an annotated (signed when supported) tag and a body file, never an inline
+multiline shell argument. The following is a template only; it is not an
+automatic publication path and must not be run for this unreleased candidate:
+
+```sh
+git tag -a v0.1.0-alpha.13 0123456789abcdef0123456789abcdef01234567 \
+  -F /private/tmp/school-os-release-tag-message.txt
+git push origin v0.1.0-alpha.13
+python3 scripts/build_release.py \
+  --repo . \
+  --ref 0123456789abcdef0123456789abcdef01234567 \
+  --version 0.1.0-alpha.13 \
+  --output-dir /private/tmp/school-os-alpha.13-assets
+gh release create v0.1.0-alpha.13 \
+  /private/tmp/school-os-alpha.13-assets/school-os-0.1.0-alpha.13.tar.gz \
+  /private/tmp/school-os-alpha.13-assets/SHA256SUMS \
+  --repo jeremieguedj/School-OS \
+  --draft --prerelease --verify-tag \
+  --notes-file /private/tmp/school-os-release-notes.md
+```
+
+Read back the just-created draft with `verify-draft` before a separate publish
+action. Do not use an overwrite option, delete/recreate a release, or replace
+an asset; if any verification fails after publication, make a later version.
+
 A source release is not a private-instance upgrade. Users choose when to transport and install it.

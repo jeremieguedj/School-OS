@@ -122,8 +122,10 @@ def build_inputs(manifest: dict[str, Any]) -> tuple[list[dict[str, str]], int]:
     for record in records:
         if not isinstance(record, dict):
             raise BriefError("each manifest record must be an object")
-        for field in ("section", "voice_role", "subject_label", "spoken_text", "source_tid", "fact_or_row_id"):
+        for field in ("delta_kind", "section", "voice_role", "subject_label", "spoken_text", "source_tid", "fact_or_row_id"):
             require_string(record, field)
+        if record["delta_kind"] not in {"new", "changed"}:
+            raise BriefError("manifest record must be a current-run new or changed delta")
         key = f"{record['section']}:{record['fact_or_row_id']}"
         if key not in seen:
             seen.add(key)

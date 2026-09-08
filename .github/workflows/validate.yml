@@ -5,6 +5,38 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      release_phase:
+        description: Read-only remote release check to run after an operator-created draft or publication
+        required: false
+        default: none
+        type: choice
+        options:
+          - none
+          - draft
+          - published
+      release_repository:
+        description: GitHub owner/repository containing the release
+        required: false
+        default: jeremieguedj/School-OS
+        type: string
+      candidate_commit:
+        description: Full immutable candidate commit SHA required for a remote release check
+        required: false
+        type: string
+      candidate_version:
+        description: Candidate release version required for a remote release check
+        required: false
+        type: string
+      candidate_manifest_status:
+        description: Manifest status in the exact candidate commit
+        required: false
+        default: unreleased
+        type: choice
+        options:
+          - unreleased
+          - released
 
 permissions:
   contents: read
@@ -24,3 +56,37 @@ jobs:
 
       - name: Run repository validation
         run: python3 scripts/validate.py
+
+  verify-release-readback:
+    if: github.event_name == 'workflow_dispatch' && inputs.release_phase != 'none'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_PHASE: ${{ inputs.release_phase }}
+      RELEASE_REPOSITORY: ${{ inputs.release_repository }}
+      CANDIDATE_COMMIT: ${{ inputs.candidate_commit }}
+      CANDIDATE_VERSION: ${{ inputs.candidate_version }}
+      CANDIDATE_MANIFEST_STATUS: ${{ inputs.candidate_manifest_status }}
+    steps:
+      - name: Check out exact candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.candidate_commit }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify draft or published release readback
+        run: |
+          test -n "$CANDIDATE_COMMIT"
+          test -n "$CANDIDATE_VERSION"
+          if [ "$RELEASE_PHASE" = draft ]; then
+            python3 scripts/verify_release.py verify-draft --repo "$RELEASE_REPOSITORY" --source-repo . --ref "$CANDIDATE_COMMIT" --commit "$CANDIDATE_COMMIT" --version "$CANDIDATE_VERSION" --manifest-status "$CANDIDATE_MANIFEST_STATUS"
+          else
+            python3 scripts/verify_release.py verify-published --repo "$RELEASE_REPOSITORY" --source-repo . --ref "$CANDIDATE_COMMIT" --commit "$CANDIDATE_COMMIT" --version "$CANDIDATE_VERSION" --manifest-status "$CANDIDATE_MANIFEST_STATUS"
+          fi

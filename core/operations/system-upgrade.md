@@ -53,6 +53,12 @@ version as an explicit input. Unsupported private variations stop for an
 authorized mapping; compatible extension files outside its declared targets are
 preserved and never silently deleted or normalized.
 
+An alpha.11 (or otherwise non-alpha.12) predecessor is not an implicit
+alpha.13 migration input. It must fail before staging or private writes; do not
+reinterpret it as alpha.12, normalize its private files, or chain an invented
+intermediate migration. A separately authorized preservation mapping is needed
+before any such upgrade can proceed.
+
 ## Coordination-mode boundary
 
 `supervised_operational_single_writer` is not a simulated conditional write. It is a narrower deployment mode whose safety depends on verified operational exclusivity for the entire upgrade, exact-ID targeting, immediate pre-write content/metadata comparison, create-only evidence, and immediate readback. It is unavailable for unattended upgrades or when another mutator cannot be ruled out. Native conditional writes remain preferred whenever the storage adapter exposes a precondition that is atomically bound to the mutation.

@@ -6,6 +6,7 @@
   },
   "records": [
     {
+      "delta_kind": "new",
       "section": "news",
       "voice_role": "voice_a",
       "subject_label": "Student A",
@@ -14,6 +15,7 @@
       "fact_or_row_id": "example-fact-001"
     },
     {
+      "delta_kind": "changed",
       "section": "action",
       "voice_role": "voice_b",
       "subject_label": "Student B",

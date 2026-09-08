@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0-alpha.13 — UNRELEASED
+
+- Prepared read-only GitHub draft and post-publication verification that binds
+  the exact candidate commit, manifest version/status, annotated tag, archive,
+  checksum asset, and downloaded asset bytes. Publication and immutability
+  remain release-gated and have not occurred.
+- Clarified that alpha.13 supports the declared alpha.12 structured-state
+  migration only; alpha.11 and unsupported predecessor forms fail closed.
+- Strengthened the optional audio worker input boundary: only current-run new
+  or changed News, Guidelines, and Actions may be narrated. This is synthetic
+  regression coverage; no audio API request, delivery, or visual brief
+  acceptance has occurred.
+
 ## 0.1.0-alpha.12 — 2026-09-03
 
 - Restored raw UTF-8 Markdown as the required ChatGPT Work scheduled storage representation after a fresh scheduled-surface probe verified exact in-place replacement and readback.
