@@ -598,3 +598,16 @@ requirements, then read this log from top to bottom.
   passed 107 tests and every changed file passed privacy/diff checks.
 - `origin/main` resolves to the same commit. Next: M2-004 provider protocol,
   pull-first reconciliation, guarded writes, bindings, and parent-edit safety.
+
+## 2026-09-07 — alpha.13 M2-004 guarded provider reconciliation
+
+- Completed M2-004. Added the narrow task-provider protocol, pull-first
+  snapshot reconciliation, managed-projection hashes, create/patch intent
+  records, exact readback, and unique durable bindings in `school_os.tasks`.
+- Extended the synthetic task fake and proved one canonical-ID provider task is
+  created/read back/bound once; a replay patches only managed fields and
+  preserves the synthetic provider's unrelated parent field. Updated task-sync
+  instructions with the same guarded-write boundary.
+- Validation/publication pending. Exact next action: run repository validation
+  and privacy scan, commit/push/verify M2-004, then implement M2-005 rendering
+  and delivery ledger contracts.

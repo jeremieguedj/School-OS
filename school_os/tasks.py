@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
+from typing import Protocol
 from typing import Any
 
 from .contracts import canonical_json_bytes, sha256_bytes, validate
@@ -9,6 +11,21 @@ from .contracts import canonical_json_bytes, sha256_bytes, validate
 
 class TaskError(ValueError):
     """Raised when source facts cannot safely build canonical task state."""
+
+
+class TaskProviderPort(Protocol):
+    """Minimal task surface for pull-first, identity-safe synchronization."""
+    def list_tasks(self) -> Sequence[Mapping[str, Any]]: ...
+    def create_task(self, candidate: Mapping[str, Any]) -> Mapping[str, Any]: ...
+    def read_task(self, provider_object_id: str) -> Mapping[str, Any] | None: ...
+    def apply_patch(self, provider_object_id: str, patch: Mapping[str, Any]) -> Mapping[str, Any]: ...
+
+
+@dataclass(frozen=True)
+class ProviderReconciliation:
+    tasks: dict[str, Any]
+    provider_state: dict[str, Any]
+    effects: tuple[dict[str, Any], ...]
 
 
 def canonical_task_id(opening_fact_id: str) -> str:
@@ -76,3 +93,69 @@ def reconcile_canonical_tasks(existing: Mapping[str, Any], facts: Sequence[Mappi
 def serialize_canonical_tasks(register: Mapping[str, Any], register_schema: Mapping[str, Any]) -> bytes:
     _validated(register, register_schema, "canonical task register")
     return canonical_json_bytes(register)
+
+
+def managed_projection(task: Mapping[str, Any]) -> dict[str, Any]:
+    """Return only system-owned provider fields; parent fields are excluded."""
+    return {
+        "canonical_task_id": task["task_id"], "title": task["action"],
+        "description": task["task_context"], "group": task["entity_scope"],
+        "workflow_state": task["workflow_state"], "source_link": task["source_link"],
+    }
+
+
+def _projection_hash(projection: Mapping[str, Any]) -> str:
+    return sha256_bytes(canonical_json_bytes(dict(projection)))
+
+
+def reconcile_provider_tasks(
+    provider: TaskProviderPort,
+    register: Mapping[str, Any],
+    provider_state: Mapping[str, Any],
+    *, task_schema: Mapping[str, Any], register_schema: Mapping[str, Any], provider_state_schema: Mapping[str, Any],
+) -> ProviderReconciliation:
+    """Pull first, then write only verified managed projections by canonical ID."""
+    _validated(register, register_schema, "canonical task register")
+    _validated(provider_state, provider_state_schema, "provider state")
+    for task in register["tasks"]:
+        _validated(task, task_schema, "canonical task")
+    snapshot = [dict(item) for item in provider.list_tasks()]
+    by_canonical: dict[str, dict[str, Any]] = {}
+    for item in snapshot:
+        canonical_id = item.get("canonical_task_id")
+        object_id = item.get("provider_object_id")
+        if not isinstance(canonical_id, str) or not isinstance(object_id, str):
+            continue
+        if canonical_id in by_canonical:
+            raise TaskError("multiple provider tasks match one canonical task ID")
+        by_canonical[canonical_id] = item
+    bindings: list[dict[str, Any]] = []
+    effects: list[dict[str, Any]] = []
+    for task in register["tasks"]:
+        projection = managed_projection(task)
+        task_id = task["task_id"]
+        current = by_canonical.get(task_id)
+        intent = {"task_id": task_id, "projection_sha256": _projection_hash(projection)}
+        if current is None:
+            created = dict(provider.create_task(projection))
+            object_id = created.get("provider_object_id")
+            if not isinstance(object_id, str):
+                raise TaskError("provider create did not return an immutable object ID")
+            effect_kind = "create"
+        else:
+            object_id = current["provider_object_id"]
+            created = dict(provider.apply_patch(object_id, projection))
+            effect_kind = "patch"
+        readback = provider.read_task(object_id)
+        if readback is None:
+            raise TaskError("provider task readback is unavailable")
+        actual = dict(readback)
+        if any(actual.get(key) != value for key, value in projection.items()):
+            raise TaskError("provider task readback does not match managed projection")
+        bindings.append({"task_id": task_id, "provider_object_id": object_id, "status": "verified", "last_managed_projection": projection, "projection_sha256": _projection_hash(projection), "verified_readback": {"provider_object_id": object_id}})
+        effects.append({"kind": effect_kind, "intent": intent, "outcome": "confirmed", "provider_object_id": object_id})
+    if len({binding["task_id"] for binding in bindings}) != len(bindings):
+        raise TaskError("provider bindings are not unique")
+    state = {"provider_id": provider_state["provider_id"], "adapter_id": provider_state["adapter_id"], "provider_revision": provider_state.get("provider_revision"), "bindings": bindings, "cursor": provider_state["cursor"], "cursor_evidence": {"pulled": True, "count": len(snapshot)}, "verified_readback": {"bindings": len(bindings)}}
+    _validated(state, provider_state_schema, "provider state")
+    return ProviderReconciliation(dict(register), state, tuple(effects))
