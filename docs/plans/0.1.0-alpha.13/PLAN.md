@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
-- Status: revised plan incorporating simplicity findings; implementation not started
-- Revision: 2, updated 2026-09-07
+- Status: revised plan with approved complete-path sequencing; implementation not started
+- Revision: 3, updated 2026-09-07
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Baseline: `main` at `095485b`, with `release.yaml` declaring `0.1.0-alpha.12`
@@ -14,11 +14,13 @@ incorporates the findings and scope recommendations from the
 [simplicity review](REVIEW.md) directly into the work packages. The original
 snapshot remains available in Git history at `3acd660`.
 
-The two approved product decisions remain in force. This document records
-current planning direction; it does not claim that implementation has started
-or that every technical detail is final. The complete-path build sequence below
-is the recommendation the user has asked to have explained. It is a development
-sequence, not authorization to run private onboarding, import, or delivery.
+The two approved product decisions remain in force. The user has also approved
+the complete-path development approach: connect one existing journey early,
+verify its recovery behavior, then expand coverage. This revision records that
+approach as implementation milestones with deliverables and completion checks.
+Implementation has not started, and detailed interfaces remain subject to
+implementation design. Approval of this plan does not activate a private
+instance or authorize private onboarding, import, or delivery.
 
 The user has deferred discussion of the review's historical-retrieval acceptance
 case. That proposed addition is not part of the current work or release gates.
@@ -384,7 +386,10 @@ rendered files, with correct content and readable presentation.
   recovery. Defer full vendor-environment emulation.
 - Add end-to-end scenarios that restart the process and discard local storage
   between steps. Test operation outcomes and persisted artifacts instead of
-  relying primarily on recipe-text assertions.
+  relying primarily on recipe-text assertions. Each stage must consume the
+  actual output of its predecessor, including installed configuration and
+  persisted references; separately prepared intermediate fixtures cannot
+  substitute for the connected-path check.
 - Maintain synthetic expected facts and task outcomes for semantic evaluation.
   Measure interpretation quality separately from deterministic assembly and
   recovery.
@@ -451,31 +456,123 @@ tests and has observed capability evidence on the surface where it will run.
 Unselected adapters and the offline speech bundle do not block the foundational
 release.
 
-## Proposed implementation sequence
+## Approved implementation sequence and milestones
 
-The recommendation is to build and verify one connected implementation of an
-existing user journey early, then expand it. This sequence is being clarified
-with the user; it does not change operation permissions or make the first
-milestone the complete release scope.
+Build and verify one connected implementation of an existing user journey
+early, then expand it. The user approved this development approach after its
+explanation. The ten work packages describe what changes; the milestones below
+describe the order in which usable behavior and evidence are delivered. Do not
+finish all infrastructure packages in isolation before connecting the journey.
 
-1. Select one supported runtime/provider combination and a small, fully specified
-   synthetic corpus. Reuse current adapters where they are adequate. Define only
-   the shared interfaces, state, and checks needed for this connected case.
-2. Install the packaged candidate into a clean test instance and verify its
-   references. Installation is a one-time lifecycle operation, not a phase to
-   repeat before each daily brief.
-3. Exercise the full normal sequence: discover the test sources, preserve and
-   verify the catalog, reconcile canonical knowledge and tasks, synchronize the
-   configured task provider, render the brief, verify delivery, and record the
-   completed operation. Start with fake providers and a send sink, then validate
-   real adapter behavior under the authorization appropriate to those effects.
-4. Interrupt that same sequence at write/effect boundaries, discard local
-   state, and resume from private-instance checkpoints. Verify unchanged-input
-   replay, no duplicate tasks/sends, and clear blocked outcomes when required.
-5. Extend the connected case to larger imports, repeated daily runs, supported
-   attachment cases, manual/scheduled overlap, materially different capability
-   paths, and actual upgrade changes. Add optional adapters independently when
-   needed. Tests and measurements grow alongside working behavior.
+All milestones are pending. Completing milestones 1–3 establishes the first
+connected implementation with recovery evidence. It does not establish full
+alpha.13 release readiness or conformance for every runtime.
+
+### Milestone 1 — Install a minimal candidate in a clean test instance
+
+**Work and deliverables:** Select one existing runtime/provider combination as
+the first conformance target. Define a small synthetic corpus containing a
+school update, a standing guideline, and an actionable request, with explicit
+expected source, knowledge, and task results. Build a candidate archive from an
+exact commit and install it into a clean synthetic instance. Deliver the
+installed validator, resolved configuration/references, minimum capability
+checks, and a reproducible test setup. Start with fake provider adapters and a
+send sink; reuse existing adapters and helpers where adequate.
+
+**Completion checks:** The extracted package validates without Git or dependency
+downloads. The installed operation can resolve its recipe, required private
+configuration, and provider references without relying on the developer's
+checkout or conversation. Missing required capabilities produce a specific
+blocked result. Manual execution can qualify without a scheduler.
+
+**Work-package coverage:** The portions of 1–3 and 9 needed to install and enter
+this journey. Implement only the shared interfaces needed by the next milestone.
+
+### Milestone 2 — Connect a complete normal operation
+
+**Work and deliverables:** Use the installed candidate to execute this sequence:
+
+```text
+Discover sources in the selected scope
+  -> preserve the complete source bodies and verify the catalog
+  -> reconcile canonical knowledge and tasks
+  -> synchronize the configured task provider
+  -> render and verify the brief
+  -> send through the test sink and verify delivery
+  -> persist completion evidence and the eligible cursors
+```
+
+Deliver the minimum executable helpers, recipe changes, and checkpoint/effect
+records needed for that sequence. Use the manual entry point with a configured
+task provider to exercise the approved no-scheduler path. Each stage consumes
+its predecessor's actual persisted output; no manual repair or replacement of
+intermediate artifacts is part of the passing test. Keep source interpretation
+separate from deterministic assembly, with semantic expectations evaluated as
+described in work package 9.
+
+**Completion checks:** Verify source-body equality and persisted-byte readback,
+source-linked canonical records, stable task identity and provider bindings,
+the expected brief content, and confirmed test delivery. The completed operation
+must account for every required phase and every source in the fixture's scope.
+Changing inputs by hand between phases cannot make a failed scenario pass.
+
+**Work-package coverage:** The connected portions of 4–8, plus installation,
+routing, capability, and behavioral tests from 1–3 and 9. Unit tests support this
+check but do not replace it.
+
+### Milestone 3 — Prove recovery and safe repeated execution
+
+**Work and deliverables:** Extend the same scenario with focused failure cases.
+Restart in a fresh process and discard the simulated agent's local files while
+retaining the test instance's durable provider state. Exercise interruption
+after a catalog write, during task synchronization, and after a send is accepted
+but its response or completion checkpoint is lost. Also stop at a planned batch
+boundary, resume in a new invocation, repeat unchanged inputs, and reconcile a
+parent edit to an existing task. Deliver restartable tests and compact evidence
+of the resulting canonical state, task bindings, and delivery receipts.
+
+**Completion checks:** A fresh execution recovers from installed instructions
+and durable state, verifies or reconciles work already performed, and continues
+the same logical operation without duplicate tasks or sends. Confirmed work is
+not blindly repeated, parent edits/history survive, and partial work is never
+reported as complete. If a provider cannot resolve an uncertain effect, the
+operation reports the specific blocker instead of guessing or retrying blindly.
+
+**Work-package coverage:** Recovery and repeatability across 4–9. This milestone
+is required before calling the initial connected implementation complete; a
+successful uninterrupted run alone is insufficient.
+
+### Milestone 4 — Expand coverage and establish release readiness
+
+**Work and deliverables:** Extend the working scenario to larger complete
+imports, repeated daily runs, supported attachment cases, manual/scheduled
+overlap, materially different capability and network paths, and the state or
+configuration changes that need an upgrade. Record representative efficiency
+measurements as the cases grow. Validate the selected real adapter/runtime
+surfaces under authorization appropriate to their effects and preserve the
+evidence separately from fake-adapter test results. Deliver the applicable
+migrations, upgrade checks, conformance evidence, and release validation results.
+Additional adapters from work package 10 remain independent extensions selected
+for a concrete deployment need.
+
+**Completion checks:** Meet the acceptance criteria of work packages 1–9 and
+any selected extensions. Verify constrained execution, honest blocked or degraded
+outcomes, preserved compatible extensions, and recovery across actual changed
+formats. Confirm capabilities on every surface for which the release claims
+support; passing fake-adapter tests or one interactive runtime does not establish
+scheduled or cross-runtime conformance. Validate the packaged candidate and
+complete the repository's test, privacy, and publication checks before declaring
+the release ready.
+
+**Work-package coverage:** Remaining scope in 1–9, plus only the selected items
+from 10. This milestone distinguishes a working first journey from the release's
+broader reliability and portability obligations.
+
+### Scope and purpose of this sequence
+
+Installation is a lifecycle operation, not a phase to repeat before each daily
+brief. The test setup and later daily operation remain separately authorized
+operations, even though the development check connects their outputs.
 
 Historical import remains a separate optional operation. An import must not
 send mail or mutate a task provider without authorization for those effects.
@@ -522,3 +619,8 @@ evidence that does not need to be repeatedly printed into model context.
   narrowed the proposed build sequence. Deferred discussion of the additional
   historical-retrieval acceptance case at the user's request. Implementation
   has not started.
+- Revision 3: recorded the user's approval of the complete-path development
+  approach. Defined four implementation milestones, their deliverables,
+  completion checks, and work-package coverage; required real stage-to-stage
+  handoffs in the connected test. Implementation has not started, and the
+  additional historical-retrieval acceptance case remains deferred.

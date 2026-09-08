@@ -188,3 +188,24 @@
 - Updated the root plan and historical review to reflect revision 2. No runtime
   code, release manifest, or private instance was changed.
 - Next: clarify the sequencing recommendation with the user before implementation.
+
+## 2026-09-07 — alpha.13 plan revision 3
+
+- Recorded the user's approval of the complete-path development approach in
+  `docs/plans/0.1.0-alpha.13/PLAN.md`.
+- Defined four pending milestones: clean candidate installation, one connected
+  normal operation, verified interruption recovery and repeated execution, then
+  broader coverage and release readiness. Each includes work, deliverables,
+  completion checks, and mapping to the existing work packages.
+- Required the connected test to consume actual outputs between stages and
+  recover from durable state after local environment loss. The initial journey
+  exercises verified manual delivery without a scheduler.
+- Distinguished the initial connected implementation from full release scope
+  and real runtime conformance. Optional adapters remain independent; the
+  additional historical-retrieval acceptance case remains deferred.
+- Updated the root plan and review disposition. This is a planning-only change;
+  no runtime code, release manifest, or private instance was changed.
+- Validation: all 77 repository tests and privacy scanning passed, along with
+  local-link, plan-structure, and diff checks.
+- Next: use the approved milestone sequence for subsequent implementation
+  planning when requested; implementation has not started.

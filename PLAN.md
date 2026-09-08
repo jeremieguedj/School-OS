@@ -13,12 +13,15 @@ Implementation has not started. This planning reference does not change the
 current release manifest or authorize private-instance activation.
 
 The [simplicity review](docs/plans/0.1.0-alpha.13/REVIEW.md) evaluates the original
-snapshot against product personas and priorities. At the user's request, plan
-revision 2 incorporates those findings: narrow routing, conservative batches,
-sequential recovery, supported formats, focused tests, and independent optional
-adapters. The proposed additional historical-retrieval acceptance case is
-deferred for separate discussion. The complete-path implementation sequence is
-being clarified before implementation; the original snapshot remains in Git.
+snapshot against product personas and priorities. The current plan incorporates
+those findings: narrow routing, conservative batches, sequential recovery,
+supported formats, focused tests, and independent optional adapters. The
+proposed additional historical-retrieval acceptance case is
+deferred for separate discussion. In revision 3, the user-approved complete-path
+approach is organized into four milestones: clean installation, a connected
+normal operation, verified recovery, and broader release coverage. Each has
+deliverables and completion checks; all remain pending. The original snapshot
+remains in Git.
 
 ## Objective
 
