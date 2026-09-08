@@ -65,6 +65,7 @@ gh release create v0.1.0-alpha.13 \
   /private/tmp/school-os-alpha.13-assets/SHA256SUMS \
   --repo jeremieguedj/School-OS \
   --draft --prerelease --verify-tag \
+  --target 0123456789abcdef0123456789abcdef01234567 \
   --notes-file /private/tmp/school-os-release-notes.md
 ```
 

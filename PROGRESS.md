@@ -1669,3 +1669,21 @@ requirements, then read this log from top to bottom.
   private-instance, tag, release, or push action occurred. Next: root may
   integrate these local commits and re-run CI; only a CI observation can close
   the prior hosted failure.
+
+## 2026-09-08 — alpha.13 M4-005 release-readback portability correction
+
+- Removed the release-verification test's fixed alpha.13/unreleased expectation.
+  It now follows the exact committed `release.yaml` version/status, rejects the
+  opposite status, and uses a separate released synthetic candidate to prove the
+  release-status mismatch path. This preserves coverage when the separately
+  authorized final release commit changes its manifest to `released`.
+- Corrected the gated `gh release create` recipe to pass `--target` with the
+  full candidate SHA, matching the verifier's strict `targetCommitish` binding.
+  Local `gh release create --help` confirms `--target branch` accepts a full
+  commit SHA and is compatible with `--verify-tag`. No command that creates a
+  tag or release was invoked.
+- Bundled CPython 3.12.14 with ordinary bytecode defaults passed 11 focused
+  release-verification/installed-package tests and `git diff --check`. Next:
+  commit this narrow correction and rerun the full bundled validation suite
+  from its exact resulting commit; publication readback remains pending an
+  actual separately authorized draft or published release.

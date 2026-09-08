@@ -3,9 +3,11 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
+from school_os.contracts import load_mapping
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -58,14 +60,42 @@ class ReleaseVerificationTests(unittest.TestCase):
     def test_draft_requires_exact_candidate_tag_commit_and_downloaded_bytes(self) -> None:
         self.verify()
 
-    def test_candidate_build_requires_the_declared_exact_ref_and_manifest_status(self) -> None:
+    def test_candidate_build_follows_the_exact_committed_manifest_identity(self) -> None:
         commit = subprocess.run(
             ["git", "-C", str(ROOT), "rev-parse", "HEAD"], check=True, capture_output=True, text=True,
         ).stdout.strip()
-        assets = candidate_assets(ROOT, "HEAD", commit, "0.1.0-alpha.13", "unreleased")
-        self.assertEqual({"school-os-0.1.0-alpha.13.tar.gz", "SHA256SUMS"}, set(assets))
+        manifest = load_mapping(ROOT / "release.yaml")
+        version = manifest["system_version"]
+        status = manifest["status"]
+        self.assertIn(status, {"unreleased", "released"})
+        assets = candidate_assets(ROOT, "HEAD", commit, version, status)
+        self.assertEqual({f"school-os-{version}.tar.gz", "SHA256SUMS"}, set(assets))
         with self.assertRaisesRegex(ReleaseVerificationError, "does not resolve"):
-            candidate_assets(ROOT, "HEAD", "0" * 40, "0.1.0-alpha.13", "unreleased")
+            candidate_assets(ROOT, "HEAD", "0" * 40, version, status)
+        other_status = "released" if status == "unreleased" else "unreleased"
+        with self.assertRaisesRegex(ReleaseVerificationError, "manifest status"):
+            candidate_assets(ROOT, "HEAD", commit, version, other_status)
+
+    def test_released_synthetic_candidate_cannot_be_verified_as_unreleased(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary) / "repo"
+            repo.mkdir()
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.name", "Synthetic Tester"], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.email", "synthetic@example.invalid"], check=True)
+            (repo / "release.yaml").write_text("system_version: 1.2.3-alpha.1\nstatus: released\n", encoding="utf-8")
+            (repo / "README.md").write_text("# Synthetic package\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(repo), "add", "."], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "released fixture"], check=True)
+            commit = subprocess.run(
+                ["git", "-C", str(repo), "rev-parse", "HEAD"], check=True, capture_output=True, text=True,
+            ).stdout.strip()
+            self.assertEqual(
+                {"school-os-1.2.3-alpha.1.tar.gz", "SHA256SUMS"},
+                set(candidate_assets(repo, "HEAD", commit, "1.2.3-alpha.1", "released")),
+            )
+            with self.assertRaisesRegex(ReleaseVerificationError, "manifest status"):
+                candidate_assets(repo, "HEAD", commit, "1.2.3-alpha.1", "unreleased")
 
     def test_wrong_release_commit_fails_before_download(self) -> None:
         self.release["targetCommitish"] = "c" * 40
