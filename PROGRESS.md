@@ -1067,3 +1067,30 @@ requirements, then read this log from top to bottom.
   Next: validate and publish this generic planning checkpoint, then obtain the
   bounded Gmail scope before re-listing the candidate root and performing any
   private write.
+
+## 2026-09-08 — alpha.13 candidate manifest write-path blocker
+
+- Recovered the existing private source-scope configuration read-only and
+  enumerated its current bounded mail window without changing Gmail. The
+  candidate root remains empty. No source body was catalogued and no candidate
+  object, task, delivery, scheduler, release, or activation effect occurred.
+- **Blocked before candidate creation:** the scaffolder's installation manifest
+  requires real object references for every managed file and for the manifest
+  itself; its readback gate requires the final stored bytes to match those
+  references. The selected Drive create/upload surface returns an object ID only
+  after it writes the bytes and exposes no preallocated-ID operation. The
+  candidate boundary permits create-only files, so a final self-referential
+  manifest cannot be created without an update or a different staging protocol.
+  Accepting placeholder references, omitting the manifest self-reference, or
+  using a replace without an approved recovery design would weaken the accepted
+  installation/readback contract.
+- Per the development execution policy, paused the affected write design and
+  started one bounded GPT-5.6 Sol High read-only consultation with the relevant
+  plan/specification, `school_os/install.py`, Drive create semantics, and the
+  concrete empty-root reproduction. No implementation proceeds until its
+  recommendation is assessed against approved constraints.
+- Changed files: this append-only log only. No private identifiers, queries,
+  message content, credentials, or provider records were added to the
+  repository. Next: record the consultation finding and either resume with an
+  in-scope verified protocol or report the specific architectural decision
+  required.
