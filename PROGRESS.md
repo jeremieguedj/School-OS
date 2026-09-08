@@ -1641,3 +1641,20 @@ requirements, then read this log from top to bottom.
   then hand the SHA and the remaining real draft/published, runtime-delta,
   visual, private upgrade, and M4-003/M4-009 evidence gates to root. No release
   readiness or M4-005 completion claim follows from this preparation alone.
+
+## 2026-09-08 — alpha.13 M4-005 installed-package bytecode portability repair
+
+- GitHub Actions Python 3.12 reproduced a real package-integrity failure in
+  the connected daily and fresh-process installed-package tests: a packaged CLI
+  imported `school_os`, Python created `__pycache__` below the extracted release
+  root, and the required subsequent inventory verification correctly rejected
+  that undeclared file. Local macOS Python used an external cache prefix, so it
+  did not expose the defect.
+- The narrow repair sets `sys.dont_write_bytecode = True` in non-runtime
+  packaged thin entrypoints before their first package import, preserving the
+  fail-closed inventory verifier. It does not ignore cache files or weaken
+  payload equality. A new extracted-package test clears bytecode-related
+  environment settings, runs the packaged scaffold and installed validators,
+  and compares package verification before and after. Next: commit the repair,
+  then run it and the full suite from the exact committed archive under ordinary
+  bytecode defaults.

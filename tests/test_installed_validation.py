@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+import os
 import shutil
 import subprocess
 import sys
@@ -7,6 +9,8 @@ import tarfile
 import tempfile
 import unittest
 from pathlib import Path
+
+from school_os.package import verify_extracted_tree
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -36,6 +40,34 @@ class InstalledValidationTests(unittest.TestCase):
         result = self.run_validator(self.root, "--candidate-test", path_empty=True)
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertFalse((self.root / ".git").exists())
+
+    def test_installed_clis_do_not_mutate_the_extracted_inventory_with_bytecode(self) -> None:
+        before = verify_extracted_tree(self.root)
+        answers = json.loads((ROOT / "tests" / "synthetic-fixtures" / "alpha13" / "answers.json").read_text(encoding="utf-8"))
+        answers["package_root"] = str(self.root)
+        answers["package_archive"] = str(self.archive)
+        answers["package_source_identity"]["commit"] = subprocess.run(
+            ["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True, capture_output=True, check=True,
+        ).stdout.strip()
+        answers_path = Path(self.temporary.name) / "answers.json"
+        references_path = ROOT / "tests" / "synthetic-fixtures" / "alpha13" / "references.json"
+        candidate = Path(self.temporary.name) / "candidate"
+        answers_path.write_text(json.dumps(answers), encoding="utf-8")
+        environment = dict(os.environ)
+        environment.pop("PYTHONPYCACHEPREFIX", None)
+        environment.pop("PYTHONDONTWRITEBYTECODE", None)
+        scaffold = subprocess.run(
+            [sys.executable, str(self.root / "scripts" / "scaffold_instance.py"), "--answers", str(answers_path), "--references", str(references_path), "--output", str(candidate)],
+            text=True, capture_output=True, check=False, env=environment,
+        )
+        self.assertEqual(0, scaffold.returncode, scaffold.stderr)
+        validator = subprocess.run(
+            [sys.executable, str(self.root / "scripts" / "validate_installed.py"), str(self.root), "--candidate-test"],
+            text=True, capture_output=True, check=False, env=environment,
+        )
+        self.assertEqual(0, validator.returncode, validator.stderr)
+        self.assertEqual([], list(self.root.rglob("__pycache__")))
+        self.assertEqual(before, verify_extracted_tree(self.root))
 
     def test_production_rejects_unreleased_and_changed_bytes(self) -> None:
         self.assertNotEqual(0, self.run_validator(self.root).returncode)

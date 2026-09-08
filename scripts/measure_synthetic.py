@@ -14,6 +14,8 @@ from pathlib import Path
 from time import monotonic, perf_counter_ns
 from typing import Any, Callable
 
+# An extracted release is immutable; this CLI must not add __pycache__ files.
+sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "tests" / "synthetic-fixtures" / "alpha13"
 sys.path.insert(0, str(ROOT))

@@ -19,6 +19,8 @@ import tempfile
 from pathlib import Path
 from typing import Any, Callable
 
+# An extracted release is immutable; this CLI must not add __pycache__ files.
+sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from build_release import BuildError, build_release, verify_release_archive

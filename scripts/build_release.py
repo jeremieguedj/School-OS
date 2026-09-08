@@ -12,6 +12,8 @@ import sys
 import tarfile
 from pathlib import Path, PurePosixPath
 
+# An extracted release is immutable; this CLI must not add __pycache__ files.
+sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from school_os.package import (

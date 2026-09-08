@@ -9,6 +9,8 @@ import sys
 from pathlib import Path
 from typing import Any, Iterable
 
+# An extracted release is immutable; this CLI must not add __pycache__ files.
+sys.dont_write_bytecode = True
 from validate_instance import ContractError, load_manifest, validate
 from school_os.capabilities import CapabilityError, qualify_execution
 
