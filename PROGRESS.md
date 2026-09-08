@@ -679,3 +679,28 @@ requirements, then read this log from top to bottom.
   delivery, scheduler, or private instance was touched. Next: M2-007, compose
   the connected daily-run fixture from M1 installer output and actual verified
   predecessor artifacts, then prove substitution fails.
+
+## 2026-09-07 — alpha.13 M2-007 connected installed daily run
+
+- Completed M2-007 and Milestone 2. Added the connected source/fact fixture and
+  `tests/test_connected_daily_run.py`. It builds and extracts the exact HEAD
+  package, scaffolds the M1 candidate, then runs the scheduler-free manual
+  entrypoint through discovery, catalog, reconciliation, provider binding,
+  brief/delivery, final evidence, and last-written eligible cursors.
+- Every stage reads the verified predecessor artifact. The fixture records
+  expected SHA-256 values for all persisted connected artifacts; the catalog
+  retains exact source bytes, facts link to the generated record, task sync
+  creates and reads back one stable canonical binding, and the send sink records
+  exactly one confirmed delivery. A substitution of the persisted catalog
+  artifact blocks before task sync or delivery.
+- Focused connected tests passed 2 tests. The complete
+  `PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate.py` gate passed 115
+  tests, schema/template checks, and release-smoke validation. This is synthetic
+  behavioral evidence only; it does not establish Gmail, Todoist, Drive, or
+  scheduled-runtime conformance. No consultation, private-instance access, or
+  provider effect occurred.
+- Changed files: `tests/test_connected_daily_run.py`,
+  `tests/synthetic-fixtures/alpha13/connected-daily-run.json`, root `PLAN.md`,
+  and the alpha.13 plan/specification. Validation/publication is pending.
+  Exact next action: privacy-scan, commit/push/verify M2-007, then begin M3-001
+  recovery/admission and fresh-process checkpoint-chain work.

@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
-- Status: approved plan with linked implementation specification; M1 complete, M2 in progress
-- Revision: 11, updated 2026-09-07
+- Status: approved plan with linked implementation specification; M1–M2 complete, M3 in progress
+- Revision: 12, updated 2026-09-07
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -22,7 +22,7 @@ approach as implementation milestones with deliverables and completion checks.
 The linked [implementation specification](SPEC.md) grounds those milestones in
 the alpha.12 codebase and defines the implementation tasks, interfaces, state
 transitions, migrations, and behavioral checks. Implementation is in progress
-at M2-007 after completing M1-001 through M1-006 and M2-001–M2-006.
+at M3-001 after completing M1 through M2.
 Implementation is limited to this reusable repository. It does not activate a
 private instance or authorize private onboarding, import, delivery, release
 publication, or real runtime/provider effects.
@@ -553,7 +553,7 @@ this journey. Implement only the shared interfaces needed by the next milestone.
 
 ### Milestone 2 — Connect a complete normal operation
 
-**Status:** in progress (M2-001–M2-006 complete; M2-007 next).
+**Status:** complete (M2-001–M2-007 complete).
 
 **Work and deliverables:** Use the installed candidate to execute this sequence:
 
@@ -587,7 +587,7 @@ check but do not replace it.
 
 ### Milestone 3 — Prove recovery and safe repeated execution
 
-**Status:** pending.
+**Status:** in progress (M3-001 next).
 
 **Work and deliverables:** Extend the same scenario with focused failure cases.
 Restart in a fresh process and discard the simulated agent's local files while
@@ -707,3 +707,6 @@ evidence that does not need to be repeatedly printed into model context.
 - Revision 11: completed M2-006's provider-neutral adapter protocols and one
   shared manual/scheduled daily runner. Manual execution now qualifies without
   a scheduler; scheduled execution adds only its scheduler admission gate.
+- Revision 12: completed M2 with an installed synthetic manual daily journey.
+  Its persisted stage artifacts and recorded hashes are verified end-to-end;
+  catalog substitution blocks before later effects. M3 recovery proof is next.

@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation in progress; M1 and M2-001–M2-006 complete, M2-007 next
-- Approved plan: [PLAN.md](PLAN.md), revision 11
+- Status: implementation in progress; M1–M2 complete, M3-001 next
+- Approved plan: [PLAN.md](PLAN.md), revision 12
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
@@ -434,7 +434,7 @@ or any real provider is conformant.
 
 ## Milestone 2 — Connect a complete normal operation
 
-**Status:** in progress (M2-001–M2-006 complete; M2-007 next).
+**Status:** complete (M2-001–M2-007 complete).
 
 ### Deliverable
 
@@ -493,6 +493,14 @@ and adds scheduler admission only for a scheduled entrypoint. The thin Python
 `scripts/run_operation.py` is synthetic-only until a selected authenticated
 adapter host binds real stage callables; it makes no provider-effect claim.
 
+**M2-007 implementation note (2026-09-07):**
+`tests/test_connected_daily_run.py` builds/extracts the exact current package,
+scaffolds an M1 synthetic instance, and makes all seven manual stages consume
+the predecessor's read-back artifact. The synthetic fixture records verified
+hashes for discovery, catalog, Facts/knowledge/tasks, provider state, rendered
+briefs, delivery ledger, final evidence, and the last-written eligible cursors.
+Altering the catalog artifact between stages blocks before task sync or delivery.
+
 ### Milestone check
 
 M2 completes only after the connected test proves stage-to-stage custody. Unit
@@ -501,7 +509,7 @@ Gmail, Todoist, Drive, or a scheduled runtime conforms.
 
 ## Milestone 3 — Prove recovery and safe repeated execution
 
-**Status:** pending.
+**Status:** in progress (M3-001 next).
 
 ### Deliverable
 

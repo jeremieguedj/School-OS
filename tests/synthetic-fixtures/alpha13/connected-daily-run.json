@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "conversation": {
+    "schema_version": 1,
+    "adapter_id": "synthetic-mail-v1",
+    "conversation_id": "connected-conversation-001",
+    "scope": {"folder": "synthetic"},
+    "pagination": {"completed": true, "pages": ["page-1"]},
+    "messages": [
+      {
+        "message_id": "message-001",
+        "received_at": "2026-09-07T08:00:00-07:00",
+        "body": "Science observation completed.\nBring a coat when it rains.\nReturn the form.",
+        "attachments": []
+      }
+    ]
+  },
+  "facts": [
+    {"fact_id": "fact-update", "source_message_id": "message-001", "source_byte_start": 0, "source_byte_end": 30, "received_date": "2026-09-07", "entity_scope": "child_1", "category": "school", "text": "Science observation completed", "flags": {"is_update": true, "is_durable": false, "is_guideline": false, "is_action": false}},
+    {"fact_id": "fact-guideline", "source_message_id": "message-001", "source_byte_start": 31, "source_byte_end": 59, "received_date": "2026-09-07", "entity_scope": "child_1", "category": "school", "text": "Bring a coat when it rains", "flags": {"is_update": false, "is_durable": true, "is_guideline": true, "is_action": false}},
+    {"fact_id": "fact-action", "source_message_id": "message-001", "source_byte_start": 60, "source_byte_end": 76, "received_date": "2026-09-07", "entity_scope": "child_1", "category": "school", "text": "Return the form", "flags": {"is_update": false, "is_durable": false, "is_guideline": false, "is_action": true}}
+  ],
+  "expected_artifact_sha256": {
+    "brief_html": "5702c3d60cc32e2f54952f090802e695f0103a200f6e4aef0a392d1808bdf65b",
+    "brief_text": "0f5ab9522c35db44eeb27a8702c896fa9860a4b383449c69f61ca5dbc315af08",
+    "catalog": "e38a799e4bc65be10dfa202afcc26b5cd434463913e1d9dfa72604487d1a3682",
+    "cursors": "a9df70029a70e43b2b2e4a2853555ff77ecfded707b6c9e66741ba3199e11875",
+    "delivery_ledger": "e2cdb3d0387e824f2bda8403ec0c5b178ac6aa4a478cf41d286319667c920f74",
+    "discovery": "c58dad1e02c4b656de6192a112798195ea579234d667bfc28d33a8dc57d155cb",
+    "facts": "98c329ec54f203a52e32c224c02f14a1b6640bad18c190851270b97dabe9bfd0",
+    "final_evidence": "6bfe420a35a587f8a1343f5fbb417317218ddf37058c35a0709b5c874a2d4162",
+    "knowledge": "50ab599d07ffbc45bffcc777f8edf59acf09f7be697d369bdcab496662450d9c",
+    "provider_state": "9f1a12006548d8c3d75564c6224784295f6969587ae5ffaec0188a486014babb",
+    "tasks": "89ef765aaa6c462c00ff602f864eaaac77f770d5be8dca6d95fbc7aa8dc7affd"
+  }
+}
