@@ -1430,3 +1430,15 @@ requirements, then read this log from top to bottom.
   Next: commit, push, and verify M4-007; then implement M4-004's bounded
   synthetic measurement/checkpoint evidence while M4-008 awaits its reviewed
   isolated handoff and task-core consultation.
+
+## 2026-09-08 — alpha.13 M4-007 publication verification
+
+- Published the accepted semantic packet/audit boundary as
+  `581d09871f579ce85d0975c0062b710c2e70c1db` on `main`; `origin/main` was
+  read back at that exact commit. The checkpoint contains only generic code,
+  schemas, tests, and continuity records; no private source or provider data.
+- M4-007's reusable mechanical boundary is complete. Its authenticated live
+  invocation and independent private audit remain M4-003/M4-009 evidence. Next:
+  begin M4-004's bounded synthetic measurement/checkpoint work; do not alter
+  M4-008 shared task core while its consultation and isolated adapter handoff
+  remain in progress.
