@@ -13,6 +13,8 @@ sys.path.insert(0, str(ROOT))
 from school_os.operations import (  # noqa: E402
     OperationError,
     checkpoint_pointer,
+    discover_recovery_chain,
+    resume_from_chain,
     validate_checkpoint_chain,
     validate_operation_state,
     validate_transition,
@@ -181,6 +183,24 @@ class OperationStateTests(unittest.TestCase):
         terminal["checkpoint"] = checkpoint_pointer(checkpoint)
         with self.assertRaisesRegex(OperationError, "terminal state must clear"):
             validate_operation_state(terminal, self.state_schema)
+
+    def test_recovery_selects_one_longest_chain_and_requires_a_new_attempt(self) -> None:
+        first = self.checkpoint()
+        paused_checkpoint = self.checkpoint(sequence=1, predecessor=checkpoint_pointer(first))
+        paused = self.active_state(paused_checkpoint, "needs_continuation")
+        chain = discover_recovery_chain([first, paused_checkpoint], first["operation_id"], self.checkpoint_schema)
+        resumed = self.checkpoint(sequence=2, predecessor=checkpoint_pointer(paused_checkpoint), attempt_id="attempt-002")
+        resume_from_chain(paused, chain, resumed, state_schema=self.state_schema, checkpoint_schema=self.checkpoint_schema)
+        with self.assertRaisesRegex(OperationError, "new attempt_id"):
+            resume_from_chain(paused, chain, self.checkpoint(sequence=2, predecessor=checkpoint_pointer(paused_checkpoint)), state_schema=self.state_schema, checkpoint_schema=self.checkpoint_schema)
+
+    def test_ambiguous_longest_recovery_chain_blocks(self) -> None:
+        first = self.checkpoint()
+        left = self.checkpoint(sequence=1, predecessor=checkpoint_pointer(first))
+        right = copy.deepcopy(left)
+        right["checkpoint_id"] = "checkpoint-other"
+        with self.assertRaisesRegex(OperationError, "ambiguous"):
+            discover_recovery_chain([first, left, right], first["operation_id"], self.checkpoint_schema)
 
 
 if __name__ == "__main__":

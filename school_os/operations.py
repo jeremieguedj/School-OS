@@ -8,6 +8,7 @@ later M2 tasks, but they must use these same validation gates.
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from typing import Any
 
 from .contracts import canonical_json_bytes, sha256_bytes, validate
@@ -20,6 +21,18 @@ class OperationError(ValueError):
 ACTIVE_STATUSES = frozenset({"running", "needs_continuation", "blocked"})
 TERMINAL_STATUSES = frozenset({"complete", "cancelled"})
 PENDING_EFFECT_OUTCOMES = frozenset({"pending", "unknown"})
+
+
+@dataclass(frozen=True)
+class RecoveryChain:
+    """The one unambiguous, longest durable checkpoint chain for an operation."""
+
+    operation_id: str
+    checkpoints: tuple[dict[str, Any], ...]
+
+    @property
+    def tip(self) -> dict[str, Any]:
+        return self.checkpoints[-1]
 
 
 def checkpoint_sha256(checkpoint: Mapping[str, Any]) -> str:
@@ -86,6 +99,74 @@ def validate_checkpoint_chain(
             if checkpoint["predecessor"] != expected:
                 raise OperationError("checkpoint predecessor reference/hash does not match verified predecessor")
         previous = checkpoint
+
+
+def discover_recovery_chain(
+    checkpoints: Sequence[Mapping[str, Any]], operation_id: str, checkpoint_schema: Mapping[str, Any]
+) -> RecoveryChain:
+    """Select one valid longest chain or fail rather than guessing after a reset."""
+    candidates = [dict(item) for item in checkpoints if item.get("operation_id") == operation_id]
+    if not candidates:
+        raise OperationError("no checkpoint was found for the active operation")
+    by_pointer: dict[tuple[str, str], dict[str, Any]] = {}
+    successors: set[tuple[str, str]] = set()
+    for checkpoint in candidates:
+        validate_checkpoint(checkpoint, checkpoint_schema)
+        pointer = checkpoint_pointer(checkpoint)
+        key = (pointer["checkpoint_id"], pointer["sha256"])
+        if key in by_pointer:
+            raise OperationError("recovery checkpoint search found duplicate immutable pointers")
+        by_pointer[key] = checkpoint
+        predecessor = checkpoint["predecessor"]
+        if predecessor is not None:
+            successors.add((predecessor["checkpoint_id"], predecessor["sha256"]))
+    leaves = [pointer for pointer in by_pointer if pointer not in successors]
+    chains: list[list[dict[str, Any]]] = []
+    for leaf in leaves:
+        reversed_chain: list[dict[str, Any]] = []
+        pointer: tuple[str, str] | None = leaf
+        while pointer is not None:
+            checkpoint = by_pointer.get(pointer)
+            if checkpoint is None:
+                reversed_chain = []
+                break
+            reversed_chain.append(checkpoint)
+            predecessor = checkpoint["predecessor"]
+            pointer = None if predecessor is None else (predecessor["checkpoint_id"], predecessor["sha256"])
+        if reversed_chain:
+            chain = list(reversed(reversed_chain))
+            try:
+                validate_checkpoint_chain(chain, checkpoint_schema)
+            except OperationError:
+                continue
+            chains.append(chain)
+    if not chains:
+        raise OperationError("no valid immutable checkpoint chain was found")
+    longest = max(len(chain) for chain in chains)
+    winners = [chain for chain in chains if len(chain) == longest]
+    if len(winners) != 1:
+        raise OperationError("recovery checkpoint search is ambiguous at the longest chain")
+    return RecoveryChain(operation_id, tuple(winners[0]))
+
+
+def resume_from_chain(
+    state: Mapping[str, Any], chain: RecoveryChain, checkpoint: Mapping[str, Any], *,
+    state_schema: Mapping[str, Any], checkpoint_schema: Mapping[str, Any],
+) -> None:
+    """Validate that a new attempt resumes the selected durable chain exactly."""
+    validate_operation_state(state, state_schema)
+    if state["status"] not in {"needs_continuation", "blocked"}:
+        raise OperationError("only a paused or blocked operation may be resumed")
+    current = _require_mapping(state["current_operation"], "current_operation")
+    if current["operation_id"] != chain.operation_id:
+        raise OperationError("recovery chain does not match the active operation")
+    validate_checkpoint(checkpoint, checkpoint_schema)
+    if checkpoint["operation_id"] != chain.operation_id:
+        raise OperationError("resumed checkpoint must retain the active operation_id")
+    if checkpoint["attempt_id"] == current["attempt_id"]:
+        raise OperationError("resumption requires a new attempt_id")
+    if checkpoint["predecessor"] != checkpoint_pointer(chain.tip):
+        raise OperationError("resumed checkpoint must point to the recovered chain tip")
 
 
 def _validate_state_shape(state: Mapping[str, Any]) -> None:

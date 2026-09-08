@@ -715,3 +715,20 @@ requirements, then read this log from top to bottom.
   M3-001, add durable recovery/admission behavior to the operation and daily
   entrypoint, then prove a fresh process resumes one operation ID with a new
   attempt after local-work loss.
+
+## 2026-09-07 — alpha.13 M3-001 durable admission and fresh-process recovery
+
+- Completed M3-001. Added immutable longest-chain discovery with ambiguity
+  blocking and resumption validation that retains one operation ID, requires a
+  new attempt ID, and points exactly to the recovered chain tip. The daily
+  runner now returns `NEEDS_CONTINUATION` at a verified planned boundary and
+  resumes only from supplied durable predecessor output.
+- Added focused state/runner tests and a new-process harness that deletes local
+  output before resuming the same operation at the next phase. Focused tests
+  passed 13 tests; the full validation gate passed 119 tests, schema/template
+  checks, and release-smoke validation. No private or provider effect occurred.
+- Changed files: `school_os/operations.py`, `school_os/daily.py`,
+  `tests/test_operation_state.py`, `tests/test_daily_runner.py`,
+  `tests/test_fresh_process_recovery.py`, root `PLAN.md`, and alpha.13 plan/spec.
+  Validation/publication pending. Exact next action: privacy-scan, commit/push/
+  verify M3-001, then implement M3-002 catalog/index write-fault recovery.

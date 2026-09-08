@@ -28,4 +28,10 @@ class DailyRunnerTests(unittest.TestCase):
   with self.assertRaisesRegex(DailyError,'not verified: catalog'):run_daily(profile=self.profile('manual'),capability_schema=self.schema,entrypoint='manual',operation_id='daily-001',attempt_id='attempt-001',stages=stages)
   del stages['catalog']
   with self.assertRaisesRegex(DailyError,'missing required daily phase: catalog'):run_daily(profile=self.profile('manual'),capability_schema=self.schema,entrypoint='manual',operation_id='daily-001',attempt_id='attempt-001',stages=stages)
+ def test_planned_pause_and_resumption_use_durable_predecessor_output(self):
+  stages,seen=self.stages(); checkpoints=[]
+  paused=run_daily(profile=self.profile('manual'),capability_schema=self.schema,entrypoint='manual',operation_id='daily-001',attempt_id='attempt-001',stages=stages,stop_after='catalog',checkpoint=lambda phase,result,outcome: checkpoints.append((phase,result)) or f'checkpoint-{phase}')
+  self.assertEqual('NEEDS_CONTINUATION',paused.outcome);self.assertEqual('catalog',paused.current_phase);self.assertEqual('checkpoint-catalog',paused.checkpoint_reference)
+  resumed=run_daily(profile=self.profile('manual'),capability_schema=self.schema,entrypoint='manual',operation_id='daily-001',attempt_id='attempt-002',stages=stages,resume_after='catalog',durable_predecessor_output=checkpoints[-1][1])
+  self.assertEqual('COMPLETE',resumed.outcome);self.assertEqual('reconcile',seen[-4][0])
 if __name__=='__main__':unittest.main()

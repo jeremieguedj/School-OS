@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation in progress; M1–M2 complete, M3-001 next
-- Approved plan: [PLAN.md](PLAN.md), revision 12
+- Status: implementation in progress; M1–M2 and M3-001 complete, M3-002 next
+- Approved plan: [PLAN.md](PLAN.md), revision 13
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
@@ -509,7 +509,7 @@ Gmail, Todoist, Drive, or a scheduled runtime conforms.
 
 ## Milestone 3 — Prove recovery and safe repeated execution
 
-**Status:** in progress (M3-001 next).
+**Status:** in progress (M3-001 complete; M3-002 next).
 
 ### Deliverable
 
@@ -528,6 +528,13 @@ catalog history, tasks, comments, or delivery.
 | M3-004 | M3-001 | Add lost-send response, Sent lookup, delivery-ledger, correction variant, and duplicate-entrypoint cases. | Interruption after accepted send yields one delivery after recovery; unchanged replay and overlapping manual/scheduled admission do not send again; an inconclusive Sent lookup blocks; an authorized correction uses a distinct key. |
 | M3-005 | M3-002–M3-004 | Add release/configuration fingerprint change, stale-auth, capacity reduction, minimum-unit non-progress, cancellation, and terminal-state tests. | Compatible resumption continues; material configuration/release change requires reconciliation; oversized source is never truncated; pending unknown effects prevent cancel/complete. |
 | M3-006 | M3-005 | Update recipes/contracts/tests README with the proven transition and recovery behavior; record compact expected evidence. | A clean full suite demonstrates all M3 interruption points and verifies durable state after each fresh-process restart. |
+
+**M3-001 implementation note (2026-09-07):** `school_os.operations`
+discovers one valid longest immutable checkpoint chain and rejects ambiguity;
+resumption requires the same operation ID, a new attempt ID, and an exact
+predecessor pointer. `school_os.daily` can checkpoint a planned boundary as
+`NEEDS_CONTINUATION` and resume after a durable predecessor output. A new Python
+process completes after discardable local output is deleted.
 
 ### Required behavioral matrix
 
