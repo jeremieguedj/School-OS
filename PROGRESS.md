@@ -966,3 +966,23 @@ requirements, then read this log from top to bottom.
   surfaces. M4-004–M4-006 remain dependency-blocked. Exact next action: obtain
   that access/authorization, run no-write capability probes first, and record
   private surface-specific evidence before any separately authorized mutation.
+
+## 2026-09-08 — alpha.13 private-instance upgrade preflight blocker
+
+- Under explicit user authorization, completed a read-only inventory of the
+  existing private Drive installation. It reports release `0.1.0-alpha.11` and
+  data schema version `1`; no private catalog, message body, configuration
+  secret, provider object, scheduler, or file bytes were changed.
+- M4-002 intentionally implements only the declared alpha.12-to-alpha.13
+  structured-state migration. The observed alpha.11 instance is therefore an
+  unsupported predecessor for a direct alpha.13 upgrade. Existing private
+  backup history was observed but not relied upon as a substitute for a
+  supported migration input.
+- This is a compatibility/design decision rather than a routine coding error.
+  Per the alpha.13 execution policy, implementation and any private-instance
+  write are paused while a bounded GPT-5.6 Sol High read-only consultation
+  evaluates whether the approved plan already supplies a safe supported path
+  or requires a new user-approved migration scope.
+- Next: record the consultation finding in the alpha.13 specification and
+  release plan as appropriate; do not modify the private instance unless a
+  supported, approved path is established.
