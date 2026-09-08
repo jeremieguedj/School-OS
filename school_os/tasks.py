@@ -98,13 +98,20 @@ def _task_from_fact(fact: Mapping[str, Any]) -> dict[str, Any]:
         "action": fact["text"], "task_context": fact["category"],
         "entity_scope": fact["entity_scope"], "source_due": fact.get("source_due"),
     }
+    source_opening = {
+        "fact_id": fact["fact_id"], "received_date": fact["received_date"],
+        "source_order": list(_source_order(fact)), "projection": source_projection,
+    }
     return {
         "task_id": canonical_task_id(fact["fact_id"]), "origin": "source", "action": fact["text"],
         "task_context": fact["category"], "entity_scope": fact["entity_scope"], "workflow_state": "needs_action",
         "owner": None, "source_opened_date": fact["received_date"], "last_supporting_source_date": fact["received_date"],
         "source_due": fact.get("source_due"), "parent_planned_due": None, "source_link": f"{fact['record_id']}#{fact['fact_id']}",
         "source_facts": [fact["fact_id"]], "latest_progress": None, "provider_bindings": [], "lifecycle_history": [],
-        "projection_state": {"resolution": "unresolved", "source_projection": source_projection},
+        "projection_state": {
+            "resolution": "unresolved", "source_projection": source_projection,
+            "source_opening": source_opening, "source_relation_evidence": [],
+        },
         "resolution": "unresolved", "revision": 1, "last_modified_evidence": {},
     }
 
@@ -115,6 +122,7 @@ def _source_order(fact: Mapping[str, Any]) -> tuple[Any, ...]:
         fact.get("source_received_at") or fact["received_date"],
         fact["record_id"],
         fact.get("source_message_ordinal", 0),
+        fact["source_message_id"],
         fact.get("source_content_ordinal", 0),
         fact["source_byte_start"],
         fact["fact_id"],
@@ -161,82 +169,169 @@ def _mark_changed(task: dict[str, Any], before: Mapping[str, Any], evidence: Map
         }
 
 
-def _apply_source_facts(
-    task: dict[str, Any], opening: Mapping[str, Any], relations: Sequence[Mapping[str, Any]]
-) -> None:
-    """Apply the current ordered source view without replaying old corrections over parents."""
-    prior_fact_ids = set(task.get("source_facts", []))
-    initial = {
-        "action": opening["text"], "task_context": opening["category"],
-        "entity_scope": opening["entity_scope"], "source_due": opening.get("source_due"),
+def _source_relation_evidence(fact: Mapping[str, Any]) -> dict[str, Any]:
+    relation = fact["task_relation"]
+    return {
+        "fact_id": fact["fact_id"], "received_date": fact["received_date"],
+        "source_order": list(_source_order(fact)), "relation": relation["relation"],
+        "changed_source_fields": deepcopy(dict(relation["changed_source_fields"])),
     }
-    old_source = dict(task.get("projection_state", {}).get("source_projection", {}))
+
+
+def _apply_source_facts(
+    task: dict[str, Any], opening: Mapping[str, Any] | None,
+    relations: Sequence[Mapping[str, Any]],
+) -> None:
+    """Merge incremental source evidence using its durable source projection as base."""
+    if task["origin"] != "source":
+        raise TaskError("source relation cannot target a parent-origin task")
+    state = deepcopy(dict(task.get("projection_state", {})))
+    source_fields = ("action", "task_context", "entity_scope", "source_due")
+    old_source = dict(state.get("source_projection", {}))
     if not old_source:
-        old_source = dict(initial)
-        for fact in relations:
-            if fact["fact_id"] in prior_fact_ids:
-                old_source.update(fact["task_relation"]["changed_source_fields"])
-    desired = dict(initial)
-    resolution = "unresolved"
+        old_source = {field: task.get(field) for field in source_fields}
+
+    stored_opening = deepcopy(state.get("source_opening"))
+    if opening is not None:
+        initial = {
+            "action": opening["text"], "task_context": opening["category"],
+            "entity_scope": opening["entity_scope"], "source_due": opening.get("source_due"),
+        }
+        incoming_opening = {
+            "fact_id": opening["fact_id"], "received_date": opening["received_date"],
+            "source_order": list(_source_order(opening)), "projection": initial,
+        }
+        if stored_opening is not None:
+            if stored_opening.get("legacy_history_floor"):
+                if stored_opening.get("fact_id") != incoming_opening["fact_id"]:
+                    raise TaskError("opening source Fact conflicts with durable task evidence")
+                if not stored_opening.get("source_order"):
+                    stored_opening.update({
+                        "received_date": incoming_opening["received_date"],
+                        "source_order": incoming_opening["source_order"],
+                    })
+            elif any(stored_opening.get(key) != value for key, value in incoming_opening.items()):
+                raise TaskError("opening source Fact conflicts with durable task evidence")
+        if stored_opening is None:
+            if set(task.get("source_facts", [])) - {opening["fact_id"]}:
+                stored_opening = {
+                    **incoming_opening, "projection": deepcopy(old_source),
+                    "legacy_history_floor": True,
+                }
+            else:
+                stored_opening = incoming_opening
+    if stored_opening is None:
+        if not task.get("source_facts"):
+            raise TaskError("existing source task lacks opening Fact identity")
+        stored_opening = {
+            "fact_id": task["source_facts"][0],
+            "received_date": task.get("source_opened_date"),
+            "source_order": [], "projection": deepcopy(old_source),
+            "legacy_history_floor": True,
+        }
+
+    persisted: dict[str, dict[str, Any]] = {}
+    for evidence in state.get("source_relation_evidence", []):
+        if not isinstance(evidence, Mapping) or not isinstance(evidence.get("fact_id"), str):
+            raise TaskError("canonical task has invalid durable source relation evidence")
+        fact_id = evidence["fact_id"]
+        candidate = deepcopy(dict(evidence))
+        if fact_id in persisted and persisted[fact_id] != candidate:
+            raise TaskError("canonical task has conflicting durable source relation evidence")
+        persisted[fact_id] = candidate
+    incoming_ids: set[str] = set()
+    for fact in relations:
+        evidence = _source_relation_evidence(fact)
+        fact_id = evidence["fact_id"]
+        incoming_ids.add(fact_id)
+        if fact_id in persisted and persisted[fact_id] != evidence:
+            raise TaskError("source relation Fact conflicts with durable task evidence")
+        persisted[fact_id] = evidence
+    ordered_evidence = sorted(persisted.values(), key=lambda value: tuple(value["source_order"]))
+
+    desired = deepcopy(dict(stored_opening["projection"]))
     coordinate_changes: dict[tuple[Any, ...], dict[str, Any]] = {}
     coordinate_lifecycle: dict[tuple[Any, ...], str] = {}
-    for fact in relations:
-        changed = dict(fact["task_relation"]["changed_source_fields"])
-        coordinate = _source_coordinate(fact)
+    for evidence in ordered_evidence:
+        source_order = evidence.get("source_order")
+        changed = evidence.get("changed_source_fields")
+        relation = evidence.get("relation")
+        if (
+            not isinstance(source_order, list) or len(source_order) != 7
+            or not isinstance(changed, Mapping)
+            or relation not in {"support", "correction", "completion", "reopen"}
+        ):
+            raise TaskError("canonical task has invalid durable source relation evidence")
+        coordinate = tuple(source_order[:-1])
         prior_at_coordinate = coordinate_changes.setdefault(coordinate, {})
         for field, value in changed.items():
+            if field not in source_fields:
+                raise TaskError("source relation changes an unsupported task field")
             if field in prior_at_coordinate and prior_at_coordinate[field] != value:
                 raise TaskError("conflicting source relations share one source coordinate")
             prior_at_coordinate[field] = value
-        desired.update(changed)
-        relation = fact["task_relation"]["relation"]
         if relation in {"completion", "reopen"}:
             prior_relation = coordinate_lifecycle.get(coordinate)
             if prior_relation is not None and prior_relation != relation:
                 raise TaskError("conflicting lifecycle relations share one source coordinate")
             coordinate_lifecycle[coordinate] = relation
-        if relation == "completion":
-            resolution = "completed"
-        elif relation == "reopen":
-            resolution = "unresolved"
+        desired.update(changed)
 
-    for field, value in desired.items():
-        if old_source.get(field) != value:
-            task[field] = value
-    task["projection_state"] = {
-        **task.get("projection_state", {}), "source_projection": desired
-    }
-    task["source_facts"] = list(dict.fromkeys(
-        [opening["fact_id"], *(fact["fact_id"] for fact in relations)]
-    ))
-    dates = [opening["received_date"], *(fact["received_date"] for fact in relations)]
-    task["last_supporting_source_date"] = max(dates)
+    conflicts = []
+    replacements: dict[str, Any] = {}
+    for field in source_fields:
+        base, canonical, source = old_source.get(field), task.get(field), desired.get(field)
+        if source == base:
+            continue
+        if canonical == base or canonical == source:
+            replacements[field] = source
+        else:
+            conflicts.append(field)
+    if conflicts:
+        raise TaskError(
+            "divergent source and parent task changes require review: " + ", ".join(conflicts)
+        )
+    task.update(replacements)
+    state.update({
+        "source_projection": desired, "source_opening": stored_opening,
+        "source_relation_evidence": ordered_evidence,
+    })
+    task["projection_state"] = state
 
-    prior_source_event_ids = {
-        event.get("event_id") for event in task.get("lifecycle_history", [])
-        if event.get("kind") in {"source_completion", "source_reopen"}
-    }
-    source_events: list[dict[str, Any]] = []
-    for fact in relations:
-        relation = fact["task_relation"]["relation"]
+    fact_ids = list(task.get("source_facts", []))
+    if stored_opening["fact_id"] not in fact_ids:
+        fact_ids.insert(0, stored_opening["fact_id"])
+    for evidence in ordered_evidence:
+        if evidence["fact_id"] not in fact_ids:
+            fact_ids.append(evidence["fact_id"])
+    task["source_facts"] = fact_ids
+    dates = [task.get("last_supporting_source_date"), stored_opening.get("received_date")]
+    dates.extend(evidence["received_date"] for evidence in ordered_evidence)
+    task["last_supporting_source_date"] = max(value for value in dates if value is not None)
+
+    prior_event_ids = {event.get("event_id") for event in task.get("lifecycle_history", [])}
+    new_lifecycle = False
+    latest_source_resolution: str | None = None
+    for evidence in ordered_evidence:
+        relation = evidence["relation"]
         if relation not in {"completion", "reopen"}:
             continue
+        latest_source_resolution = "completed" if relation == "completion" else "unresolved"
         event_id = "event-" + sha256_bytes(
-            (relation + "\0" + task["task_id"] + "\0" + fact["fact_id"]).encode("utf-8")
+            (relation + "\0" + task["task_id"] + "\0" + evidence["fact_id"]).encode("utf-8")
         )
-        source_events.append({
+        if event_id in prior_event_ids:
+            continue
+        task["lifecycle_history"] = [*task.get("lifecycle_history", []), {
             "event_id": event_id, "kind": "source_" + relation,
-            "fact_id": fact["fact_id"], "received_date": fact["received_date"],
-            "changed_source_fields": dict(fact["task_relation"]["changed_source_fields"]),
-            "source_order": list(_source_order(fact)),
-        })
-    non_source_events = [
-        deepcopy(event) for event in task.get("lifecycle_history", [])
-        if event.get("kind") not in {"source_completion", "source_reopen"}
-    ]
-    task["lifecycle_history"] = [*source_events, *non_source_events]
-    if not non_source_events or any(event["event_id"] not in prior_source_event_ids for event in source_events):
-        _set_resolution(task, resolution)
+            "fact_id": evidence["fact_id"], "received_date": evidence["received_date"],
+            "changed_source_fields": deepcopy(dict(evidence["changed_source_fields"])),
+            "source_order": deepcopy(evidence["source_order"]),
+        }]
+        prior_event_ids.add(event_id)
+        new_lifecycle = new_lifecycle or evidence["fact_id"] in incoming_ids
+    if new_lifecycle and latest_source_resolution is not None:
+        _set_resolution(task, latest_source_resolution)
 
 
 def build_derived_knowledge(facts: Sequence[Mapping[str, Any]], *, fact_schema: Mapping[str, Any], task_schema: Mapping[str, Any]) -> dict[str, Any]:
@@ -279,20 +374,21 @@ def reconcile_canonical_tasks(existing: Mapping[str, Any], facts: Sequence[Mappi
         relation = fact.get("task_relation")
         if relation:
             target = relation["target_task_id"]
-            if target not in openings:
+            if target not in openings and target not in existing_by_id:
                 raise TaskError("source relation has an unknown target task ID")
-            relations[target].append(fact)
-    for task_id, opening in openings.items():
+            relations.setdefault(target, []).append(fact)
+    for task_id in sorted(set(openings) | set(relations)):
+        opening = openings.get(task_id)
         if task_id not in existing_by_id:
+            if opening is None:
+                raise TaskError("source relation has an unknown target task ID")
             task = _task_from_fact(opening)
             _apply_source_facts(task, opening, relations[task_id])
             existing_by_id[task_id] = task
             continue
         task = existing_by_id[task_id]
-        if task["origin"] != "source":
-            raise TaskError("source relation cannot target a parent-origin task")
         before = deepcopy(task)
-        _apply_source_facts(task, opening, relations[task_id])
+        _apply_source_facts(task, opening, relations.get(task_id, []))
         _mark_changed(task, before, {"kind": "source_reconciliation", "source_fact_count": len(task["source_facts"])})
     result = {"schema_version": 1, "tasks": [existing_by_id[key] for key in sorted(existing_by_id)]}
     _validate_task_bindings(result["tasks"])
@@ -353,6 +449,32 @@ def _validate_task_bindings(tasks: Sequence[Mapping[str, Any]]) -> None:
 
 def _projection_hash(projection: Mapping[str, Any]) -> str:
     return sha256_bytes(canonical_json_bytes(dict(projection)))
+
+
+def _create_effect_id(task_id: str, projection_sha256: str) -> str:
+    return "effect-" + sha256_bytes(
+        f"task-create\0{task_id}\0{projection_sha256}".encode("utf-8")
+    )
+
+
+def _create_recovery_outcome(
+    provider: TaskProviderPort, intent: Mapping[str, Any]
+) -> tuple[str, dict[str, Any]]:
+    reconcile = getattr(provider, "reconcile_create_intent", None)
+    if reconcile is None:
+        return "unknown", {}
+    result = reconcile(deepcopy(dict(intent)))
+    if isinstance(result, Mapping):
+        outcome = result.get("outcome")
+        verification = result.get("verification", {})
+    else:
+        outcome = getattr(result, "outcome", None)
+        verification = getattr(result, "verification", {})
+    if outcome not in {"confirmed", "definitely_not_applied", "unknown"}:
+        raise TaskError("task create recovery returned an invalid effect outcome")
+    if not isinstance(verification, Mapping):
+        raise TaskError("task create recovery lacks structured verification evidence")
+    return outcome, deepcopy(dict(verification))
 
 
 def recover_task_comment(provider: TaskProviderPort, provider_object_id: str, effect_id: str, text: str) -> Mapping[str, Any]:
@@ -422,6 +544,14 @@ def reconcile_provider_tasks(
     effect_intents = {item["effect_id"]: deepcopy(dict(item)) for item in input_state["effect_intents"]}
     if len(effect_intents) != len(input_state["effect_intents"]):
         raise TaskError("duplicate task effect intent")
+    create_intents = {
+        item["task_id"]: item for item in effect_intents.values()
+        if item["kind"] == "task_create"
+    }
+    if len(create_intents) != sum(
+        item["kind"] == "task_create" for item in effect_intents.values()
+    ):
+        raise TaskError("duplicate task create intent")
 
     # Either half of an interrupted canonical-task/claim-intent checkpoint can
     # reconstruct the other from immutable admission evidence before mutation.
@@ -550,6 +680,8 @@ def reconcile_provider_tasks(
     # Recover each previously journaled completion-policy effect in exact order.
     for effect_id in list(effect_intents):
         intent = effect_intents[effect_id]
+        if intent["kind"] == "task_create":
+            continue
         task_id, object_id = intent["task_id"], intent["provider_object_id"]
         if task_id not in tasks or by_canonical.get(task_id, {}).get("provider_object_id") != object_id:
             raise TaskError("task effect intent does not resolve its canonical provider object")
@@ -574,6 +706,7 @@ def reconcile_provider_tasks(
         effect_intents.pop(effect_id)
 
     bindings: list[dict[str, Any]] = []
+    provider_effect_blocked = False
     for task_id in sorted(tasks):
         if task_id in pending:
             continue
@@ -584,15 +717,93 @@ def reconcile_provider_tasks(
         current = by_canonical.get(task_id)
         conflicts: set[str] = set()
         intent = {"task_id": task_id, "projection_sha256": _projection_hash(projection)}
+        if provider_effect_blocked:
+            continue
         if current is None:
             if any(binding.get("provider_id") == provider_id for binding in task["provider_bindings"]):
                 raise TaskError("durably bound provider task is absent from the complete snapshot")
             if _resolution(task) == "completed":
                 _mark_changed(task, before, {"kind": "provider_reconciliation", "provider_id": provider_id})
                 continue
-            current = dict(provider.create_task(create_projection(task)))
+            create_intent = create_intents.get(task_id)
+            if create_intent is None:
+                effect_id = _create_effect_id(task_id, intent["projection_sha256"])
+                create_intent = {
+                    "effect_id": effect_id, "kind": "task_create", "task_id": task_id,
+                    "projection_sha256": intent["projection_sha256"],
+                    "projection": deepcopy(projection), "outcome": "pending", "verification": {},
+                }
+                effect_intents[effect_id] = create_intent
+                create_intents[task_id] = create_intent
+                effects.append({"kind": "create_intent", "intent": deepcopy(create_intent), "outcome": "journaled"})
+                continue
+            if (
+                create_intent["projection_sha256"] != intent["projection_sha256"]
+                or create_intent["projection"] != projection
+            ):
+                raise TaskError("task create intent no longer matches the canonical projection")
+            if create_intent["outcome"] == "unknown":
+                outcome, verification = _create_recovery_outcome(provider, create_intent)
+                if outcome != "definitely_not_applied":
+                    raise TaskError("task create outcome remains unknown after a zero-match lookup")
+                create_intent["outcome"] = "definitely_not_applied"
+                create_intent["verification"] = verification
+            try:
+                created = provider.create_task(create_projection(task))
+            except Exception as exc:
+                create_intent["outcome"] = "unknown"
+                create_intent["verification"] = {"exception_type": type(exc).__name__}
+                effects.append({
+                    "kind": "create", "intent": deepcopy(create_intent),
+                    "outcome": "unknown", "provider_object_id": None,
+                })
+                provider_effect_blocked = True
+                continue
+            if isinstance(created, Mapping):
+                current = dict(created)
+            else:
+                outcome = getattr(created, "outcome", None)
+                verification = getattr(created, "verification", {})
+                identity = getattr(created, "identity", None)
+                if outcome == "unknown":
+                    create_intent["outcome"] = "unknown"
+                    create_intent["verification"] = deepcopy(dict(verification))
+                    effects.append({
+                        "kind": "create", "intent": deepcopy(create_intent),
+                        "outcome": "unknown", "provider_object_id": identity,
+                    })
+                    provider_effect_blocked = True
+                    continue
+                if outcome == "definitely_not_applied":
+                    create_intent["outcome"] = "definitely_not_applied"
+                    create_intent["verification"] = deepcopy(dict(verification))
+                    effects.append({
+                        "kind": "create", "intent": deepcopy(create_intent),
+                        "outcome": "definitely_not_applied", "provider_object_id": None,
+                    })
+                    continue
+                if outcome != "confirmed" or not isinstance(identity, str) or not identity:
+                    raise TaskError("task create returned an invalid effect result")
+                exact_created = provider.read_task(identity)
+                if exact_created is None:
+                    raise TaskError("confirmed task create lacks exact provider readback")
+                current = dict(exact_created)
             effect_kind = "create"
         else:
+            create_intent = create_intents.get(task_id)
+            canonical_binding = next(
+                (binding for binding in task["provider_bindings"] if binding.get("provider_id") == provider_id),
+                None,
+            )
+            if create_intent is not None:
+                if (
+                    create_intent["projection_sha256"] != intent["projection_sha256"]
+                    or create_intent["projection"] != projection
+                    or any(current.get(key) != value for key, value in projection.items())
+                ):
+                    raise TaskError("task create recovery found a conflicting provider match")
+            elif not previous.get(task_id) and canonical_binding is None:
+                raise TaskError("unbound managed provider task lacks a durable create intent")
             prior_binding = previous.get(task_id)
             prior_managed = dict(prior_binding.get("last_managed_projection", {})) if prior_binding else {}
             if prior_binding:
@@ -705,6 +916,9 @@ def reconcile_provider_tasks(
             _set_resolution(task, "unresolved")
         task["projection_state"] = {**task["projection_state"], "provider_status": status if status_present else None}
         _bind(task, provider_id, object_id)
+        create_intent = create_intents.pop(task_id, None)
+        if create_intent is not None:
+            effect_intents.pop(create_intent["effect_id"], None)
         next_snapshot = _parent_snapshot(actual)
         for field in conflicts:
             if field in prior:

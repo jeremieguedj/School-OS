@@ -66,4 +66,32 @@ class TaskTests(unittest.TestCase):
   a={**base,"fact_id":"fact-a","text":"Friday","task_relation":{"target_task_id":task_id,"relation":"correction","changed_source_fields":{"source_due":"2026-09-11"}}};b={**base,"fact_id":"fact-b","text":"Monday","task_relation":{"target_task_id":task_id,"relation":"correction","changed_source_fields":{"source_due":"2026-09-14"}}}
   with self.assertRaisesRegex(TaskError,"source coordinate"):
    reconcile_canonical_tasks({"schema_version":1,"tasks":[]},[opening,a,b],fact_schema=self.fact,task_schema=self.task,register_schema=self.register)
+ def test_incremental_relations_merge_without_resending_opening_or_losing_history(self):
+  opening=self.facts()[0];task_id=canonical_task_id(opening["fact_id"]);flags={"is_update":False,"is_durable":False,"is_guideline":False,"is_action":False}
+  def relation(fact_id,date,kind,fields=None):
+   return {"fact_id":fact_id,"record_id":"record-2","source_message_id":"message-2","source_byte_start":0,"source_byte_end":3,"received_date":date,"entity_scope":"household","category":"school","text":kind,"flags":flags,"task_relation":{"target_task_id":task_id,"relation":kind,"changed_source_fields":fields or {}}}
+  opened=reconcile_canonical_tasks({"schema_version":1,"tasks":[]},[opening],fact_schema=self.fact,task_schema=self.task,register_schema=self.register)
+  corrected=reconcile_canonical_tasks(opened,[relation("fact-correction","2026-09-08","correction",{"source_due":"2026-09-12"})],fact_schema=self.fact,task_schema=self.task,register_schema=self.register)
+  completed=reconcile_canonical_tasks(corrected,[relation("fact-completion","2026-09-10","completion")],fact_schema=self.fact,task_schema=self.task,register_schema=self.register)
+  replayed=reconcile_canonical_tasks(completed,[opening],fact_schema=self.fact,task_schema=self.task,register_schema=self.register)
+  task=replayed["tasks"][0]
+  self.assertEqual("2026-09-12",task["source_due"]);self.assertEqual("2026-09-10",task["last_supporting_source_date"]);self.assertEqual("completed",task["resolution"])
+  self.assertEqual(["fact-action","fact-correction","fact-completion"],task["source_facts"]);self.assertEqual(["source_completion"],[event["kind"] for event in task["lifecycle_history"]])
+ def test_late_older_source_lifecycle_evidence_does_not_reverse_newer_chronology(self):
+  opening=self.facts()[0];task_id=canonical_task_id(opening["fact_id"]);flags={"is_update":False,"is_durable":False,"is_guideline":False,"is_action":False}
+  def relation(fact_id,date,kind):
+   return {"fact_id":fact_id,"record_id":"record-2","source_message_id":"message-2","source_byte_start":0,"source_byte_end":3,"received_date":date,"entity_scope":"household","category":"school","text":kind,"flags":flags,"task_relation":{"target_task_id":task_id,"relation":kind,"changed_source_fields":{}}}
+  opened=reconcile_canonical_tasks({"schema_version":1,"tasks":[]},[opening],fact_schema=self.fact,task_schema=self.task,register_schema=self.register)
+  reopened=reconcile_canonical_tasks(opened,[relation("fact-reopen","2026-09-11","reopen")],fact_schema=self.fact,task_schema=self.task,register_schema=self.register)
+  late_older=reconcile_canonical_tasks(reopened,[relation("fact-completion","2026-09-10","completion")],fact_schema=self.fact,task_schema=self.task,register_schema=self.register)
+  self.assertEqual("unresolved",late_older["tasks"][0]["resolution"]);self.assertEqual("2026-09-11",late_older["tasks"][0]["last_supporting_source_date"])
+  self.assertEqual({"fact-reopen","fact-completion"},{event["fact_id"] for event in late_older["tasks"][0]["lifecycle_history"]})
+ def test_divergent_source_and_accepted_parent_action_blocks_before_overwrite(self):
+  opening=self.facts()[0];task_id=canonical_task_id(opening["fact_id"])
+  register=reconcile_canonical_tasks({"schema_version":1,"tasks":[]},[opening],fact_schema=self.fact,task_schema=self.task,register_schema=self.register)
+  register["tasks"][0]["action"]="Parent wording"
+  correction={"fact_id":"fact-correction","record_id":"record-2","source_message_id":"message-2","source_byte_start":0,"source_byte_end":3,"received_date":"2026-09-08","entity_scope":"household","category":"school","text":"Source wording","flags":{"is_update":False,"is_durable":False,"is_guideline":False,"is_action":False},"task_relation":{"target_task_id":task_id,"relation":"correction","changed_source_fields":{"action":"Source wording"}}}
+  with self.assertRaisesRegex(TaskError,"divergent source and parent.*action"):
+   reconcile_canonical_tasks(register,[correction],fact_schema=self.fact,task_schema=self.task,register_schema=self.register)
+  self.assertEqual("Parent wording",register["tasks"][0]["action"]);self.assertEqual("Return the form",register["tasks"][0]["projection_state"]["source_projection"]["action"])
 if __name__=='__main__': unittest.main()

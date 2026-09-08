@@ -4,20 +4,26 @@ import sys
 import unittest
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]; sys.path.insert(0,str(ROOT))
-from school_os.tasks import TaskError, recover_task_comment, reconcile_provider_tasks  # noqa: E402
+from school_os.tasks import TaskError, canonical_task_id, reconcile_canonical_tasks, recover_task_comment, reconcile_provider_tasks  # noqa: E402
 from tests.support.fakes import FixtureTasks  # noqa: E402
 
 class ProviderReconciliationTests(unittest.TestCase):
  @classmethod
  def setUpClass(cls):
-  cls.task_schema=json.loads((ROOT/'schemas/task.schema.json').read_text()); cls.register_schema=json.loads((ROOT/'schemas/canonical-tasks.schema.json').read_text()); cls.state_schema=json.loads((ROOT/'schemas/provider-state.schema.json').read_text())
+  cls.task_schema=json.loads((ROOT/'schemas/task.schema.json').read_text()); cls.register_schema=json.loads((ROOT/'schemas/canonical-tasks.schema.json').read_text()); cls.state_schema=json.loads((ROOT/'schemas/provider-state.schema.json').read_text());cls.fact_schema=json.loads((ROOT/'schemas/fact.schema.json').read_text())
  def task(self):
   return {"task_id":"task-1","origin":"source","action":"Return form","task_context":"school","entity_scope":"household","workflow_state":"needs_action","owner":None,"source_opened_date":"2026-09-07","last_supporting_source_date":"2026-09-07","source_due":None,"parent_planned_due":None,"source_link":"record-1#fact-1","source_facts":["fact-1"],"latest_progress":None,"provider_bindings":[],"lifecycle_history":[],"projection_state":{},"revision":1,"last_modified_evidence":{}}
  def state(self): return {"provider_id":"synthetic","adapter_id":"synthetic-tasks","provider_revision":None,"bindings":[],"cursor":None,"cursor_evidence":{},"verified_readback":{}}
+ def sync(self,provider,register,state):
+  return reconcile_provider_tasks(provider,register,state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+ def create_and_sync(self,provider,register,state=None):
+  intent=self.sync(provider,register,state or self.state())
+  self.assertEqual("create_intent",intent.effects[0]["kind"]);self.assertEqual([],provider.tasks)
+  return self.sync(provider,intent.tasks,intent.provider_state)
  def test_pull_first_create_readback_and_binding_preserves_provider_fields(self):
   provider=FixtureTasks(); register={"schema_version":1,"tasks":[self.task()]}
-  result=reconcile_provider_tasks(provider,register,self.state(),task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
-  self.assertEqual(["list","create","read"],provider.calls); self.assertEqual("confirmed",result.effects[0]["outcome"]); self.assertEqual("task-1",result.provider_state["bindings"][0]["task_id"])
+  result=self.create_and_sync(provider,register)
+  self.assertEqual(["list","list","create","read"],provider.calls); self.assertEqual("confirmed",result.effects[0]["outcome"]); self.assertEqual("task-1",result.provider_state["bindings"][0]["task_id"])
   provider.tasks[0]["parent_note"]="keep"; result=reconcile_provider_tasks(provider,register,result.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
   self.assertEqual("keep",provider.tasks[0]["parent_note"]); self.assertEqual(1,len(provider.tasks))
  def test_lost_create_replay_binds_existing_task_and_preserves_parent_title_group(self):
@@ -28,13 +34,59 @@ class ProviderReconciliationTests(unittest.TestCase):
     if self.lose: self.lose=False;raise ConnectionError('synthetic lost response')
     return result
   provider=LostResponseTasks();register={"schema_version":1,"tasks":[self.task()]}
-  with self.assertRaises(ConnectionError):reconcile_provider_tasks(provider,register,self.state(),task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+  intent=self.sync(provider,register,self.state());unknown=self.sync(provider,intent.tasks,intent.provider_state)
   self.assertEqual(1,len(provider.tasks))
-  recovered=reconcile_provider_tasks(provider,register,self.state(),task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+  self.assertEqual("unknown",unknown.provider_state["effect_intents"][0]["outcome"])
+  recovered=self.sync(provider,unknown.tasks,unknown.provider_state)
   self.assertEqual(1,len(provider.tasks));self.assertEqual('task-1',recovered.provider_state['bindings'][0]['task_id'])
   provider.tasks[0].update({'title':'Parent title','group':'parent-group','parent_planned_due':'2026-09-10','progress':'done'})
   preserved=reconcile_provider_tasks(provider,register,recovered.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
   self.assertEqual('Parent title',provider.tasks[0]['title']);self.assertEqual('parent-group',provider.tasks[0]['group']);self.assertEqual('Parent title',preserved.tasks['tasks'][0]['action']);self.assertEqual('parent-group',preserved.tasks['tasks'][0]['entity_scope'])
+ def test_unknown_create_does_not_retry_after_one_empty_complete_snapshot(self):
+  class InvisibleAfterLostCreate(FixtureTasks):
+   def __init__(self): super().__init__();self.first=True;self.hide_next=False
+   def list_tasks(self):
+    self.calls.append("list")
+    if self.hide_next:self.hide_next=False;return []
+    return [dict(task) for task in self.tasks]
+   def create_task(self,candidate):
+    value=super().create_task(candidate)
+    if self.first:self.first=False;self.hide_next=True;raise ConnectionError("lost accepted create")
+    return value
+  provider=InvisibleAfterLostCreate();register={"schema_version":1,"tasks":[self.task()]}
+  journaled=self.sync(provider,register,self.state());unknown=self.sync(provider,journaled.tasks,journaled.provider_state)
+  self.assertEqual(1,len(provider.tasks));self.assertEqual("unknown",unknown.provider_state["effect_intents"][0]["outcome"])
+  with self.assertRaisesRegex(TaskError,"remains unknown"):
+   self.sync(provider,unknown.tasks,unknown.provider_state)
+  self.assertEqual(1,len(provider.tasks));self.assertEqual(1,provider.calls.count("create"))
+  adopted=self.sync(provider,unknown.tasks,unknown.provider_state)
+  self.assertEqual(1,len(provider.tasks));self.assertEqual([],adopted.provider_state["effect_intents"]);self.assertEqual("task-1",adopted.provider_state["bindings"][0]["task_id"])
+ def test_zero_match_create_retry_requires_explicit_definitely_not_applied(self):
+  class DefinitelyAbsentCreate(FixtureTasks):
+   def __init__(self): super().__init__();self.first=True
+   def create_task(self,candidate):
+    if self.first:self.first=False;self.calls.append("create");raise ConnectionError("failed before apply")
+    return super().create_task(candidate)
+   def reconcile_create_intent(self,intent):
+    self.calls.append("reconcile_create")
+    return {"outcome":"definitely_not_applied","verification":{"complete_lookup":True,"consistency_window_elapsed":True}}
+  provider=DefinitelyAbsentCreate();register={"schema_version":1,"tasks":[self.task()]}
+  journaled=self.sync(provider,register,self.state());unknown=self.sync(provider,journaled.tasks,journaled.provider_state)
+  retried=self.sync(provider,unknown.tasks,unknown.provider_state)
+  self.assertEqual(1,len(provider.tasks));self.assertEqual(2,provider.calls.count("create"));self.assertIn("reconcile_create",provider.calls);self.assertEqual([],retried.provider_state["effect_intents"])
+ def test_managed_row_without_binding_or_create_intent_blocks(self):
+  provider=FixtureTasks();provider.tasks=[{**{"canonical_task_id":"task-1","origin":"source","title":"Return form","group":"household","description":"school","workflow_state":"needs_action","source_link":"record-1#fact-1","source_due":""},"provider_object_id":"synthetic-task-1"}]
+  with self.assertRaisesRegex(TaskError,"durable create intent"):
+   self.sync(provider,{"schema_version":1,"tasks":[self.task()]},self.state())
+ def test_create_recovery_blocks_conflicting_or_ambiguous_canonical_id_matches(self):
+  for variant in ("conflicting","ambiguous"):
+   with self.subTest(variant=variant):
+    provider=FixtureTasks();register={"schema_version":1,"tasks":[self.task()]};journaled=self.sync(provider,register,self.state());projection=journaled.provider_state["effect_intents"][0]["projection"]
+    first={**projection,"provider_object_id":"synthetic-task-1"}
+    provider.tasks=[{**first,"title":"Wrong action"}] if variant=="conflicting" else [first,{**projection,"provider_object_id":"synthetic-task-2"}]
+    with self.assertRaisesRegex(TaskError,"conflicting provider match|multiple provider tasks"):
+     self.sync(provider,journaled.tasks,journaled.provider_state)
+    self.assertEqual(0,provider.calls.count("create"))
  def test_lost_update_response_is_adopted_without_a_second_patch(self):
   class LostPatchTasks(FixtureTasks):
    def __init__(self): super().__init__();self.lose=True
@@ -43,7 +95,7 @@ class ProviderReconciliationTests(unittest.TestCase):
     if self.lose: self.lose=False;raise ConnectionError('synthetic lost patch response')
     return result
   provider=LostPatchTasks();old=self.task();register={"schema_version":1,"tasks":[old]}
-  initial=reconcile_provider_tasks(provider,register,self.state(),task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+  initial=self.create_and_sync(provider,register)
   updated=self.task();updated['task_context']='Revised school context';register={"schema_version":1,"tasks":[updated]}
   with self.assertRaises(ConnectionError):reconcile_provider_tasks(provider,register,initial.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
   self.assertEqual('Revised school context',provider.tasks[0]['description']);self.assertEqual(1,provider.calls.count('patch'))
@@ -63,7 +115,7 @@ class ProviderReconciliationTests(unittest.TestCase):
    def apply_parent_state(self,object_id,*,status=None,**_):
     return self.apply_patch(object_id,{"status":status})
   provider=CompletionTasks();register={"schema_version":1,"tasks":[self.task()]}
-  initial=reconcile_provider_tasks(provider,register,self.state(),task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+  initial=self.create_and_sync(provider,register)
   provider.tasks[0].update({"status":"completed","completion_comment":""})
   intent=reconcile_provider_tasks(provider,initial.tasks,initial.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
   self.assertEqual("completed",provider.tasks[0]["status"]);self.assertEqual(1,len(intent.provider_state["effect_intents"]));self.assertEqual(0,len(provider.comments))
@@ -81,7 +133,7 @@ class ProviderReconciliationTests(unittest.TestCase):
   provider.tasks[0]["status"]="completed";again=reconcile_provider_tasks(provider,parent_reopen.tasks,parent_reopen.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
   self.assertEqual("completed",again.tasks["tasks"][0]["resolution"]);self.assertEqual("parent_completion",again.tasks["tasks"][0]["lifecycle_history"][-1]["kind"])
  def test_three_way_source_only_projects_and_divergence_reviews_without_overwrite(self):
-  provider=FixtureTasks();initial=reconcile_provider_tasks(provider,{"schema_version":1,"tasks":[self.task()]},self.state(),task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
+  provider=FixtureTasks();initial=self.create_and_sync(provider,{"schema_version":1,"tasks":[self.task()]})
   source=json.loads(json.dumps(initial.tasks));source["tasks"][0]["action"]="Source correction"
   projected=reconcile_provider_tasks(provider,source,initial.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
   self.assertEqual("Source correction",provider.tasks[0]["title"]);self.assertEqual("patch",projected.effects[0]["kind"])
@@ -90,6 +142,15 @@ class ProviderReconciliationTests(unittest.TestCase):
   source=json.loads(json.dumps(parent.tasks));source["tasks"][0]["action"]="Second source correction";provider.tasks[0]["title"]="Parent correction"
   conflict=reconcile_provider_tasks(provider,source,parent.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
   self.assertEqual("Second source correction",conflict.tasks["tasks"][0]["action"]);self.assertEqual("Parent correction",provider.tasks[0]["title"]);self.assertEqual("title",conflict.review_cases[0]["field"])
+ def test_source_correction_after_accepted_parent_edit_blocks_before_projection(self):
+  flags={"is_update":False,"is_durable":False,"is_guideline":False,"is_action":True};opening={"fact_id":"fact-open","record_id":"record-1","source_message_id":"message-1","source_byte_start":0,"source_byte_end":4,"received_date":"2026-09-01","entity_scope":"household","category":"school","text":"Original action","flags":flags};task_id=canonical_task_id(opening["fact_id"])
+  register=reconcile_canonical_tasks({"schema_version":1,"tasks":[]},[opening],fact_schema=self.fact_schema,task_schema=self.task_schema,register_schema=self.register_schema);provider=FixtureTasks();initial=self.create_and_sync(provider,register)
+  provider.tasks[0]["title"]="Parent wording";accepted=self.sync(provider,initial.tasks,initial.provider_state)
+  correction={"fact_id":"fact-correction","record_id":"record-1","source_message_id":"message-2","source_byte_start":0,"source_byte_end":4,"received_date":"2026-09-02","entity_scope":"household","category":"school","text":"Source wording","flags":{**flags,"is_action":False},"task_relation":{"target_task_id":task_id,"relation":"correction","changed_source_fields":{"action":"Source wording"}}}
+  calls=list(provider.calls)
+  with self.assertRaisesRegex(TaskError,"divergent source and parent.*action"):
+   reconcile_canonical_tasks(accepted.tasks,[correction],fact_schema=self.fact_schema,task_schema=self.task_schema,register_schema=self.register_schema)
+  self.assertEqual("Parent wording",provider.tasks[0]["title"]);self.assertEqual(calls,provider.calls)
  def test_comment_recovery_rejects_same_effect_with_wrong_text(self):
   provider=FixtureTasks();provider.tasks=[{"provider_object_id":"object-1"}];provider.comments=[{"provider_object_id":"object-1","effect_id":"effect-1","text":"wrong"}]
   with self.assertRaisesRegex(TaskError,"unexpected text"):
@@ -101,7 +162,7 @@ class ProviderReconciliationTests(unittest.TestCase):
     if self.fail_comment:self.fail_comment=False;raise ConnectionError("synthetic comment failure")
     return super().write_comment(object_id,effect_id,text)
    def apply_parent_state(self,object_id,*,status=None,**_): return self.apply_patch(object_id,{"status":status})
-  provider=FaultyCompletion();initial=reconcile_provider_tasks(provider,{"schema_version":1,"tasks":[self.task()]},self.state(),task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema);provider.tasks[0].update({"status":"completed","completion_comment":""})
+  provider=FaultyCompletion();initial=self.create_and_sync(provider,{"schema_version":1,"tasks":[self.task()]});provider.tasks[0].update({"status":"completed","completion_comment":""})
   intent=reconcile_provider_tasks(provider,initial.tasks,initial.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
   with self.assertRaises(ConnectionError):
    reconcile_provider_tasks(provider,intent.tasks,intent.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
@@ -141,7 +202,7 @@ class ProviderReconciliationTests(unittest.TestCase):
     return value
   for provider_type,expected_status in ((LostComment,"completed"),(LostReopenBefore,"completed"),(LostReopenAfter,"open")):
    with self.subTest(provider=provider_type.__name__):
-    provider=provider_type();initial=reconcile_provider_tasks(provider,{"schema_version":1,"tasks":[self.task()]},self.state(),task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema);provider.tasks[0].update({"status":"completed","completion_comment":""})
+    provider=provider_type();initial=self.create_and_sync(provider,{"schema_version":1,"tasks":[self.task()]});provider.tasks[0].update({"status":"completed","completion_comment":""})
     intent=reconcile_provider_tasks(provider,initial.tasks,initial.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)
     with self.assertRaises(ConnectionError):
      reconcile_provider_tasks(provider,intent.tasks,intent.provider_state,task_schema=self.task_schema,register_schema=self.register_schema,provider_state_schema=self.state_schema)

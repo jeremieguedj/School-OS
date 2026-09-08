@@ -289,12 +289,17 @@ class GoogleSheetsTaskAdapterTests(unittest.TestCase):
             factory.begin_sync(), register, first.provider_state, task_schema=self.task_schema,
             register_schema=self.register_schema, provider_state_schema=self.state_schema,
         )
+        third = reconcile_provider_tasks(
+            factory.begin_sync(), second.tasks, second.provider_state, task_schema=self.task_schema,
+            register_schema=self.register_schema, provider_state_schema=self.state_schema,
+        )
 
         self.assertEqual(1, len(port.rows))
-        self.assertEqual("create", first.effects[0]["kind"])
-        self.assertEqual("adopt", second.effects[0]["kind"])
-        self.assertEqual("sheets:canonical:task-1", second.provider_state["bindings"][0]["provider_object_id"])
-        self.assertEqual(2, port.complete_reads)
+        self.assertEqual("create_intent", first.effects[0]["kind"])
+        self.assertEqual("create", second.effects[0]["kind"])
+        self.assertEqual("adopt", third.effects[0]["kind"])
+        self.assertEqual("sheets:canonical:task-1", third.provider_state["bindings"][0]["provider_object_id"])
+        self.assertEqual(3, port.complete_reads)
 
     def test_one_sync_uses_one_complete_snapshot_for_multiple_tasks(self) -> None:
         factory, port = self.adapter_factory()
@@ -311,16 +316,17 @@ class GoogleSheetsTaskAdapterTests(unittest.TestCase):
             register_schema=self.register_schema, provider_state_schema=self.state_schema,
         )
 
-        self.assertEqual(["create", "create"], [effect["kind"] for effect in first.effects])
+        self.assertEqual(["create_intent", "create_intent"], [effect["kind"] for effect in first.effects])
         self.assertEqual(1, port.complete_reads)
-        self.assertEqual(2, len(port.rows))
+        self.assertEqual(0, len(port.rows))
 
         second = reconcile_provider_tasks(
             factory.begin_sync(), register, first.provider_state, task_schema=self.task_schema,
             register_schema=self.register_schema, provider_state_schema=self.state_schema,
         )
-        self.assertEqual(["adopt", "adopt"], [effect["kind"] for effect in second.effects])
+        self.assertEqual(["create", "create"], [effect["kind"] for effect in second.effects])
         self.assertEqual(2, port.complete_reads)
+        self.assertEqual(2, len(port.rows))
 
     def test_patch_guard_blocks_reordered_row_before_native_write(self) -> None:
         row = self.managed_row()

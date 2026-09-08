@@ -92,6 +92,9 @@ atomic precondition.
    sync. Do not use an earlier sync's snapshot as authority. A verified exact
    readback advances this sync's index; observed drift invalidates it and the
    runtime explicitly reloads before recovery.
+   A complete empty snapshot alone does not establish that an earlier unknown
+   append was not applied. The runtime may return `definitely_not_applied` for
+   retry only with its declared post-consistency-window negative evidence.
 2. Validate marker, required system fields, and canonical-ID uniqueness.
    Before a write, the runtime passes unchanged fields from the prior verified
    binding to `verify_expected_system_fields`; unexpected canonical ID, origin,
@@ -106,6 +109,12 @@ atomic precondition.
 5. Preserve parent Action/Group edits according to the canonical reconciliation
    policy. Record the parent fields, status, and comment observations separately
    for the core policy rather than treating them as source facts.
+
+Core persists a `task_create` intent containing the canonical ID, exact Sheet
+projection, and projection hash in provider state before `create_task` is ever
+called. Recovery searches the complete managed scope by canonical ID: it adopts
+one exact row, blocks multiple or conflicting rows, and does not repeat an
+unknown append after a merely empty snapshot.
 
 `apply_parent_state` is available to the runtime only after core policy has
 chosen an allowed status/reopen/review or parent-state update. `None` leaves a

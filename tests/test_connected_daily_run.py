@@ -144,7 +144,12 @@ class ConnectedDailyRunTests(unittest.TestCase):
 
         def task_sync(previous: dict[str, Any]) -> dict[str, Any]:
             register = json.loads(Path(previous["artifacts"]["tasks"]["path"]).read_text(encoding="utf-8"))
-            reconciled = reconcile_provider_tasks(provider, register, {"provider_id": "synthetic", "adapter_id": "synthetic-tasks", "provider_revision": None, "bindings": [], "cursor": None, "cursor_evidence": {}, "verified_readback": {}}, task_schema=self.schemas["task.schema.json"], register_schema=self.schemas["canonical-tasks.schema.json"], provider_state_schema=self.schemas["provider-state.schema.json"])
+            create_intent = reconcile_provider_tasks(provider, register, {"provider_id": "synthetic", "adapter_id": "synthetic-tasks", "provider_revision": None, "bindings": [], "cursor": None, "cursor_evidence": {}, "verified_readback": {}}, task_schema=self.schemas["task.schema.json"], register_schema=self.schemas["canonical-tasks.schema.json"], provider_state_schema=self.schemas["provider-state.schema.json"])
+            intent_artifact = self._write_checked(work / "provider-state-create-intent.json", canonical_json_bytes(create_intent.provider_state), writes)
+            persisted_intent = json.loads(Path(intent_artifact["path"]).read_text(encoding="utf-8"))
+            if persisted_intent != create_intent.provider_state or not persisted_intent["effect_intents"]:
+                raise AssertionError("task create intent was not durable before provider mutation")
+            reconciled = reconcile_provider_tasks(provider, create_intent.tasks, persisted_intent, task_schema=self.schemas["task.schema.json"], register_schema=self.schemas["canonical-tasks.schema.json"], provider_state_schema=self.schemas["provider-state.schema.json"])
             # Canonical state is the first recoverable half of the checkpoint;
             # provider state is admitted only after its canonical bindings read back.
             tasks_artifact = self._write_checked(
@@ -187,7 +192,7 @@ class ConnectedDailyRunTests(unittest.TestCase):
         self.assertEqual("COMPLETE", result.outcome)
         self.assertEqual(PHASES, result.completed_phases)
         self.assertEqual(1, len(sink.deliveries))
-        self.assertEqual(["list", "create", "read"], provider.calls)
+        self.assertEqual(["list", "list", "create", "read"], provider.calls)
         self.assertEqual("eligible-cursors.json", writes[-1])
         artifacts = result.outputs["commit"]["artifacts"]
         self.assertIn("candidate_manifest", artifacts)

@@ -1558,3 +1558,60 @@ requirements, then read this log from top to bottom.
   occurred. Next: integrate this isolated candidate with the coordinated source
   chronology schema changes, rerun the complete gate, and independently review
   the combined diff before publication.
+
+## 2026-09-08 — alpha.13 task independent-review blocker repair in progress
+
+- Reproduced all three follow-up review failures against `95eb0bd`: a
+  relation-only incremental Fact could not target an existing source task, a
+  source Action correction silently replaced an accepted parent Action edit,
+  and a lost accepted create followed by one empty snapshot could create a
+  duplicate provider row.
+- Canonical task reconciliation now retains compact opening and ordered source
+  relation evidence, merges new relationship Facts without requiring historical
+  Facts to be resent, preserves source Fact/lifecycle evidence and monotonic
+  support dates, and resolves late-arriving evidence by source chronology.
+  `source_projection` is now the explicit common base: source-only changes
+  apply, parent-only values remain, equal changes converge, and divergent
+  source/parent values block before mutation or provider projection.
+- Provider state now admits a narrow `task_create` effect intent with canonical
+  ID, exact managed projection, projection hash, effect outcome, and verification.
+  The first reconciliation journals only the intent; continuation performs the
+  create. Unknown responses retain the intent, adopt exactly one exact later
+  match, and block on an empty snapshot unless the adapter supplies explicit
+  `definitely_not_applied` evidence. Focused regressions cover the one-empty-
+  snapshot duplicate case and evidence-authorized retry.
+- Focused task/provider tests pass, and the complete unit suite currently passes
+  188 tests after updating the connected and Sheets synthetic flows to persist
+  create intent before mutation. Contracts and the alpha.13 specification now
+  describe the incremental merge, source/parent three-way rule, and create
+  effect recovery semantics. No live provider, private data, delivery, schedule,
+  release, or push was touched.
+- Next: rerun the connected hash fixture and all 188 tests after documentation
+  updates, exercise exact standalone reproductions for all three blockers,
+  inspect the scoped diff, run `scripts/validate.py`, privacy and diff checks,
+  then append final evidence and create one scoped local commit.
+
+## 2026-09-08 — alpha.13 task independent-review blockers repaired
+
+- Completed the bounded follow-up repair without changing Fact/source schemas,
+  the existing parent-claim and missing-comment recovery design, private data,
+  any provider, delivery, schedule, release, or remote branch. The permanent
+  regression matrix now covers relation-only correction/completion, omission of
+  historical Facts, late older lifecycle evidence, accepted-parent/source
+  divergence before projection, durable create-intent journaling, one invisible
+  snapshot after a lost accepted create, exact-match adoption, conflicting and
+  multiple matches, missing intent, and explicit negative-evidence retry.
+- `PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate.py` passed the complete
+  repository gate with 190 tests plus JSON schema, template-manifest, and
+  release-smoke checks. The direct privacy scan and `git diff --check` passed.
+  The connected synthetic run persists and reads back provider create state
+  before its create call; fresh-process recovery starts from a durable unknown
+  create intent and adopts exactly one verified provider row.
+- Changed scope is limited to `school_os/tasks.py`, provider-state schema,
+  task/Sheets contracts and alpha.13 specification, connected/recovery/task/
+  provider/Sheets tests and one synthetic expected-hash fixture, plus this
+  append-only log. The coordinated brief decision remains untouched.
+- Next: create one scoped local commit in this isolated worktree and return its
+  exact SHA to the coordinator. The coordinator should integrate it with the
+  separate source-chronology work, rerun the complete combined gate and an
+  independent diff review, then handle any authorized publication.

@@ -558,6 +558,17 @@ relations, completion/comment replay, field clearing, and guarded retargeting.
 This is repository evidence only; M4-003/M4-009 still require the actual
 runtime bridge and observed private-Sheet conformance.
 
+**Task-core independent-review repair (2026-09-08):** Canonical source tasks
+retain compact ordered relation evidence and merge relation-only incremental
+calls without dropping prior Fact IDs, lifecycle events, resolution, or the
+monotonic support date. The stored `source_projection` is the common base for
+source-vs-accepted-parent Action/Group changes; divergent values block before
+mutation/projection. Provider task creation is now a two-checkpoint operation:
+the first reconciliation persists an exact canonical-ID/projection-hash intent,
+and only a continuation may create from it. Unknown outcomes adopt exactly one
+verified canonical-ID match, block ambiguity or an inconclusive zero match, and
+retry only after explicit adapter `definitely_not_applied` evidence.
+
 **M4-001/M4-007 custody correction (2026-09-08):** Source admission now requires
 an explicit complete MIME-tree assertion and rejects high-bit 7bit transport.
 The combined message gate requires resolved MIME attachment and direct-resource
