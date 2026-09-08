@@ -700,8 +700,9 @@ successful uninterrupted run alone is insufficient.
 
 ### Milestone 4 — Expand coverage and establish release readiness
 
-**Status:** in progress (M4-001 implementation complete pending observed
-binding; M4-002 complete for synthetic alpha.12 input; M4-003–M4-009 pending or in
+**Status:** in progress (M4-001 and M4-007 generic implementations complete
+pending observed binding; M4-002 complete for synthetic alpha.12 input;
+M4-003–M4-009 otherwise pending or in
 progress under the fresh-test-instance authorization; M4-006 remains the final
 release gate).
 

@@ -1,6 +1,6 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation and observed validation in progress; M1–M3 are reopened for chained revalidation, M4-001 implementation is complete pending observed binding, M4-002 remains complete for its declared synthetic input, and M4-003–M4-009 remain
+- Status: implementation and observed validation in progress; M1–M3 are reopened for chained revalidation, M4-001 and M4-007 implementations are complete pending observed binding, M4-002 remains complete for its declared synthetic input, and M4-003–M4-009 otherwise remain
 - Approved plan: [PLAN.md](PLAN.md), revision 29
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
@@ -208,6 +208,8 @@ Add these schemas:
   metadata, exact plaintext bodies, attachments, pagination/scope evidence;
 - `schemas/extraction-result.schema.json`: byte-span-based candidates, flags,
   entity scopes, coverage decisions, attachment outcomes, and review cases;
+- `schemas/semantic-packet.schema.json`: bounded exact source segments supplied
+  to one live interpreter invocation; and
 - `schemas/canonical-tasks.schema.json`: task-register version and array of the
   complete logical tasks described by `core/contracts/tasks.md`;
 - `schemas/brief-input.schema.json`: local window, entity order, news,
@@ -689,6 +691,16 @@ that carries real connector reads into the checked-in helpers and carries their
 verified outputs to provider writes. Do not build a generic orchestration
 framework. M4-004 measurement and the implementation/package portion of M4-005
 proceed independently; only final M4-006 waits for all observed evidence.
+
+**M4-007 implementation (2026-09-08):** `school_os.semantic` provides the
+narrow live-interpreter boundary. It supplies bounded source/attachment
+segments, assigns Fact IDs from immutable provenance and exact byte spans, and
+rejects paraphrase, invented identifiers, malformed candidates, duplicate IDs,
+or incomplete segment coverage before canonical Facts exist. An independent
+audit must identify the exact packet hash and accept each segment; review or
+blocked audit entries stop acceptance. The callable is deliberately injected:
+synthetic tests prove the mechanical boundary only, while M4-003/M4-009 must
+bind an actual authenticated interpreter and retain private result/audit hashes.
 
 **Fresh test-instance boundary (2026-09-08):** Create alpha.13 from an exact
 package in the newly empty authorized Drive test root after an empty-root

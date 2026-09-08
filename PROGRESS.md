@@ -1410,3 +1410,23 @@ requirements, then read this log from top to bottom.
   claim from synthetic tests. Next: begin M4-007 live semantic/audit plumbing;
   leave M4-008 shared task-core changes to the coordinator's consultation and
   isolated adapter handoff.
+
+## 2026-09-08 — alpha.13 M4-007 semantic packet and audit boundary
+
+- Added `school_os.semantic` and the semantic-packet schema. The narrow callable
+  boundary accepts only bounded exact body/attachment segments; code assigns
+  Fact IDs from record/message/content identity plus UTF-8 byte span and kind.
+  Interpreter candidates must reproduce their selected source bytes exactly,
+  cover every segment explicitly, and cannot supply provenance IDs. Independent
+  audit binds to the packet hash and must account for every segment before a
+  result is accepted.
+- Focused semantic/import/task tests passed (13 tests). Complete
+  `PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate.py` passed 151 tests plus
+  schema/template and release-smoke checks; `git diff --check` and the privacy
+  scan passed. This is reusable mechanical implementation only: no real model,
+  source, provider, Drive, Sheet, mail, scheduler, or delivery action occurred;
+  actual authenticated invocation remains M4-003/M4-009 evidence. Changed
+  files: semantic helper/schema/tests plus root/alpha.13 continuity documents.
+  Next: commit, push, and verify M4-007; then implement M4-004's bounded
+  synthetic measurement/checkpoint evidence while M4-008 awaits its reviewed
+  isolated handoff and task-core consultation.

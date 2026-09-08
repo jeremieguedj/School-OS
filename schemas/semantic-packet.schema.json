@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/semantic-packet.schema.json",
+  "title": "School-OS bounded semantic extraction packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "record_id", "conversation_id", "segments"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "record_id": {"type": "string", "minLength": 1},
+    "conversation_id": {"type": "string", "minLength": 1},
+    "segments": {"type": "array", "minItems": 1, "items": {"type": "object"}}
+  }
+}
