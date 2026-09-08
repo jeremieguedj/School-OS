@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from school_os.contracts import load_mapping
+from school_os.contracts import load_mapping_yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -64,7 +64,12 @@ class ReleaseVerificationTests(unittest.TestCase):
         commit = subprocess.run(
             ["git", "-C", str(ROOT), "rev-parse", "HEAD"], check=True, capture_output=True, text=True,
         ).stdout.strip()
-        manifest = load_mapping(ROOT / "release.yaml")
+        manifest = load_mapping_yaml(
+            subprocess.run(
+                ["git", "-C", str(ROOT), "show", "HEAD:release.yaml"],
+                check=True, capture_output=True, text=True,
+            ).stdout
+        )
         version = manifest["system_version"]
         status = manifest["status"]
         self.assertIn(status, {"unreleased", "released"})

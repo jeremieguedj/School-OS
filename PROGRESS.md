@@ -1687,3 +1687,18 @@ requirements, then read this log from top to bottom.
   commit this narrow correction and rerun the full bundled validation suite
   from its exact resulting commit; publication readback remains pending an
   actual separately authorized draft or published release.
+
+## 2026-09-08 — alpha.13 M4-005 final-manifest test decoupling
+
+- Corrected two remaining ambient-manifest assumptions. Release verification
+  now parses `HEAD:release.yaml` with the repository's strict YAML loader
+  rather than working-tree bytes, so its candidate identity test follows the
+  exact commit being packaged. The installed-validation production rejection
+  now builds an isolated unreleased Git fixture with a rebuilt inventory; the
+  actual HEAD archive is validated according to its own manifest state and
+  still receives the inventory-corruption negative check.
+- Bundled CPython 3.12.14 under ordinary bytecode defaults passed the focused
+  release-verification and installed-package set (11 tests) after both fixes.
+  Next: commit, run the full bundled validation and exact committed archive
+  candidate check, then hand the final SHA to root. No manifest status, tag,
+  release, push, or external-provider state was changed.

@@ -10,6 +10,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from school_os.contracts import load_mapping
 from school_os.package import verify_extracted_tree
 
 
@@ -69,8 +70,37 @@ class InstalledValidationTests(unittest.TestCase):
         self.assertEqual([], list(self.root.rglob("__pycache__")))
         self.assertEqual(before, verify_extracted_tree(self.root))
 
-    def test_production_rejects_unreleased_and_changed_bytes(self) -> None:
-        self.assertNotEqual(0, self.run_validator(self.root).returncode)
+    def test_production_rejects_a_synthetic_unreleased_package_and_changed_bytes(self) -> None:
+        fixture_repo = Path(self.temporary.name) / "unreleased-repo"
+        fixture_repo.mkdir()
+        subprocess.run(["git", "init", "-q", str(fixture_repo)], check=True)
+        subprocess.run(["git", "-C", str(fixture_repo), "config", "user.name", "Synthetic Tester"], check=True)
+        subprocess.run(["git", "-C", str(fixture_repo), "config", "user.email", "synthetic@example.invalid"], check=True)
+        (fixture_repo / "release.yaml").write_text("system_version: 1.2.3-alpha.1\nstatus: unreleased\n", encoding="utf-8")
+        (fixture_repo / "README.md").write_text("# Synthetic package\n", encoding="utf-8")
+        schema_dir = fixture_repo / "schemas"
+        schema_dir.mkdir()
+        shutil.copy(ROOT / "schemas" / "release.schema.json", schema_dir / "release.schema.json")
+        subprocess.run(["git", "-C", str(fixture_repo), "add", "."], check=True)
+        subprocess.run(["git", "-C", str(fixture_repo), "commit", "-qm", "unreleased fixture"], check=True)
+        fixture_output = Path(self.temporary.name) / "unreleased-output"
+        built = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / "build_release.py"), "--repo", str(fixture_repo), "--ref", "HEAD", "--version", "1.2.3-alpha.1", "--output-dir", str(fixture_output)],
+            text=True, capture_output=True, check=False,
+        )
+        self.assertEqual(0, built.returncode, built.stderr)
+        fixture_root = Path(self.temporary.name) / "School-OS-1.2.3-alpha.1"
+        with tarfile.open(fixture_output / "school-os-1.2.3-alpha.1.tar.gz", "r:gz") as package:
+            package.extractall(self.temporary.name)
+        rejected = self.run_validator(fixture_root)
+        self.assertNotEqual(0, rejected.returncode)
+        self.assertIn("unreleased package requires --candidate-test", rejected.stderr)
+
+        actual_status = load_mapping(self.root / "release.yaml")["status"]
+        actual = self.run_validator(self.root, "--candidate-test")
+        self.assertEqual(0, actual.returncode, actual.stderr)
+        if actual_status == "released":
+            self.assertEqual(0, self.run_validator(self.root).returncode)
         path = self.root / "core" / "operations" / "daily-run.md"
         path.write_text(path.read_text(encoding="utf-8") + "changed\n", encoding="utf-8")
         result = self.run_validator(self.root, "--candidate-test")
