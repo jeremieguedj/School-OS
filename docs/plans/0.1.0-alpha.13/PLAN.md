@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
 - Status: approved completion plan; M1–M3 require chained revalidation after the installer correction, and M4 implementation plus observed fresh-test-instance evidence remains
-- Revision: 35, updated 2026-09-08
+- Revision: 36, updated 2026-09-08
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -224,17 +224,22 @@ to complete every required phase before reporting success. Both decisions need
 consistent recipe, capability, state, test, and upgrade treatment; neither is
 permission to bypass provenance, verification, or authorization.
 
-## Pending brief-policy clarification
+## Approved user-added task exception
 
-The selected existing daily recipe requires a source-received date and blocks
-missing dates. A parent-origin task entered directly in the task provider may
-have no school-email received date. Automatic approval review rejected both a
-new default and a required policy parameter for this case. The isolated brief
-candidate is therefore unaccepted; M4-005 brief integration and M4-009 delivery
-remain paused pending direct user steering. A proposed narrow exception would
-show such tasks under an explicit parent-added heading without inventing a
-school received date. That exception is not approved or selected. Independent
-task recovery and runtime implementation may continue.
+The user explicitly approved supporting tasks added directly to any selected
+task tool, including Google Sheets and other conformant providers. An eligible
+user-origin task without a school-email received date appears under
+**Parent-added tasks** within its ordinary child or household action section.
+Preserve its canonical action and scope; never invent a received date or source
+link. This is a narrow, provider-independent exception to the selected daily
+brief recipe, not a new configurable policy or a change to source provenance.
+
+Only explicitly user-origin, unresolved finite tasks qualify. Completed,
+historical, optional, and standing-rule exclusions remain. Missing or malformed
+required dates on source-origin items still block; corrupt source records must
+not be relabelled as user tasks. The former policy pause is resolved. The brief
+candidate still requires implementation review, deterministic and visual
+verification, and connected acceptance before delivery or release.
 
 ## Proposed implementation shape
 
@@ -991,3 +996,6 @@ evidence that does not need to be repeatedly printed into model context.
 - Revision 35: accepted the bounded task repair after independent hard-process
   recovery, reconciled the Sheets capability baseline, and repaired/refreshed
   the executable measurements. Chained package and observed acceptance remain.
+- Revision 36: recorded direct user approval of provider-independent user-added
+  tasks and their undated Parent-added tasks group. Lifted the policy pause
+  while retaining source provenance, eligibility, and acceptance gates.

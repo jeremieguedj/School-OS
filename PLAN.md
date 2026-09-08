@@ -69,8 +69,11 @@ and continuation. Final runtime/brief integration still requires a refresh.
 M4-005's repository release preparation is now integrated, including exact
 remote asset verification, audio delta regression, and the ordinary-Python
 package-cache correction. Actual CI, remote release, visual, connected daily
-worker bindings, and private acceptance remain open; brief integration/sending
-also await the existing missing-date decision.
+worker bindings, and private acceptance remain open. The user approved a narrow
+provider-independent recipe exception: eligible user-added tasks without an
+email received date appear under Parent-added tasks in their ordinary action
+section, with no invented date or link. Source-origin date requirements remain
+strict. Brief implementation and acceptance can now resume.
 The original snapshot remains in Git.
 
 ## Objective

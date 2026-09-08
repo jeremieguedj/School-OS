@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
 - Status: implementation and observed validation in progress; M1–M3 require chained revalidation, M4-001/M4-007 implementations await observed binding, the task repair is integrated, M4-002 is complete for its declared synthetic input, and M4-004 is refreshed for the task repair pending final runtime/brief integration
-- Approved plan: [PLAN.md](PLAN.md), revision 35
+- Approved plan: [PLAN.md](PLAN.md), revision 36
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
@@ -44,12 +44,17 @@ not authorize production activation, migration, existing-instance changes, or
 test delivery/scheduling before their remaining private choices and acceptance
 conditions are satisfied.
 
-M4-005 brief integration and M4-009 sending are additionally paused on the
-plan's pending parent-origin missing-date clarification. No new missing-date
-default, policy parameter, or undated rendering exception is approved by this
-status record. The isolated brief candidate must not be integrated as accepted
-behavior until that decision is resolved. Independent task and runtime repairs
-remain authorized.
+The user approved the plan's provider-independent user-added task exception.
+M4-005 must render eligible undated user-origin tasks under **Parent-added
+tasks** in their ordinary child/household action section, preserving canonical
+action and scope without inventing a received date or source URL. Use the
+canonical origin and explicit unresolved-finite selection; do not infer user
+origin from missing source data. Required source-origin dates remain strict,
+and completed/history/optional/standing-rule exclusions remain unchanged.
+Exercise dated/undated mixed tasks, multiple provider mappings, absent links,
+completed tasks, and malformed source dates in tests, then visually inspect the
+selected template. The policy pause is lifted; implementation and normal
+content, recipient, delivery, and release acceptance gates still apply.
 
 M4-005's repository release-verification/audio-delta/immutable-entrypoint
 preparation is integrated. The exact-ref verifier supports both manifest states

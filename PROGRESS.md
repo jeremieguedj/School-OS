@@ -1954,3 +1954,22 @@ requirements, then read this log from top to bottom.
   ingestion workers and correctly configured visual evidence, then continue
   the already approved fresh-instance acceptance. All private values and repro
   artifacts remain outside Git; no test send or schedule has been created.
+
+## 2026-09-08 — user-added task recipe exception approved
+
+- The user explicitly approved tasks added directly in the selected task tool,
+  whether Sheets or another conformant provider. Release plan revision 36 and
+  SPEC now permit eligible undated user-origin tasks under Parent-added tasks
+  within their ordinary child/household action section. Preserve canonical
+  wording and scope; invent neither received dates nor source links.
+- This resolves the former policy pause. Required source-origin dates and
+  unresolved-finite eligibility remain strict; missing source evidence must not
+  be treated as proof of user origin. No provider-specific policy or configurable
+  exception framework is needed.
+- Existing brief work remains a candidate pending review and deterministic/visual
+  checks, including the selected template's link separators and bold guideline
+  scope. No email, schedule, private installation, or release is claimed here.
+- Next: complete and review the isolated brief candidate, integrate the repaired
+  runtime primitives and concrete ingestion workers, then execute the gated
+  fresh-instance acceptance path. Private recipient/configuration values remain
+  outside Git.
