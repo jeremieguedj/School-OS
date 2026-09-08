@@ -1,0 +1,11 @@
+{
+  "package_root": "REPLACE_WITH_EXTRACTED_PACKAGE_ROOT",
+  "package_archive": "REPLACE_WITH_CANDIDATE_ARCHIVE",
+  "package_source_identity": {"repository": "jeremieguedj/School-OS", "commit": "0000000000000000000000000000000000000000"},
+  "instance_id": "synthetic-alpha13",
+  "release_channel": "alpha",
+  "household": {"timezone": "America/Los_Angeles", "entities": [{"entity_id": "child_1", "display_name": "Child 1", "type": "child", "sort_order": 1}, {"entity_id": "household", "display_name": "Family", "type": "shared", "sort_order": 99}], "grouping": {"canonical_scope_field": "entities", "shared_group_id": "household", "unscoped_update_group": "household"}},
+  "integrations": {"runtime_adapter": "runtimes/synthetic.md", "mail_adapter": "mail/synthetic.md", "task_adapter": "tasks/synthetic.md", "scheduler_adapter": null, "audio_adapter": null, "task_provider_status": "not_configured"},
+  "policies": {"brief": {"rolling_window_days": 7, "group_by_received_day": true, "source_links_required_for_source_backed_tasks": true}, "tasks": {"completion_requires_parent_comment": true, "completion_comment_structure": "freeform", "reopen_when_comment_missing": true}, "attachments": {"excluded_content_policy": "do_not_catalogue_sensitive_unrelated_content", "unsupported_outcome": "manual_review"}, "audio": {"enabled": false, "unavailable_behavior": "disclose_optional_degradation"}, "execution": {"max_records_per_unit": 25, "max_bytes_per_unit": 262144, "delivery_correction_policy": "explicit_authorization_required", "manual_entrypoint_authorization": "explicit_user_request_required", "serialization_mode": "attended_single_writer"}},
+  "daily_values": {"presentation": {"brief_heading": "School updates"}}
+}

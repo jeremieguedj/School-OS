@@ -1,11 +1,11 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation in progress; M1-001, M1-003, M1-002, M1-004, and M1-005 complete
-- Approved plan: [PLAN.md](PLAN.md), revision 7
+- Status: implementation in progress; M1 complete, M2-001 next
+- Approved plan: [PLAN.md](PLAN.md), revision 8
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
-- Milestone status: M1 in progress; M2 pending; M3 pending; M4 pending
+- Milestone status: M1 complete; M2 in progress; M3 pending; M4 pending
 
 ## Authority and boundaries
 
@@ -386,8 +386,7 @@ declared consistency window. Multiple matches or an inconclusive lookup is
 
 ## Milestone 1 — Install a minimal candidate in a clean test instance
 
-**Status:** in progress (M1-001, M1-003, M1-002, M1-004, and M1-005 complete;
-M1-006 pending).
+**Status:** complete (M1-001 through M1-006).
 
 ### Deliverable
 
@@ -399,8 +398,7 @@ required capability is missing.
 
 ### Ordered tasks
 
-**Task status:** M1-001, M1-003, M1-002, M1-004, and M1-005 complete. M1-006
-is pending.
+**Task status:** M1-001 through M1-006 complete.
 
 **Sequencing resolution (2026-09-07):** M1-002's installed validator must
 verify the registry as a required payload, but M1-003 creates the registry and

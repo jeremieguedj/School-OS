@@ -445,3 +445,21 @@ requirements, then read this log from top to bottom.
 - Next: M1-006, a fresh-process synthetic installation fixture that uses the
   extracted package and current scaffolder/capability contracts without mail,
   task, or delivery effects.
+
+## 2026-09-07 — alpha.13 M1-006 synthetic clean installation
+
+- Completed M1 and M1-006. Added checked-in synthetic answers, exact-reference
+  evidence, an empty source corpus, filesystem storage fake, fixture mail/task
+  adapters, and a send sink under `tests/support/` and
+  `tests/synthetic-fixtures/alpha13/`.
+- Added a fresh-process test that builds the exact candidate, extracts it, runs
+  the extracted `scaffold_instance.py` with only fixture inputs, then resolves
+  `daily-run` through the extracted registry. It reports candidate paths/hashes
+  and creates no mail, task, or delivery effect; the fixture corpus remains
+  empty and the fakes show no effects.
+- Validation: focused synthetic-installation test and `python3 scripts/validate.py`
+  passed 94 tests, schemas/templates, the release smoke check, and tracked-file
+  privacy scan. M1 is now complete; no real provider or private instance was
+  touched.
+- Next: M2-001, versioned operation state/checkpoint contracts and legal
+  transition validation.

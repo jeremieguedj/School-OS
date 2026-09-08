@@ -1,0 +1,26 @@
+{
+  "instance_root": {"object_id": "synthetic-instance-root", "kind": "folder", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
+  "observed": {
+    "source_checkpoint": {"object_id": "synthetic-source-checkpoint", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
+    "source_catalog_folder": {"object_id": "synthetic-source-catalog-folder", "kind": "folder", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
+    "source_catalog_index": {"object_id": "synthetic-source-catalog-index", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
+    "canonical_action_register": {"object_id": "synthetic-canonical-actions", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
+    "guidelines": {"object_id": "synthetic-guidelines", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
+    "rolling_updates": {"object_id": "synthetic-rolling-updates", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
+    "brief_template": {"object_id": "synthetic-brief-template", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
+    "delivery_state": {"object_id": "synthetic-delivery-state", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
+    "final_run_checkpoint": {"object_id": "synthetic-final-checkpoint", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
+    "runtime_profile": {"object_id": "synthetic-runtime-profile", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
+    "source_scope": {"object_id": "synthetic-source-scope", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
+    "delivery_configuration": {"object_id": "synthetic-delivery-config", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
+    "task_provider_selector": {"object_id": "synthetic-task-selector", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"}
+  },
+  "returned_objects": {
+    "instance.yaml": {"object_id": "synthetic-instance-manifest", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
+    "config/household.yaml": {"object_id": "synthetic-household", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
+    "config/integrations.yaml": {"object_id": "synthetic-integrations", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
+    "config/policies.yaml": {"object_id": "synthetic-policies", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
+    "config/daily-run-personal-values.md": {"object_id": "synthetic-daily-values", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
+    "state/installation-manifest.json": {"object_id": "synthetic-install-manifest", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"}
+  }
+}
