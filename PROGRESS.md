@@ -611,3 +611,11 @@ requirements, then read this log from top to bottom.
 - Validation/publication pending. Exact next action: run repository validation
   and privacy scan, commit/push/verify M2-004, then implement M2-005 rendering
   and delivery ledger contracts.
+
+## 2026-09-07 — alpha.13 M2-004 verification
+
+- M2-004 was accepted as `5cd9acaed055e520b62808b6ddf421ac231d9476`
+  (`Implement alpha.13 provider reconciliation`). The repository gate passed
+  108 tests and changed files passed privacy/diff checks.
+- `origin/main` resolves to the same commit. Next: M2-005 deterministic brief
+  rendering, templates, delivery ledger, and send-sink verification.
