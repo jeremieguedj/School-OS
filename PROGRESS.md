@@ -757,3 +757,12 @@ requirements, then read this log from top to bottom.
   root `PLAN.md`, and the alpha.13 plan/specification. Validation/publication
   pending. Exact next action: privacy-scan, commit/push/verify M3-002, then
   implement M3-003 task fault recovery and parent-edit preservation.
+
+## 2026-09-07 — alpha.13 M3-002 verification
+
+- M3-002 was accepted as `097a3f7351bffc9064a1932dd0a317a37659c47b`
+  (`Implement alpha.13 catalog recovery`). The full repository gate passed 121
+  tests, direct privacy scanning included the new recovery test, and
+  `origin/main` was read back at the same SHA.
+- Next: M3-003 task create/update/comment fault recovery and parent-edit
+  preservation, using immutable canonical task IDs and provider readback.
