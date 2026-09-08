@@ -22,7 +22,7 @@ approach as implementation milestones with deliverables and completion checks.
 The linked [implementation specification](SPEC.md) grounds those milestones in
 the alpha.12 codebase and defines the implementation tasks, interfaces, state
 transitions, migrations, and behavioral checks. Implementation is in progress
-at M2-005 after completing M1-001 through M1-006 and M2-001–M2-004.
+at M2-006 after completing M1-001 through M1-006 and M2-001–M2-005.
 Implementation is limited to this reusable repository. It does not activate a
 private instance or authorize private onboarding, import, delivery, release
 publication, or real runtime/provider effects.
@@ -553,7 +553,7 @@ this journey. Implement only the shared interfaces needed by the next milestone.
 
 ### Milestone 2 — Connect a complete normal operation
 
-**Status:** in progress (M2-001–M2-004 complete; M2-005 next).
+**Status:** in progress (M2-001–M2-005 complete; M2-006 next).
 
 **Work and deliverables:** Use the installed candidate to execute this sequence:
 

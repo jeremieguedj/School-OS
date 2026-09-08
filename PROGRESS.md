@@ -619,3 +619,15 @@ requirements, then read this log from top to bottom.
   108 tests and changed files passed privacy/diff checks.
 - `origin/main` resolves to the same commit. Next: M2-005 deterministic brief
   rendering, templates, delivery ledger, and send-sink verification.
+
+## 2026-09-07 — alpha.13 M2-005 deterministic brief and ledger
+
+- Completed M2-005. Added brief-input and delivery-ledger schemas, static
+  HTML/plain templates/theme, and `school_os.brief` deterministic renderer.
+  It keeps News, Guidelines, and Action Items separate, escapes content/links,
+  emits explicit empty sections, and returns stable bytes for identical input.
+- Added send-sink ledger confirmation with content hashes and duplicate key
+  suppression; tests prove one confirmed delivery entry. No real send/provider
+  action occurred. Validation/publication pending. Exact next action: validate,
+  privacy scan, commit/push/verify M2-005, then implement M2-006 shared daily
+  entrypoints and operation pipeline.

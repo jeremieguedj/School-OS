@@ -1,6 +1,6 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation in progress; M1 and M2-001–M2-004 complete, M2-005 next
+- Status: implementation in progress; M1 and M2-001–M2-005 complete, M2-006 next
 - Approved plan: [PLAN.md](PLAN.md), revision 9
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
@@ -434,7 +434,7 @@ or any real provider is conformant.
 
 ## Milestone 2 — Connect a complete normal operation
 
-**Status:** in progress (M2-001–M2-004 complete; M2-005 next).
+**Status:** in progress (M2-001–M2-005 complete; M2-006 next).
 
 ### Deliverable
 
@@ -479,6 +479,10 @@ guidelines fail if treated as actions, and task titles are never identity.
 complete synthetic snapshot first, resolves canonical IDs without title matching,
 records a managed-projection hash before create/patch, and accepts bindings only
 after exact readback. Parent/provider-owned fields are not part of the patch.
+
+**M2-005 implementation note (2026-09-07):** `school_os.brief` deterministically
+renders the versioned input contract to escaped HTML/plain text. The delivery
+ledger confirms a content-hash/key once through the send sink and blocks repeats.
 
 ### Milestone check
 

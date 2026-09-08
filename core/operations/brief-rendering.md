@@ -14,6 +14,11 @@ delivery. Read only the declared private derived files:
 
 ## Rendering rules
 
+`school_os.brief` renders the versioned brief-input contract to fixed HTML and
+plain-text outputs. Inputs sort deterministically by date/entity/text; text and
+links are escaped; empty sections are explicit. Record input/content hashes in
+the operation checkpoint rather than creating a separate rendering manifest.
+
 - Render News, Guidelines, and Action Items as separate sections.
 - Group each section's entries by the configured local received day, newest first.
 - Group task presentation by configured person/entity order followed by the household group.
@@ -27,3 +32,8 @@ delivery. Read only the declared private derived files:
 ## Delivery
 
 Use the private delivery state to prevent duplicate daily sends. A user-requested immediate brief is authorized for delivery when it was dispatched through the configured schedule's verified run-now control; it receives the same scheduler identity, delivery-key lookup, verification, and ledger rules as a cadence-triggered run. Verify the sent result through the selected mail adapter before recording success. If delivery outcome is ambiguous, follow the installed delivery policy and do not blindly resend.
+
+The durable delivery ledger records delivery key, variant, content hash,
+recipient/configuration fingerprint, provider message identity, and verification.
+An existing confirmed key suppresses a duplicate; unknown outcomes go to
+reconciliation rather than a blind resend.
