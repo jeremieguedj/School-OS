@@ -43,3 +43,33 @@ Read the selected operation recipe first, then only the dependencies it declares
 ## Repository maintenance rule
 
 Keep this file generic. Do not add private household details, provider IDs, domains, recipients, credentials, message content, or operational copies here.
+
+## Repository development continuity
+
+School-OS development must remain independent of any particular coding agent,
+vendor, local workspace, or conversation. GitHub is the durable shared state
+from which another agent must be able to resume the work.
+
+When maintaining this repository:
+
+1. Follow the current approved release plan and the specification it links.
+   Keep milestone status in that release plan accurate; do not infer executable
+   support from documentation alone.
+2. On resumption, inspect the actual branch, working tree, implementation, and
+   Git history, then reconcile the plan, specification, and progress log with
+   that evidence before continuing.
+3. Append `PROGRESS.md` after each meaningful work unit, before a handoff or
+   planned stop, and when blocked. Record completed and unfinished work,
+   validation evidence, relevant files, blockers, decisions, and the exact next
+   action.
+4. For every accepted repository change, run validation appropriate to the
+   change, including the privacy scan before publishing; commit all and only
+   accepted in-scope files; push the descriptive commit to the intended GitHub
+   branch; and verify that the remote branch resolves to that commit before
+   reporting the work complete.
+
+Never leave accepted work only in a local working tree or unpushed commit. Never
+publish private-instance data, credentials, or unrelated user changes. If
+validation, GitHub authentication or authorization, the push, or remote
+verification fails, preserve the local changes and report the work as incomplete
+with the exact blocker.

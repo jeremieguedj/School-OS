@@ -23,11 +23,9 @@
 
 ## Resume instructions
 
-1. Read `PLAN.md`.
-2. Read this file from top to bottom.
-3. Inspect the repository tree and the latest commit.
-4. Continue only from the first unchecked task in the active phase.
-5. Update this file after each verified milestone.
+Follow the authoritative
+[repository development continuity](START-HERE.md#repository-development-continuity)
+requirements, then read this log from top to bottom.
 
 ## 2026-09-02 — local audio-worker scaffold
 
@@ -209,3 +207,27 @@
   local-link, plan-structure, and diff checks.
 - Next: use the approved milestone sequence for subsequent implementation
   planning when requested; implementation has not started.
+
+## 2026-09-07 — shared repository continuity instructions
+
+- Consolidated repository-maintenance continuity requirements in
+  `START-HERE.md`; `AGENTS.md`, the Claude compatibility entry, and the progress
+  resume instructions now lead to that single vendor-neutral owner.
+- Required maintenance work to follow the approved release plan and linked
+  specification, keep milestone status accurate, append evidence-rich progress
+  checkpoints, and reconcile documentation with the actual code and Git state
+  on resumption.
+- Preserved the validation, privacy scan, scoped commit, push, and remote-commit
+  verification requirements. No runtime behavior, release plan milestone,
+  manifest, or private instance changed.
+- Relevant files: `START-HERE.md`, `AGENTS.md`,
+  `docs/instruction-ownership.md`, and `PROGRESS.md`.
+- Validation: complete `scripts/validate.py` passed all 77 tests, schema and
+  manifest checks, the release-package smoke check, and the tracked-file privacy
+  scan; a separate privacy scan, targeted entry-point/link checks, and
+  `git diff --check` also passed.
+- Publication to `origin/main` is the remaining action before the planned stop;
+  no blocker or new product decision is open.
+- Next: publish and verify this maintenance checkpoint, then wait for user
+  confirmation before creating and linking the alpha.13 implementation
+  specification. Do not begin runtime implementation.
