@@ -366,3 +366,17 @@ requirements, then read this log from top to bottom.
   next. Exact next action: implement the Git-free installed validator using the
   registry/schema and extracted-tree verification, including the candidate-mode
   and no-Git negative tests.
+
+## 2026-09-07 — alpha.13 M1-002 installed validation
+
+- Completed M1-002 after M1-003. Added `scripts/validate_installed.py`, which
+  validates an extracted root or archive using only package bytes: inventory,
+  manifest/schema/version, every schema document, registry, and mapped recipe.
+  It never invokes Git or repository tests; unreleased candidates require the
+  explicit `--candidate-test` flag.
+- Added clean candidate tests with `.git` absent and `PATH` excluding Git,
+  production rejection of `unreleased`, changed-byte detection, and missing
+  registry/archive-evidence failures. `python3 scripts/validate.py` passed all
+  88 tests; no provider or private-instance effect occurred.
+- Next: M1-004, deterministic instance scaffolding with dedicated configuration
+  and installation-manifest contracts.
