@@ -529,3 +529,17 @@ requirements, then read this log from top to bottom.
 - Next: M2-002. Implement the versioned lossless source/extraction schemas and
   catalog codec, preserving adapter body bytes and proving both source-to-record
   equality and intended-to-persisted byte equality before indexing.
+
+## 2026-09-07 — alpha.13 persistent development execution policy
+
+- Recorded the user-authorized development execution policy in the alpha.13
+  release plan. It requires autonomous ordered implementation through M4,
+  recovery from repository evidence, continuity/publish checkpoints after every
+  work unit, bounded read-only consultation for design failures, and a final
+  stop only at authorized repository completion or a genuine blocker.
+- Created the corresponding persistent development goal without a token budget
+  or scheduled automation. This policy applies to development agents only and
+  does not widen runtime or external-effect authorization.
+- Validation/publication is pending for this documentation checkpoint. Exact
+  next action: validate, privacy scan, commit, push, and verify it; then resume
+  M2-002 without a routine stop.

@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
 - Status: approved plan with linked implementation specification; M1 complete, M2 in progress
-- Revision: 9, updated 2026-09-07
+- Revision: 10, updated 2026-09-07
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -43,6 +43,57 @@ This plan follows [product principles](../../product-principles.md),
 [implementation plan](../../../PLAN.md) retains historical development context.
 The motivating runtime retros remain private; this document contains only
 generic requirements and independently described implementation proposals.
+
+## Development execution policy
+
+This section governs development agents maintaining this repository. It does
+not add a School-OS runtime requirement or authorize private-instance access,
+provider effects, release publication, paid services, or production activation.
+
+Development proceeds autonomously through the ordered authorized tasks and all
+four milestones. A completed task or milestone is a recoverable checkpoint, not
+a reason to stop or seek routine confirmation. On every resumption, compaction,
+or environment reset, inspect `AGENTS.md`, `START-HERE.md`, this plan and its
+linked specification, the relevant latest `PROGRESS.md` entries, branch,
+worktree, history, and implementation/test evidence. Reconcile discrepancies
+and continue from the first unfinished dependency; read narrowly after that
+recovery rather than relying on conversation memory or repeatedly loading
+unrelated history.
+
+After every meaningful work unit, update task/milestone status in this plan,
+implementation details in `SPEC.md` when needed, the root `PLAN.md` summary,
+and append `PROGRESS.md` with completed and unfinished work, changed files,
+validation, decisions, blockers, and the exact next action. Run meaningful
+behavioral tests and privacy scans including new files, commit only accepted
+in-scope changes, push to `origin/main`, verify the remote SHA, and then
+continue immediately. Preserve historical entries and unrelated user changes.
+Before a predictable execution limit, handoff, or blocked stop, leave a
+recoverable progress checkpoint that identifies uncommitted work and any
+publication failure.
+
+If evidence shows the approved design is flawed, contradictory, infeasible, or
+unsafe, stop the affected implementation. Record the reproduction and consult
+one GPT-5.6 Sol sub-agent with High reasoning in a bounded, read-only role,
+using fresh context containing this policy, task identifiers, relevant
+plan/spec text, code references, violated assumption, reproduction, options,
+and a specific decision question. Do not implement the disputed design while it
+reviews. Escalate to one GPT-6 Astra High consultation only if Sol cannot
+resolve the issue or identifies a fundamental architectural problem. Evaluate
+advice against the approved constraints, record the finding and resolution in
+this plan, `SPEC.md`, and `PROGRESS.md`, and resume automatically only when the
+resolution remains in scope. A consultant cannot authorize new product scope,
+incompatible architecture, private access, or external effects. Ordinary coding
+mistakes and transient tool failures may be fixed directly; repeated failure
+requires reassessment rather than indefinite workaround attempts.
+
+Finish every repository task that can be completed under existing authorization,
+including M4 work independent of unavailable real-provider evidence. Stop only
+when all authorized implementation and applicable validation are complete and
+remotely verified, or when a genuine blocker prevents useful authorized work.
+Document blocked work precisely and do not mark it or its milestone complete.
+At final stop, distinguish repository implementation from production conformance
+and release readiness, and report milestones, validation, remote commit,
+remaining work, and any exact decision or access needed.
 
 ## Approved product decisions
 
@@ -649,3 +700,7 @@ evidence that does not need to be repeatedly printed into model context.
 - Revision 9: completed M2-001's operation-state/checkpoint contracts and
   validation. M2 is now in progress; M2-002 is next. The data-schema migration
   and alpha.12 compatibility claim remain deferred to M4 as specified.
+- Revision 10: recorded the durable development execution policy: autonomous
+  ordered implementation, evidence-based continuity/publication checkpoints,
+  bounded design-failure consultation, existing authorization boundaries, and
+  completion only at repository readiness or a genuine blocker.
