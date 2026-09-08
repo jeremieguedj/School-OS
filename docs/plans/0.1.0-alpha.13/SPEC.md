@@ -1,11 +1,11 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation blocked; M1–M3 and M4-001–M4-002 complete, M4-003 awaits observed private-surface evidence; the authorized private instance is an unsupported alpha.11 migration predecessor
-- Approved plan: [PLAN.md](PLAN.md), revision 21
+- Status: implementation and observed validation in progress; M1–M3 are reopened for chained revalidation, M4-001 is reopened, M4-002 remains complete for its declared synthetic input, and M4-003–M4-009 remain
+- Approved plan: [PLAN.md](PLAN.md), revision 28
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
-- Milestone status: M1 complete; M2 in progress; M3 pending; M4 pending
+- Milestone status: M1–M3 revalidation pending; M4 in progress
 
 ## Authority and boundaries
 
@@ -15,19 +15,28 @@ owns the implementation detail linked by that plan. If the two conflict, stop
 and reconcile them rather than silently changing a product decision.
 
 This work remains subject to the repository's product principles, architecture,
-contracts, privacy boundary, and instruction-ownership rules. It authorizes
-repository implementation only; it does not authorize a release, access to a
-private instance, provider effects, or production activation.
+contracts, privacy boundary, and instruction-ownership rules. The user has now
+authorized repository completion and full alpha.13 validation in a new empty
+private Drive test instance under the user's test parent. That test scope
+includes read-only source-domain/configuration discovery from the existing
+private instance; a 14-day school-mail import; a Google Sheets task projection;
+real manual and temporary scheduled brief-email runs; and independent
+source-grounded inventory/view validation. The existing instance, its files,
+and its schedules remain unchanged. Exact private references, queries, domains,
+recipients, source content, and evidence stay outside Git.
 
-The selected provider mapping for the first connected journey is the existing
-ChatGPT Work, Google Drive, Gmail, and Todoist path, entered manually with no
-scheduler and with optional audio disabled. Because the repository has no
-executable authenticated adapters for that path, the first three milestones run
-the same interfaces through a dependency-free Python 3.12 reference runner, a
-clean filesystem-backed synthetic instance, and fake storage, mail, task, and
-delivery adapters. This is executable behavioral evidence, not a production
-conformance claim. Milestone 4 must observe the exact real surfaces before it
-makes one. The core does not depend on those providers.
+The selected provider mapping for the connected release journey is a qualified
+runtime with Google Drive storage, Gmail source/delivery, Google Sheets tasks,
+and the exact temporary scheduler surface observed during the test. Provider
+capability is never inferred from a similar interactive or scheduled surface.
+M1–M3 retain a dependency-free Python 3.12 reference runner, filesystem-backed
+synthetic instance, and fakes, but their release evidence must be regenerated
+after the installer correction. Milestone 4 must execute the real authenticated
+runtime/connector-to-helper path with actual predecessor artifacts; the
+synthetic `--stage-results` entrypoint and checked-in interpreter results cannot
+establish it. Optional audio delivery may remain disabled, but its existing
+current-run-delta input and worker regression remain release checks. The core
+does not depend on these providers.
 
 ## Existing implementation inventory
 
@@ -386,8 +395,9 @@ declared consistency window. Multiple matches or an inconclusive lookup is
 
 ## Milestone 1 — Install a minimal candidate in a clean test instance
 
-**Status:** corrective implementation in progress (M1-004 and M1-006 reopened
-for create-only provider installation).
+**Status:** reopened for clean-instance revalidation. The corrected M1-004 and
+M1-006 implementation exists; its exact package has not yet passed in the new
+empty private test root.
 
 ### Deliverable
 
@@ -399,8 +409,9 @@ required capability is missing.
 
 ### Ordered tasks
 
-**Task status:** M1-001–M1-003 and M1-005 complete; M1-004 and M1-006
-corrective implementation in progress.
+**Task status:** M1-001–M1-003 and M1-005 complete; M1-004 and M1-006 reopened
+for exact-package, fresh-bootstrap, no-extra-object revalidation. The earlier
+candidate with an excluded staging object is not acceptance evidence.
 
 **Sequencing resolution (2026-09-07):** M1-002's installed validator must
 verify the registry as a required payload, but M1-003 creates the registry and
@@ -456,14 +467,17 @@ content manifest, admission receipt, or provider write.
 
 ### Milestone check
 
-M1 completes only when M1-001 through M1-006, including the reopened create-only
-installation correction, pass from a clean checkout and the
-release plan is updated with evidence. It does not claim that daily-run behavior
-or any real provider is conformant.
+M1 completes only when M1-001 through M1-006, including the corrected create-only
+installation sequence, pass from a clean checkout and exact package, and a fresh
+invocation recovers the new empty test instance through its returned bootstrap
+with no undeclared object in the test root. Record generic evidence in the
+release plan and keep private references outside Git. It does not claim daily-run
+behavior or complete real-provider conformance.
 
 ## Milestone 2 — Connect a complete normal operation
 
-**Status:** complete (M2-001–M2-007 complete).
+**Status:** reopened for chained revalidation. M2-001–M2-007 retain their
+accepted synthetic implementation but must run from the repaired M1 generation.
 
 ### Deliverable
 
@@ -532,13 +546,16 @@ Altering the catalog artifact between stages blocks before task sync or delivery
 
 ### Milestone check
 
-M2 completes only after the connected test proves stage-to-stage custody. Unit
-tests and recipe wording cannot substitute. The test sink is not evidence that
-Gmail, Todoist, Drive, or a scheduled runtime conforms.
+M2 completes only after the connected test proves stage-to-stage custody from
+the repaired installer. Unit tests and recipe wording cannot substitute. The
+test sink is not evidence that Gmail, Sheets, Drive, or a scheduled runtime
+conforms, and the fixture interpreter is not semantic-accuracy evidence.
 
 ## Milestone 3 — Prove recovery and safe repeated execution
 
-**Status:** complete (M3-001–M3-006).
+**Status:** reopened for chained recovery revalidation. M3-001–M3-006 retain
+their accepted synthetic implementation but must use the repaired M1 generation
+and actual M2 predecessor artifacts.
 
 ### Deliverable
 
@@ -613,7 +630,9 @@ state removed. A passing uninterrupted operation is insufficient.
 
 ## Milestone 4 — Expand coverage and establish release readiness
 
-**Status:** blocked (M4-001–M4-002 complete; M4-003 awaits observed private-surface evidence).
+**Status:** in progress. M4-001 is reopened, M4-002 is complete for its declared
+synthetic alpha.12 input, M4-003–M4-009 remain, and M4-006 is the final release
+gate.
 
 M4 is sufficiently specified to bound later work, but concrete real-provider
 limits and migrations must be based on observed authorized surfaces and private
@@ -623,12 +642,15 @@ legacy inventories. Do not invent them in advance.
 
 | ID | Depends on | Work and affected files | Observable acceptance |
 |---|---|---|---|
-| M4-001 | M3 complete | Extend catalog/import runner for complete multi-page scopes, larger bounded batches, no-new-message runs, supported attachment extraction, and explicit unsupported outcomes. Update import/attachment recipes and fixtures. | Complete enumeration evidence accounts for every item; batch resume is stable; no-new-message daily run still regenerates required rolling/brief output; unsupported content is visible and never inferred. |
+| M4-001 | M3 implementation | Correct the mail-adapter/body admission boundary; extend catalog/import for complete multi-page scopes, bounded batches, no-new-message runs, selected runtime-native PDF/image extraction, attachment provenance locators, and explicit unsupported outcomes. Update import/attachment recipes, Fact/extraction schemas as narrowly required, and fixtures. | Transport/charset decoding and one provider-designated complete plain alternative pass the exact regression matrix; ambiguous, lossy, incomplete, HTML-derived, and unsupported body content fails visibly without cursor movement. Every selected readable attachment is read and assigned an exact extracted-text span or provider-backed page/region locator; original-content and extracted-text hashes are distinct, and original-byte proof is claimed only when exposed. Unreadable/unverifiable content has a specific blocker. Complete enumeration and stable resume pass. |
 | M4-002 | M3 complete | Implement only actual format/config/state migrations, expected as `migrations/0002-alpha13-structured-state.md` plus transformer/tests; update release schema/manifest only during implementation. | Supported alpha.12 templates/records migrate with verified backups and idempotence; unsupported private variants stop with exact exceptions; compatible extensions remain. |
-| M4-003 | M3 complete | Exercise manual/scheduled coexistence, retry/overlap behavior, separate network paths, auth refresh, constrained limits, and any claimed non-Python equivalent. Update runtime/scheduler/mail/task/storage adapter mappings and conformance fixtures. | Each claimed execution surface has current observed evidence. Fake adapters or interactive evidence do not establish scheduled conformance. |
-| M4-004 | M4-001–M4-003 | Record representative onboarding, bounded import, daily update, no-new-message, and interruption measurements in a small checked-in synthetic baseline. | Available tokens/tool calls/bytes/elapsed/repeated work are labeled measured; unavailable values are explicit; no benchmark framework or private telemetry is introduced. |
-| M4-005 | M4-002–M4-004 | Extend `.github/workflows/validate.yml`, release tests, changelog, release manifest, package verification, migration/upgrade docs, and release recipe. Implement draft-asset verification and post-publication checks using the existing release workflow surface. | Clean checkout and extracted package gates pass; archive/tag/commit/manifest/assets agree; older synthetic instance upgrades and resumes; publication remains blocked until all release gates pass. |
-| M4-006 | M4-005 | Perform authorized real-surface conformance and release-candidate validation; keep evidence private when it contains instance/provider data. | Every support claim has surface-specific evidence, repository privacy scan is clean, and no production activation occurs without separate authorization. |
+| M4-003 | M1–M3 revalidated; M4-001, M4-007, M4-008 implementation | Implement and exercise the selected authenticated runtime/connector-to-helper path; reconcile runtime, storage, mail, task, and scheduler adapter docs with actual capabilities; test manual/scheduled coexistence, separate network paths, auth refresh, limits, and scheduler execution. | Actual connector data reaches checked-in helpers and their outputs return to provider writes with complete readback. Each narrowly named surface has current observed evidence. The scheduler mapping no longer forbids a qualified direct manual run, create-only installation is not confused with later exact-ID guarded replacement, and interactive evidence does not establish unattended conformance. |
+| M4-004 | M3 implementation; M4-001 synthetic path | Record representative onboarding, bounded import, daily update, no-new-message, and interruption measurements in a small checked-in synthetic baseline. Translate observed elapsed/execution-budget evidence into a conservative checkpoint-before-limit rule. | Available tokens/tool calls/bytes/elapsed/repeated work are labeled measured; unavailable values are explicit; at least one measured boundary produces `NEEDS_CONTINUATION` and resumes; no benchmark framework or private telemetry is introduced. This task does not wait for private/provider evidence. |
+| M4-005 | M4-001, M4-002, M4-004, M4-007, M4-008 implementation | Prepare release validation independently of outstanding real-provider evidence: extend CI, release tests, changelog, manifest, package verification, migration/upgrade docs, visual brief checks, audio-input regression, and release recipe. Implement draft-asset and post-publication verification using the existing workflow surface. | Clean checkout and extracted package gates pass; archive/tag/commit/manifest/assets agree; older synthetic input upgrades/resumes; rendered fixtures pass deterministic and visual inspection; current-run audio input/worker regression passes; publication stays gated on M4-006. |
+| M4-007 | M4-001 | Implement actual semantic extraction/evaluation plumbing and source-grounded audit records without a second canonical store. | A live interpreter consumes body and selected readable-attachment packets and produces schema-valid Fact/coverage results without checked-in answers. Independent review accounts for every substantive source clause and attachment region and flags unsupported/ambiguous meaning; canned interpreter output cannot satisfy acceptance. |
+| M4-008 | M2-004 implementation | Implement the selected Google Sheets task adapter with private configuration, canonical-ID bindings, explicit system/parent-owned columns, completion/comment policy, scoped reads, guarded writes, and exact row readback. | Synthetic conformance passes; a test Sheet projects each eligible action once, retains stable IDs and allowed parent edits, excludes guidelines/non-actions, and replays without duplicate rows or lost unrelated values. |
+| M4-009 | M1–M3 revalidated; M4-003, M4-007, M4-008 | Run the authorized fresh private test acceptance: recover from bootstrap, use the grounded 14-day query to select candidate conversations, fetch and ingest their complete ordered thread membership and selected readable attachments, interpret and audit canonical inventory, project eligible actions to Sheets, render/visually verify briefs, and send one manual-test and one scheduled-test delivery. Exercise same-key replays and checkpoint/resume. | One complete authenticated path reaches `COMPLETE`; discovery-hit counts and full-thread message counts are separate and reconciled; every fetched message and attachment has provenance and an admission/processing disposition, including replies or older context outside the selection predicate. Corrections/completions in thread context and every substantive readable attachment fact are preserved. Every Fact is source-supported; brief and task inclusion follow policy and per-message dates rather than forcing every Fact into a view. The two visibly marked test variants each send once only to the selected test recipient set; replay of either same key is suppressed. The temporary schedule is directly observed and then verified inactive. Existing private instance and unrelated schedules remain unchanged. |
+| M4-006 | M4-003–M4-005, M4-007–M4-009 | Perform final release-candidate validation and prepare the existing release workflow; keep private evidence outside Git. | All ten work-package gates and each support claim have current evidence; clean/package/privacy checks pass; candidate commit, manifest, archive, and checksums agree. Formal tag/release publication and production activation remain separately authorized. |
 
 **M4-001 implementation note (2026-09-08):** `school_os.importer` records every
 provider page token and immutable conversation disposition, then chooses whole
@@ -649,44 +671,65 @@ The transformer also requires both the legacy manifest and active-release
 version to be exactly `0.1.0-alpha.12`; a schema-1 predecessor alone is not a
 supported input.
 
-**M4-003 status (2026-09-08):** Repository work now marks capability evidence
-as `unverified`, `synthetic`, or `observed`; scheduled mutation qualification
+**M4-003 status (2026-09-08):** Repository work marks capability evidence as
+`unverified`, `synthetic`, or `observed`; scheduled mutation qualification
 requires `observed`. Synthetic tests cover independent network paths,
-authentication/limits, manual/scheduled delivery-key overlap, and the
-observed-evidence gate, but cannot establish a real execution surface. Current
-authorization now permits a read-only private Drive inventory, which found an
-alpha.11/schema-1 instance. That inventory does not establish runtime, mail,
-task, or scheduler conformance, and the alpha.11 predecessor is outside
-Migration 0002's explicit alpha.12 input. M4-003 is not complete, and
-M4-004–M4-006 remain blocked by its dependency.
+authentication/limits, manual/scheduled delivery-key overlap, and the observed-
+evidence gate, but cannot establish a real execution surface. The fresh test
+instance now authorizes the missing surface observations. M4-003 must also
+replace the synthetic-only stage-result path with the smallest runtime binding
+that carries real connector reads into the checked-in helpers and carries their
+verified outputs to provider writes. Do not build a generic orchestration
+framework. M4-004 measurement and the implementation/package portion of M4-005
+proceed independently; only final M4-006 waits for all observed evidence.
 
-**Inactive candidate observation boundary (2026-09-08):** A new empty private
-Drive root may be used for one candidate-only test under explicit user
-authorization, with bounded read-only Gmail input and no existing-instance,
-task, delivery, scheduler, activation, or publication effects. It must recheck
-the exact empty root before the first write and use create-only regular-byte
-objects with identity, parent, MIME, hash, and byte-for-byte readback. The
-source scope must be explicit and fixed before Gmail enumeration. Record all
-pagination and inclusion/duplicate/blocked dispositions; read complete thread
-membership and block out-of-scope members. Accept only complete unambiguous
-UTF-8 plaintext adapter bodies, never snippets, reconstructed content, or
-silently omitted multipart/attachment material. The v2 catalog's independent
-source-to-record and intended-to-persisted checks remain required. A fresh
-invocation may prove catalog/index adoption after local state loss. This is
-partial observed evidence for the exact manual storage/mail surface only; it
-does not qualify the `daily-run` capability profile or complete M4-003.
+**Fresh test-instance boundary (2026-09-08):** Create alpha.13 from an exact
+package in the newly empty authorized Drive test root after an empty-root
+readback. The installation generation remains create-only, with identity,
+parent, MIME, hash, and byte readback. Later guarded mutable state may use the
+selected storage surface's exact-ID replacement only after that separate
+capability is observed; create-only installation is not a claim that every
+runtime write is create-only. Fix the 14-day source scope from the authorized
+read-only existing-instance configuration before enumeration and keep its
+private values out of Git. The query selects candidate conversations; it does
+not filter messages out of a selected conversation. Record paginated discovery
+hits separately from complete ordered thread membership, including messages
+from other senders or outside the date window with their own provenance and
+view eligibility. Preserve reply corrections and completion evidence. A fresh invocation must
+prove bootstrap recovery and later checkpoint/catalog/task/delivery recovery
+from durable state. The earlier candidate with an excluded staging object stays
+unchanged and supplies no clean-install acceptance.
 
-**Candidate multipart admission resolution (2026-09-08):** A bounded GPT-5.6
-Sol High read-only consultation confirmed that the approved alpha.13 scope
-supports only a fail-closed negative disposition here: a message with more than
-one available MIME representation is `unsupported`/`manual_review` and may not
-create a source record, catalog/index, knowledge, task, or derived output.
-Plain and HTML alternatives must still block even when they appear equivalent;
-the present contract has no approved exact equivalence rule. Persisting raw
-RFC822 as canonical source would be a core source/provenance extension requiring
-user approval, including a versioned raw-artifact contract and recovery/privacy
-rules. This candidate result is negative observed evidence only, not successful
-Gmail/catalog conformance or M4 completion.
+**Source-admission reconciliation (2026-09-08):** Direct review of the original
+and current `core/contracts/source-catalog.md`, the mail adapter contract, and
+`school_os.importer` supersedes the earlier broad multipart conclusion. The
+canonical unit is the complete plaintext string returned by the selected mail
+adapter, not the provider's encoded MIME transport. Attachments are explicitly
+separate outcomes. Standards-conformant content-transfer decoding and declared-
+charset decoding therefore belong at the adapter boundary and are compatible
+with the existing catalog contract. They are not whitespace normalization,
+summarization, HTML conversion, or other content rewriting.
+
+The smallest compatible implementation passes one normalized body result and a
+separate attachment inventory from the adapter to core. For a recursive
+`multipart/alternative` tree, the adapter may select a single complete
+`text/plain` alternative only when the provider/adapter identifies it as the
+message's plaintext body and every decode step is strict and evidenced. It may
+use a complete raw provider read to prove MIME structure and detect silent
+replacement without persisting raw MIME as canonical data. `multipart/mixed`
+with one eligible body and separately inventoried attachments is admissible.
+Multiple plausible plain bodies, an incomplete tree/body, invalid bytes or a
+decoder that silently inserted replacement characters, HTML-only content, and
+HTML-to-text reconstruction remain `unsupported` or `manual_review` and cannot
+advance the cursor.
+
+Raw-MIME canonical storage is a different option only if a selected connector
+cannot establish a complete plaintext result or the product is later required
+to preserve every alternative representation. That option would change the
+source/provenance contract and require an explicit architecture decision,
+versioned artifact/schema rules, recovery and privacy treatment, and migration.
+It is not required or selected for alpha.13 while the bounded normalized path
+passes.
 
 **Candidate artifact verification (2026-09-08):** The authorized GPT-5.6 Terra
 High read-only verifier confirmed that the observed candidate stayed within the
@@ -697,12 +740,37 @@ observation may not claim a clean candidate-root inventory or clean-instance
 acceptance. It remains private evidence only and must not be renamed, repaired,
 or deleted under the current authorization.
 
-`school_os.importer.admit_exact_plaintext_representation` is the repository
-fail-closed gate for this current boundary. Only one complete identity-transfer
-UTF-8 `text/plain` byte sequence is eligible for downstream admission; multiple
-parts (including apparently equivalent alternatives), non-UTF-8 charsets,
-transfer decoding, malformed metadata, unavailable bytes, and attachments are
-non-admitting outcomes. The gate does not persist a source disposition itself.
+`school_os.importer.admit_exact_plaintext_representation` currently violates
+that boundary by rejecting every multipart message, every attachment-bearing
+message, every non-identity transfer encoding, and every non-UTF-8 source
+charset before adapter normalization. M4-001 is reopened to replace that
+behavior with the bounded normalized-body gate. The regression matrix must
+prove: identity UTF-8; quoted-printable/base64 transport decoding; strict
+declared-charset decoding followed by canonical UTF-8 encoding; one selected
+plain alternative beside an HTML alternative; one body plus separately
+processed attachments; deterministic replay; ambiguous multiple plain parts;
+HTML-only/converted text; incomplete parts; malformed metadata; unavailable
+bytes; and invalid or replacement-bearing decoding. Positive cases must compare
+the adapter Unicode body to the v2 frame exactly and compare the intended UTF-8
+catalog bytes to persisted bytes independently. Negative cases create no
+catalog/index/Fact/view/task effect and do not move the source cursor.
+
+**Attachment provenance correction:** `attachment-processing.md` already
+promises Facts from attachment content the selected runtime actually reads, but
+the current Fact schema exposes only message/body byte spans and the implemented
+extractor accepts only UTF-8 `text/plain`. That is incomplete for selected
+readable PDF/image content. M4-001 may make the smallest backward-compatible
+schema/contract addition: attachment-derived Facts retain the source message and
+add attachment identity, MIME type, and either a byte span into a preserved
+exact UTF-8 extraction or a page/region locator into the provider attachment.
+Record the extracted-text hash separately from the original-content hash; omit
+the latter and disclose the limitation when the selected tool exposes only
+extracted text. Existing body-Fact meaning and stable IDs remain unchanged. The
+runtime bridge must read the attachment content through the observed surface
+and independent audit must inspect the same source locator. Do not add a
+general document-processing framework. If a selected readable format cannot
+produce one of these verifiable locators, the operation blocks rather than
+claiming full acceptance or inferring from the filename/surrounding message.
 
 **Private-upgrade consultation (2026-09-08):** A bounded GPT-5.6 Sol High
 read-only review confirmed that there is no approved direct alpha.11-to-
@@ -730,9 +798,58 @@ capability profile that predates alpha.13's `observed` evidence classification.
 It cannot establish the attended upgrade surface or alpha.13 runtime/scheduler
 conformance; no profile or provider record was modified.
 
-Optional adapters from work package 10 receive independent IDs only when the
-user selects a concrete deployment need. They do not become dependencies of
-M4-001 through M4-006 and do not block alpha.13 otherwise.
+Google Sheets is the selected work-package-10 task adapter and is required by
+M4-008/M4-009/M4-006. Other optional adapters retain independent IDs and do not
+become alpha.13 dependencies unless separately selected.
+
+**Authenticated execution detail:** The implementation may add one narrow CLI
+or binding that accepts validated normalized packets, invokes existing
+`school_os` helpers, and returns validated candidates/evidence to the selected
+runtime. It must not accept predeclared per-phase success objects as real
+evidence. The runtime mapping records the exact connector, local-execution,
+storage-update, mail, Sheets, and scheduler operations actually observed. Update
+`adapters/schedulers/chatgpt-work.md` or the selected scheduler mapping so the
+accepted scheduler-free direct manual sender is permitted after manual-surface
+qualification; scheduled execution adds its own observed admission. Also
+separate immutable create-only installation from guarded exact-ID replacement
+of admitted mutable state. A provider may qualify one, both, or neither based
+on probes; no unconditional replace or cross-surface inference is allowed.
+
+**Semantic and projection audit detail:** For each admitted message, retain the
+adapter body hash, extraction packet hash, live interpreter result hash, Fact
+IDs/spans, ordered coverage decisions, and independent audit disposition in
+private evidence. The independent reviewer rereads the source, checks each
+substantive clause and each Fact classification, and records omissions,
+unsupported inferences, ambiguity, or corrected results before downstream
+acceptance. Canonical inventory is complete for supported source meaning;
+projection is selective. A message's own received date and provenance, rather
+than the conversation-selection hit, govern its derived-view eligibility.
+Guidelines enter guideline views and never task rows;
+only unresolved action Facts become canonical/Sheet tasks; rolling/recent brief
+sections follow the resolved date and category policies; durable or older Facts
+may remain only in inventory/knowledge. A pending human clarification remains a
+review case and is never manufactured into a task.
+
+**Sheets mapping minimum:** Use one private spreadsheet/sheet scope selected in
+configuration. Every system-managed row carries the immutable canonical task ID
+and source/projection evidence needed for exact lookup. Declare columns as
+system-managed, parent-editable, or provider-owned; pull the complete scoped
+snapshot before mutation; apply the minimum patch; read the exact row back; and
+advance binding state only after verification. Duplicate canonical IDs,
+ambiguous row lookup, missing managed values, or unexpected system-field drift
+block. Parent edits and unrelated cells survive. Spreadsheet creation and row
+writes are test-instance effects only.
+
+**Presentation, audio, and budget evidence:** Render the actual connected brief
+to HTML and plain text, compare source-linked content mechanically, and inspect
+representative desktop/mobile rendering for clipping, overflow, long text,
+links, unusual characters, empty sections, and configured labels. Derive the
+optional audio input only from the permitted current-run delta and run the
+existing worker/input regressions without requiring an external audio effect.
+For each representative operation, record observable elapsed time, runtime
+budget or deadline, tool calls, input/output bytes, and repeated work. Set a
+conservative checkpoint threshold from those observations and demonstrate a
+planned `NEEDS_CONTINUATION` before exhaustion followed by fresh-attempt resume.
 
 ## Configuration, migration, packaging, and validation changes
 
@@ -810,35 +927,52 @@ evidence for every real execution-surface support claim.
 - The synthetic filesystem/fake-provider instance has the same durable/local
   ownership boundary as a real instance; deleting its local run directory does
   not delete its durable provider-state directory.
-- Exact plaintext body means the complete string returned by the selected mail
-  adapter. If only HTML, snippets, or incomplete bodies are available, the
-  adapter must declare that limitation and the configured operation blocks or
-  records the approved attachment/body outcome.
+- Exact plaintext body means the complete Unicode string returned by the
+  selected mail adapter after strict MIME transfer and declared-charset
+  decoding. Its canonical UTF-8 encoding is framed without content or whitespace
+  changes. A provider raw read may verify structure/decoding but is not itself a
+  canonical catalog artifact. HTML conversion, snippets, incomplete bodies,
+  ambiguous plain alternatives, and silent replacement decoding block or record
+  the approved body outcome. Attachments follow their separate inventory and
+  processing outcomes.
 - Normal household operation has one active mutating operation. Coordination is
   scoped to admission and consequential effects, not a general locking system.
 - The supported alpha.12 legacy forms are the checked-in templates/contracts and
   independently specified migration cases. Private deviations are not assumed.
 
-### Unresolved decisions and approvals
+### Pending decisions and private grounding
 
-No unresolved product decision blocks M1–M3. The design choices above implement
-the approved plan without changing its acceptance criteria.
+No core architecture decision currently blocks implementation. The selected
+connector/plaintext path uses the existing adapter and catalog contracts. If it
+cannot prove strict complete plaintext for an in-scope message, that message
+blocks; raw-MIME canonical storage would then be a separate user decision with
+the consequences described above.
 
-Before M4 can make production support or release claims, implementation must
-resolve these evidence-dependent items:
+Two user choices remain pending and affect only dependent view/delivery steps:
 
-- which exact real runtime/provider/authorization surfaces alpha.13 will claim;
-- the limits, authentication behavior, consistency windows, idempotency/search
-  behavior, and serialization mode actually observed on each selected surface;
-- the exact private legacy variants affected by Migration 0002; and
-- whether any work-package-10 adapter or offline speech bundle is selected.
+- whether the 14-day requirement changes ordinary brief eligibility into a
+  full 14-day digest or applies only to import plus canonical-inventory audit;
+- whether both test deliveries go only to the connected test account or to the
+  existing configured recipient set.
 
-User approval is required before inspecting or migrating a private instance,
-incurring paid/externally visible adapter effects, selecting optional adapter
-scope that expands the release work, publishing the release, or activating a
-production schedule/manual sender. If a real provider cannot meet the specified
-reconciliation contract, changing the contract or weakening acceptance also
-requires explicit user approval; the default outcome is a precise blocker.
+Privately resolve the exact source scope, test-root references, authenticated
+surfaces, selected recipient set, temporary schedule/timezone, and observed
+limits before their effects. Continue independent source-adapter, semantic,
+Sheets, measurement, package, and no-send validation while the two choices are
+pending. The manual and scheduled acceptance messages use separate explicit
+private test variants under one frozen source window, are visibly labeled as
+tests, and each send once. Replaying either same delivery key must suppress a
+duplicate. If the existing variant contract cannot express that safely, stop
+before sending rather than changing dates or issuing an untracked duplicate.
+
+The user has authorized test-instance writes from an exact candidate package,
+the test Sheet, the two grounded test deliveries, and a temporary test schedule.
+Verify that schedule inactive after acceptance and leave unrelated schedules
+untouched. A formal tag/release publication, production-instance migration, or
+production activation remains outside this test boundary. If a
+real provider cannot meet a required reconciliation contract, changing or
+weakening the contract requires a user decision; the default is a precise
+blocker.
 
 ### Deferred scope
 
@@ -849,8 +983,10 @@ requires explicit user approval; the default outcome is a precise blocker.
   worker pools, background cancellation infrastructure, learned throughput
   optimization, a layout/template engine, full vendor emulation, and broad
   benchmark infrastructure remain deferred.
-- Google Sheets task support, additional attachment extractors, runtime speech
-  adapters, and offline speech packages remain independent extensions.
+- Unselected attachment extractors, runtime speech adapters, and offline speech
+  packages remain independent extensions. The selected runtime-native PDF/image
+  path and Google Sheets are required for this release acceptance; their
+  source-grounded content cannot be skipped under this deferral.
 - Automatic continuation is used only when an authorized mechanism exists.
   Otherwise a later manual or scheduled session resumes from durable state.
 - Historical import remains separate and never implies task-provider mutation or

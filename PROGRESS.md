@@ -1264,3 +1264,82 @@ requirements, then read this log from top to bottom.
   validate and publish this verifier-qualified continuity checkpoint, then
   obtain explicit approval for the required core source/provenance extension
   before any positive source admission can resume.
+
+## 2026-09-08 — alpha.13 completion-scope and source-contract reconciliation
+
+- Reconciled the original/current source-catalog and mail-adapter contracts with
+  `school_os.importer.admit_exact_plaintext_representation`. The helper's blanket
+  rejection of multipart messages, attachment-bearing messages, transfer
+  decoding, and non-UTF-8 source charsets is below the adapter boundary and is
+  overbroad. The compatible alpha.13 path keeps transport/charset decoding in
+  the adapter, admits only a provider-designated complete plaintext body with
+  strict decoding evidence, inventories attachments separately, and preserves
+  the existing two exact catalog comparisons. Ambiguous/incomplete plain parts,
+  HTML conversion, HTML-only content, invalid bytes, or silent replacement
+  remain non-admitting. Raw MIME may be verification input but is not selected
+  as a canonical artifact; no core architecture change is required while this
+  bounded path passes.
+- Incorporated the newly authorized completion scope without recording private
+  values: use a new empty private test instance; discover source-domain/config
+  from the existing instance read-only; select candidate conversations with the
+  grounded 14-day query and preserve their full ordered thread membership;
+  perform live semantic extraction plus independent source-to-inventory-to-view
+  audit; use Google Sheets as the required task adapter; and execute actual
+  manual and temporary scheduled test deliveries with duplicate-policy proof.
+  The existing instance, earlier candidate, and unrelated schedules remain
+  unchanged.
+- Reopened M1–M3 acceptance for chained revalidation after the installer repair,
+  reopened M4-001 for source admission, retained M4-002 only for its declared
+  synthetic alpha.12 input, and added M4-007 semantic execution, M4-008 Sheets,
+  and M4-009 full connected private acceptance. M4-004 synthetic measurement and
+  M4-005 package preparation no longer wait for real-provider evidence; M4-006
+  remains the final all-ten-work-package release gate. Adapter reconciliation
+  must permit the approved qualified direct manual sender, distinguish immutable
+  installation from guarded mutable replacement, and establish scheduled
+  support only on the exact observed surface.
+- Closed missing acceptance requirements: actual interpreter results rather
+  than canned stage outputs; real connector-to-helper execution; independent
+  clause/Fact/classification/projection review; correct guideline/action/update
+  filtering; current-run optional-audio regression; HTML visual inspection;
+  observed time budgets translated into checkpoint-before-limit behavior; one
+  successful complete connected path; and same-key suppression for both manual
+  and scheduled test variants.
+- Reconciled selected readable attachments with the already-approved attachment
+  contract. M4-001 now owns the narrow additive provenance needed for PDF/image
+  Facts: attachment identity and MIME plus an exact extracted-text span or
+  provider-backed page/region. Original-content and extracted-text hashes remain
+  distinct, and no original-byte proof is claimed when the selected surface
+  exposes only extracted text. Every selected readable attachment must be
+  source-audited or produce a specific blocker; a generic extraction framework
+  and unselected extractors remain deferred.
+- Two view/delivery choices remain pending and are intentionally not guessed:
+  whether the 14-day scope changes ordinary brief eligibility or only import and
+  inventory-audit coverage, and the exact test recipient set. Independent
+  implementation, measurement, package preparation, source discovery, and
+  no-send validation remain executable while those choices are unresolved.
+- Changed files in this documentation-only work unit: root `PLAN.md`, alpha.13
+  `PLAN.md` and `SPEC.md`, and this append-only log. No runtime code, private
+  data, provider object, release, delivery, or schedule was changed. Next: run
+  diff/consistency/privacy validation, publish this documentation checkpoint,
+  then begin M4-001's bounded adapter-normalization implementation and regression
+  matrix while M1–M3 fresh-instance revalidation is coordinated from the exact
+  candidate package.
+
+## 2026-09-08 — alpha.13 reconciliation validation and publication blocker
+
+- Validation of the documentation reconciliation passed: the complete
+  `scripts/validate.py` gate ran 145 tests plus schema/template and release-smoke
+  checks; `scripts/privacy_scan.py` and `git diff --check` passed. The accepted
+  local commit contains only root `PLAN.md`, this log, and the alpha.13 plan and
+  specification; it contains no private identifiers, queries, recipients,
+  source content, credentials, or provider records.
+- Publication to `origin/main` did not occur. Automatic approval review rejected
+  the default-branch push because it requires explicit user authorization for
+  that shared-repository mutation, despite the delegated continuity instruction.
+  The local commit is preserved and no workaround or retry was attempted.
+- Next: obtain explicit authorization for the `origin/main` push, publish and
+  verify the exact remote SHA, then start M4-001's bounded adapter-normalization
+  implementation and regression matrix. Independent authorized private
+  discovery may continue, but the two pending view/delivery choices still gate
+  their dependent brief and send steps. Formal tag/release publication and
+  production activation remain separately authorized.

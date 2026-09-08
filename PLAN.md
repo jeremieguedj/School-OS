@@ -9,19 +9,26 @@ The current revised plan for the next release, `0.1.0-alpha.13`, is
 [the alpha.13 release plan](docs/plans/0.1.0-alpha.13/PLAN.md). It records ten work
 packages, deliverables, benefits, deferral impacts, and acceptance criteria,
 including the approved manual-sender and cross-session continuation decisions.
-Implementation has completed the repository portion of M4-003. A create-only
-installation correction has reopened M1-004 and M1-006; M2–M3 require
-revalidation against that repair. An authorized
-inactive candidate-only Drive/Gmail observation has read back the declared
-create-only generation, but a preserved excluded staging object means that root
-cannot establish a clean-instance acceptance. It is also source-admission-
-blocked by an observed multipart Gmail message with no approved lossless
-representation; observed runtime, mail, task, and scheduler evidence is still
-required. The candidate cannot establish production,
-delivery, task, scheduler, migration, or release-readiness claims. The
-installed private instance is an
-alpha.11 predecessor, outside alpha.13's declared alpha.12 migration input, so
-no direct upgrade or activation is authorized by this planning reference.
+Implementation has completed the repository safety portion of M4-003. The
+create-only installer correction reopens M1-004/M1-006 clean-instance evidence;
+M2–M3 require chained revalidation from that repaired generation. M4-001 is
+reopened because the current importer rejects MIME transport decoding,
+multipart alternatives, and attachment-bearing messages below the adapter
+boundary. The compatible correction admits a strictly decoded, provider-
+designated complete plaintext body and keeps attachments separate; ambiguous,
+incomplete, HTML-derived, or lossy content still blocks. No raw-MIME canonical
+architecture is selected.
+
+The authorized completion target is a new empty private Drive test instance.
+The existing alpha.11 instance may supply source-domain/configuration evidence
+read-only and must remain unchanged; it is outside alpha.13's declared alpha.12
+migration input and is not this release's test deployment. The fresh test path
+must ingest the grounded last-14-day source scope, perform live semantic and
+independent source-to-inventory-to-view audits, use the selected Google Sheets
+task adapter, execute real manual and temporary scheduled test-email runs, and
+verify duplicate suppression and schedule deactivation. Exact private values
+stay outside Git. The earlier candidate with an excluded staging object remains
+unchanged and supplies no clean-instance acceptance.
 
 The [simplicity review](docs/plans/0.1.0-alpha.13/REVIEW.md) evaluates the original
 snapshot against product personas and priorities. The current plan incorporates
@@ -32,18 +39,15 @@ deferred for separate discussion. The user-approved complete-path approach is
 organized into four milestones: clean installation, a connected normal
 operation, verified recovery, and broader release coverage. The release plan now
 links the code-grounded [implementation specification](docs/plans/0.1.0-alpha.13/SPEC.md),
-which defines stable tasks and acceptance checks. M1's create-only correction
-is still in progress (M1-004 and M1-006); M2 and M3 retain their accepted
-synthetic implementation but require their recorded revalidation against that
-repair. M4-001–M4-002 are complete, while M4-003 requires observed
-runtime/provider evidence; M4-004–M4-006 depend on it. The existing alpha.11
-private instance is not a direct alpha.13 migration source; its upgrade remains
-paused pending the separately documented compatible staged-path audit or new
-approved migration scope. That audit has now failed because the existing source
-catalog includes native-document storage; no conversion or activation is
-permitted without an approved preservation mapping. Its legacy scheduled-only
-capability record also lacks alpha.13 observed-evidence qualification, so it
-cannot establish an attended upgrade surface.
+which defines stable tasks and acceptance checks. M1–M3 are reopened for
+revalidation without discarding their accepted implementation history. M4-004
+synthetic measurement and M4-005 package preparation no longer wait for
+real-provider evidence; final M4-006 still does. Added M4-007 semantic execution,
+M4-008 Google Sheets, and M4-009 full observed-path acceptance tasks. Two
+delivery/view choices remain pending: whether the 14-day scope changes normal
+brief eligibility or only import/audit coverage, and the exact test recipient
+set. Independent implementation and no-send work continue while those are
+resolved.
 The original snapshot remains in Git.
 
 ## Objective
