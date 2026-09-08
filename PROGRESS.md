@@ -742,3 +742,18 @@ requirements, then read this log from top to bottom.
 - Next: M3-002 catalog/index write-fault recovery. The task must adopt one
   verified durable record after interruption without duplicate index rows or
   renumbered Facts.
+
+## 2026-09-07 — alpha.13 M3-002 catalog/index write-fault recovery
+
+- Completed M3-002. Added pure catalog recovery that first re-verifies exact
+  source bodies and persisted record bytes, then adopts a single stable index
+  row with the supplied stable Fact IDs. Existing identical rows are idempotent;
+  corrupt bytes, duplicate rows, or a Fact linked to another record block.
+- Added storage-write fault simulation: a record exists before the index write,
+  then recovery publishes one row and replay leaves it unchanged. Focused tests
+  passed 6 tests; the complete gate passed 121 tests, schema/template checks,
+  and release-smoke validation. No private or provider effect occurred.
+- Changed files: `school_os/catalog.py`, `tests/test_operation_recovery.py`,
+  root `PLAN.md`, and the alpha.13 plan/specification. Validation/publication
+  pending. Exact next action: privacy-scan, commit/push/verify M3-002, then
+  implement M3-003 task fault recovery and parent-edit preservation.

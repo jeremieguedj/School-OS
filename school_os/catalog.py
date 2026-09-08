@@ -28,6 +28,15 @@ class CatalogRecord:
     bodies: tuple[tuple[str, str], ...]
 
 
+@dataclass(frozen=True)
+class CatalogRecovery:
+    """A verified index candidate for a record persisted before its index write."""
+
+    index: dict[str, Any]
+    record_id: str
+    adopted: bool
+
+
 def stable_record_id(adapter_id: str, conversation_id: str) -> str:
     """Derive a record identity only from immutable adapter/conversation IDs."""
     if not adapter_id or not conversation_id:
@@ -144,3 +153,45 @@ def verify_persisted_record(source_bodies: Mapping[str, str], intended: bytes, p
         raise CatalogError("source-to-record verification failed: " + "; ".join(errors))
     if persisted != intended:
         raise CatalogError("intended-to-persisted byte verification failed")
+
+
+def recover_catalog_index(
+    source_bodies: Mapping[str, str], intended: bytes, persisted: bytes,
+    index: Mapping[str, Any], facts: list[Mapping[str, Any]],
+) -> CatalogRecovery:
+    """Adopt one verified orphaned record without inventing index rows or Fact IDs.
+
+    The caller owns guarded storage writes. This pure recovery step first proves
+    both source equality and readback bytes, then returns either an idempotent
+    existing index or a candidate with exactly one new row.
+    """
+    verify_persisted_record(source_bodies, intended, persisted)
+    record = parse_v2_record(persisted)
+    record_id = record.header.get("record_id")
+    if not isinstance(record_id, str) or not record_id:
+        raise CatalogError("persisted record has no immutable record_id")
+    fact_ids: list[str] = []
+    for fact in facts:
+        if fact.get("record_id") != record_id:
+            raise CatalogError("recovery Fact does not link to the persisted record")
+        fact_id = fact.get("fact_id")
+        if not isinstance(fact_id, str) or not fact_id:
+            raise CatalogError("recovery Fact has no stable fact_id")
+        fact_ids.append(fact_id)
+    if len(fact_ids) != len(set(fact_ids)):
+        raise CatalogError("recovery Facts contain duplicate stable fact_id values")
+    existing_rows = index.get("records", [])
+    if not isinstance(existing_rows, list) or any(not isinstance(row, Mapping) for row in existing_rows):
+        raise CatalogError("catalog index records must be an array of objects")
+    rows = [dict(row) for row in existing_rows]
+    matches = [row for row in rows if row.get("record_id") == record_id]
+    if len(matches) > 1:
+        raise CatalogError("catalog index has duplicate rows for one record")
+    entry = {"record_id": record_id, "record_sha256": sha256_bytes(persisted), "fact_ids": fact_ids}
+    if matches:
+        if matches[0] != entry:
+            raise CatalogError("existing catalog index row disagrees with verified record or Fact IDs")
+        return CatalogRecovery({"schema_version": 1, "records": rows}, record_id, True)
+    rows.append(entry)
+    rows.sort(key=lambda row: row["record_id"])
+    return CatalogRecovery({"schema_version": 1, "records": rows}, record_id, True)

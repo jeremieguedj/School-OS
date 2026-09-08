@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation in progress; M1–M2 and M3-001 complete, M3-002 next
-- Approved plan: [PLAN.md](PLAN.md), revision 13
+- Status: implementation in progress; M1–M2 and M3-001–M3-002 complete, M3-003 next
+- Approved plan: [PLAN.md](PLAN.md), revision 14
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
@@ -509,7 +509,7 @@ Gmail, Todoist, Drive, or a scheduled runtime conforms.
 
 ## Milestone 3 — Prove recovery and safe repeated execution
 
-**Status:** in progress (M3-001 complete; M3-002 next).
+**Status:** in progress (M3-001–M3-002 complete; M3-003 next).
 
 ### Deliverable
 
@@ -535,6 +535,11 @@ resumption requires the same operation ID, a new attempt ID, and an exact
 predecessor pointer. `school_os.daily` can checkpoint a planned boundary as
 `NEEDS_CONTINUATION` and resume after a durable predecessor output. A new Python
 process completes after discardable local output is deleted.
+
+**M3-002 implementation note (2026-09-07):** `recover_catalog_index` adopts a
+record only after independent source and persisted-byte verification. It makes
+one stable index row containing unchanged Fact IDs, is idempotent on replay,
+and blocks corrupted bytes, duplicate rows, or conflicting provenance.
 
 ### Required behavioral matrix
 
