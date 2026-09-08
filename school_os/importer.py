@@ -54,6 +54,10 @@ class AttachmentOutcome:
     source_message_id: str | None = None
     content_id: str | None = None
     original_bytes_observed: bool = False
+    read_evidence: Mapping[str, Any] | None = None
+    complete_units: tuple[str, ...] = ()
+    unit_count: int | None = None
+    disposition_reason: str | None = None
 
 
 @dataclass(frozen=True)
@@ -63,6 +67,21 @@ class AttachmentExtraction:
     text: str
     locator: Mapping[str, Any]
     complete_units: tuple[str, ...] = ()
+    unit_count: int | None = None
+
+
+@dataclass(frozen=True)
+class AttachmentRead:
+    """One complete attachment read, with original bytes optional by surface."""
+
+    identity: str
+    mime_type: str
+    complete: bool
+    declared_byte_size: int
+    original_bytes: bytes | None = None
+    extracted: AttachmentExtraction | None = None
+    read_locator: Mapping[str, Any] | None = None
+    version: str | None = None
 
 
 @dataclass(frozen=True)
@@ -75,6 +94,7 @@ class DirectHtmlResource:
     source_message_id: str
     html_part_id: str
     html_part_sha256: str
+    html_decoded_sha256: str
     occurrence: int
     attribute: str
 
@@ -87,6 +107,11 @@ class DirectResourceRead:
     redirect_chain: tuple[str, ...]
     data: bytes
     mime_type: str
+    status_code: int = 0
+    complete: bool = False
+    eof: bool = False
+    bytes_read: int = -1
+    declared_content_length: int | None = None
 
 
 @dataclass(frozen=True)
@@ -99,6 +124,12 @@ class DirectResourceOutcome:
     extracted_text_sha256: str | None
     text: str | None
     locator: dict[str, Any] | None
+    final_url: str | None = None
+    redirect_chain: tuple[str, ...] = ()
+    fetch_evidence: Mapping[str, Any] | None = None
+    complete_units: tuple[str, ...] = ()
+    unit_count: int | None = None
+    disposition_reason: str | None = None
 
 
 class _DirectResourceParser(HTMLParser):
@@ -111,18 +142,25 @@ class _DirectResourceParser(HTMLParser):
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         values = {key.lower(): value for key, value in attrs}
-        if tag.lower() == "img" and isinstance(values.get("src"), str):
+        lowered = tag.lower()
+        if "srcset" in values or (
+            isinstance(values.get("style"), str) and "url(" in values["style"].lower()
+        ):
+            self.unrecognized_resource_bearers.append(lowered)
+        if lowered in {"picture", "source", "svg", "style", "link"}:
+            self.unrecognized_resource_bearers.append(lowered)
+        if lowered == "img" and isinstance(values.get("src"), str):
             self.references.append(("html_embedded", "src", values["src"]))
             return
-        candidate = values.get("href") if tag.lower() == "a" else values.get("src") or values.get("data")
+        candidate = values.get("href") if lowered == "a" else values.get("src") or values.get("data")
         declared_type = values.get("type")
         if isinstance(candidate, str) and (
             urlparse(candidate).path.lower().endswith(".pdf") or declared_type == "application/pdf"
         ):
-            self.references.append(("html_linked", "href" if tag.lower() == "a" else "src", candidate))
+            self.references.append(("html_linked", "href" if lowered == "a" else "src", candidate))
             return
-        if tag.lower() in {"object", "embed", "iframe"} and isinstance(candidate, str):
-            self.unrecognized_resource_bearers.append(tag.lower())
+        if lowered in {"object", "embed", "iframe"} and isinstance(candidate, str):
+            self.unrecognized_resource_bearers.append(lowered)
 
 
 @dataclass(frozen=True)
@@ -203,7 +241,7 @@ def _decode_declared_charset(data: bytes, charset: str) -> bytes:
         raise ValueError("declared charset decoding is lossy or invalid") from exc
 
 
-def _strict_html_part_bytes(html_part: Mapping[str, Any]) -> tuple[str, bytes]:
+def _strict_html_part_bytes(html_part: Mapping[str, Any]) -> tuple[str, str, bytes]:
     part_id = html_part.get("part_id")
     if not isinstance(part_id, str) or not part_id:
         raise ImportError("HTML MIME part has no immutable part_id")
@@ -214,10 +252,27 @@ def _strict_html_part_bytes(html_part: Mapping[str, Any]) -> tuple[str, bytes]:
     data = html_part.get("data")
     if not isinstance(charset, str) or not isinstance(encoding, str) or not isinstance(data, bytes):
         raise ImportError("HTML MIME part lacks strict decoding evidence")
+    raw_hash = html_part.get("raw_part_sha256")
+    raw_length = html_part.get("raw_part_byte_length")
+    raw_locator = html_part.get("raw_part_locator")
+    provider_unicode = html_part.get("provider_unicode")
+    if (
+        raw_hash != sha256_bytes(data)
+        or raw_length != len(data)
+        or not isinstance(raw_locator, Mapping)
+        or raw_locator.get("kind") != "raw_part_bytes"
+        or raw_locator.get("byte_start") != 0
+        or raw_locator.get("byte_end") != len(data)
+        or not isinstance(provider_unicode, str)
+    ):
+        raise ImportError("HTML MIME part lacks complete raw-part custody evidence")
     try:
-        return part_id, _decode_declared_charset(_decode_transport(data, encoding), charset)
+        decoded = _decode_declared_charset(_decode_transport(data, encoding), charset)
     except ValueError as exc:
         raise ImportError(f"HTML MIME part cannot be decoded strictly: {exc}") from exc
+    if decoded.decode("utf-8", errors="strict") != provider_unicode:
+        raise ImportError("HTML provider Unicode differs from strict selected-part decode")
+    return part_id, raw_hash, decoded
 
 
 def _direct_https_url(value: str) -> bool:
@@ -231,7 +286,7 @@ def discover_direct_html_resources(
     """Inventory direct image/PDF resources without converting HTML to text."""
     if not source_message_id:
         raise ImportError("HTML resource source message identity is required")
-    part_id, html_bytes = _strict_html_part_bytes(html_part)
+    part_id, raw_hash, html_bytes = _strict_html_part_bytes(html_part)
     parser = _DirectResourceParser()
     try:
         parser.feed(html_bytes.decode("utf-8", errors="strict"))
@@ -249,7 +304,8 @@ def discover_direct_html_resources(
             f"{source_message_id}\0{part_id}\0{occurrence}\0{attribute}\0{url}".encode("utf-8")
         )
         resources.append(DirectHtmlResource(
-            resource_id, origin, url, source_message_id, part_id, html_hash, occurrence, attribute,
+            resource_id, origin, url, source_message_id, part_id, raw_hash, html_hash,
+            occurrence, attribute,
         ))
     return tuple(resources)
 
@@ -264,69 +320,135 @@ def _expected_resource_mime(data: bytes) -> str | None:
     return None
 
 
+def _validated_extraction(
+    extracted: AttachmentExtraction, mime_type: str,
+) -> tuple[bytes, dict[str, Any]]:
+    """Validate one whole, bounded extraction rather than a representative unit."""
+    if not isinstance(extracted.text, str):
+        raise ValueError("extracted text is not Unicode")
+    text = extracted.text.encode("utf-8", errors="strict")
+    if mime_type in {"application/pdf", "image/png", "image/jpeg"} and not text:
+        raise ValueError("selected PDF/image extraction is empty")
+    unit_count = extracted.unit_count
+    if not isinstance(unit_count, int) or unit_count < 1:
+        raise ValueError("extraction lacks a positive expected unit count")
+    prefix = "page" if mime_type == "application/pdf" else "image" if mime_type.startswith("image/") else "text"
+    expected_units = tuple(f"{prefix}:{index}" for index in range(1, unit_count + 1))
+    if tuple(extracted.complete_units) != expected_units:
+        raise ValueError("extraction does not account for every expected unit in order")
+    locator = dict(extracted.locator)
+    kind = locator.get("kind")
+    if kind == "extracted_text_span":
+        valid = locator.get("byte_start") == 0 and locator.get("byte_end") == len(text) and bool(text)
+    elif kind == "provider_page_region":
+        valid = (
+            unit_count == 1
+            and isinstance(locator.get("page"), int)
+            and locator["page"] == 1
+            and isinstance(locator.get("region"), str)
+            and bool(locator["region"])
+        )
+    else:
+        valid = False
+    if not valid:
+        raise ValueError("extraction locator does not cover the complete extracted content")
+    return text, locator
+
+
 def process_direct_html_resources(
     resources: Sequence[DirectHtmlResource], *,
     fetch_resource: Callable[[str], DirectResourceRead],
     extractors: Mapping[str, Callable[[DirectResourceRead], AttachmentExtraction]],
     max_bytes: int,
     max_redirects: int,
+    excluded_resources: Mapping[str, str] | None = None,
 ) -> tuple[DirectResourceOutcome, ...]:
     """Fetch only enumerated direct resources and require exact provenance."""
     if max_bytes < 1 or max_redirects < 0:
         raise ImportError("direct resource bounds are invalid")
     outcomes: list[DirectResourceOutcome] = []
+    exclusions = dict(excluded_resources or {})
+    unknown_exclusions = set(exclusions) - {resource.resource_id for resource in resources}
+    if unknown_exclusions:
+        raise ImportError("direct-resource exclusion references an unknown resource")
     for resource in resources:
+        exclusion_reason = exclusions.get(resource.resource_id)
+        if exclusion_reason is not None:
+            if not isinstance(exclusion_reason, str) or not exclusion_reason.strip():
+                raise ImportError("direct-resource exclusion lacks evidence")
+            outcomes.append(DirectResourceOutcome(
+                resource, "excluded_by_policy", None, None, None, None,
+                disposition_reason=exclusion_reason,
+            ))
+            continue
         try:
             read = fetch_resource(resource.url)
         except OSError:
-            outcomes.append(DirectResourceOutcome(resource, "inaccessible", None, None, None, None))
+            outcomes.append(DirectResourceOutcome(
+                resource, "inaccessible", None, None, None, None,
+                disposition_reason="direct resource fetch was inaccessible",
+            ))
             continue
         chain = tuple(read.redirect_chain)
         if (
             not isinstance(read.data, bytes)
             or not isinstance(read.mime_type, str)
+            or read.status_code != 200
+            or read.complete is not True
+            or read.eof is not True
+            or read.bytes_read != len(read.data)
+            or (
+                read.declared_content_length is not None
+                and read.declared_content_length != len(read.data)
+            )
             or not chain
             or chain[0] != resource.url
             or chain[-1] != read.url
             or len(chain) - 1 > max_redirects
+            or len(set(chain)) != len(chain)
             or any(not _direct_https_url(url) for url in chain)
             or len(read.data) > max_bytes
         ):
-            outcomes.append(DirectResourceOutcome(resource, "manual_review", None, None, None, None))
+            outcomes.append(DirectResourceOutcome(
+                resource, "manual_review", None, None, None, None,
+                final_url=read.url if isinstance(read.url, str) else None,
+                redirect_chain=chain,
+                disposition_reason="direct resource fetch lacks complete bounded read evidence",
+            ))
             continue
+        fetch_evidence = {
+            "status_code": read.status_code,
+            "complete": True,
+            "eof": True,
+            "bytes_read": read.bytes_read,
+            "declared_content_length": read.declared_content_length,
+            "mime_type": read.mime_type,
+        }
         expected_mime = _expected_resource_mime(read.data)
         if expected_mime is None or read.mime_type != expected_mime:
-            outcomes.append(DirectResourceOutcome(resource, "manual_review", None, None, None, None))
+            outcomes.append(DirectResourceOutcome(
+                resource, "manual_review", sha256_bytes(read.data), None, None, None,
+                final_url=read.url, redirect_chain=chain, fetch_evidence=fetch_evidence,
+                disposition_reason="resource signature and declared MIME do not agree",
+            ))
             continue
         extractor = extractors.get(read.mime_type)
         if extractor is None:
-            outcomes.append(DirectResourceOutcome(resource, "manual_review", sha256_bytes(read.data), None, None, None))
+            outcomes.append(DirectResourceOutcome(
+                resource, "manual_review", sha256_bytes(read.data), None, None, None,
+                final_url=read.url, redirect_chain=chain, fetch_evidence=fetch_evidence,
+                disposition_reason="no selected extractor supports the verified MIME type",
+            ))
             continue
         try:
             extracted = extractor(read)
-            extracted_bytes = extracted.text.encode("utf-8", errors="strict")
+            extracted_bytes, locator = _validated_extraction(extracted, read.mime_type)
         except (UnicodeError, ValueError, OSError):
-            outcomes.append(DirectResourceOutcome(resource, "manual_review", sha256_bytes(read.data), None, None, None))
-            continue
-        locator = dict(extracted.locator)
-        kind = locator.get("kind")
-        if kind == "extracted_text_span":
-            valid_locator = (
-                isinstance(locator.get("byte_start"), int)
-                and isinstance(locator.get("byte_end"), int)
-                and 0 <= locator["byte_start"] < locator["byte_end"] <= len(extracted_bytes)
-            )
-        elif kind == "provider_page_region":
-            valid_locator = (
-                isinstance(locator.get("page"), int)
-                and locator["page"] >= 1
-                and isinstance(locator.get("region"), str)
-                and bool(locator["region"])
-            )
-        else:
-            valid_locator = False
-        if not valid_locator:
-            outcomes.append(DirectResourceOutcome(resource, "manual_review", sha256_bytes(read.data), None, None, None))
+            outcomes.append(DirectResourceOutcome(
+                resource, "manual_review", sha256_bytes(read.data), None, None, None,
+                final_url=read.url, redirect_chain=chain, fetch_evidence=fetch_evidence,
+                disposition_reason="extractor did not establish complete units and a whole-content locator",
+            ))
             continue
         outcomes.append(DirectResourceOutcome(
             resource,
@@ -335,6 +457,12 @@ def process_direct_html_resources(
             sha256_bytes(extracted_bytes),
             extracted.text,
             locator,
+            final_url=read.url,
+            redirect_chain=chain,
+            fetch_evidence=fetch_evidence,
+            complete_units=tuple(extracted.complete_units),
+            unit_count=extracted.unit_count,
+            disposition_reason="complete bounded resource read and extraction",
         ))
     return tuple(outcomes)
 
@@ -514,7 +642,7 @@ def next_import_batch(
 
 
 def process_attachments(
-    attachments: Sequence[Mapping[str, Any]], *, read_attachment: Callable[[str], ReadResult],
+    attachments: Sequence[Mapping[str, Any]], *, read_attachment: Callable[[str], ReadResult | AttachmentRead],
     supported_mime_types: Sequence[str], max_bytes: int,
     extractors: Mapping[str, Callable[[ReadResult], AttachmentExtraction]] | None = None,
 ) -> tuple[AttachmentOutcome, ...]:
@@ -535,71 +663,148 @@ def process_attachments(
             raise ImportError("attachment has no immutable attachment_id")
         if source_message_id is not None and (not isinstance(source_message_id, str) or not source_message_id):
             raise ImportError("attachment has malformed source_message_id")
+        if not isinstance(content_id, str) or not content_id:
+            raise ImportError("attachment has malformed content_id")
         if attachment_id in seen:
-            outcomes.append(AttachmentOutcome(attachment_id, "duplicate", None, None, None, None, None))
+            outcomes.append(AttachmentOutcome(
+                attachment_id, "duplicate", None, None, None, None, None,
+                source_message_id=source_message_id, content_id=content_id,
+                disposition_reason="duplicate immutable attachment identity",
+            ))
             continue
         seen.add(attachment_id)
         if not isinstance(mime_type, str) or mime_type not in supported:
-            outcomes.append(AttachmentOutcome(attachment_id, "unsupported", mime_type if isinstance(mime_type, str) else None, None, None, None, None))
+            outcomes.append(AttachmentOutcome(
+                attachment_id, "unsupported", mime_type if isinstance(mime_type, str) else None,
+                None, None, None, None, source_message_id=source_message_id,
+                content_id=content_id, disposition_reason="declared MIME type is not selected",
+            ))
             continue
         if not isinstance(byte_size, int) or byte_size < 0 or byte_size > max_bytes:
-            outcomes.append(AttachmentOutcome(attachment_id, "manual_review", mime_type, None, None, None, None))
+            outcomes.append(AttachmentOutcome(
+                attachment_id, "manual_review", mime_type, None, None, None, None,
+                source_message_id=source_message_id, content_id=content_id,
+                disposition_reason="declared attachment size is missing or outside the selected bound",
+            ))
             continue
         try:
             result = read_attachment(attachment_id)
         except OSError:
-            outcomes.append(AttachmentOutcome(attachment_id, "inaccessible", mime_type, None, None, None, None))
+            outcomes.append(AttachmentOutcome(
+                attachment_id, "inaccessible", mime_type, None, None, None, None,
+                source_message_id=source_message_id, content_id=content_id,
+                disposition_reason="attachment read was inaccessible",
+            ))
             continue
-        if result.identity != attachment_id or result.mime_type != mime_type or len(result.data) != byte_size:
-            outcomes.append(AttachmentOutcome(attachment_id, "inaccessible", mime_type, None, None, None, None))
-            continue
-        original_observed = attachment.get("original_bytes_observed", True) is True
-        original_hash = sha256_bytes(result.data) if original_observed else None
-        if mime_type == "text/plain":
+        original: bytes | None
+        extracted: AttachmentExtraction | None
+        if isinstance(result, AttachmentRead):
+            if (
+                result.identity != attachment_id
+                or result.mime_type != mime_type
+                or result.complete is not True
+                or result.declared_byte_size != byte_size
+                or not isinstance(result.read_locator, Mapping)
+            ):
+                outcomes.append(AttachmentOutcome(
+                    attachment_id, "inaccessible", mime_type, None, None, None, None,
+                    source_message_id=source_message_id, content_id=content_id,
+                    disposition_reason="provider extraction lacks complete identity/MIME/size/locator evidence",
+                ))
+                continue
+            original = result.original_bytes
+            if original is not None and len(original) != byte_size:
+                outcomes.append(AttachmentOutcome(
+                    attachment_id, "inaccessible", mime_type, None, None, None, None,
+                    source_message_id=source_message_id, content_id=content_id,
+                    disposition_reason="observed original bytes disagree with declared size",
+                ))
+                continue
+            extracted = result.extracted
+            read_evidence = {
+                "complete": True,
+                "identity": result.identity,
+                "mime_type": result.mime_type,
+                "declared_byte_size": result.declared_byte_size,
+                "observed_byte_size": len(original) if original is not None else None,
+                "mode": "original_bytes" if original is not None else "provider_extracted_text",
+                "locator": dict(result.read_locator),
+                "version": result.version,
+            }
+        else:
+            if result.identity != attachment_id or result.mime_type != mime_type or len(result.data) != byte_size:
+                outcomes.append(AttachmentOutcome(
+                    attachment_id, "inaccessible", mime_type, None, None, None, None,
+                    source_message_id=source_message_id, content_id=content_id,
+                    disposition_reason="attachment identity, MIME, or byte-count readback disagrees",
+                ))
+                continue
+            original = result.data
+            extracted = None
+            read_evidence = {
+                "complete": True,
+                "identity": result.identity,
+                "mime_type": result.mime_type,
+                "declared_byte_size": byte_size,
+                "observed_byte_size": len(result.data),
+                "mode": "original_bytes",
+                "locator": {"kind": "provider_object", "identity": result.identity},
+                "version": result.version,
+            }
+        original_observed = original is not None
+        original_hash = sha256_bytes(original) if original is not None else None
+        if original is not None and mime_type in {"application/pdf", "image/png", "image/jpeg"}:
+            if _expected_resource_mime(original) != mime_type:
+                outcomes.append(AttachmentOutcome(
+                    attachment_id, "manual_review", mime_type, original_hash, None, None, None,
+                    source_message_id=source_message_id, content_id=content_id,
+                    original_bytes_observed=True, read_evidence=read_evidence,
+                    disposition_reason="attachment signature and declared MIME do not agree",
+                ))
+                continue
+        if extracted is None and mime_type == "text/plain" and original is not None:
             try:
-                text = result.data.decode("utf-8", errors="strict")
+                text = original.decode("utf-8", errors="strict")
             except UnicodeDecodeError:
-                outcomes.append(AttachmentOutcome(attachment_id, "unsupported", mime_type, original_hash, None, None, None))
+                outcomes.append(AttachmentOutcome(
+                    attachment_id, "unsupported", mime_type, original_hash, None, None, None,
+                    source_message_id=source_message_id, content_id=content_id,
+                    original_bytes_observed=True, read_evidence=read_evidence,
+                    disposition_reason="text attachment is not strict UTF-8",
+                ))
                 continue
             extracted = AttachmentExtraction(
                 text,
-                {"kind": "extracted_text_span", "byte_start": 0, "byte_end": len(result.data)},
+                {"kind": "extracted_text_span", "byte_start": 0, "byte_end": len(original)},
+                ("text:1",), 1,
             )
-        else:
+        elif extracted is None and original is not None:
             extractor = selected_extractors.get(mime_type)
-            if extractor is None:
-                outcomes.append(AttachmentOutcome(attachment_id, "manual_review", mime_type, original_hash, None, None, None))
-                continue
-            try:
-                extracted = extractor(result)
-            except (UnicodeError, ValueError, OSError):
-                outcomes.append(AttachmentOutcome(attachment_id, "manual_review", mime_type, original_hash, None, None, None))
-                continue
-        if not isinstance(extracted.text, str):
-            outcomes.append(AttachmentOutcome(attachment_id, "manual_review", mime_type, original_hash, None, None, None))
+            if extractor is not None:
+                try:
+                    extraction_input = result if isinstance(result, ReadResult) else ReadResult(
+                        original, result.identity, "file", None, result.mime_type, result.version,
+                    )
+                    extracted = extractor(extraction_input)
+                except (UnicodeError, ValueError, OSError):
+                    extracted = None
+        if extracted is None:
+            outcomes.append(AttachmentOutcome(
+                attachment_id, "manual_review", mime_type, original_hash, None, None, None,
+                source_message_id=source_message_id, content_id=content_id,
+                original_bytes_observed=original_observed, read_evidence=read_evidence,
+                disposition_reason="no complete selected extraction is available",
+            ))
             continue
-        extracted_bytes = extracted.text.encode("utf-8", errors="strict")
-        locator = dict(extracted.locator)
-        kind = locator.get("kind")
-        if kind == "extracted_text_span":
-            start = locator.get("byte_start")
-            end = locator.get("byte_end")
-            valid_locator = isinstance(start, int) and isinstance(end, int) and 0 <= start < end <= len(extracted_bytes)
-        elif kind == "provider_page_region":
-            valid_locator = isinstance(locator.get("page"), int) and locator["page"] >= 1 and isinstance(locator.get("region"), str) and bool(locator["region"])
-        else:
-            valid_locator = False
-        if not valid_locator:
-            outcomes.append(AttachmentOutcome(attachment_id, "manual_review", mime_type, original_hash, None, None, None))
-            continue
-        if mime_type in {"application/pdf", "image/png", "image/jpeg"} and not original_observed:
-            outcomes.append(AttachmentOutcome(attachment_id, "manual_review", mime_type, None, None, None, None, source_message_id=source_message_id, content_id=content_id))
-            continue
-        if mime_type == "application/pdf" and not extracted.complete_units:
-            outcomes.append(AttachmentOutcome(attachment_id, "manual_review", mime_type, original_hash, None, None, None, source_message_id=source_message_id, content_id=content_id, original_bytes_observed=original_observed))
-            continue
-        if mime_type.startswith("image/") and not extracted.text:
-            outcomes.append(AttachmentOutcome(attachment_id, "manual_review", mime_type, original_hash, None, None, None, source_message_id=source_message_id, content_id=content_id, original_bytes_observed=original_observed))
+        try:
+            extracted_bytes, locator = _validated_extraction(extracted, mime_type)
+        except (UnicodeError, ValueError):
+            outcomes.append(AttachmentOutcome(
+                attachment_id, "manual_review", mime_type, original_hash, None, None, None,
+                source_message_id=source_message_id, content_id=content_id,
+                original_bytes_observed=original_observed, read_evidence=read_evidence,
+                disposition_reason="extraction does not prove every expected unit and whole-content locator",
+            ))
             continue
         outcomes.append(AttachmentOutcome(
             attachment_id,
@@ -612,5 +817,9 @@ def process_attachments(
             source_message_id=source_message_id,
             content_id=content_id,
             original_bytes_observed=original_observed,
+            read_evidence=read_evidence,
+            complete_units=tuple(extracted.complete_units),
+            unit_count=extracted.unit_count,
+            disposition_reason="complete attachment read and extraction",
         ))
     return tuple(outcomes)

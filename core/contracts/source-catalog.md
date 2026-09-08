@@ -33,8 +33,12 @@ Each fact has a stable `fact_id`, source-message reference, local received date,
 
 A guideline is never an action. Facts may not combine unrelated claims merely to reduce record count.
 
-New body Facts carry the stable record ID, immutable message ID, and non-empty
-UTF-8 byte span that supports the claim. Attachment Facts retain those record
+New body Facts carry the stable record ID, immutable message ID, content ID,
+content hash, non-empty UTF-8 byte span, and exact `source_quote` that supports
+the claim. A Fact's `text` is concise canonical source-supported wording for
+derived views; it may paraphrase the quote, but an independent audit must accept
+the exact quote, canonical wording, and classification. Unsupported wording or
+an incorrect span/flag blocks. Attachment Facts retain those record
 and message identities and add the immutable attachment/resource ID, origin
 (`mime_attachment`, `html_embedded`, or `html_linked`), declared MIME type,
 separate original-content and extracted-text hashes, and one verified locator:
@@ -46,17 +50,35 @@ so it can be rebuilt without weakening source provenance.
 
 ## Coverage
 
-Every substantive sentence or clause in source text maps to one or more facts or an explicit no-fact outcome with a reason such as greeting, boilerplate, duplicate, or unavailable content. Attachments and direct HTML image/PDF references receive separate presence/processing outcomes. The catalog never invents attachment/resource content it could not read.
+Every UTF-8 byte of preserved source text is covered exactly once by a Fact,
+an explicit no-fact outcome, or an explicit review outcome with a reason.
+Independent review may accept a faithful source ambiguity when it is retained
+as review and no guessed deadline, task, completion, or other claim is promoted.
+An omitted clause, unsupported wording, or wrong classification remains a
+blocking audit error. Attachments and direct HTML image/PDF references receive
+separate presence/processing outcomes. The catalog never invents
+attachment/resource content it could not read.
 
 ## Lossless acceptance gate
 
 New records use the v2 raw-UTF-8 Markdown codec in `school_os.catalog`. Its
 header records stable record/conversation identity, ordered message metadata,
-scope, and pagination evidence. Each body is preceded by a compact JSON frame
+scope, pagination evidence, selected-body custody, and every ordered attachment
+and direct-resource outcome. Each body is preceded by a compact JSON frame
 with its immutable message ID and exact UTF-8 byte length. The parser reads that
 many bytes before looking for another frame, so headings, HTML comments, and
 delimiter-like text inside a source body are data, not structure. V1 heading
 framing remains a fail-closed migration input and is not used for new records.
+
+Each extracted attachment/resource text has its own byte-counted content frame,
+stable code-assigned content ID, exact text hash, and source-message association.
+The header separately retains original-content hash only when original bytes
+were observed, the extracted-text hash, read/fetch evidence, all expected
+page/image/text units, and the original extraction locator. Direct HTML
+resources also retain raw and strictly decoded HTML-part hashes, occurrence,
+attribute, original/final URL, and redirect chain. Parsing must dereference each
+frame exactly once and reject missing, duplicate, unreferenced, or inconsistent
+content.
 
 For each ordered source message, the catalog record identifies the immutable message ID and contains a distinct raw-message section. Before accepting a new or changed record, compare that section directly with the complete plaintext body returned for the same message ID by the selected mail adapter. The strings must be equal without deletion, substitution, summarization, reordering, ellipsis, or whitespace normalization. Headers and metadata exposed separately by the adapter remain required provenance fields but are not invented when the adapter does not expose them.
 

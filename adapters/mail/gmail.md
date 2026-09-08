@@ -26,3 +26,11 @@ Status: reference adapter template.
 ## Catalog requirements
 
 The adapter must return actual available plaintext body content, not a generated summary. A runtime that exposes only snippets cannot claim lossless catalog capability. Threading is provider metadata; ordered immutable messages are the durable evidence unit.
+
+For the selected plaintext part, the adapter supplies complete raw part bytes,
+part identity, declared transfer encoding and charset, a whole-part locator,
+and the provider Unicode value. The admission boundary strictly decodes the raw
+bytes and requires exact equality with that Unicode value before cataloguing.
+A raw-message read may establish this evidence at the adapter boundary; raw MIME
+is not the canonical catalog body. Attachments and direct image/PDF references
+from a complete HTML alternative remain separately inventoried outcomes.

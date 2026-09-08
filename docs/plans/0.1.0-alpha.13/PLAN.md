@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
 - Status: approved completion plan; M1–M3 require chained revalidation after the installer correction, and M4 implementation plus observed fresh-test-instance evidence remains
-- Revision: 30, updated 2026-09-08
+- Revision: 31, updated 2026-09-08
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -89,27 +89,30 @@ records. Completion stays a lifecycle event, not a new workflow state; a
 missing required parent comment reopens with one recoverable reminder. No title
 matching, generic task engine, or unscoped provider mutation is authorized.
 
-**Task-core implementation checkpoint (2026-09-08):** The corrected canonical
-reconciler and selected Sheets mapping now have synthetic coverage. A complete
-scoped snapshot is indexed once per sync; the core journals a parent-origin
-task/claim intent before a guarded claim and resolves recovery by canonical ID.
-Source relations are explicit and validated, including support/correction/
-completion/reopen evidence. Parent action, group, planned date, progress,
-workflow, status, and qualifying completion comment observations use durable
-last-synchronized snapshots; source due and provenance remain source-owned.
-Completion remains append-only lifecycle history. This completes the repository
-implementation portion of the reopened M2-003/M2-004/M3-003 and M4-008 work;
-authenticated runtime binding and observed private test-Sheet evidence remain
-M4-003/M4-009 work.
+**Task-core checkpoint review (2026-09-08):** The first canonical/Sheets
+checkpoint did not complete the reopened gates. Focused failure cases found
+that connected sync discarded reconciled canonical state, field ownership was
+not a true base/local/remote comparison, parent-claim recovery depended on a
+mutable row locator, completion/comment replay could adopt the wrong event, and
+guarded writes could overwrite a changed target cell. M2-003, M2-004, M3-003,
+and M4-008 remain reopened until the bounded correction is reviewed, integrated,
+and revalidated. The accepted correction stays within the existing task/register
+and provider-state contracts; it does not add a generic task engine.
 
-**Source custody and semantic audit correction (2026-09-08):** M4-001 and
-M4-007 are reopened. Complete source admission must bind the selected raw MIME
-part, strict transport/charset decode, and provider Unicode result; custody
-must retain ordered attachment/resource outcomes and complete-unit evidence.
-The semantic interpreter receives a frozen packet and independent audit binds
-both that packet hash and the exact interpreted artifact hash. Existing daily
-brief policy governs both approved private test sends; the private recipient is
-not repository configuration.
+**Source custody and semantic audit correction (2026-09-08):** The reopened
+M4-001/M4-007 repository correction is implemented and regression-tested.
+Complete source admission binds the selected raw MIME part, strict transport/
+charset decode, and provider Unicode result. Byte-counted catalog frames retain
+ordered attachment/resource outcomes, original-versus-extracted hashes,
+read/fetch evidence, stable content identity, and every expected extraction
+unit. A bounded semantic packet is built only from exact source-equal persisted
+content; code assigns exact quotes/spans and provenance while allowing separately
+audited source-supported canonical Fact wording. Independent audit binds the
+packet, exact interpreted artifact, every byte disposition/reason, Fact wording/
+classification, and source outcome. Authenticated invocation and private-source
+accuracy remain M4-003/M4-009 gates. Existing daily brief policy governs both
+approved private test sends; the private recipient is not repository
+configuration.
 
 The user has authorized the new test instance to ingest the last 14 days of the
 grounded school-mail scope; execute real manual and temporary scheduled brief
@@ -734,8 +737,8 @@ successful uninterrupted run alone is insufficient.
 
 ### Milestone 4 — Expand coverage and establish release readiness
 
-**Status:** in progress (M4-001 and M4-007 generic implementations complete
-pending observed binding; M4-002 complete for synthetic alpha.12 input;
+**Status:** in progress (M4-001 and M4-007 corrected generic implementations
+complete pending authenticated observed binding; M4-002 complete for synthetic alpha.12 input;
 M4-003–M4-009 otherwise pending or in
 progress under the fresh-test-instance authorization; M4-006 remains the final
 release gate).
@@ -788,11 +791,10 @@ task IDs now cover their missing executable and observed acceptance:
 | 9. Tests/measurement/upgrade/release | Revalidate M1–M3; M4-002/M4-004–M4-006/M4-009 | Synthetic, package, observed, privacy, upgrade, and release-readiness gates pass with evidence kept in its proper owner; publication remains separately authorized. |
 | 10. Selected adapters | M4-008/M4-009 | Google Sheets passes contract and real read/write/reconciliation checks; other optional adapters remain independent. |
 
-Two presentation/delivery choices remain pending and must not be guessed: whether
-the 14-day requirement changes ordinary brief eligibility or only the ingestion
-and inventory-audit window, and the exact test recipient set. Until those are
-resolved privately, source discovery, adapter implementation, synthetic tests,
-package preparation, and non-delivery validation continue independently.
+The resolved private test policy uses the existing daily brief eligibility
+recipe while the independent source/inventory audit covers the full fixed
+14-day source scope. Both test variants go only to the approved private
+recipient. Exact recipient and source values remain outside Git.
 
 ### Scope and purpose of this sequence
 
@@ -931,3 +933,12 @@ evidence that does not need to be repeatedly printed into model context.
   authorized GPT-5.6 Sol High consultation. It extends M4-001 source accounting
   only for exact image/PDF references in complete HTML alternatives and retains
   all no-crawler, no-HTML-conversion, provenance, and blocker boundaries.
+- Revision 30: reconciled the task-core and source/semantic failure reviews,
+  reopened the affected gates, and recorded the resolved existing-brief-policy
+  and private-recipient choices without adding private values.
+- Revision 31: completed the bounded M4-001/M4-007 repository correction with
+  strict source custody, byte-counted extracted-content framing, full unit/read/
+  fetch provenance, deterministic semantic packets, exact coverage, code-owned
+  Fact provenance, and independent exact-result audit. Authenticated accuracy
+  and source acceptance remain M4-003/M4-009 work; task-core gates remain open
+  pending their separately reviewed correction.

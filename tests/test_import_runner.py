@@ -10,7 +10,7 @@ sys.path.insert(0, str(ROOT))
 
 from school_os.adapters import Page, ReadResult
 from school_os.catalog import serialize_v2_record, validate_source_to_record, verify_persisted_record
-from school_os.importer import AttachmentExtraction, DirectResourceRead, ImportError, admit_exact_plaintext_representation, discover_direct_html_resources, enumerate_conversations, next_import_batch, process_attachments, process_direct_html_resources, require_complete_message_coverage, require_message_source_coverage
+from school_os.importer import AttachmentExtraction, AttachmentRead, DirectResourceRead, ImportError, admit_exact_plaintext_representation, discover_direct_html_resources, enumerate_conversations, next_import_batch, process_attachments, process_direct_html_resources, require_complete_message_coverage, require_message_source_coverage
 
 
 class ImportRunnerTests(unittest.TestCase):
@@ -101,14 +101,18 @@ class ImportRunnerTests(unittest.TestCase):
         verify_persisted_record({"message-001": body}, intended, intended)
 
     def test_source_admission_blocks_ambiguous_lossy_or_incomplete_mime_before_catalogue(self) -> None:
-        selected = {"part_id": "body", "role": "body", "selected_plaintext": True, "complete": True, "mime_type": "text/plain", "charset": "utf-8", "content_transfer_encoding": "identity", "data": b"same"}
+        def selected_part(data: bytes = b"same", **updates) -> dict:
+            value = {"part_id": "body", "role": "body", "selected_plaintext": True, "complete": True, "mime_type": "text/plain", "charset": "utf-8", "content_transfer_encoding": "identity", "data": data, "raw_part_sha256": __import__("hashlib").sha256(data).hexdigest(), "raw_part_byte_length": len(data), "raw_part_locator": {"kind": "raw_part_bytes", "byte_start": 0, "byte_end": len(data)}, "provider_unicode": data.decode("utf-8", errors="replace")}
+            value.update(updates)
+            return value
+        selected = selected_part()
         cases = (
             (selected, {"part_id": "other", "role": "body", "selected_plaintext": False, "complete": True, "mime_type": "text/plain", "charset": "utf-8", "content_transfer_encoding": "identity", "data": b"other"}),
             ({"part_id": "html", "role": "body", "selected_plaintext": False, "complete": True, "mime_type": "text/html", "charset": "utf-8", "content_transfer_encoding": "identity", "data": b"<p>only</p>"},),
             ({**selected, "complete": False},),
-            ({**selected, "content_transfer_encoding": "base64", "data": b"not*base64"},),
-            ({**selected, "charset": "utf-8", "data": b"\xff"},),
-            ({**selected, "content_transfer_encoding": "quoted-printable", "data": b"bad=Q"},),
+            (selected_part(b"not*base64", content_transfer_encoding="base64"),),
+            (selected_part(b"\xff", charset="utf-8"),),
+            (selected_part(b"bad=Q", content_transfer_encoding="quoted-printable"),),
             ({**selected, "data": None},),
         )
         outcomes = [admit_exact_plaintext_representation(parts, mime_tree_complete=True) for parts in cases]
@@ -118,30 +122,35 @@ class ImportRunnerTests(unittest.TestCase):
         self.assertEqual(outcomes[0], admit_exact_plaintext_representation(cases[0], mime_tree_complete=True))
 
     def test_selected_pdf_or_image_extraction_requires_a_provenance_locator(self) -> None:
-        raw = {"agenda": b"%PDF-raw", "image": b"jpeg-raw", "bad": b"broken"}
+        raw = {"agenda": b"%PDF-raw", "image": b"\xff\xd8\xffraw!!", "bad": b"%PDF-b"}
 
-        def read_attachment(identity: str) -> ReadResult:
+        def read_attachment(identity: str) -> ReadResult | AttachmentRead:
             mime = "application/pdf" if identity in {"agenda", "bad"} else "image/jpeg"
+            if identity == "image":
+                return AttachmentRead(
+                    identity, mime, True, len(raw[identity]), None,
+                    AttachmentExtraction("Image text", {"kind": "extracted_text_span", "byte_start": 0, "byte_end": 10}, ("image:1",), 1),
+                    {"kind": "provider_attachment", "identity": identity}, "1",
+                )
             return ReadResult(raw[identity], identity, "file", None, mime, "1")
 
         def pdf(result: ReadResult) -> AttachmentExtraction:
-            return AttachmentExtraction("Return form", {"kind": "provider_page_region", "page": 1, "region": "body"}, ("1",))
-
-        def image(_result: ReadResult) -> AttachmentExtraction:
-            return AttachmentExtraction("Image text", {"kind": "extracted_text_span", "byte_start": 0, "byte_end": 10})
+            if result.identity == "bad":
+                return AttachmentExtraction("Incomplete", {"kind": "extracted_text_span", "byte_start": 0, "byte_end": 10}, ("page:1",), 2)
+            return AttachmentExtraction("Return form", {"kind": "provider_page_region", "page": 1, "region": "body"}, ("page:1",), 1)
 
         outcomes = process_attachments(
             (
                 {"attachment_id": "agenda", "mime_type": "application/pdf", "byte_size": 8},
-                {"attachment_id": "image", "mime_type": "image/jpeg", "byte_size": 8, "original_bytes_observed": False},
+                {"attachment_id": "image", "mime_type": "image/jpeg", "byte_size": 8},
                 {"attachment_id": "bad", "mime_type": "application/pdf", "byte_size": 6},
             ),
             read_attachment=read_attachment,
             supported_mime_types=("application/pdf", "image/jpeg"),
             max_bytes=20,
-            extractors={"application/pdf": pdf, "image/jpeg": image},
+            extractors={"application/pdf": pdf},
         )
-        self.assertEqual(["extracted", "manual_review", "extracted"], [item.outcome for item in outcomes])
+        self.assertEqual(["extracted", "extracted", "manual_review"], [item.outcome for item in outcomes])
         self.assertNotEqual(outcomes[0].original_content_sha256, outcomes[0].extracted_text_sha256)
         self.assertIsNone(outcomes[1].original_content_sha256)
         self.assertEqual("provider_page_region", outcomes[0].locator["kind"])
@@ -154,6 +163,10 @@ class ImportRunnerTests(unittest.TestCase):
         html_part = {
             "part_id": "html-1", "complete": True, "mime_type": "text/html",
             "charset": "utf-8", "content_transfer_encoding": "identity", "data": html,
+            "raw_part_sha256": __import__("hashlib").sha256(html).hexdigest(),
+            "raw_part_byte_length": len(html),
+            "raw_part_locator": {"kind": "raw_part_bytes", "byte_start": 0, "byte_end": len(html)},
+            "provider_unicode": html.decode("utf-8"),
         }
         resources = discover_direct_html_resources("message-001", html_part)
         self.assertEqual(["html_embedded", "html_linked"], [item.origin for item in resources])
@@ -161,22 +174,35 @@ class ImportRunnerTests(unittest.TestCase):
         self.assertEqual(64, len(resources[0].html_part_sha256))
         self.assertNotEqual(resources[0].resource_id, resources[1].resource_id)
 
+        encoded_html = __import__("base64").b64encode(html)
+        encoded_part = {
+            **html_part,
+            "content_transfer_encoding": "base64",
+            "data": encoded_html,
+            "raw_part_sha256": __import__("hashlib").sha256(encoded_html).hexdigest(),
+            "raw_part_byte_length": len(encoded_html),
+            "raw_part_locator": {"kind": "raw_part_bytes", "byte_start": 0, "byte_end": len(encoded_html)},
+        }
+        encoded_resources = discover_direct_html_resources("message-001", encoded_part)
+        self.assertEqual(__import__("hashlib").sha256(encoded_html).hexdigest(), encoded_resources[0].html_part_sha256)
+        self.assertEqual(__import__("hashlib").sha256(html).hexdigest(), encoded_resources[0].html_decoded_sha256)
+
         payloads = {
             "https://assets.example/notice.png": DirectResourceRead(
                 "https://assets.example/notice.png", ("https://assets.example/notice.png",),
-                b"\x89PNG\r\n\x1a\nsource", "image/png",
+                b"\x89PNG\r\n\x1a\nsource", "image/png", 200, True, True, 14, 14,
             ),
             "https://assets.example/form.pdf": DirectResourceRead(
                 "https://cdn.example/form.pdf", ("https://assets.example/form.pdf", "https://cdn.example/form.pdf"),
-                b"%PDF-1.7 source", "application/pdf",
+                b"%PDF-1.7 source", "application/pdf", 200, True, True, 15, 15,
             ),
         }
 
         def extract_image(_read: DirectResourceRead) -> AttachmentExtraction:
-            return AttachmentExtraction("Image statement", {"kind": "extracted_text_span", "byte_start": 0, "byte_end": 15})
+            return AttachmentExtraction("Image statement", {"kind": "extracted_text_span", "byte_start": 0, "byte_end": 15}, ("image:1",), 1)
 
         def extract_pdf(_read: DirectResourceRead) -> AttachmentExtraction:
-            return AttachmentExtraction("PDF statement", {"kind": "provider_page_region", "page": 1, "region": "body"}, ("1",))
+            return AttachmentExtraction("PDF statement", {"kind": "provider_page_region", "page": 1, "region": "body"}, ("page:1",), 1)
 
         outcomes = process_direct_html_resources(
             resources,
@@ -192,10 +218,10 @@ class ImportRunnerTests(unittest.TestCase):
         require_message_source_coverage(b"", outcomes)
 
         with self.assertRaisesRegex(ImportError, "direct HTTPS"):
-            discover_direct_html_resources("message-001", {**html_part, "data": b'<img src="http://assets.example/notice.png">'})
+            discover_direct_html_resources("message-001", {**html_part, "data": b'<img src="http://assets.example/notice.png">', "raw_part_sha256": __import__("hashlib").sha256(b'<img src="http://assets.example/notice.png">').hexdigest(), "raw_part_byte_length": len(b'<img src="http://assets.example/notice.png">'), "raw_part_locator": {"kind": "raw_part_bytes", "byte_start": 0, "byte_end": len(b'<img src="http://assets.example/notice.png">')}, "provider_unicode": '<img src="http://assets.example/notice.png">'})
         blocked = process_direct_html_resources(
             resources[:1],
-            fetch_resource=lambda _url: DirectResourceRead("https://assets.example/notice.png", ("https://assets.example/notice.png",), b"not an image", "image/png"),
+            fetch_resource=lambda _url: DirectResourceRead("https://assets.example/notice.png", ("https://assets.example/notice.png",), b"not an image", "image/png", 200, True, True, 12, 12),
             extractors={"image/png": extract_image},
             max_bytes=64,
             max_redirects=0,

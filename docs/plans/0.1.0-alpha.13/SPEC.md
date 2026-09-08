@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
 - Status: implementation and observed validation in progress; M1–M3 are reopened for chained revalidation, M4-001 and M4-007 implementations are complete pending observed binding, M4-002 remains complete for its declared synthetic input, and M4-003–M4-009 otherwise remain
-- Approved plan: [PLAN.md](PLAN.md), revision 30
+- Approved plan: [PLAN.md](PLAN.md), revision 31
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
@@ -546,24 +546,33 @@ validated Fact-to-task relationships and block ambiguity. Both canonical task
 and provider state retain unique bindings. No title match, silent unbound-row
 admission, or generic task engine is permitted.
 
-**Task-core implementation (2026-09-08):** `school_os.tasks` now applies those
-rules mechanically. It records pending parent claim intents in provider state
-before the next sync can claim the exact provider packet, uses canonical IDs to
-recover claims, carries last parent snapshots in verified bindings, and keeps
-source due/provenance outside parent-field admission. `school_os.sheets`
-implements the selected adapter's one-snapshot session, guarded mutable row
-packets, exact readback, distinct source/parent due columns, and native comment
-bridge. Synthetic tests cover same-title parent tasks, claim/replay, source
-relations, completion/comment replay, field clearing, and guarded retargeting.
-This is repository evidence only; M4-003/M4-009 still require the actual
-runtime bridge and observed private-Sheet conformance.
+**Task-core checkpoint review (2026-09-08):** Focused failure cases against the
+first implementation found that connected sync did not retain reconciled tasks,
+parent fields lacked durable three-way base/local/remote decisions, a pending
+parent claim could be stranded by row movement, comment recovery could select
+the wrong event, and a stale cached cell could defeat the intended Sheet guard.
+M2-003, M2-004, M3-003, and M4-008 therefore remain open until the bounded
+repair is reviewed, integrated, and revalidated. The repair must preserve the
+accepted task/register/provider-state shapes and use optional source chronology
+from Facts; it does not authorize title matching or a new task engine.
 
-**M4-001/M4-007 custody correction (2026-09-08):** Source admission now requires
-an explicit complete MIME-tree assertion and rejects high-bit 7bit transport.
-The combined message gate requires resolved MIME attachment and direct-resource
-outcomes before advancement. Semantic packets are deep-copied/frozen before an
-interpreter callback, while audit identifies both the packet and canonical exact
-interpretation hashes. Further selected-runtime evidence remains M4-003/M4-009.
+**M4-001/M4-007 custody correction (2026-09-08):** Source admission requires an
+explicit complete MIME-tree assertion, exact raw-part hash/length/locator,
+strict transfer/charset decode equal to provider Unicode, and rejects high-bit
+7bit transport. The combined message gate requires resolved MIME attachment and
+direct-resource outcomes before advancement. Catalog v2 durably frames every
+body and extracted text by exact byte count/hash, and retains typed read/fetch,
+redirect, raw/decoded HTML-part, extraction-unit, locator, and outcome evidence.
+Semantic packets are built only from a parsed, source-equal catalog readback,
+bounded deterministically, and deep-copied before the interpreter callback.
+Code assigns immutable provenance, exact source quotes and Fact identities;
+canonical Fact wording may be a source-supported paraphrase only when an
+independent audit accepts that wording and its classification. Audit binds the
+packet, exact normalized interpretation, every byte-span disposition and reason,
+every Fact, and every source outcome. A faithfully preserved ambiguity can be
+accepted as review without promoting a guessed Fact; omissions, unsupported
+wording, or wrong spans/flags block. Further authenticated interpreter and
+selected-runtime evidence remains M4-003/M4-009.
 
 **M2-005 implementation note (2026-09-07):** `school_os.brief` deterministically
 renders the versioned input contract to escaped HTML/plain text. The delivery
@@ -672,8 +681,8 @@ state removed. A passing uninterrupted operation is insufficient.
 
 ## Milestone 4 — Expand coverage and establish release readiness
 
-**Status:** in progress. M4-001 implementation is complete pending observed
-binding, M4-002 is complete for its declared synthetic alpha.12 input,
+**Status:** in progress. M4-001 and M4-007 corrected generic implementations
+are complete pending authenticated observed binding, M4-002 is complete for its declared synthetic alpha.12 input,
 M4-003–M4-009 remain, and M4-006 is the final release
 gate.
 
@@ -698,10 +707,17 @@ legacy inventories. Do not invent them in advance.
 **M4-001 implementation note (2026-09-08):** `school_os.importer` records every
 provider page token and immutable conversation disposition, then chooses whole
 records from deterministic byte/record bounds and durable completed IDs. It
-extracts only exact supported `text/plain` UTF-8 attachment content and exposes
-unsupported, inaccessible, duplicate, and manual-review outcomes without
-inventing content. The daily runner proves an empty discovery still regenerates
-required rolling/brief outputs. These are synthetic repository checks only.
+admits one strictly decoded provider-designated complete plain body, processes
+selected text/PDF/image MIME attachments, and discovers only direct image/PDF
+references in a complete strict HTML alternative. Every selected extraction
+requires all expected ordered units and a whole-content locator. Direct fetches
+require a bounded HTTPS redirect chain, status/EOF/length evidence, and matching
+MIME signature. `school_os.catalog` assigns stable content/outcome identities,
+retains separate original and extracted hashes, byte-frames every preserved
+text, and rejects missing or inconsistent custody on parse. Unsupported,
+inaccessible, excluded, duplicate, and manual-review outcomes remain explicit;
+an unresolved substantive outcome blocks. These are synthetic repository checks
+only; selected runtime reads and source accuracy remain M4-003/M4-009 evidence.
 
 **M4-002 implementation note (2026-09-08):**
 `school_os.migrate_alpha13.migrate_alpha12` transforms only the declared
@@ -727,14 +743,18 @@ framework. M4-004 measurement and the implementation/package portion of M4-005
 proceed independently; only final M4-006 waits for all observed evidence.
 
 **M4-007 implementation (2026-09-08):** `school_os.semantic` provides the
-narrow live-interpreter boundary. It supplies bounded source/attachment
-segments, assigns Fact IDs from immutable provenance and exact byte spans, and
-rejects paraphrase, invented identifiers, malformed candidates, duplicate IDs,
-or incomplete segment coverage before canonical Facts exist. An independent
-audit must identify the exact packet hash and accept each segment; review or
-blocked audit entries stop acceptance. The callable is deliberately injected:
-synthetic tests prove the mechanical boundary only, while M4-003/M4-009 must
-bind an actual authenticated interpreter and retain private result/audit hashes.
+narrow live-interpreter boundary. It supplies bounded source/body/attachment/
+resource segments and every source outcome from verified catalog custody,
+assigns Fact IDs and exact quotes from immutable provenance and UTF-8 byte spans,
+and requires coverage to partition every source byte. Source-supported canonical
+Fact wording is distinct from the immutable quote; the independent audit binds
+both, along with flags/classification, the exact interpreted artifact, each
+coverage reason, and each source outcome. Explicit source ambiguity may remain
+an accepted review case only when no guessed claim is promoted. Malformed,
+unsupported, incomplete, omitted, or unaudited results block before downstream
+use. The callable is deliberately injected: synthetic tests prove the mechanical
+boundary only, while M4-003/M4-009 must bind an actual authenticated interpreter
+and retain private result/audit hashes.
 
 **Fresh test-instance boundary (2026-09-08):** Create alpha.13 from an exact
 package in the newly empty authorized Drive test root after an empty-root
@@ -1016,18 +1036,12 @@ cannot prove strict complete plaintext for an in-scope message, that message
 blocks; raw-MIME canonical storage would then be a separate user decision with
 the consequences described above.
 
-Two user choices remain pending and affect only dependent view/delivery steps:
-
-- whether the 14-day requirement changes ordinary brief eligibility into a
-  full 14-day digest or applies only to import plus canonical-inventory audit;
-- whether both test deliveries go only to the connected test account or to the
-  existing configured recipient set.
-
-Privately resolve the exact source scope, test-root references, authenticated
-surfaces, selected recipient set, temporary schedule/timezone, and observed
-limits before their effects. Continue independent source-adapter, semantic,
-Sheets, measurement, package, and no-send validation while the two choices are
-pending. The manual and scheduled acceptance messages use separate explicit
+The resolved acceptance policy keeps the existing daily-brief eligibility
+recipe; the full fixed 14-day scope is an ingestion and independent canonical-
+inventory audit requirement. Both test deliveries go only to the approved
+private recipient. Keep that recipient, the exact source scope, test-root
+references, authenticated surfaces, temporary schedule/timezone, and observed
+limits private. The manual and scheduled acceptance messages use separate explicit
 private test variants under one frozen source window, are visibly labeled as
 tests, and each send once. Replaying either same delivery key must suppress a
 duplicate. If the existing variant contract cannot express that safely, stop

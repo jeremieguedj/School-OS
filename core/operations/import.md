@@ -24,7 +24,10 @@ Optionally backfill a private source catalog without changing the meaning of the
    cursor move. Create/refresh source records through the source-catalog
    contract, then process separately inventoried attachments and direct HTML
    image/PDF resources through `attachment-processing.md` and persist their
-   explicit outcomes with the source record.
+   explicit outcomes with the source record. Build the source message through
+   the checked-in admission/custody helper so the catalog, rather than an
+   interpreter, assigns content/outcome identities and binds raw-part,
+   extracted-text, read/fetch, locator, and complete-unit evidence.
 5. Reconcile derived private data only after verified source batches.
 6. Do not send a daily brief or mutate the task provider unless the user explicitly authorizes those separate operations.
 7. Record completed and blocked source identities, enumeration evidence, and

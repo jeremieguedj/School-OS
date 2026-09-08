@@ -228,6 +228,8 @@ def validate(value: Any, schema: dict[str, Any], path: str = "$") -> list[str]:
             return [f"{path}: expected {' or '.join(types)}"]
     if "enum" in schema and value not in schema["enum"]:
         errors.append(f"{path}: must be one of {schema['enum']!r}")
+    if "const" in schema and value != schema["const"]:
+        errors.append(f"{path}: must equal {schema['const']!r}")
     if isinstance(value, dict):
         required = schema.get("required", [])
         errors.extend(f"{path}: missing required property {key!r}" for key in required if key not in value)

@@ -1513,3 +1513,40 @@ requirements, then read this log from top to bottom.
   this final repository custody checkpoint; selected runtime must still provide
   actual complete provider reads/fetches/page extraction before private M4-009
   acceptance. No provider or private instance was touched.
+
+## 2026-09-08 — alpha.13 source-custody and exact semantic-audit integration
+
+- Completed the bounded corrective integration for M4-001/M4-007. One admitted
+  body now carries selected raw-part hash/length/whole-part locator, strict
+  transfer/charset decode, and exact provider-Unicode equality into a typed v2
+  catalog record. Attachments and direct HTML image/PDF resources retain stable
+  code-assigned content/outcome identity, source-message association, separate
+  original/extracted hashes, exact extracted text frames, complete ordered
+  page/image/text units, locators, and typed read/fetch/redirect evidence. Raw
+  and strictly decoded HTML-part hashes remain distinct. Missing, duplicate,
+  inconsistent, unresolved, or unreferenced custody blocks.
+- `school_os.semantic` now builds bounded ordered packets only from a parsed,
+  source-equal catalog readback, passes an isolated deep copy to the injected
+  interpreter, partitions every UTF-8 source byte into Fact/no-Fact/review
+  coverage, and assigns immutable Fact IDs, exact quotes, chronology, and
+  attachment/resource provenance in code. Canonical Fact text may be concise
+  source-supported wording distinct from its exact quote. Independent audit
+  binds the packet hash, exact normalized interpretation, every span and its
+  interpreter reason, every canonical wording/classification, and every source
+  outcome. A faithfully preserved source ambiguity may pass as review without
+  a guessed downstream claim; an audit error remains blocking.
+- Added focused end-to-end and tamper regressions covering raw/decoded HTML
+  hashes, eight-page attachment completeness, image-resource fetch evidence,
+  catalog framing/dereference, bounded packet construction, exact result audit,
+  bad EOF/unit/read evidence, lossy decode, and literal-versus-inserted Unicode
+  replacement characters. `python3 scripts/validate.py` passed 173 tests and
+  `git diff --check` passed. This is synthetic mechanical evidence only; no
+  private source, provider, Drive, Sheet, mail, scheduler, or delivery action
+  occurred.
+- Reconciled the release documents: the generic M4-001/M4-007 correction is
+  complete pending authenticated interpreter/source acceptance in M4-003/
+  M4-009. M2-003/M2-004/M3-003/M4-008 remain reopened because the separate
+  task-core candidate still has focused failure cases under review. Next:
+  privacy-scan the staged new test, commit/push/verify this source checkpoint,
+  then integrate and refresh the separately accepted bounded M4-004 measurement
+  delta without touching task/Sheets/brief/runtime work.
