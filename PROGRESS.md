@@ -1973,3 +1973,140 @@ requirements, then read this log from top to bottom.
   runtime primitives and concrete ingestion workers, then execute the gated
   fresh-instance acceptance path. Private recipient/configuration values remain
   outside Git.
+
+## 2026-09-08 — alpha.13 M4-003 approved runtime-adapter design checkpoint
+
+- Recorded the approved finite Codex-local host bridge before implementation.
+  The synchronous standard-library core uses private mode-0600 request/response
+  files under a mode-0700 run directory, short hash-bound PTY controls, static
+  request-kind dispatch, bounded payloads, one-use response verification, and
+  explicit unknown-effect reconciliation. It does not expose arbitrary tool
+  execution or treat synthetic responses as observed authorization.
+- Recorded the connected composition boundary: exact predecessor artifacts,
+  explicit selected capabilities, durable exact delivery intent and Sent
+  readback, same-phase unit continuation, and admitted archive/checksum
+  bootstrap references. The selected Drive replacement limitation and the
+  distinction between interactive and scheduled evidence remain explicit.
+- Status remains pending. No authenticated connector, provider write, private
+  value, schedule, release, or production instance was touched. Next: implement
+  the independent bridge/response writer and focused synthetic transport tests,
+  then add connected delivery/daily/bootstrap pieces without editing the
+  separately owned task, source, or renderer files.
+
+## 2026-09-08 — alpha.13 M4-003 runtime bridge and recovery implementation
+
+- Implemented the finite Codex-local bridge in `school_os/codex_bridge.py` and
+  the noncanonical PTY response writer. Requests and responses are private,
+  bounded, hash-bound, one-use files; only fixed Drive/Gmail/Sheets/comment and
+  semantic kinds can dispatch. Flat/nested structured content is normalized;
+  mismatched IDs, hashes, paths, modes, wrappers, truncation, replay, arbitrary
+  kinds, and tool errors fail closed. Synthetic transport covers a 1,048,634-
+  byte response without placing private payload bytes in terminal controls.
+- Added `school_os/connected_daily.py`, which verifies every phase's actual
+  persisted artifact and passes it to the next phase. Canned `verified: true`
+  results cannot authorize a phase. `school_os.daily` now requires the selected
+  capability set explicitly and can checkpoint/repeat bounded units inside one
+  phase using `phase_complete`, `completed_units`, and `remaining_work`.
+  Partial phases never enter `completed_phases`; budget checks remain between
+  units and cannot preempt an in-flight provider/model call.
+- Added `school_os/delivery.py`. Operational send state is durable and read back
+  before dispatch, includes key/variant/To/CC/BCC/subject/body hashes, and is
+  treated as possibly applied across abrupt process death. Confirmation checks
+  the returned Gmail ID through raw MIME, SENT label, exact recipients, subject
+  marker, and both bodies. Recovery paginates Sent candidates and accepts one
+  exact match only; zero, multiple, or non-progress blocks without resend.
+- Corrected the fresh-bootstrap gap: create-only installation now admits and
+  reads back the exact release archive and `SHA256SUMS` as payload objects,
+  records their exact references and hashes, and verifies the pinned pair before
+  safe extraction. A Python 3.12 test removes the original extracted checkout
+  and successfully rebuilds from recovered package bytes.
+- Added precise Codex-local runtime/scheduler docs and reconciled the older
+  ChatGPT Work direct-manual prohibition. Current project discovery does not
+  establish an eligible local cron surface; the documented scheduled test is a
+  separately authorized thread heartbeat and interactive evidence remains
+  insufficient for it.
+- Focused Python 3.12 validation passed 51 tests with ambient bytecode controls
+  removed. The complete 192-test run currently has three known extracted-
+  package inventory failures from pre-verification `__pycache__` creation in
+  other thin entrypoints; the separately assigned release worker owns that
+  portability repair. This session set `sys.dont_write_bytecode` before
+  School-OS imports in its owned `run_operation.py` entrypoint.
+- Genuine pending dependency: the generic daily capability list names task
+  history/move operations that the selected native Sheets surface does not
+  expose. The coordinator was given the narrow snapshot/batchUpdate/comment
+  mapping proposal; no nonexistent capability is claimed here. Brief input
+  policy/API and task abrupt-stop repair are also still owned by their separate
+  sessions. No provider mutation, private value, send, schedule, release, or
+  production effect occurred. M4-003/M4-009 acceptance remains pending.
+- Next: finish CLI/parser and bridge pagination tests, rerun complete validation
+  after the assigned portability/task/brief deltas are integrated by the
+  coordinator, then commit this isolated candidate and report its exact SHA.
+
+## 2026-09-08 — alpha.13 M4-003 runtime scope correction
+
+- Removed the generic `school_os.connected_daily` callback composition and its
+  self-selected artifact-hash test because neither constituted a concrete
+  connected execution path. Renamed the host-mode result to
+  `BOOTSTRAP_READBACK_VERIFIED`; it proves only exact bootstrap metadata/content
+  identity through the finite bridge and does not claim runtime readiness.
+- The missing concrete installed entrypoint must still bind recovered admitted
+  package/state custody, Drive artifact and checkpoint persistence,
+  Gmail-to-catalog import, semantic interpretation plus independent audit,
+  accepted native-Sheets task synchronization, finalized brief input/rendering,
+  exact delivery, and cursor commit last. Those interfaces remain dependent on
+  separately owned task and brief acceptance work.
+- Strengthened connector normalization for observed CallToolResult shapes with
+  tool metadata alongside `structuredContent.result`. Metadata and model-facing
+  text blocks are never treated as semantic verification; absent structured
+  content blocks.
+- Delivery now closes the durable effect checkpoint after exact Sent readback
+  and heals a crash between confirmed-ledger and confirmed-effect persistence.
+  A pending ledger with no effect checkpoint is provably pre-dispatch and may
+  proceed once; a pending effect always reconciles and never blindly resends.
+- Final owned focused validation passed 51 tests on CPython 3.12.14. The prior
+  complete run exercised 190 tests and had only the three separately owned
+  package-inventory/bytecode failures; the coordinator has since accepted that
+  release repair on main. `git diff --check` passed. No connector call,
+  provider mutation, private value, send, schedule, release, or production
+  effect occurred in this candidate.
+
+## 2026-09-08 — alpha.13 M4-003 primitive review repair
+
+- Reproduced and repaired all five confirmed synthetic review gaps against
+  candidate `a69ce99f79a9feb88f4affffcf57788c41af85cb`: mismatched Gmail
+  provider IDs can no longer confirm or heal delivery state; a partial daily
+  unit cannot advance without a nonempty durable checkpoint identity; package
+  extraction rebinds both archive and checksum bytes to admitted hashes;
+  bootstrap readback requires narrow storage-only profile qualification plus
+  complete strict base64 bytes and two independent size agreements; and
+  nonfinite semantic/host results fail the bridge's JSON gate.
+- Added direct regressions for post-send/suppression/reconciliation ID mismatch,
+  absent/empty partial-unit checkpoints, a self-consistent substituted archive,
+  empty-bootstrap success claims and unused invalid profiles, a valid narrow
+  storage-only bootstrap profile, and a `NaN` semantic response. The primitive-
+  only architecture and explicit missing connected-worker boundary are
+  unchanged.
+- Bundled CPython 3.12.14 passed the five exact review regressions and the
+  broader 55-test owned runtime/recovery matrix. `git diff --check` passed.
+  The three historical package/bytecode failures belong to the already accepted
+  release repair on main and were neither hidden nor reimplemented here. No
+  provider call, private value, send, schedule, push, release, or production
+  effect occurred.
+
+## 2026-09-08 — runtime primitives integrated for exact-package validation
+
+- Integrated the complete reviewed primitive delta through `43b054c`, retaining
+  the accepted task effect callback, executable measurement regression, and
+  approved user-added task policy. Independently reran the five original
+  invalid-input cases: wrong Sent identity, absent bootstrap content/profile,
+  nonfinite semantic JSON, non-durable partial-phase continuation, and replaced
+  admitted archive bytes now reject. The owned 52-test matrix passes.
+- These are bounded transport, delivery, continuation, and package-recovery
+  primitives. The host CLI explicitly verifies bootstrap readback only; concrete
+  connected daily execution and authenticated acceptance remain unfinished.
+- Combined working-tree validation passed 228 of 229 tests; the measurement
+  command exposed missing synthetic pinned-package references. Added those
+  references. Its next run correctly rejected the old committed package schema
+  paired with the new installer. Commit this candidate locally, then rerun the
+  actual command and full ordinary-CPython suite against the exact new package
+  before push or acceptance. No provider or release effect occurred.

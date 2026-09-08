@@ -10,7 +10,7 @@
     "verification_status": {"enum": ["candidate", "verified"]},
     "package": {
       "type": "object", "additionalProperties": false,
-      "required": ["version", "source_identity", "archive_sha256", "inventory_sha256"],
+      "required": ["version", "source_identity", "archive_name", "archive_sha256", "inventory_sha256", "archive_reference", "checksums_reference", "checksums_sha256"],
       "properties": {
         "version": {"type": "string", "minLength": 1},
         "source_identity": {
@@ -19,7 +19,11 @@
           "properties": {"repository": {"type": "string", "minLength": 1}, "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}}
         },
         "archive_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "inventory_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        "inventory_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "archive_name": {"type": "string", "minLength": 1},
+        "archive_reference": {"type": "object"},
+        "checksums_reference": {"type": "object"},
+        "checksums_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
       }
     },
     "instance_root_reference": {"type": "object"},

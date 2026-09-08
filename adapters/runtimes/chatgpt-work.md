@@ -1,7 +1,7 @@
 # ChatGPT Work runtime profile
 
-Status: reference profile only. It becomes production-capable only when paired
-with a current private `observed` scheduled-surface conformance record.
+Status: reference profile only. Manual and scheduled surfaces qualify
+independently through current private `observed` conformance records.
 
 This profile maps School-OS contracts to ChatGPT Work's connector and scheduled-task surfaces. Environment-specific truth is recorded only in the private capability profile; this public adapter never embeds account IDs, task IDs, private file IDs, recipients, or credentials.
 
@@ -41,4 +41,4 @@ Scheduled production additionally requires a selected scheduler adapter, observe
 Do not assume one ChatGPT surface or account has the same capabilities as another. A missing, stale, interactive-only, or nonconformant private profile supports read-only inspection only.
 
 This repository contains synthetic contract tests, not a private observed
-conformance record. It therefore makes no scheduled ChatGPT Work support claim.
+conformance record. It therefore makes no manual support claim and no scheduled ChatGPT Work support claim.

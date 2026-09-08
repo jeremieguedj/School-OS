@@ -193,7 +193,7 @@ class ConnectedDailyRunTests(unittest.TestCase):
             cursors = self._write_checked(work / "eligible-cursors.json", canonical_json_bytes({"discovery": "page-1", "provider": "synthetic", "final_evidence_sha256": evidence["sha256"]}), writes)
             return {"verified": True, "artifacts": {**previous["artifacts"], "final_evidence": evidence, "cursors": cursors}}
 
-        result = run_daily(profile=self._profile(), capability_schema=self.schemas["capability-profile.schema.json"], entrypoint="manual", operation_id="synthetic-daily-001", attempt_id="synthetic-attempt-001", stages={"preflight": preflight, "discover": discover, "catalog": catalog, "reconcile": reconcile, "task_sync": task_sync, "brief_delivery": brief_delivery, "commit": commit})
+        result = run_daily(profile=self._profile(), capability_schema=self.schemas["capability-profile.schema.json"], entrypoint="manual", operation_id="synthetic-daily-001", attempt_id="synthetic-attempt-001", stages={"preflight": preflight, "discover": discover, "catalog": catalog, "reconcile": reconcile, "task_sync": task_sync, "brief_delivery": brief_delivery, "commit": commit}, required_capabilities=("storage.read_complete", "mail.search", "tasks.list_complete"))
         return result, state, writes, sink, provider
 
     def test_installed_manual_run_uses_actual_predecessor_artifacts(self) -> None:

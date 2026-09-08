@@ -14,8 +14,9 @@ import os
 import re
 import shutil
 import tempfile
+import tarfile
 from pathlib import Path
-from typing import Any, Protocol
+from typing import Any, Mapping, Protocol
 
 from .contracts import ContractError, canonical_json_bytes, dump_mapping_yaml, load_mapping, load_mapping_yaml, sha256_bytes, validate
 from .package import PackageError, verify_extracted_tree, verify_release_archive
@@ -31,6 +32,8 @@ ADMISSION_PATH = "state/installation-admission.json"
 BOOTSTRAP_PATH = "BOOTSTRAP.md"
 FILE_MAP_PATH = "state/file-map.yaml"
 OPERATION_STATE_PATH = "state/operation-state.json"
+PACKAGE_ARCHIVE_PATH = "system/package/release.archive"
+PACKAGE_CHECKSUMS_PATH = "system/package/SHA256SUMS"
 MANAGED_PATHS = (
     "instance.yaml",
     "config/household.yaml",
@@ -39,6 +42,8 @@ MANAGED_PATHS = (
     "config/daily-run-personal-values.md",
     FILE_MAP_PATH,
     OPERATION_STATE_PATH,
+    PACKAGE_ARCHIVE_PATH,
+    PACKAGE_CHECKSUMS_PATH,
 )
 DAILY_REFERENCE_KINDS = {
     "source_checkpoint": "file",
@@ -63,6 +68,23 @@ class CreateOnlyStorage(ReferenceStorage, Protocol):
     """Storage surface for installation generations that may never replace bytes."""
 
     def create_file(self, parent_id: str, name: str, data: bytes, mime_type: str) -> StoredObject: ...
+
+
+def _pinned_archive_name(checksums: bytes, archive_sha256: str) -> str:
+    try:
+        text = checksums.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise InstallationError("pinned package checksums are not UTF-8") from exc
+    lines = text.splitlines(keepends=True)
+    if len(lines) != 1 or not lines[0].endswith("\n"):
+        raise InstallationError("pinned checksums must contain exactly one archive entry")
+    fields = lines[0][:-1].split("  ", 1)
+    if (
+        len(fields) != 2 or fields[0] != archive_sha256 or not fields[1]
+        or Path(fields[1]).name != fields[1]
+    ):
+        raise InstallationError("pinned checksums do not declare the exact archive hash and name")
+    return fields[1]
 
 
 def parse_daily_values(data: bytes) -> dict[str, Any]:
@@ -333,13 +355,22 @@ def _normalise_inputs(answers: dict[str, Any], references: dict[str, Any], packa
         "config/daily-run-personal-values.md": b"---\n" + dump_mapping_yaml(daily) + b"---\n\n" + prose,
         FILE_MAP_PATH: dump_mapping_yaml(file_map),
         OPERATION_STATE_PATH: operation_state_bytes,
+        PACKAGE_ARCHIVE_PATH: Path(answers["package_archive"]).read_bytes(),
+        PACKAGE_CHECKSUMS_PATH: Path(answers["package_archive"]).with_name("SHA256SUMS").read_bytes(),
     }
     if any(_contains_placeholder(load_mapping_yaml(data.decode("utf-8"))) for path, data in files.items() if path.endswith(".yaml")) or b"REPLACE_WITH_" in files["config/daily-run-personal-values.md"]:
         raise InstallationError("candidate contains an unresolved placeholder")
+    manifest_package = dict(package)
+    manifest_package.update({
+        "archive_name": Path(answers["package_archive"]).name,
+        "archive_reference": returned_references[PACKAGE_ARCHIVE_PATH],
+        "checksums_reference": returned_references[PACKAGE_CHECKSUMS_PATH],
+        "checksums_sha256": sha256_bytes(files[PACKAGE_CHECKSUMS_PATH]),
+    })
     manifest = {
         "schema_version": 2,
         "verification_status": "candidate",
-        "package": package,
+        "package": manifest_package,
         "instance_root_reference": instance_root,
         "files": {
             path: {"object_reference": returned_references[path], "sha256": sha256_bytes(data)}
@@ -408,6 +439,18 @@ def validate_candidate(candidate_root: Path, package_root: Path) -> dict[str, An
             raise InstallationError(f"installation manifest hash disagrees for {path}")
         if b"REPLACE_WITH_" in data:
             raise InstallationError(f"unresolved placeholder in {path}")
+    package = _require_mapping(manifest["package"], "installation manifest package")
+    for path, field in (
+        (PACKAGE_ARCHIVE_PATH, "archive_reference"),
+        (PACKAGE_CHECKSUMS_PATH, "checksums_reference"),
+    ):
+        reference = _reference(package[field], root_id=root_id, expected_kind="file", label=f"package {field}")
+        if reference != manifest["files"][path]["object_reference"]:
+            raise InstallationError(f"package {field} disagrees with admitted file")
+    if package["archive_sha256"] != sha256_bytes((candidate_root / PACKAGE_ARCHIVE_PATH).read_bytes()):
+        raise InstallationError("package archive hash disagrees with admitted file")
+    if package["checksums_sha256"] != sha256_bytes((candidate_root / PACKAGE_CHECKSUMS_PATH).read_bytes()):
+        raise InstallationError("package checksums hash disagrees with admitted file")
     _validated(load_mapping(candidate_root / "instance.yaml"), package_root, "instance.schema.json", "instance manifest")
     _validated(load_mapping(candidate_root / "config" / "household.yaml"), package_root, "household.schema.json", "household configuration")
     _validated(load_mapping(candidate_root / "config" / "integrations.yaml"), package_root, "integrations.schema.json", "integration selection")
@@ -599,12 +642,16 @@ def recover_create_only_generation(
     if manifest_root != root:
         raise InstallationError("content manifest names a different instance root")
     package = _require_mapping(manifest["package"], "content manifest package")
-    _required_keys(package, {"version", "source_identity", "archive_sha256", "inventory_sha256"}, "content manifest package")
+    _required_keys(
+        package,
+        {"version", "source_identity", "archive_sha256", "inventory_sha256", "archive_name", "archive_reference", "checksums_reference", "checksums_sha256"},
+        "content manifest package",
+    )
     source_identity = _require_mapping(package["source_identity"], "content manifest source identity")
     _required_keys(source_identity, {"repository", "commit"}, "content manifest source identity")
-    if not isinstance(package["version"], str) or not isinstance(source_identity["repository"], str) or re.fullmatch(r"[0-9a-f]{40}", source_identity.get("commit", "")) is None:
+    if not isinstance(package["version"], str) or not isinstance(package["archive_name"], str) or Path(package["archive_name"]).name != package["archive_name"] or not isinstance(source_identity["repository"], str) or re.fullmatch(r"[0-9a-f]{40}", source_identity.get("commit", "")) is None:
         raise InstallationError("content manifest package identity is invalid")
-    if any(re.fullmatch(r"[0-9a-f]{64}", package.get(key, "")) is None for key in ("archive_sha256", "inventory_sha256")):
+    if any(re.fullmatch(r"[0-9a-f]{64}", package.get(key, "")) is None for key in ("archive_sha256", "inventory_sha256", "checksums_sha256")):
         raise InstallationError("content manifest package hashes are invalid")
     files = _require_mapping(manifest["files"], "content manifest files")
     if not files:
@@ -624,6 +671,20 @@ def recover_create_only_generation(
         if sha256_bytes(object_.data) != entry["sha256"]:
             raise InstallationError(f"content manifest hash disagrees for {path}")
         admitted_objects[path] = object_
+    if PACKAGE_ARCHIVE_PATH not in admitted_objects or PACKAGE_CHECKSUMS_PATH not in admitted_objects:
+        raise InstallationError("content manifest does not admit the pinned archive and checksums")
+    archive_reference = _exact_reference(package["archive_reference"], root=root, label="package archive_reference")
+    checksums_reference = _exact_reference(package["checksums_reference"], root=root, label="package checksums_reference")
+    if archive_reference != _exact_reference(files[PACKAGE_ARCHIVE_PATH]["object_reference"], root=root, label="archive file reference"):
+        raise InstallationError("package archive reference disagrees with admitted file")
+    if checksums_reference != _exact_reference(files[PACKAGE_CHECKSUMS_PATH]["object_reference"], root=root, label="checksums file reference"):
+        raise InstallationError("package checksums reference disagrees with admitted file")
+    archive_bytes = admitted_objects[PACKAGE_ARCHIVE_PATH].data or b""
+    checksums_bytes = admitted_objects[PACKAGE_CHECKSUMS_PATH].data or b""
+    if sha256_bytes(archive_bytes) != package["archive_sha256"] or sha256_bytes(checksums_bytes) != package["checksums_sha256"]:
+        raise InstallationError("pinned package archive or checksums hash disagrees")
+    if _pinned_archive_name(checksums_bytes, package["archive_sha256"]) != package["archive_name"]:
+        raise InstallationError("pinned package archive is not declared by checksums")
     if "instance.yaml" not in admitted_objects or admitted_objects["instance.yaml"].object_id != instance_id:
         raise InstallationError("bootstrap instance identity is not admitted by the content manifest")
     return {
@@ -632,6 +693,8 @@ def recover_create_only_generation(
         "admission": admission,
         "admission_reference": admission_reference,
         "bootstrap_reference": dict(bootstrap_reference),
+        "package_archive": archive_bytes,
+        "package_checksums": checksums_bytes,
     }
 
 
@@ -661,6 +724,11 @@ def install_create_only_generation(
         or any(path in {MANIFEST_PATH, ADMISSION_PATH, BOOTSTRAP_PATH} for path in payloads)
     ):
         raise InstallationError("create-only generation requires final non-empty payload mapping")
+    if PACKAGE_ARCHIVE_PATH not in payloads or PACKAGE_CHECKSUMS_PATH not in payloads:
+        raise InstallationError("create-only generation requires pinned archive and checksums payloads")
+    if sha256_bytes(payloads[PACKAGE_ARCHIVE_PATH]) != package.get("archive_sha256"):
+        raise InstallationError("pinned archive bytes disagree with package evidence")
+    archive_name = _pinned_archive_name(payloads[PACKAGE_CHECKSUMS_PATH], package["archive_sha256"])
     objects: dict[str, StoredObject] = {}
     for path, object_ in (existing_payloads or {}).items():
         if path not in payloads:
@@ -679,10 +747,17 @@ def install_create_only_generation(
     for path, data in sorted(payloads.items()):
         if path not in objects:
             objects[path] = _create_or_adopt(storage, parent_id=root.object_id, name=path, data=data, mime_type="application/octet-stream")
+    admitted_package = dict(package)
+    admitted_package.update({
+        "archive_name": archive_name,
+        "archive_reference": _stored_reference(objects[PACKAGE_ARCHIVE_PATH], root.object_id),
+        "checksums_reference": _stored_reference(objects[PACKAGE_CHECKSUMS_PATH], root.object_id),
+        "checksums_sha256": sha256_bytes(payloads[PACKAGE_CHECKSUMS_PATH]),
+    })
     manifest = {
         "schema_version": 2,
         "verification_status": "candidate",
-        "package": package,
+        "package": admitted_package,
         "instance_root_reference": root_reference,
         "files": {
             path: {"object_reference": _stored_reference(object_, root.object_id), "sha256": sha256_bytes(payloads[path])}
@@ -712,3 +787,53 @@ def install_create_only_generation(
     return recover_create_only_generation(
         storage, root_reference=root_reference, bootstrap_reference=bootstrap_reference,
     )
+
+
+def extract_recovered_package(recovery: Mapping[str, Any], destination: Path) -> Path:
+    """Verify an admitted archive/checksum pair before safe local extraction."""
+    manifest = _require_mapping(recovery.get("manifest"), "recovered manifest")
+    package = _require_mapping(manifest.get("package"), "recovered package")
+    archive = recovery.get("package_archive")
+    checksums = recovery.get("package_checksums")
+    if not isinstance(archive, bytes) or not isinstance(checksums, bytes):
+        raise InstallationError("recovery lacks exact admitted package bytes")
+    if sha256_bytes(archive) != package.get("archive_sha256"):
+        raise InstallationError("recovered archive bytes disagree with admitted hash")
+    if sha256_bytes(checksums) != package.get("checksums_sha256"):
+        raise InstallationError("recovered checksums bytes disagree with admitted hash")
+    if _pinned_archive_name(checksums, package["archive_sha256"]) != package.get("archive_name"):
+        raise InstallationError("recovered checksums archive name disagrees with admission")
+    if destination.exists() or not destination.parent.is_dir():
+        raise InstallationError("package extraction destination must be a new path")
+    staging = Path(tempfile.mkdtemp(prefix="school-os-recovered-", dir=destination.parent))
+    try:
+        archive_path = staging / package["archive_name"]
+        sums_path = staging / "SHA256SUMS"
+        archive_path.write_bytes(archive)
+        sums_path.write_bytes(checksums)
+        errors = verify_release_archive(archive_path, sums_path, package["version"])
+        if errors:
+            raise InstallationError("recovered package verification failed: " + "; ".join(errors))
+        with tarfile.open(archive_path, "r:gz") as bundle:
+            for member in bundle.getmembers():
+                target = staging / member.name
+                if member.isdir():
+                    target.mkdir(parents=True, exist_ok=True)
+                    continue
+                if not member.isfile():
+                    raise InstallationError("recovered package has an unsupported member")
+                target.parent.mkdir(parents=True, exist_ok=True)
+                source = bundle.extractfile(member)
+                if source is None:
+                    raise InstallationError("recovered package member is unreadable")
+                target.write_bytes(source.read())
+        extracted = staging / f"School-OS-{package['version']}"
+        verification = verify_extracted_tree(extracted, package["version"])
+        if verification.inventory_sha256 != package["inventory_sha256"]:
+            raise InstallationError("recovered package inventory hash disagrees")
+        os.replace(extracted, destination)
+    except Exception:
+        shutil.rmtree(staging, ignore_errors=True)
+        raise
+    shutil.rmtree(staging, ignore_errors=True)
+    return destination

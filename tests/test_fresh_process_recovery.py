@@ -56,7 +56,7 @@ class FreshProcessRecoveryTests(unittest.TestCase):
                 "from school_os.daily import run_daily; "
                 "x=DailyRunnerTests('test_manual_runs_all_phases_without_scheduler'); x.setUpClass(); "
                 "stages,_=x.stages(); data=json.loads((Path(sys.argv[1])/'durable.json').read_text()); "
-                "r=run_daily(profile=x.profile('manual'),capability_schema=x.schema,entrypoint='manual',operation_id='daily-001',attempt_id='attempt-002',stages=stages,resume_after='catalog',durable_predecessor_output=data['previous']); "
+                "r=run_daily(profile=x.profile('manual'),capability_schema=x.schema,entrypoint='manual',operation_id='daily-001',attempt_id='attempt-002',stages=stages,required_capabilities=('storage.read_complete','mail.search','tasks.list_complete'),resume_after='catalog',durable_predecessor_output=data['previous']); "
                 "print(json.dumps([r.outcome,r.operation_id,r.attempt_id,next(iter(r.outputs))]))"
             )
             result = subprocess.run([sys.executable, "-c", code, str(root)], cwd=ROOT, text=True, capture_output=True, check=False)

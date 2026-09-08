@@ -795,6 +795,70 @@ verified outputs to provider writes. Do not build a generic orchestration
 framework. M4-004 measurement and the implementation/package portion of M4-005
 proceed independently; only final M4-006 waits for all observed evidence.
 
+**M4-003 approved Codex-local runtime-adapter design (2026-09-08; acceptance
+pending):** The selected CPython core is synchronous and communicates with the
+authenticated Codex host through a finite JSON request union, never arbitrary
+tool-name execution. A persistent echo-disabled PTY runner exchanges only short
+control records and hashes with the host. Canonical request/response JSON lives
+in a mode-0700 run directory with mode-0600 files. The runner fsyncs a request,
+emits its request ID, fixed kind, SHA-256, and absolute path, then accepts only a
+matching one-use response control after verifying path containment, identity,
+mode, length, hash, and wrapper schema. The host statically dispatches each
+allowed request kind to the corresponding authenticated Drive, Gmail, Sheets,
+comment, or semantic callback tool. It returns arbitrary response bytes through
+the packaged `scripts/write_host_response.py` helper in noncanonical,
+echo-disabled PTY mode using an explicit byte count; neither private request nor
+response bodies are printed to the terminal or model output. Truncation,
+mismatched controls, replay, unexpected kinds, and malformed wrappers block.
+Tool exceptions have unknown effects and require provider readback or
+reconciliation. Flat and nested (`result`) structured-content wrappers are both
+normalized explicitly. Synthetic responses never establish observed capability
+or authorize connected writes.
+
+The bridge exposes only the connected operation's bounded Drive metadata/list/
+fetch/create-folder/upload/update, Gmail paginated search/raw/full/thread/
+attachment/send/Sent lookup, native Sheets metadata/CellData/batchUpdate, and
+paginated native comment calls, plus semantic interpretation/audit handoffs.
+Operational delivery uses a structured exact request containing delivery key,
+variant, To/CC/BCC, subject, and HTML/text hashes. A durable pending ledger and
+effect checkpoint are persisted and read back before send. Confirmation requires
+the returned message ID to read back with the SENT label, exact parsed recipient
+sets, delivery-key subject marker, and both MIME bodies. Recovery performs a
+complete paginated Sent search and accepts exactly one full-context match; zero,
+inconclusive, or multiple matches block instead of blindly retrying an unknown
+send. Equal-body test variants remain distinct by key.
+
+The concrete installed connected-daily entrypoint must compose the seven
+existing phase callables from their real predecessor artifacts and pass the
+exact selected capability set to qualification. It is not yet implemented;
+bootstrap readback and arbitrary callback composition are not substitutes.
+`school_os.daily` may repeat verified bounded units within one
+phase: each unit reports `phase_complete`, `completed_units`, and
+`remaining_work`; partial work checkpoints and resumes in that same phase and is
+not added to `completed_phases`. Budget checks occur only between complete
+units, and in-flight provider/model calls cannot be preempted. Fresh bootstrap
+recovery also requires create-only admitted archive and checksum references;
+the runtime fetches and verifies that exact pinned package before extraction, so
+a reset host needs only the stable bootstrap plus authenticated connectors and
+not a live repository. Drive replacement remains non-atomic and is acceptable
+only with the selected single-writer guard, immediate hash/modified-time check,
+and complete readback. Drive list caps block at the bound; interactive evidence
+does not imply unattended scheduler conformance. Repository implementation and
+synthetic bridge tests do not complete M4-003: authenticated manual and
+scheduled observations remain pending M4-003/M4-009 acceptance.
+
+**M4-003 primitive-review correction (2026-09-08):** Sent verification binds
+the observed raw message ID to the exact requested provider ID in post-send,
+suppression, and reconciliation paths before ledger/effect confirmation. Each
+non-final same-phase unit must return a nonempty durable checkpoint identity
+before another unit executes. Package extraction rechecks the exact admitted
+archive and checksum byte hashes, not merely an equivalent internal inventory.
+The bootstrap-read primitive has its own narrow storage-only profile gate and
+requires strict raw base64 content with fetch-size and metadata-size agreement
+before `BOOTSTRAP_READBACK_VERIFIED`; this is not daily admission. All bridge
+results, including semantic callbacks, must be finite JSON. These mechanical
+corrections do not implement or claim the still-missing connected daily worker.
+
 **M4-004 implementation (2026-09-08):** `scripts/measure_synthetic.py` runs the
 existing scaffolder/package verifier, complete paginated enumeration, bounded
 import selection, strict plaintext admission and typed catalog framing, all

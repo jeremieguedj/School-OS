@@ -76,7 +76,7 @@ class RuntimeConformanceTests(unittest.TestCase):
     def test_duplicate_capability_id_blocks(self) -> None:
         profile = self.profile()
         profile["capabilities"].append(copy.deepcopy(profile["capabilities"][0]))
-        errors = validate_capability_profile(profile, self.schema)
+        errors = validate_capability_profile(profile, self.schema, required_capabilities=["storage.read_complete"])
         self.assertTrue(any("duplicate capability" in error for error in errors))
 
     def test_manual_evidence_does_not_satisfy_scheduled_surface(self) -> None:
@@ -107,15 +107,15 @@ class RuntimeConformanceTests(unittest.TestCase):
             for capability_id in ("scheduler.inspect", "scheduler.verify")
         ])
         with self.assertRaisesRegex(CapabilityError, "observed-surface"):
-            qualify_execution(profile, self.schema, operation="daily-run", entrypoint="scheduled")
+            qualify_execution(profile, self.schema, operation="daily-run", entrypoint="scheduled", required_capabilities=("storage.read_complete", "mail.search", "tasks.list_complete"))
         profile["evidence_class"] = "observed"
-        self.assertEqual("scheduled", qualify_execution(profile, self.schema, operation="daily-run", entrypoint="scheduled").entrypoint)
+        self.assertEqual("scheduled", qualify_execution(profile, self.schema, operation="daily-run", entrypoint="scheduled", required_capabilities=("storage.read_complete", "mail.search", "tasks.list_complete")).entrypoint)
         for path in ("storage", "mail", "tasks", "scheduler"):
             with self.subTest(path=path):
                 unavailable = copy.deepcopy(profile)
                 unavailable["network_paths"][path]["status"] = "unavailable"
                 with self.assertRaisesRegex(CapabilityError, path):
-                    qualify_execution(unavailable, self.schema, operation="daily-run", entrypoint="scheduled")
+                    qualify_execution(unavailable, self.schema, operation="daily-run", entrypoint="scheduled", required_capabilities=("storage.read_complete", "mail.search", "tasks.list_complete"))
 
     def test_undeclared_operation_blocks(self) -> None:
         errors = validate_capability_profile(self.profile(), self.schema, operation="task-sync")
@@ -146,13 +146,13 @@ class RuntimeConformanceTests(unittest.TestCase):
         self.assertIn("conformant:", result.stdout)
 
     def test_unknown_limits_are_conservative_and_named_blockers_fail(self) -> None:
-        plan = qualify_execution(self.profile(), self.schema, operation="daily-run", entrypoint="manual")
+        plan = qualify_execution(self.profile(), self.schema, operation="daily-run", entrypoint="manual", required_capabilities=("storage.read_complete", "mail.search", "tasks.list_complete"))
         self.assertEqual(1, plan.max_records_per_unit)
         self.assertEqual(65536, plan.max_bytes_per_unit)
         profile = self.profile()
         profile["authentication"]["status"] = "unknown"
         with self.assertRaisesRegex(CapabilityError, "authentication is 'unknown'"):
-            qualify_execution(profile, self.schema, operation="daily-run", entrypoint="manual")
+            qualify_execution(profile, self.schema, operation="daily-run", entrypoint="manual", required_capabilities=("storage.read_complete", "mail.search", "tasks.list_complete"))
 
     def test_every_daily_run_capability_is_in_core_catalog(self) -> None:
         daily_run = (ROOT / "core" / "operations" / "daily-run.md").read_text()

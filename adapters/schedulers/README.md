@@ -15,3 +15,5 @@ A runtime without a certified scheduler adapter may support manual runs only.
 Available adapters:
 
 - `chatgpt-work.md` — ChatGPT Work scheduled tasks with private per-instance conformance.
+- `codex-local.md` — separately authorized Codex thread heartbeat qualification;
+  it does not claim a local cron surface when no eligible local project exists.

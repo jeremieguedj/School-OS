@@ -19,7 +19,10 @@ The agent follows `core/operations/onboarding.md` from the supplied release:
 2. Reads `START-HERE.md` and `release.yaml`, and requires the manifest version/status to match the immutable source identity.
 3. Collects selected integration choices.
 4. Validates the actual capability profile.
-5. Creates the private Drive instance and copies the release into its versioned `system/` area with readback checksum verification.
+5. Creates the private Drive instance and stores the exact release archive and
+   `SHA256SUMS` as create-only admitted installation artifacts alongside the
+   private payloads. It records their returned IDs and reads both back before
+   admitting the content manifest.
 6. Records the package checksum, inventory checksum, tag, commit, and verification evidence in private state.
 7. Creates private configuration and state from templates.
 8. Runs a no-send validation.
@@ -27,4 +30,7 @@ The agent follows `core/operations/onboarding.md` from the supplied release:
 
 ## Recurring operation
 
-After successful installation, the scheduler receives only the stable private Drive bootstrap reference and operation name. It runs from the installed Drive release and does not need GitHub access.
+After successful installation, the scheduler receives only the stable private
+Drive bootstrap reference and operation name. A reset host follows the admitted
+archive/checksum references, verifies and extracts that pinned package, and runs
+without the original local files or GitHub access.

@@ -7,6 +7,9 @@ An adapter is selected only through private instance configuration. It must not 
 ## Layout
 
 - `runtimes/` — runtime capability and tool mapping.
+
+The selected alpha.13 local binding is `runtimes/codex-local.md`; its observed
+manual and scheduled evidence remains private and surface-specific.
 - `mail/` — source/discovery/delivery mapping.
 - `tasks/` — parent task-provider mapping.
 - `schedulers/` — recurring execution mapping.

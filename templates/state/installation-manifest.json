@@ -7,8 +7,20 @@
       "repository": "REPLACE_WITH_SOURCE_REPOSITORY",
       "commit": "0000000000000000000000000000000000000000"
     },
+    "archive_name": "school-os-REPLACE_WITH_INSTALLED_RELEASE_VERSION.tar.gz",
     "archive_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-    "inventory_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    "inventory_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "archive_reference": {
+      "object_id": "REPLACE_WITH_PRIVATE_ARCHIVE_OBJECT",
+      "kind": "file",
+      "permitted_ancestor_id": "REPLACE_WITH_PRIVATE_INSTANCE_ROOT"
+    },
+    "checksums_reference": {
+      "object_id": "REPLACE_WITH_PRIVATE_CHECKSUMS_OBJECT",
+      "kind": "file",
+      "permitted_ancestor_id": "REPLACE_WITH_PRIVATE_INSTANCE_ROOT"
+    },
+    "checksums_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
   },
   "instance_root_reference": {
     "object_id": "REPLACE_WITH_PRIVATE_INSTANCE_ROOT",

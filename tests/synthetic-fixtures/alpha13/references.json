@@ -16,6 +16,8 @@
     "task_provider_selector": {"object_id": "synthetic-task-selector", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"}
   },
   "returned_objects": {
+    "system/package/release.archive": {"object_id": "synthetic-pinned-archive", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
+    "system/package/SHA256SUMS": {"object_id": "synthetic-pinned-checksums", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
     "instance.yaml": {"object_id": "synthetic-instance-manifest", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
     "config/household.yaml": {"object_id": "synthetic-household", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},
     "config/integrations.yaml": {"object_id": "synthetic-integrations", "kind": "file", "permitted_ancestor_id": "synthetic-instance-root", "version": "1"},

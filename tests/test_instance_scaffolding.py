@@ -24,7 +24,10 @@ from school_os.install import (  # noqa: E402
     InstallationError,
     MANAGED_PATHS,
     OPERATION_STATE_PATH,
+    PACKAGE_ARCHIVE_PATH,
+    PACKAGE_CHECKSUMS_PATH,
     compose_create_only_candidate_payloads,
+    extract_recovered_package,
     initial_operation_state_bytes,
     install_create_only_generation,
     recover_create_only_generation,
@@ -33,6 +36,12 @@ from school_os.install import (  # noqa: E402
     verify_candidate_readback,
 )
 from school_os.references import StoredObject  # noqa: E402
+
+
+TEST_ARCHIVE = b"synthetic admitted release archive"
+TEST_ARCHIVE_SHA = sha256_bytes(TEST_ARCHIVE)
+TEST_CHECKSUMS = f"{TEST_ARCHIVE_SHA}  synthetic-release.archive\n".encode("utf-8")
+PACKAGE_PAYLOADS = {PACKAGE_ARCHIVE_PATH: TEST_ARCHIVE, PACKAGE_CHECKSUMS_PATH: TEST_CHECKSUMS}
 
 
 class FakeStorage:
@@ -162,6 +171,13 @@ class InstanceScaffoldingTests(unittest.TestCase):
         self.assertEqual(first_manifest, validate_candidate(first, self.package_root))
         self.assertFalse(any(b"REPLACE_WITH_" in path.read_bytes() for path in first.rglob("*") if path.is_file()))
 
+        manifest_path = first / "state/installation-manifest.json"
+        tampered = json.loads(manifest_path.read_text())
+        tampered["package"]["archive_reference"] = self.reference("unadmitted-archive")
+        manifest_path.write_text(json.dumps(tampered), encoding="utf-8")
+        with self.assertRaisesRegex(InstallationError, "archive_reference disagrees"):
+            validate_candidate(first, self.package_root)
+
     def test_missing_answers_fail_without_accepting_output(self) -> None:
         answers = dict(self.answers)
         del answers["daily_values"]
@@ -201,23 +217,23 @@ class InstanceScaffoldingTests(unittest.TestCase):
         result = install_create_only_generation(
             storage,
             root_reference={"object_id": "instance-root", "kind": "folder", "permitted_ancestor_id": "instance-root", "version": "1"},
-            package={"version": "0.1.0-alpha.13", "source_identity": {"repository": "example", "commit": "a" * 40}, "archive_sha256": "a" * 64, "inventory_sha256": "b" * 64},
-            payloads={"instance.yaml": b"instance\n", "state/operation-state.json": b"{}\n"},
+            package={"version": "0.1.0-alpha.13", "source_identity": {"repository": "example", "commit": "a" * 40}, "archive_sha256": TEST_ARCHIVE_SHA, "inventory_sha256": "b" * 64},
+            payloads={**PACKAGE_PAYLOADS,"instance.yaml": b"instance\n", "state/operation-state.json": b"{}\n"},
         )
         self.assertNotIn("installation_manifest_reference", result["manifest"])
         self.assertEqual("verified", result["admission"]["verification_status"])
-        self.assertEqual(["instance.yaml", "state/operation-state.json", "state/installation-manifest.json", "state/installation-admission.json", "BOOTSTRAP.md"], storage.calls)
+        self.assertEqual(["instance.yaml", "state/operation-state.json", PACKAGE_CHECKSUMS_PATH, PACKAGE_ARCHIVE_PATH, "state/installation-manifest.json", "state/installation-admission.json", "BOOTSTRAP.md"], storage.calls)
 
     def test_create_only_generation_adopts_one_lost_response_without_retry(self) -> None:
         storage = CreateOnlyFakeStorage(lose_after_create=True)
         result = install_create_only_generation(
             storage,
             root_reference={"object_id": "instance-root", "kind": "folder", "permitted_ancestor_id": "instance-root", "version": "1"},
-            package={"version": "0.1.0-alpha.13", "source_identity": {"repository": "example", "commit": "a" * 40}, "archive_sha256": "a" * 64, "inventory_sha256": "b" * 64},
-            payloads={"instance.yaml": b"instance\n"},
+            package={"version": "0.1.0-alpha.13", "source_identity": {"repository": "example", "commit": "a" * 40}, "archive_sha256": TEST_ARCHIVE_SHA, "inventory_sha256": "b" * 64},
+            payloads={**PACKAGE_PAYLOADS,"instance.yaml": b"instance\n"},
         )
         self.assertEqual("verified", result["admission"]["verification_status"])
-        self.assertEqual(4, len(storage.calls))
+        self.assertEqual(6, len(storage.calls))
 
     def test_staged_payload_builder_uses_the_first_created_state_reference(self) -> None:
         storage = CreateOnlyFakeStorage()
@@ -250,6 +266,30 @@ class InstanceScaffoldingTests(unittest.TestCase):
             result["manifest"]["files"][OPERATION_STATE_PATH]["object_reference"],
         )
         self.assertEqual(1, storage.calls.count(OPERATION_STATE_PATH))
+        alternate_archive = gzip.compress(
+            gzip.decompress(result["package_archive"]), compresslevel=1, mtime=0,
+        )
+        self.assertNotEqual(result["package_archive"], alternate_archive)
+        alternate_sums = (
+            f"{sha256_bytes(alternate_archive)}  {result['manifest']['package']['archive_name']}\n"
+        ).encode("utf-8")
+        substituted = {
+            **result, "package_archive": alternate_archive,
+            "package_checksums": alternate_sums,
+        }
+        with self.assertRaisesRegex(InstallationError, "archive bytes disagree with admitted hash"):
+            extract_recovered_package(substituted, self.base / "substituted-package")
+        self.assertFalse((self.base / "substituted-package").exists())
+        checksum_substituted = {
+            **result, "package_checksums": result["package_checksums"] + b"\n",
+        }
+        with self.assertRaisesRegex(InstallationError, "checksums bytes disagree with admitted hash"):
+            extract_recovered_package(checksum_substituted, self.base / "substituted-checksums")
+        self.assertFalse((self.base / "substituted-checksums").exists())
+        shutil.rmtree(self.package_root)
+        extracted = extract_recovered_package(result, self.base / "recovered-package")
+        self.assertTrue((extracted / "START-HERE.md").is_file())
+        self.assertFalse((extracted / ".git").exists())
 
     def test_create_only_generation_blocks_ambiguous_lost_response(self) -> None:
         storage = CreateOnlyFakeStorage(lose_after_create=True, duplicate_after_loss=True)
@@ -257,16 +297,16 @@ class InstanceScaffoldingTests(unittest.TestCase):
             install_create_only_generation(
                 storage,
                 root_reference={"object_id": "instance-root", "kind": "folder", "permitted_ancestor_id": "instance-root", "version": "1"},
-                package={"version": "0.1.0-alpha.13", "source_identity": {"repository": "example", "commit": "a" * 40}, "archive_sha256": "a" * 64, "inventory_sha256": "b" * 64},
-                payloads={"instance.yaml": b"instance\n"},
+                package={"version": "0.1.0-alpha.13", "source_identity": {"repository": "example", "commit": "a" * 40}, "archive_sha256": TEST_ARCHIVE_SHA, "inventory_sha256": "b" * 64},
+                payloads={**PACKAGE_PAYLOADS,"instance.yaml": b"instance\n"},
             )
         self.assertEqual(["instance.yaml"], storage.calls)
 
     def test_fresh_bootstrap_recovery_rejects_tamper_metadata_and_incomplete_generation(self) -> None:
         root = {"object_id": "instance-root", "kind": "folder", "permitted_ancestor_id": "instance-root", "version": "1"}
-        package = {"version": "0.1.0-alpha.13", "source_identity": {"repository": "example", "commit": "a" * 40}, "archive_sha256": "a" * 64, "inventory_sha256": "b" * 64}
+        package = {"version": "0.1.0-alpha.13", "source_identity": {"repository": "example", "commit": "a" * 40}, "archive_sha256": TEST_ARCHIVE_SHA, "inventory_sha256": "b" * 64}
         storage = CreateOnlyFakeStorage()
-        result = install_create_only_generation(storage, root_reference=root, package=package, payloads={"instance.yaml": b"instance\n", "state/operation-state.json": b"{}\n"})
+        result = install_create_only_generation(storage, root_reference=root, package=package, payloads={**PACKAGE_PAYLOADS,"instance.yaml": b"instance\n", "state/operation-state.json": b"{}\n"})
         recovered = recover_create_only_generation(storage, root_reference=root, bootstrap_reference=result["bootstrap_reference"])
         self.assertEqual(result["manifest"], recovered["manifest"])
         manifest_id = result["manifest_reference"]["object_id"]
@@ -275,28 +315,28 @@ class InstanceScaffoldingTests(unittest.TestCase):
             recover_create_only_generation(storage, root_reference=root, bootstrap_reference=result["bootstrap_reference"])
 
         storage = CreateOnlyFakeStorage()
-        result = install_create_only_generation(storage, root_reference=root, package=package, payloads={"instance.yaml": b"instance\n"})
+        result = install_create_only_generation(storage, root_reference=root, package=package, payloads={**PACKAGE_PAYLOADS,"instance.yaml": b"instance\n"})
         instance_id = result["manifest"]["files"]["instance.yaml"]["object_reference"]["object_id"]
         storage.objects = [replace(item, data=b"changed\n") if item.object_id == instance_id else item for item in storage.objects]
         with self.assertRaisesRegex(InstallationError, "hash disagrees"):
             recover_create_only_generation(storage, root_reference=root, bootstrap_reference=result["bootstrap_reference"])
 
         storage = CreateOnlyFakeStorage()
-        result = install_create_only_generation(storage, root_reference=root, package=package, payloads={"instance.yaml": b"instance\n"})
+        result = install_create_only_generation(storage, root_reference=root, package=package, payloads={**PACKAGE_PAYLOADS,"instance.yaml": b"instance\n"})
         instance_id = result["manifest"]["files"]["instance.yaml"]["object_reference"]["object_id"]
         storage.objects = [replace(item, mime_type="text/plain") if item.object_id == instance_id else item for item in storage.objects]
         with self.assertRaisesRegex(InstallationError, "reference failed"):
             recover_create_only_generation(storage, root_reference=root, bootstrap_reference=result["bootstrap_reference"])
 
         storage = CreateOnlyFakeStorage()
-        result = install_create_only_generation(storage, root_reference=root, package=package, payloads={"instance.yaml": b"instance\n"})
+        result = install_create_only_generation(storage, root_reference=root, package=package, payloads={**PACKAGE_PAYLOADS,"instance.yaml": b"instance\n"})
         instance_id = result["manifest"]["files"]["instance.yaml"]["object_reference"]["object_id"]
         storage.objects = [replace(item, parent_id="outside-root", ancestor_ids=("instance-root", "outside-root")) if item.object_id == instance_id else item for item in storage.objects]
         with self.assertRaisesRegex(InstallationError, "outside the declared root"):
             recover_create_only_generation(storage, root_reference=root, bootstrap_reference=result["bootstrap_reference"])
 
         storage = CreateOnlyFakeStorage()
-        result = install_create_only_generation(storage, root_reference=root, package=package, payloads={"instance.yaml": b"instance\n"})
+        result = install_create_only_generation(storage, root_reference=root, package=package, payloads={**PACKAGE_PAYLOADS,"instance.yaml": b"instance\n"})
         admission_id = result["admission_reference"]["object_id"]
         storage.objects = [replace(item, data=b"{}\n") if item.object_id == admission_id else item for item in storage.objects]
         with self.assertRaisesRegex(InstallationError, "admission receipt"):

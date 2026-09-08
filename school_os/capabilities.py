@@ -13,6 +13,7 @@ class CapabilityError(ValueError):
 
 MANUAL_DAILY_REQUIREMENTS = ("storage.read_complete", "mail.search", "tasks.list_complete")
 SCHEDULED_REQUIREMENTS = ("scheduler.inspect", "scheduler.verify")
+BOOTSTRAP_READ_REQUIREMENTS = ("storage.read_complete",)
 UNKNOWN_RECORD_LIMIT = 1
 UNKNOWN_BYTE_LIMIT = 65536
 
@@ -36,9 +37,43 @@ def _available(profile: dict[str, Any]) -> dict[str, dict[str, Any]]:
     return result
 
 
+def qualify_bootstrap_read(
+    profile: dict[str, Any], schema: dict[str, Any], *, entrypoint: str,
+) -> ExecutionPlan:
+    """Qualify only exact installed-bootstrap retrieval, without daily claims."""
+    errors = validate(profile, schema)
+    if errors:
+        raise CapabilityError("invalid capability profile: " + "; ".join(errors))
+    if entrypoint not in {"manual", "scheduled"}:
+        raise CapabilityError(f"unknown entrypoint: {entrypoint}")
+    if profile["execution_surface"] != entrypoint:
+        raise CapabilityError(f"execution surface is {profile['execution_surface']!r}, expected {entrypoint!r}")
+    if profile["authentication"]["status"] != "available":
+        raise CapabilityError(f"authentication is {profile['authentication']['status']!r}")
+    for name in ("local_execution", "storage_read_complete", "file_transfer"):
+        if profile["observations"][name].get("status") != "available":
+            raise CapabilityError(f"required bootstrap observation is not available: {name}")
+    if profile["network_paths"]["storage"].get("status") != "available":
+        raise CapabilityError("required bootstrap network path is not available: storage")
+    available = _available(profile)
+    for capability_id in BOOTSTRAP_READ_REQUIREMENTS:
+        record = available.get(capability_id)
+        if record is None:
+            raise CapabilityError(f"missing required bootstrap capability: {capability_id}")
+        if record["status"] != "available":
+            raise CapabilityError(f"required bootstrap capability is {record['status']!r}: {capability_id}")
+    limits = profile["limits"]
+    return ExecutionPlan(
+        "bootstrap-read", entrypoint,
+        limits["max_records_per_unit"] or UNKNOWN_RECORD_LIMIT,
+        limits["max_bytes_per_unit"] or UNKNOWN_BYTE_LIMIT,
+        BOOTSTRAP_READ_REQUIREMENTS,
+    )
+
+
 def qualify_execution(
     profile: dict[str, Any], schema: dict[str, Any], *, operation: str, entrypoint: str,
-    required_capabilities: Iterable[str] = MANUAL_DAILY_REQUIREMENTS,
+    required_capabilities: Iterable[str],
     requested_records: int | None = None, requested_bytes: int | None = None,
 ) -> ExecutionPlan:
     """Return bounded plan, or a specific blocker, without contacting providers."""
@@ -61,6 +96,8 @@ def qualify_execution(
         if profile["network_paths"][name].get("status") != "available":
             raise CapabilityError(f"required network path is not available: {name}")
     requirements = tuple(required_capabilities) + (SCHEDULED_REQUIREMENTS if entrypoint == "scheduled" else ())
+    if not requirements:
+        raise CapabilityError("execution qualification requires an explicit capability set")
     available = _available(profile)
     for capability_id in requirements:
         record = available.get(capability_id)
