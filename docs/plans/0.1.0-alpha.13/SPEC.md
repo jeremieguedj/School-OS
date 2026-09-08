@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
 - Status: implementation and observed validation in progress; M1–M3 are reopened for chained revalidation, M4-001/M4-007 implementations are complete pending observed binding, M4-002 remains complete for its declared synthetic input, and M4-004 is implemented pending a final post-task-repair refresh
-- Approved plan: [PLAN.md](PLAN.md), revision 32
+- Approved plan: [PLAN.md](PLAN.md), revision 33
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
@@ -43,6 +43,13 @@ only after every release gate is met, formal alpha.13 tags/releases. This does
 not authorize production activation, migration, existing-instance changes, or
 test delivery/scheduling before their remaining private choices and acceptance
 conditions are satisfied.
+
+M4-005 brief integration and M4-009 sending are additionally paused on the
+plan's pending parent-origin missing-date clarification. No new missing-date
+default, policy parameter, or undated rendering exception is approved by this
+status record. The isolated brief candidate must not be integrated as accepted
+behavior until that decision is resolved. Independent task and runtime repairs
+remain authorized.
 
 ## Existing implementation inventory
 

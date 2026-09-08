@@ -1578,3 +1578,36 @@ requirements, then read this log from top to bottom.
   final release evidence. This run used only synthetic fixtures/fakes and made
   no private or provider effects. Next: staged privacy/diff checks, commit/push/
   remote verification, then hand off main to the queued task/brief/runtime work.
+
+## 2026-09-08 — alpha.13 integration handoff and brief-policy gate
+
+- The source/measurement writer relinquished main at the clean, remotely
+  verified commit `b643e1fbf779be72144790de28dd956aa1da753d` after 179 passing
+  tests, privacy and diff checks. M4-004 must still be regenerated after the
+  task repair; authenticated M4-003/M4-009 acceptance remains outstanding.
+- Independent review rejected the isolated task candidate despite its passing
+  tests: incremental source batches could discard history or regress task
+  resolution, a source correction could overwrite an accepted parent edit,
+  and an unknown create outcome could produce a duplicate. A separate isolated
+  implementation session is repairing exactly those three cases. No rejected
+  task candidate has been integrated into main.
+- The selected runtime transport was probed with an echo-disabled terminal and
+  hashed private request/response files, including exact large-payload transfer.
+  Plain-pipe input returned EOF and is not the selected mechanism. A separate
+  isolated session now owns the bounded authenticated bridge, bootstrap package
+  references, within-phase continuation, capability enforcement, and durable
+  keyed delivery implementation. These probes are not observed daily-run or
+  unattended-provider acceptance.
+- Brief input/rendering work remains isolated and uncommitted. Automatic
+  approval review rejected both attempted missing-date policy API shapes,
+  treating them as unapproved policy/contract changes. The selected recipe
+  requires received dates, while a parent-origin task may have no school email.
+  The proposed explicit parent-added presentation exception awaits direct user
+  steering. Brief integration and all test sends remain paused; independent
+  task/runtime repairs may continue. No new missing-date behavior is approved
+  by this checkpoint.
+- Next: resolve that one brief policy gate, review and integrate completed
+  isolated candidates, regenerate current measurements, then perform the
+  authorized fresh-package/instance/manual/scheduled/Sheet acceptance. Source
+  evidence and exact private references remain outside Git. No test email or
+  temporary schedule has been created, and no release-completion claim is made.

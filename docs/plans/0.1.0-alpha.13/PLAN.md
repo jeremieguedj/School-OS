@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 release plan
 
 - Status: approved completion plan; M1–M3 require chained revalidation after the installer correction, and M4 implementation plus observed fresh-test-instance evidence remains
-- Revision: 32, updated 2026-09-08
+- Revision: 33, updated 2026-09-08
 - Original snapshot: committed as `3acd660` on 2026-09-07
 - Target release: `0.1.0-alpha.13`
 - Specification inventory baseline: `main` at `4617215`, with `release.yaml`
@@ -212,6 +212,18 @@ requires revising daily-run invocation semantics while retaining its obligation
 to complete every required phase before reporting success. Both decisions need
 consistent recipe, capability, state, test, and upgrade treatment; neither is
 permission to bypass provenance, verification, or authorization.
+
+## Pending brief-policy clarification
+
+The selected existing daily recipe requires a source-received date and blocks
+missing dates. A parent-origin task entered directly in the task provider may
+have no school-email received date. Automatic approval review rejected both a
+new default and a required policy parameter for this case. The isolated brief
+candidate is therefore unaccepted; M4-005 brief integration and M4-009 delivery
+remain paused pending direct user steering. A proposed narrow exception would
+show such tasks under an explicit parent-added heading without inventing a
+school received date. That exception is not approved or selected. Independent
+task recovery and runtime implementation may continue.
 
 ## Proposed implementation shape
 
