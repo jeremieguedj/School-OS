@@ -10,6 +10,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
+from urllib.parse import parse_qsl, urlsplit
 
 from .references import ReferenceStorage, StoredObject
 
@@ -59,6 +60,39 @@ def _size(value: Any, label: str) -> int:
 _SCOPED_ITEM_TYPES = ("document", "image", "folder")
 _SCOPED_PAGE_SIZE = 1000
 _MAX_SCOPED_PAGES_PER_TYPE = 1000
+_GOOGLE_DRIVE_HOSTS = frozenset({"drive.google.com", "docs.google.com"})
+
+
+def _same_google_drive_object_url(expected: str, observed: str, object_id: str) -> bool:
+    """Allow only Google's ``usp=drivesdk`` decoration on one exact object URL."""
+    if expected == observed:
+        return True
+    if not all(isinstance(item, str) and item for item in (expected, observed, object_id)):
+        return False
+    expected_parts, observed_parts = urlsplit(expected), urlsplit(observed)
+    if (
+        expected_parts.scheme != "https" or observed_parts.scheme != "https"
+        or expected_parts.netloc not in _GOOGLE_DRIVE_HOSTS
+        or observed_parts.netloc != expected_parts.netloc
+        or expected_parts.path != observed_parts.path
+        or expected_parts.fragment != observed_parts.fragment
+    ):
+        return False
+    path_parts = tuple(part for part in expected_parts.path.split("/") if part)
+    try:
+        object_index = path_parts.index("d") + 1
+    except ValueError:
+        return False
+    if object_index >= len(path_parts) or path_parts[object_index] != object_id:
+        return False
+
+    def _meaningful_query(query: str) -> list[tuple[str, str]]:
+        return [
+            item for item in parse_qsl(query, keep_blank_values=True)
+            if item != ("usp", "drivesdk")
+        ]
+
+    return _meaningful_query(expected_parts.query) == _meaningful_query(observed_parts.query)
 
 
 def _complete_scoped_search(drive: Any, parent_id: str) -> tuple[dict[str, Any], ...]:
@@ -322,7 +356,7 @@ class CodexDriveReferenceStorage(ReferenceStorage):
     def read(self, object_id: str) -> StoredObject | None:
         mime_type, parents, version, url, name, size = self._read_metadata(object_id)
         expected_url = self.expected_urls.get(object_id)
-        if expected_url is not None and expected_url != url:
+        if expected_url is not None and not _same_google_drive_object_url(expected_url, url, object_id):
             raise ConnectedStorageError("Drive metadata URL differs from the admitted object URL")
         kind = "folder" if mime_type == self._FOLDER_MIME else "file"
         if kind == "folder":

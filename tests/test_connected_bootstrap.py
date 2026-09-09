@@ -70,6 +70,24 @@ class ConnectedBootstrapTests(unittest.TestCase):
         with self.assertRaisesRegex(ConnectedStorageError, "URL"):
             storage.read("bootstrap")
 
+    def test_reference_storage_accepts_only_google_drivesdk_suffix_for_same_object(self) -> None:
+        drive = FakeDrive()
+        drive.objects["bootstrap"]["url"] = "https://drive.example.invalid/file/d/bootstrap/view"
+        with mock.patch("school_os.connected_storage._GOOGLE_DRIVE_HOSTS", frozenset({"drive.example.invalid"})):
+            storage = CodexDriveReferenceStorage(
+                drive,
+                expected_urls={"bootstrap": "https://drive.example.invalid/file/d/bootstrap/view?usp=drivesdk"},
+            )
+            self.assertEqual(b"test", storage.read("bootstrap").data)
+
+            for expected in (
+                "https://drive.example.invalid/file/d/wrong-bootstrap/view?usp=drivesdk",
+                "https://docs.example.invalid/file/d/bootstrap/view?usp=drivesdk",
+                "https://drive.example.invalid/file/d/bootstrap/view?resourcekey=changed",
+            ):
+                with self.subTest(expected=expected), self.assertRaisesRegex(ConnectedStorageError, "URL"):
+                    CodexDriveReferenceStorage(drive, expected_urls={"bootstrap": expected}).read("bootstrap")
+
     def test_reference_storage_observed_empty_search_exhausts_every_category(self) -> None:
         drive = FakeDrive()
         del drive.objects["bootstrap"]

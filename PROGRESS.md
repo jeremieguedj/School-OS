@@ -2763,3 +2763,23 @@ requirements, then read this log from top to bottom.
   main mutation, push, or release occurred. Next: hand the immutable repair
   commit to the root task for publication, exact-SHA CI, replacement-package
   verification, and continuation by the already authorized live executor.
+
+## 2026-09-08 — Drive same-object link-decoration repair
+
+- Reproduced a narrow live setup admission blocker after an otherwise exact
+  create receipt: the native provider may add or remove only its
+  `usp=drivesdk` tracking decoration between a receipt URL and metadata URL
+  for the same Google Drive object. Byte-for-byte URL comparison rejected that
+  benign presentation difference before the existing metadata and byte
+  readback checks could run.
+- Added a Google-Drive-only comparator at the existing `CodexDriveReferenceStorage`
+  admission boundary. It accepts only that one decoration after requiring HTTPS,
+  the same Google host, path, fragment, and embedded object ID. It retains every
+  other query selector exactly, and the existing object identity, parent, MIME,
+  version, size, fetch identity, and exact-byte checks are unchanged.
+- Added synthetic same-object suffix acceptance plus wrong-ID, wrong-host, and
+  meaningful-query regressions. Focused bootstrap and instance-scaffolding
+  tests (31) passed, as did privacy scanning and `git diff --check`. No
+  provider call, private-data access, main change, push, release, or live retry
+  occurred. Next: commit this isolated repair and send its small delta to the
+  integration owner for composition with the broader live-setup fixes.
