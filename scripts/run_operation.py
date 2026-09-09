@@ -81,6 +81,7 @@ def _handoff_recovered_package(
     drive: Any, *, bootstrap_document: Path, run_directory: Path,
     operation: str, entrypoint: str, operation_id: str, attempt_id: str,
     instance_reference: str,
+    scheduler_admitted: bool = False,
 ) -> Any:
     """Recover only the admitted package, then stop importing this checkout."""
     document = load_bootstrap_document(bootstrap_document)
@@ -93,6 +94,7 @@ def _handoff_recovered_package(
     return exec_installed_entrypoint(
         recovered, operation=operation, entrypoint=entrypoint, operation_id=operation_id,
         attempt_id=attempt_id, run_directory=run_directory, instance_reference=instance_reference,
+        scheduler_admitted=scheduler_admitted,
     )
 
 
@@ -131,6 +133,7 @@ def main(argv: list[str] | None = None) -> int:
                     run_directory=args.host_jsonl, operation=args.operation,
                     entrypoint=args.entrypoint, operation_id=args.operation_id,
                     attempt_id=args.attempt_id, instance_reference=args.instance,
+                    scheduler_admitted=args.scheduler_admitted,
                 )
             except (BridgeError, BootstrapError, DailyError) as exc:
                 print(f"blocked: {exc}", file=sys.stderr)
@@ -152,6 +155,7 @@ def main(argv: list[str] | None = None) -> int:
                     drive, bootstrap_document=args.bootstrap_document, run_directory=args.host_jsonl,
                     operation=args.operation, entrypoint=args.entrypoint, operation_id=args.operation_id,
                     attempt_id=args.attempt_id, instance_reference=args.instance,
+                    scheduler_admitted=args.scheduler_admitted,
                 )
             bootstrap = _object(args.bootstrap_reference, "bootstrap reference")
             if set(bootstrap) != {"object_id", "url"} or not all(isinstance(bootstrap[key], str) and bootstrap[key] for key in bootstrap):

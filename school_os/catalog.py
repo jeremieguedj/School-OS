@@ -124,6 +124,7 @@ def _outcome_mapping(
 def build_catalog_message(
     *, message_id: str, received_at: str, received_date: str, admission: Any,
     attachment_outcomes: Sequence[Any] = (), resource_outcomes: Sequence[Any] = (),
+    gmail_internal_date_ms: int | None = None,
 ) -> dict[str, Any]:
     """Bind one admitted body and importer-owned outcomes into catalog input."""
     if not all(isinstance(item, str) and item for item in (message_id, received_at, received_date)):
@@ -164,7 +165,7 @@ def build_catalog_message(
     outcome_ids = [value["outcome_id"] for value in [*attachments, *resources]]
     if len(outcome_ids) != len(set(outcome_ids)):
         raise CatalogError("catalog message has duplicate outcome identity")
-    return {
+    result = {
         "message_id": message_id,
         "received_at": received_at,
         "received_date": received_date,
@@ -173,6 +174,11 @@ def build_catalog_message(
         "attachments": attachments,
         "resources": resources,
     }
+    if gmail_internal_date_ms is not None:
+        if isinstance(gmail_internal_date_ms, bool) or not isinstance(gmail_internal_date_ms, int) or gmail_internal_date_ms < 0:
+            raise CatalogError("catalog message Gmail internal date is invalid")
+        result["gmail_internal_date_ms"] = gmail_internal_date_ms
+    return result
 
 
 def _canonical_inline(value: Mapping[str, Any]) -> bytes:
@@ -473,6 +479,7 @@ def serialize_v2_record(conversation: Mapping[str, Any], schema: Mapping[str, An
             "message_id": message["message_id"],
             "received_at": message["received_at"],
             "received_date": message["received_date"],
+            **({"gmail_internal_date_ms": message["gmail_internal_date_ms"]} if "gmail_internal_date_ms" in message else {}),
             "body_custody": body_custody,
             "attachments": [
                 {key: item for key, item in outcome.items() if key != "extracted_text"}

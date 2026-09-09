@@ -1,7 +1,7 @@
 # School-OS 0.1.0-alpha.13 implementation specification
 
-- Status: implementation and observed validation in progress; M1–M3 require chained revalidation, M4-001/M4-007 implementations await observed binding, the task repair is integrated, M4-002 is complete for its declared synthetic input, and M4-004's brief repository path has refreshed synthetic/package/CI evidence
-- Approved plan: [PLAN.md](PLAN.md), revision 38
+- Status: integrated connected-runtime candidate complete in repository; independent final review and authenticated fresh-instance/manual/scheduled acceptance remain pending
+- Approved plan: [PLAN.md](PLAN.md), revision 43
 - Inventory baseline: `main` at `4617215`, with `release.yaml` declaring
   `0.1.0-alpha.12`
 - Target release: `0.1.0-alpha.13`
@@ -78,6 +78,20 @@ uses the v2 builder with explicit synthetic source/task/guideline inputs. Its
 final integrated baseline, exact package, and CI validation passed at
 `6cb12446a2b535646351c82fe5825e9b3d371bda`; this synthetic evidence does not
 substitute for final runtime or visual brief acceptance.
+
+The integrated candidate now replaces the installed entrypoint's deliberate
+block with the concrete seven-phase composition, carrying an admitted
+mode-0600 instance document from bootstrap recovery. It resolves exact Drive
+references, journals immutable operation checkpoints and guarded operation
+state, separates discovery/catalog and canonical/task-provider phases, renders
+from the verified all-current catalog view, uses exact delivery state and Sent
+readback, writes final evidence, and advances the eligible source cursor last.
+Setup proves a versioned root completely empty before its first write, validates
+the finite private seed shapes, initializes and reads back the selected Sheet's
+13 literal headers, installs a fully configured file map, and recovers the
+create-only bootstrap generation. Synthetic nonempty and subsequent zero-hit
+composition tests are passing; none of this substitutes for authenticated
+provider, private-content, visual, scheduler, or delivery acceptance.
 
 The v2 brief contract keeps each item's exact canonical scope display separate
 from its configured entity route, so a multi-entity guideline routed to the

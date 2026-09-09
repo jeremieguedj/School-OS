@@ -1059,3 +1059,15 @@ evidence that does not need to be repeatedly printed into model context.
   request/result types use the advertised Drive/Gmail/Sheets/comment forms.
   Exact storage readback and all bootstrap boundaries remain unchanged pending
   independent re-review.
+- Revision 43: assembled one integrated candidate descending accepted main with
+  the reviewed bootstrap/source repairs, exact Gmail timestamp persistence, an
+  all-current audited catalog loader, create-only Drive setup plus selected
+  Sheet initialization, and the installed seven-phase connected composition.
+  A provider-shaped nonempty source fixture now traverses catalog, audit,
+  canonical task and derived views, native Sheet projection, provenance-bearing
+  brief, exact delivery, final evidence, and cursor-last commit; a subsequent
+  zero-new-hit operation reuses all prior current knowledge and suppresses the
+  same delivery key. This remains synthetic repository evidence pending one
+  independent final review and the separately authorized authenticated
+  fresh-instance/manual/scheduled acceptance. No private instance, provider,
+  schedule, tag, release, push, or main-tree effect occurred.

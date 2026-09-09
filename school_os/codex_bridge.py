@@ -353,6 +353,11 @@ def _validate_result(kind: str, result: Any, args: Mapping[str, Any] | None = No
     elif kind == "drive.list_folder":
         if not isinstance(result.get("files"), list):
             raise BridgeError("drive.list_folder result.files must be a list")
+    elif kind == "drive.create_folder":
+        if result.get("success") is not True:
+            raise BridgeError("drive.create_folder result lacks success evidence")
+        for key in ("id", "parent_id", "title", "url"):
+            _nonempty_string(result.get(key), f"drive.create_folder result.{key}")
     elif kind == "drive.upload_file":
         if result.get("success") is not True:
             raise BridgeError(f"{kind} result lacks success evidence")

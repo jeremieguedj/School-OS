@@ -107,7 +107,8 @@ class Source:
             "conversation_id": identity,
             "messages": [{
                 "message_id": f"{identity}-message", "received_at": "2026-09-08T08:00:00Z",
-                "received_date": "2026-09-08", "mime_tree_complete": True,
+                "received_date": "2026-09-08", "gmail_internal_date_ms": 1788854400000,
+                "mime_tree_complete": True,
                 "parts": [_part(self.bodies[identity].encode("utf-8"))], "attachments": [], "html_parts": [],
             }],
         }
@@ -137,7 +138,7 @@ class ReplySource(Source):
             value["messages"].append({
                 "message_id": "reply-message",
                 "received_at": "2026-09-09T08:00:00Z",
-                "received_date": "2026-09-09",
+                "received_date": "2026-09-09", "gmail_internal_date_ms": 1788940800000,
                 "mime_tree_complete": True,
                 "parts": [_part(b"New reply")],
                 "attachments": [],
@@ -268,6 +269,30 @@ class ConnectedIngestionTests(unittest.TestCase):
         self.assertEqual((), replay.artifacts)
         self.assertEqual(1, self.interpret_calls)
         self.assertEqual(1, self.audit_calls)
+
+    def test_current_catalog_view_reloads_all_audited_facts_after_zero_new_writes(self) -> None:
+        source = Source({"thread-1": "First", "thread-2": "Second"})
+        worker = self.worker(source)
+        first = worker.run(
+            scope={"query": "bounded"}, catalog_parent=self.parent,
+            index_reference=self.index, continuation_reference=self.state,
+            max_records=2, max_bytes=8192,
+        )
+        replay = worker.run(
+            scope={"query": "bounded"}, catalog_parent=self.parent,
+            index_reference=first.index.reference, continuation_reference=first.work.reference,
+            max_records=2, max_bytes=8192,
+        )
+        self.assertEqual((), replay.artifacts)
+        view = worker.current_catalog_view(
+            catalog_parent=self.parent, index_reference=replay.index.reference,
+            max_bytes=8192,
+        )
+        self.assertEqual(2, len(view.artifacts))
+        self.assertEqual(2, len(view.facts))
+        self.assertEqual(set(fact["fact_id"] for fact in view.facts), set(view.source_record_map))
+        self.assertTrue(all(item["gmail_internal_date_ms"] == 1788854400000 for item in view.source_record_map.values()))
+        self.assertTrue(all(item["verified_link"].startswith("https://drive.test/") for item in view.source_record_map.values()))
 
     def test_interrupted_batch_advances_only_complete_units_then_resumes(self) -> None:
         source = Source({"thread-1": "First", "thread-2": "Second"})

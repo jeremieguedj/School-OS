@@ -7,6 +7,7 @@ files:
   capability_profile: {}
   operation_state: {}
   operation_checkpoints_folder: {}
+  source_checkpoint: {}
   current_index: {}
   source_catalog_folder: {}
   source_catalog_index: {}
@@ -18,5 +19,6 @@ files:
   active_task_provider: {}
   task_sync_state: {}
   delivery_state: {}
+  final_run_checkpoint: {}
   manual_run_recipe: {}
   durable_profiles: {}

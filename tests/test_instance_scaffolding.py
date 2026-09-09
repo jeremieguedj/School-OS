@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import gzip
+import base64
+import hashlib
 import json
 import shutil
 import subprocess
@@ -16,7 +18,7 @@ from dataclasses import replace
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from school_os.contracts import sha256_bytes  # noqa: E402
+from school_os.contracts import canonical_json_bytes, sha256_bytes  # noqa: E402
 from school_os.package import inventory_bytes  # noqa: E402
 from school_os.install import (  # noqa: E402
     DAILY_REFERENCE_KINDS,
@@ -36,6 +38,14 @@ from school_os.install import (  # noqa: E402
     verify_candidate_readback,
 )
 from school_os.references import StoredObject  # noqa: E402
+from school_os.connected_setup import (  # noqa: E402
+    CodexDriveCreateOnlyStorage,
+    SETUP_FILE_ROLES,
+    install_connected_instance,
+)
+from school_os.connected_sheets import GoogleSheetsScope  # noqa: E402
+from school_os.connected_daily import ConnectedDailyRuntime, REQUIRED_CAPABILITIES  # noqa: E402
+from school_os.daily import PHASES  # noqa: E402
 
 
 TEST_ARCHIVE = b"synthetic admitted release archive"
@@ -71,6 +81,199 @@ class CreateOnlyFakeStorage(FakeStorage):
                 self.objects.append(replace(object_, object_id=f"duplicate-{len(self.objects) + 1}"))
             raise OSError("lost create response")
         return object_
+
+
+class ConnectedSetupDrive:
+    def __init__(self) -> None:
+        self.sequence = 1
+        self.objects = {
+            "instance-root": {
+                "id": "instance-root", "title": "School-OS", "mime_type": "application/vnd.google-apps.folder",
+                "parent_ids": [], "modified_time": "1", "url": "https://drive.example.invalid/instance-root", "data": None,
+            }
+        }
+
+    def metadata(self, file_id: str, *, fields: str):
+        item = self.objects[file_id]
+        result = {key: item[key] for key in ("id", "title", "mime_type", "parent_ids", "modified_time", "url")}
+        if item["data"] is not None:
+            result["size"] = len(item["data"])
+        return result
+
+    def fetch(self, url: str, *, raw: bool, include_base64: bool):
+        item = next(value for value in self.objects.values() if value["url"] == url)
+        data = item["data"]
+        return {
+            "id": item["id"], "b64_string": base64.b64encode(data).decode("ascii"),
+            "file_size_bytes": len(data), "is_empty": not data,
+        }
+
+    def list_folder(self, url: str, *, top_k: int):
+        parent = next(value for value in self.objects.values() if value["url"] == url)
+        files = [
+            {"id": item["id"], "title": item["title"], "mime_type": item["mime_type"],
+             "url": item["url"], "parent_ids": item["parent_ids"]}
+            for item in self.objects.values() if item["parent_ids"] == [parent["id"]]
+        ]
+        return {"complete": True, "files": files}
+
+    def upload(self, file_uri: str, *, file_name: str, mime_type: str, parent_folder_id: str):
+        self.sequence += 1
+        identifier = f"created-{self.sequence}"
+        data = Path(file_uri).read_bytes()
+        item = {
+            "id": identifier, "title": file_name, "mime_type": mime_type,
+            "parent_ids": [parent_folder_id], "modified_time": str(self.sequence),
+            "url": f"https://drive.example.invalid/{identifier}", "data": data,
+        }
+        self.objects[identifier] = item
+        return {"success": True, "id": identifier, "mime_type": mime_type, "parent_id": parent_folder_id, "url": item["url"]}
+
+    def create_folder(self, name: str, parent_folder: str):
+        self.sequence += 1
+        identifier = f"created-{self.sequence}"
+        item = {
+            "id": identifier, "title": name, "mime_type": "application/vnd.google-apps.folder",
+            "parent_ids": [parent_folder], "modified_time": str(self.sequence),
+            "url": f"https://drive.example.invalid/{identifier}", "data": None,
+        }
+        self.objects[identifier] = item
+        return {"success": True, "id": identifier, "parent_id": parent_folder, "title": name, "url": item["url"]}
+
+    def update(self, file_id: str, *, file_uri: str, mime_type: str):
+        self.sequence += 1
+        item = self.objects[file_id]
+        item["data"] = Path(file_uri).read_bytes()
+        item["mime_type"] = mime_type
+        item["modified_time"] = str(self.sequence)
+        return {
+            "success": True, "id": file_id, "mime_type": mime_type,
+            "parent_id": item["parent_ids"][0], "url": item["url"],
+            "modified_time": item["modified_time"],
+        }
+
+
+class ConnectedSetupSheets:
+    def __init__(self, scope: GoogleSheetsScope) -> None:
+        self.scope = scope
+        self.headers: list[str] | None = None
+        self.grid: list[list[str | None]] = [
+            [None] * (scope.last_column - scope.first_column + 1)
+            for _ in range(scope.last_row - scope.first_row + 1)
+        ]
+
+    def metadata(self, **arguments):
+        return {
+            "spreadsheetId": self.scope.spreadsheet_id,
+            "sheets": [{"properties": {"sheetId": self.scope.sheet_id, "title": self.scope.sheet_title}}],
+        }
+
+    def cells(self, **arguments):
+        last = max((index for index, row in enumerate(self.grid) if any(value is not None for value in row)), default=-1)
+        row_data = [{"values": [
+            {} if value is None else {"formattedValue": value, "userEnteredValue": {"stringValue": value}}
+            for value in row
+        ]} for row in self.grid[:last + 1]]
+        return {
+            "spreadsheetId": self.scope.spreadsheet_id,
+            "sheets": [{
+                "properties": {"sheetId": self.scope.sheet_id, "title": self.scope.sheet_title},
+                "data": [{
+                    "startRow": self.scope.first_row - 1,
+                    "startColumn": self.scope.first_column - 1,
+                    "rowData": row_data,
+                }],
+            }],
+        }
+
+    def batch_update(self, **arguments):
+        for request in arguments["requests"]:
+            update = request["updateCells"]
+            target = update["range"]
+            start_row = target["startRowIndex"] - (self.scope.first_row - 1)
+            start_column = target["startColumnIndex"] - (self.scope.first_column - 1)
+            for row_offset, row in enumerate(update["rows"]):
+                for column_offset, value in enumerate(row["values"]):
+                    self.grid[start_row + row_offset][start_column + column_offset] = value["userEnteredValue"]["stringValue"]
+        if all(isinstance(value, str) and value for value in self.grid[0]):
+            self.headers = list(self.grid[0])
+        return {"spreadsheetId": self.scope.spreadsheet_id}
+
+    def all_comments(self, **arguments):
+        return ()
+
+
+class ConnectedRuntimeGmail:
+    def __init__(self, *, source_enabled: bool = False) -> None:
+        self.peer = object()
+        self.messages: dict[str, bytes] = {}
+        self.send_count = 0
+        self.source_enabled = source_enabled
+        self.source_body = "Return the signed form."
+        transport = base64.b64encode(self.source_body.encode("utf-8"))
+        self.source_raw = (
+            b"Content-Type: text/plain; charset=utf-8\r\n"
+            b"Content-Transfer-Encoding: base64\r\n\r\n" + transport
+        )
+        self.source_full = {
+            "id": "source-message-1", "thread_id": "source-thread-1",
+            "internal_date": "1788854400000",
+            "payload": {
+                "part_id": "", "mime_type": "text/plain", "filename": "",
+                "headers": [
+                    {"name": "Content-Type", "value": 'text/plain; charset="utf-8"'},
+                    {"name": "Content-Transfer-Encoding", "value": "base64"},
+                ],
+                "body": {"size": len(self.source_body.encode("utf-8")), "base64_url_content": None, "content": self.source_body, "attachment_id": None},
+                "read_attachment_supported": None, "parts": None,
+            },
+        }
+
+    def search_ids(self, **arguments):
+        if arguments["query"].startswith("in:sent"):
+            return {"message_ids": list(self.messages), "next_page_token": None}
+        return {"message_ids": ["source-message-1"] if self.source_enabled else [], "next_page_token": None}
+
+    def send(self, request):
+        self.send_count += 1
+        identifier = f"sent-{self.send_count}"
+        text, html = request["payload"]["parts"]
+        headers = [f'To: {request["to"]}']
+        if "cc" in request:
+            headers.append(f'Cc: {request["cc"]}')
+        if "bcc" in request:
+            headers.append(f'Bcc: {request["bcc"]}')
+        headers.extend([
+            f'Subject: {request["subject"]}', 'MIME-Version: 1.0',
+            'Content-Type: multipart/alternative; boundary="school-os-test"', '',
+        ])
+        parts = []
+        for mime_type, content in (("text/plain", text["body"]["content"]), ("text/html", html["body"]["content"])):
+            parts.extend([
+                "--school-os-test", f"Content-Type: {mime_type}; charset=utf-8",
+                "Content-Transfer-Encoding: base64", "",
+                base64.b64encode(content.encode("utf-8")).decode("ascii"),
+            ])
+        parts.extend(["--school-os-test--", ""])
+        self.messages[identifier] = ("\r\n".join([*headers, *parts])).encode("ascii")
+        return {"id": identifier, "thread_id": identifier, "label_ids": ["SENT"]}
+
+    def read(self, message_id: str, format: str):
+        if message_id == "source-message-1":
+            if format == "full":
+                return dict(self.source_full)
+            return {
+                "id": message_id, "thread_id": "source-thread-1",
+                "raw": base64.urlsafe_b64encode(self.source_raw).decode("ascii").rstrip("="),
+            }
+        data = self.messages[message_id]
+        return {
+            "id": message_id, "thread_id": message_id, "label_ids": ["SENT"],
+            "raw": base64.urlsafe_b64encode(data).decode("ascii").rstrip("="),
+        }
+
+    def read_thread(self, thread_id: str, *, max_messages: int):
+        return {"id": thread_id, "messages": [dict(self.source_full)]}
 
 
 class InstanceScaffoldingTests(unittest.TestCase):
@@ -157,6 +360,50 @@ class InstanceScaffoldingTests(unittest.TestCase):
             "daily_values": {"presentation": {"brief_heading": "School updates"}},
         }
 
+    def make_connected_observed(self, profile: dict | None = None) -> dict:
+        observed = {
+            role: {"name": f"observed/{role}.json", "data": b"{}\n", "mime_type": "application/json"}
+            for role in SETUP_FILE_ROLES
+        }
+        values = {
+            "source_scope": {"schema_version": 1, "adapter_id": "gmail-v1", "query": "from:school newer_than:14d", "label_ids": ["INBOX"], "max_results": 100, "max_thread_messages": 100},
+            "delivery_configuration": {"schema_version": 1, "variant": "manual-test", "to": ["parent@example.invalid"], "cc": [], "bcc": [], "subject_prefix": "School updates"},
+            "canonical_action_register": {"schema_version": 1, "tasks": []},
+            "task_sync_state": {"provider_id": "sheet-1", "adapter_id": "google-sheets-v1", "provider_revision": None, "bindings": [], "cursor": None, "cursor_evidence": {}, "verified_readback": {}},
+            "source_checkpoint": {"schema_version": 1, "eligible_cursor": None},
+            "source_catalog_index": {"schema_version": 1, "records": []},
+            "guidelines": {"schema_version": 1, "guidelines": []},
+            "rolling_updates": {"schema_version": 1, "rolling_updates": []},
+            "delivery_state": {"schema_version": 1, "deliveries": {}, "effects": {}},
+            "final_run_checkpoint": {"schema_version": 1, "last_run": None},
+            "brief_template": {"version": "test-v1", "html": "<html>{{BRIEF_CONTENT}}</html>", "text": "{{BRIEF_CONTENT}}", "placeholders": {"BRIEF_CONTENT": {"kind": "content"}}},
+        }
+        for role, value in values.items():
+            observed[role]["data"] = json.dumps(value, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+        observed["runtime_profile"]["data"] = canonical_json_bytes(profile) if profile is not None else (ROOT / "templates" / "state" / "capability-profile.json").read_bytes()
+        return observed
+
+    def make_connected_profile(self) -> dict:
+        profile = json.loads((ROOT / "templates" / "state" / "capability-profile.json").read_text(encoding="utf-8"))
+        profile.update({
+            "profile_id": "connected-test", "runtime_adapter": "runtimes/codex.md",
+            "execution_surface": "manual", "evidence_class": "synthetic",
+            "runtime_selector": {"model": "test", "reasoning_effort": "none"},
+            "selected_adapters": {"mail": "mail/gmail.md", "tasks": "tasks/google-sheets.md", "scheduler": None, "audio": None},
+            "verified_at": "2026-09-08T12:00:00Z",
+            "adapter_versions": {"runtime": "1", "mail": "1", "tasks": "1", "scheduler": None},
+            "authentication": {"status": "available", "verified_at": "2026-09-08T12:00:00Z", "recheck_trigger": "test"},
+            "network_paths": {name: {"status": "available" if name != "scheduler" else "not_required"} for name in ("storage", "mail", "tasks", "scheduler")},
+            "observations": {name: {"status": "available"} for name in ("local_execution", "storage_read_complete", "pagination", "file_transfer")},
+            "limits": {"max_records_per_unit": 10, "max_bytes_per_unit": 262144},
+            "capabilities": [
+                {"capability_id": name, "status": "available", "verification": {"synthetic": True}, "degradation": "stop"}
+                for name in REQUIRED_CAPABILITIES
+            ],
+            "scheduler_behavior": None, "conformant_operations": ["daily-run"],
+        })
+        return profile
+
     def test_confirmed_inputs_create_byte_stable_schema_valid_candidate(self) -> None:
         first = self.base / "first"
         second = self.base / "second"
@@ -223,6 +470,185 @@ class InstanceScaffoldingTests(unittest.TestCase):
         self.assertNotIn("installation_manifest_reference", result["manifest"])
         self.assertEqual("verified", result["admission"]["verification_status"])
         self.assertEqual(["instance.yaml", "state/operation-state.json", PACKAGE_CHECKSUMS_PATH, PACKAGE_ARCHIVE_PATH, "state/installation-manifest.json", "state/installation-admission.json", "BOOTSTRAP.md"], storage.calls)
+
+    def test_connected_setup_proves_empty_root_initializes_headers_and_installs(self) -> None:
+        scope = GoogleSheetsScope(
+            "sheet-1", "https://sheets.example.invalid/sheet-1", 7, "Tasks",
+            1, 20, 1, 13,
+        )
+        drive = ConnectedSetupDrive()
+        sheets = ConnectedSetupSheets(scope)
+        observed = self.make_connected_observed()
+        root = {
+            "object_id": "instance-root", "kind": "folder",
+            "permitted_ancestor_id": "instance-root", "mime_type": "application/vnd.google-apps.folder", "version": "1",
+        }
+        result = install_connected_instance(
+            storage=CodexDriveCreateOnlyStorage(drive, scratch_directory=self.base / "scratch"),
+            sheets=sheets, root_reference=root, answers=self.answers,
+            observed_payloads=observed, sheet_scope=scope,
+        )
+        self.assertTrue(result["root_initially_empty"])
+        self.assertEqual(13, len(sheets.headers or []))
+        self.assertIn("bootstrap_reference", result["bootstrap_document"])
+        created_names = {item["title"] for item in drive.objects.values()}
+        self.assertTrue(set(MANAGED_PATHS) <= created_names)
+        self.assertIn("source-catalog", created_names)
+        self.assertIn("operation-checkpoints", created_names)
+
+    def test_connected_setup_refuses_nonempty_root_before_sheet_write(self) -> None:
+        scope = GoogleSheetsScope(
+            "sheet-1", "https://sheets.example.invalid/sheet-1", 7, "Tasks",
+            1, 20, 1, 13,
+        )
+        drive = ConnectedSetupDrive()
+        drive.uploaded = drive.upload(
+            str(self.archive), file_name="existing", mime_type="application/octet-stream",
+            parent_folder_id="instance-root",
+        )
+        sheets = ConnectedSetupSheets(scope)
+        root = {
+            "object_id": "instance-root", "kind": "folder",
+            "permitted_ancestor_id": "instance-root", "mime_type": "application/vnd.google-apps.folder", "version": "1",
+        }
+        with self.assertRaisesRegex(InstallationError, "not initially empty"):
+            install_connected_instance(
+                storage=CodexDriveCreateOnlyStorage(drive, scratch_directory=self.base / "scratch"),
+                sheets=sheets, root_reference=root, answers=self.answers,
+                observed_payloads={}, sheet_scope=scope,
+            )
+        self.assertIsNone(sheets.headers)
+
+    def test_connected_runtime_executes_all_seven_phases_and_commits_cursor_last(self) -> None:
+        profile = self.make_connected_profile()
+        scope = GoogleSheetsScope(
+            "sheet-1", "https://sheets.example.invalid/sheet-1", 7, "Tasks",
+            1, 20, 1, 13,
+        )
+        drive = ConnectedSetupDrive()
+        sheets = ConnectedSetupSheets(scope)
+        storage = CodexDriveCreateOnlyStorage(drive, scratch_directory=self.base / "setup-scratch")
+        root = {
+            "object_id": "instance-root", "kind": "folder",
+            "permitted_ancestor_id": "instance-root", "mime_type": "application/vnd.google-apps.folder", "version": "1",
+        }
+        installed = install_connected_instance(
+            storage=storage, sheets=sheets, root_reference=root, answers=self.answers,
+            observed_payloads=self.make_connected_observed(profile), sheet_scope=scope,
+        )
+        recovery = recover_create_only_generation(
+            storage, root_reference=root,
+            bootstrap_reference=installed["bootstrap_document"]["bootstrap_reference"],
+        )
+        run_directory = self.base / "connected-run"
+        run_directory.mkdir(mode=0o700)
+        gmail = ConnectedRuntimeGmail()
+        class UnusedSemantic:
+            def interpret(self, _packet):
+                raise AssertionError("zero-hit run must not interpret")
+            def audit(self, _packet, _interpretation):
+                raise AssertionError("zero-hit run must not audit")
+        result = ConnectedDailyRuntime(
+            installed_root=self.package_root, recovery=recovery,
+            run_directory=run_directory, drive=drive, gmail=gmail,
+            sheets=sheets, semantic=UnusedSemantic(),
+        ).run(entrypoint="manual", operation_id="connected-zero-hit", attempt_id="attempt-1")
+        self.assertEqual("COMPLETE", result.outcome)
+        self.assertEqual(tuple(PHASES), result.completed_phases)
+        self.assertEqual(1, gmail.send_count)
+        final_item = next(item for item in drive.objects.values() if item["title"] == "observed/final_run_checkpoint.json")
+        cursor_item = next(item for item in drive.objects.values() if item["title"] == "observed/source_checkpoint.json")
+        self.assertLess(int(final_item["modified_time"]), int(cursor_item["modified_time"]))
+
+    def test_connected_runtime_nonempty_join_survives_a_later_zero_hit_run(self) -> None:
+        scope = GoogleSheetsScope(
+            "sheet-1", "https://sheets.example.invalid/sheet-1", 7, "Tasks",
+            1, 20, 1, 13,
+        )
+        drive = ConnectedSetupDrive()
+        sheets = ConnectedSetupSheets(scope)
+        storage = CodexDriveCreateOnlyStorage(drive, scratch_directory=self.base / "setup-scratch")
+        root = {
+            "object_id": "instance-root", "kind": "folder",
+            "permitted_ancestor_id": "instance-root", "mime_type": "application/vnd.google-apps.folder", "version": "1",
+        }
+        installed = install_connected_instance(
+            storage=storage, sheets=sheets, root_reference=root, answers=self.answers,
+            observed_payloads=self.make_connected_observed(self.make_connected_profile()), sheet_scope=scope,
+        )
+        recovery = recover_create_only_generation(
+            storage, root_reference=root,
+            bootstrap_reference=installed["bootstrap_document"]["bootstrap_reference"],
+        )
+        run_directory = self.base / "connected-run"
+        run_directory.mkdir(mode=0o700)
+        gmail = ConnectedRuntimeGmail(source_enabled=True)
+
+        class Semantic:
+            def interpret(self, packet):
+                return {
+                    "candidates": [{
+                        "segment_id": segment["segment_id"], "byte_start": 0,
+                        "byte_end": len(segment["text"].encode("utf-8")),
+                        "candidate_kind": "statement", "category": "school",
+                        "entity_scope": "child_1", "text": segment["text"],
+                        "flags": {"is_update": False, "is_durable": False, "is_guideline": False, "is_action": True},
+                    } for segment in packet["segments"]],
+                    "coverage": [{
+                        "segment_id": segment["segment_id"], "byte_start": 0,
+                        "byte_end": len(segment["text"].encode("utf-8")),
+                        "outcome": "fact", "reason": "action statement",
+                    } for segment in packet["segments"]],
+                    "review_cases": [],
+                }
+
+            def audit(self, packet, interpreted):
+                return {
+                    "packet_sha256": interpreted["packet_sha256"],
+                    "interpreted_sha256": interpreted["interpreted_sha256"],
+                    "coverage": [{
+                        "segment_id": segment["segment_id"], "byte_start": 0,
+                        "byte_end": len(segment["text"].encode("utf-8")),
+                        "outcome": "fact",
+                        "source_quote_sha256": hashlib.sha256(segment["text"].encode()).hexdigest(),
+                        "interpreted_reason_sha256": hashlib.sha256(b"action statement").hexdigest(),
+                        "audit_disposition": "accepted", "reason": "source quote checked",
+                    } for segment in packet["segments"]],
+                    "facts": [{
+                        "fact_id": fact["fact_id"],
+                        "source_quote_sha256": hashlib.sha256(fact["source_quote"].encode()).hexdigest(),
+                        "canonical_text_sha256": hashlib.sha256(fact["text"].encode()).hexdigest(),
+                        "classification": {
+                            "candidate_kind": "statement", "category": "school", "entity_scope": "child_1",
+                            "flags": fact["flags"],
+                        },
+                        "audit_disposition": "accepted", "reason": "wording checked",
+                    } for fact in interpreted["facts"]],
+                    "source_outcomes": [],
+                }
+
+        runtime = lambda: ConnectedDailyRuntime(
+            installed_root=self.package_root, recovery=recovery,
+            run_directory=run_directory, drive=drive, gmail=gmail,
+            sheets=sheets, semantic=Semantic(),
+        )
+        first = runtime().run(entrypoint="manual", operation_id="nonempty", attempt_id="attempt-1")
+        self.assertEqual("COMPLETE", first.outcome)
+        self.assertEqual(1, gmail.send_count)
+        first_input = next(item for item in drive.objects.values() if item["title"] == "state/runs/nonempty-brief-input.json")
+        first_value = json.loads(first_input["data"])
+        self.assertEqual("Return the signed form.", first_value["tasks"][0]["text"])
+        self.assertEqual("2026-09-08", first_value["tasks"][0]["received_date"])
+        self.assertTrue(first_value["tasks"][0]["source_link"].startswith("https://drive.example.invalid/"))
+        self.assertEqual("Return the signed form.", sheets.grid[1][3])
+
+        gmail.source_enabled = False
+        second = runtime().run(entrypoint="manual", operation_id="zero-after-nonempty", attempt_id="attempt-1")
+        self.assertEqual("COMPLETE", second.outcome)
+        self.assertEqual(1, gmail.send_count)
+        second_input = next(item for item in drive.objects.values() if item["title"] == "state/runs/zero-after-nonempty-brief-input.json")
+        second_value = json.loads(second_input["data"])
+        self.assertEqual(first_value["tasks"], second_value["tasks"])
 
     def test_create_only_generation_adopts_one_lost_response_without_retry(self) -> None:
         storage = CreateOnlyFakeStorage(lose_after_create=True)

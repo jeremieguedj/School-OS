@@ -2668,3 +2668,39 @@ requirements, then read this log from top to bottom.
   release, push, or external effect occurred. Next: create the local repair
   commit and hand it to independent review; authenticated Gmail and visual
   semantic qualification remain separate acceptance gates.
+
+## 2026-09-08 — integrated connected runtime candidate
+
+- Composed the accepted bootstrap, connected-source, ingestion, task, Sheets,
+  brief, and delivery primitives into one installed seven-phase runner. Fresh
+  bootstrap recovery now writes a mode-0600 admitted instance document and
+  executes only the extracted package. Every mutable Drive write advances the
+  returned version pointer; immutable operation checkpoints bind each phase to
+  guarded operation-state transitions; final evidence precedes the eligible
+  source cursor, which is the last domain write.
+- Persisted exact Gmail internal epoch milliseconds in the v2 catalog and added
+  a verified all-current catalog loader. Reconcile and brief phases therefore
+  consume every audited current Fact and provenance link even when the current
+  discovery has no hits or writes no new catalog bundle.
+- Added create-only connected setup with complete empty-root proof, finite
+  private seed validation, lost-response adoption by unique exact readback,
+  selected-Sheet metadata and empty-grid proof, 13 literal header writes and
+  complete readback, fully configured file mapping, and recovered bootstrap
+  evidence. No spreadsheet-create API or alternate installation framework was
+  introduced.
+- Added a provider-shaped nonempty composed test that carries one exact Gmail
+  full/raw message through semantic interpretation and independent audit,
+  canonical action and Sheet creation, received-date/source-link brief input,
+  exact Gmail delivery, and cursor-last commit. A second operation with zero
+  new source hits retains the same current task/provenance and suppresses a
+  duplicate send. Empty-root refusal and a separate zero-hit fresh run are also
+  covered.
+- Focused integration validation passed 61 tests. The complete bundled CPython
+  3.12 repository validator passed all 314 tests, including schemas, package,
+  installed-entrypoint, privacy, source, task, recovery, delivery, and release
+  checks. `git diff --check` passed. Current accepted main remains
+  `bc0128d8335df9c12805c15ee7abca004fb62f35`; its GitHub Validate run
+  `34297587808` succeeded before this candidate. This candidate has not been
+  pushed or published and has made no provider, private-instance, source,
+  delivery, scheduler, tag, release, or main-tree change. Next: one independent
+  final review, then the separately authorized Terra live acceptance.

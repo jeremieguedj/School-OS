@@ -68,8 +68,11 @@ Its task-sync measurements now exercise the accepted durable effect callback
 and continuation. Final runtime/brief integration still requires a refresh.
 M4-005's repository release preparation is now integrated, including exact
 remote asset verification, audio delta regression, and the ordinary-Python
-package-cache correction. Actual CI, remote release, visual, connected daily
-worker bindings, and private acceptance remain open. The user approved a narrow
+package-cache correction. One integrated repository candidate now contains the
+installed seven-phase connected runner, all-current catalog view, exact Gmail
+timestamps, and create-only Drive/Sheet setup. Its provider-shaped nonempty and
+zero-new-hit paths pass synthetically; independent review, authenticated private
+acceptance, final CI, remote release, and visual checks remain open. The user approved a narrow
 provider-independent recipe exception: eligible user-added tasks without an
 email received date appear under Parent-added tasks in their ordinary action
 section, with no invented date or link. Source-origin date requirements remain

@@ -81,6 +81,7 @@ class GmailMimeNormalizerTests(unittest.TestCase):
         result = self.normalizer.normalize(full(payload), raw(source))
         self.assertEqual("2026-05-05T08:30:00Z", result["received_at"])
         self.assertEqual("2026-05-05", result["received_date"])
+        self.assertEqual(1777969800000, result["gmail_internal_date_ms"])
         self.assertEqual(["0.0", "0.1", "1"], [part["part_id"] for part in result["parts"]])
         plain = result["parts"][0]
         self.assertTrue(plain["selected_plaintext"])
@@ -106,6 +107,7 @@ class GmailMimeNormalizerTests(unittest.TestCase):
         result = self.normalizer.normalize(full(payload, date="1777968000000"), raw(source))
         self.assertEqual("2026-05-05T08:00:00Z", result["received_at"])
         self.assertEqual("2026-05-05", result["received_date"])
+        self.assertEqual(1777968000000, result["gmail_internal_date_ms"])
         self.assertEqual(transport, result["parts"][0]["data"])
 
     def test_rejects_id_thread_raw_base64_ambiguous_plaintext_and_provider_mismatch(self) -> None:

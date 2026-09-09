@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-"""Verify the recovered installed root before the future connected composition.
-
-This explicit entrypoint prevents a bootstrap process from continuing to import
-ambient checkout code.  It intentionally does not implement daily phases.
-"""
+"""Verify an admitted package, then run its concrete connected daily operation."""
 
 from __future__ import annotations
 
@@ -20,6 +16,16 @@ sys.path.insert(0, str(ROOT))
 from school_os.package import PackageError, verify_extracted_tree
 
 
+def _runtime_document(path: Path) -> dict:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ValueError(f"cannot read installed instance document: {exc}") from exc
+    if not isinstance(value, dict) or set(value) != {"schema_version", "root_reference", "manifest", "manifest_reference", "admission_reference"} or value.get("schema_version") != 1:
+        raise ValueError("installed instance document has an unsupported shape")
+    return value
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--installed-root", type=Path, required=True)
@@ -29,6 +35,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--attempt-id", required=True)
     parser.add_argument("--run-directory", type=Path, required=True)
     parser.add_argument("--instance-reference", required=True)
+    parser.add_argument("--instance-document", type=Path)
+    parser.add_argument("--scheduler-admitted", action="store_true")
     parser.add_argument("--verify-only", action="store_true")
     args = parser.parse_args(argv)
     try:
@@ -48,8 +56,29 @@ def main(argv: list[str] | None = None) -> int:
     if args.verify_only:
         print(json.dumps({"outcome": "INSTALLED_ENTRYPOINT_VERIFIED", **evidence}, sort_keys=True))
         return 0
-    print("blocked: connected daily composition is not installed", file=sys.stderr)
-    return 1
+    if args.instance_document is None:
+        print("blocked: installed execution requires its admitted instance document", file=sys.stderr)
+        return 1
+    try:
+        from school_os.codex_bridge import CodexDrivePort, CodexGmailPort, CodexSemanticPort, CodexSheetsPort, JsonlPeer
+        from school_os.connected_daily import ConnectedDailyRuntime
+        document = _runtime_document(args.instance_document)
+        if document["root_reference"] != document["manifest"].get("instance_root_reference"):
+            raise ValueError("installed instance document root disagrees with its manifest")
+        peer = JsonlPeer(args.run_directory)
+        result = ConnectedDailyRuntime(
+            installed_root=root, recovery=document, run_directory=args.run_directory,
+            drive=CodexDrivePort(peer), gmail=CodexGmailPort(peer),
+            sheets=CodexSheetsPort(peer), semantic=CodexSemanticPort(peer),
+        ).run(
+            entrypoint=args.entrypoint, operation_id=args.operation_id,
+            attempt_id=args.attempt_id, scheduler_admitted=args.scheduler_admitted,
+        )
+    except Exception as exc:
+        print(f"blocked: {exc}", file=sys.stderr)
+        return 1
+    print(json.dumps({"instance": args.instance_reference, "operation_id": result.operation_id, "attempt_id": result.attempt_id, "outcome": result.outcome, "completed_phases": list(result.completed_phases)}, sort_keys=True))
+    return 0
 
 
 if __name__ == "__main__":

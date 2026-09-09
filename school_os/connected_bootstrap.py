@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any, Callable
 from urllib.parse import urlsplit
 
+from .contracts import canonical_json_bytes
 from .install import InstallationError, extract_recovered_package, recover_create_only_generation
 from .references import ObjectReference, ReferenceError, ReferenceStorage, resolve_reference
 from .connected_storage import ConnectedStorageError
@@ -142,6 +143,7 @@ def installed_command(
     attempt_id: str,
     run_directory: Path,
     instance_reference: str,
+    scheduler_admitted: bool = False,
 ) -> tuple[str, list[str], dict[str, str]]:
     """Build a no-ambient-import exec invocation for the extracted package."""
     if operation != "daily-run" or entrypoint not in {"manual", "scheduled"}:
@@ -158,6 +160,25 @@ def installed_command(
         "--attempt-id", attempt_id, "--run-directory", str(resolved_run),
         "--instance-reference", instance_reference,
     ]
+    if scheduler_admitted:
+        arguments.append("--scheduler-admitted")
+    recovery = recovered.recovery
+    if isinstance(recovery, Mapping) and isinstance(recovery.get("manifest"), Mapping):
+        document = {
+            "schema_version": 1,
+            "root_reference": dict(recovery["manifest"]["instance_root_reference"]),
+            "manifest": dict(recovery["manifest"]),
+            "manifest_reference": dict(recovery["manifest_reference"]),
+            "admission_reference": dict(recovery["admission_reference"]),
+        }
+        runtime_path = resolved_run / f"instance-runtime-{operation_id}-{attempt_id}.json"
+        descriptor = os.open(runtime_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        try:
+            with os.fdopen(descriptor, "wb", closefd=False) as handle:
+                handle.write(canonical_json_bytes(document)); handle.flush(); os.fsync(handle.fileno())
+        finally:
+            os.close(descriptor)
+        arguments.extend(["--instance-document", str(runtime_path)])
     environment = {key: value for key, value in os.environ.items() if key not in {"PYTHONPATH", "PYTHONHOME"}}
     environment["PYTHONNOUSERSITE"] = "1"
     environment["SCHOOL_OS_INSTALLED_ROOT"] = str(recovered.root)
@@ -173,11 +194,13 @@ def exec_installed_entrypoint(
     attempt_id: str,
     run_directory: Path,
     instance_reference: str,
+    scheduler_admitted: bool = False,
     executor: Callable[[str, list[str], Mapping[str, str]], Any] = os.execve,
 ) -> Any:
     """Replace the bootstrap process; the extracted package becomes authoritative."""
     executable, arguments, environment = installed_command(
         recovered, operation=operation, entrypoint=entrypoint, operation_id=operation_id,
         attempt_id=attempt_id, run_directory=run_directory, instance_reference=instance_reference,
+        scheduler_admitted=scheduler_admitted,
     )
     return executor(executable, arguments, environment)
