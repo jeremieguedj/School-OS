@@ -181,8 +181,8 @@ value=build_brief_input(run_local_date='2026-09-07', timezone='UTC', entities=[{
 assert value['tasks'][0]['received_date'] is None
 assert value['tasks'][1]['received_date']=='2026-09-07'
 """
-        environment = {**os.environ, "PYTHONPATH": "/private/tmp/schoolos-alpha13-brief-worktree", "TASK_SELECTION": json.dumps(selection)}
-        result = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, env=environment, cwd="/private/tmp/schoolos-alpha13-brief-worktree")
+        environment = {**os.environ, "PYTHONPATH": str(ROOT), "TASK_SELECTION": json.dumps(selection)}
+        result = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, env=environment, cwd=ROOT)
         self.assertEqual(0, result.returncode, result.stderr)
 
 

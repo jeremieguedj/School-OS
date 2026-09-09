@@ -2389,3 +2389,22 @@ requirements, then read this log from top to bottom.
   workers only: bootstrap/daily composition, attachment/direct-resource
   extraction, observed provider binding, delivery/scheduler, and private
   acceptance remain open.
+
+## 2026-09-08 — alpha.13 published integration CI portability repair
+
+- Published `main` SHA
+  `683ba296919430ebaacd321282a7cd690554ad63` is unchanged, but its exact
+  GitHub Actions **Validate** run `34294692219` failed before any private or
+  provider-facing work. The failed log identified one test subprocess whose
+  `PYTHONPATH` and working directory still named an untracked local temporary
+  worktree (`/private/tmp/schoolos-alpha13-brief-worktree`), which does not
+  exist on GitHub runners.
+- Replaced only that stale temporary path with the test module's repository
+  `ROOT`, preserving the isolated child-process assertion while making it
+  checkout-portable. Focused `tests.test_connected_tasks` passed, followed by
+  the complete ordinary-CPython validator (all 277 tests plus schema, package,
+  privacy, and tracked-file checks). No provider, private data, schedule,
+  release, tag, or external mutation occurred.
+- Next: commit and publish this minimal portability correction, then verify the
+  resulting exact remote SHA and GitHub Validate run. The failed run remains
+  evidence that `683ba296...` itself is not publication-verified.
