@@ -2501,3 +2501,43 @@ requirements, then read this log from top to bottom.
   bind observed authenticated providers, and obtain the outstanding M4-008 and
   M4-009 acceptance evidence. No provider, private source, mail, scheduler,
   release, tag, push, or shared-main mutation occurred.
+
+## 2026-09-09 — recovery MVP execution specification drafted
+
+- Stopped implementation and replaced the active execution route with
+  `docs/plans/mvp-recovery/PLAN.md`. The recovery plan is a combined plan and
+  implementation specification, ready for a new execution session, for one fresh
+  install MVP: Drive-canonical source/knowledge/tasks, live Google Sheets and
+  isolated Todoist projections,
+  manual and scheduled verified test briefs, ElevenLabs audio, complete bounded
+  source custody, and durable replay/fresh-session recovery.
+- Grounded the plan in current `main` at `bc0128d`, the accepted split
+  ingestion/task/Sheets/brief primitives, and the stopped connected candidate
+  lineage `9357733 -> d7f3ae3 -> 127219b -> cef9190 -> e44c434`. The candidate
+  is explicitly review input rather than an accepted release base. Historical
+  implementations, worktrees, tests, and documents are retained but do not
+  preempt the new routing.
+- Added `docs/plans/mvp-recovery/SOL-HANDOFF.md`, a copyable prompt for a new
+  GPT-5.6 Sol High owner. It enforces the unsent 90-minute first thin journey,
+  four-active-hour ceiling, final frozen package/configuration/interpreter, fixed
+  E2E endpoint, bounded helper/escalation policy, task-tool pull-before-push and
+  failure-safe guided switch, exact audio-before-multipart-send ordering, and the
+  prohibition on production, goal, or monitoring effects.
+- Private domains, recipients, provider IDs, task roots, schedule values, and
+  unsanitized reference adapter/settings receipts remain only in gitignored
+  `private/mvp-recovery/TEST-PARAMETERS.md` and `ADAPTER-SOURCES.md`. No private
+  value was added to Git. Read-only private grounding was performed, but no
+  runtime code, provider mutation, private-instance mutation, task-project
+  mutation, delivery, scheduler mutation, goal, tag, release, commit, or push
+  was performed.
+- Root completed the documentation review and corrected audio delivery order,
+  failure-safe task-tool activation, phase sequencing, and planned mutable-state
+  handling. Privacy scanning of all four changed/new documents against the
+  private source identifiers and recipient/domain values passed. Local links,
+  Phase 0–5 ordering, six pending implementation statuses, Git-ignore boundaries,
+  and `git diff --check` passed. No broad runtime test suite was needed for this
+  documentation-only change.
+- The accepted documentation checkpoint is ready for commit/push and exact
+  remote readback under repository continuity. After publication, the next
+  action is to open a new GPT-5.6 Sol High session with the private companion and
+  paste the handoff prompt. Implementation remains unstarted.

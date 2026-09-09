@@ -1,9 +1,31 @@
 # School-OS implementation plan
 
-Status: active  
+Status: recovery specification ready; implementation not started
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 ## Next-release planning
+
+Implementation is currently stopped. The active recovery route is the
+[recovery MVP plan and implementation specification](docs/plans/mvp-recovery/PLAN.md),
+with a copyable [new-session Sol High handoff](docs/plans/mvp-recovery/SOL-HANDOFF.md).
+It supersedes the alpha.13 completion sequence as the operational plan while
+preserving the alpha.13 plan, specification, review, branches, worktrees, tests,
+and history as implementation evidence. Resume only in a new GPT-5.6 Sol High
+session. The recovery MVP starts from a fresh empty private test root, reconciles
+the stopped connected-runtime candidates against current `main`, freezes one
+exact package/configuration/interpreter, and proves Drive-canonical knowledge and
+tasks through live Sheets, Todoist, email, scheduler, audio, and restart cases.
+No runtime implementation, provider mutation, release, goal, or production
+change was performed while writing this route; read-only private grounding was
+used for the specification.
+
+The private execution values and unsanitized reference adapter receipts live
+only in
+gitignored `private/mvp-recovery/TEST-PARAMETERS.md` and
+`private/mvp-recovery/ADAPTER-SOURCES.md`. They must not enter Git. The historical
+alpha.13 status below is historical evidence of completed and stopped work;
+where it describes the next execution step, the recovery MVP route above now
+controls.
 
 The current revised plan for the next release, `0.1.0-alpha.13`, is
 [the alpha.13 release plan](docs/plans/0.1.0-alpha.13/PLAN.md). It records ten work
