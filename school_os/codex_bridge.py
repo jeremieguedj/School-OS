@@ -485,9 +485,9 @@ class HostBindingDispatcher:
         if not isinstance(value, Mapping) or value.get("isError") is True:
             raise BridgeError("host tool returned an error; effect outcome is unknown")
         structured = value.get("structuredContent")
-        if not isinstance(structured, Mapping) or "result" not in structured:
+        if not isinstance(structured, Mapping):
             raise BridgeError("host tool response lacks structuredContent.result")
-        result = structured["result"]
+        result = structured.get("result", structured)
         _json_safe(result, "normalized host result")
         return result
     def dispatch(self, kind: str, args: Mapping[str, Any], invoke: Any) -> Any:
