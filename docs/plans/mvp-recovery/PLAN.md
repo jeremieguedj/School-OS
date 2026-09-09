@@ -208,7 +208,7 @@ window, and bytes match; final installed outputs must come from the final packag
 
 ### Phase 0 — reconcile and freeze the candidate
 
-**Status: in progress.** Candidate code and tests are reconciled in
+**Status: complete.** Candidate code and tests are reconciled in
 [`RECONCILIATION.md`](RECONCILIATION.md); exact package freeze and live-gate
 preparation remain. Inspect `main`, all named candidate commits/branches,
 worktrees, history, current tests, and both private companion files. Produce a
@@ -244,7 +244,7 @@ blocks the affected path.
 
 ### Phase 1 — early live integration
 
-**Status: pending; first implementation target, without a completion deadline.**
+**Status: in progress; first implementation target, without a completion deadline.**
 The mandatory one-hour status checkpoint applies even if this phase has not
 started or finished. Use the Phase 0 `window_start_ms` and
 `window_end_ms` 14-day `[start,end)` bounds, recorded only in private evidence.

@@ -82,6 +82,56 @@ class CodexBridgeTests(unittest.TestCase):
         self.assertNotEqual(0, result.returncode)
         self.assertFalse(truncated.exists())
 
+    def test_host_dispatch_script_preserves_the_reviewed_binding_boundary(self) -> None:
+        request_id = "dispatch-1"
+        request = {
+            "args": {"parent_id": "root", "item_type": "folder", "topn": 100},
+            "kind": "drive.search_page",
+            "protocol": 1,
+            "request_id": request_id,
+        }
+        request_path = self.run_dir / f"{request_id}.request.json"
+        request_bytes = canonical_json_bytes(request)
+        request_path.write_bytes(request_bytes)
+        os.chmod(request_path, 0o600)
+        native_result_path = self.run_dir / f"{request_id}.native-result.json"
+        native_result = canonical_json_bytes({
+            "content": [],
+            "structuredContent": {
+                "result": {"results": [], "next_page_token": None},
+            },
+        })
+        native_result_path.write_bytes(native_result)
+        os.chmod(native_result_path, 0o600)
+        control = json.dumps({
+            "request_id": request_id,
+            "native_result_path": str(native_result_path),
+            "sha256": sha256_bytes(native_result),
+        }) + "\n"
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(ROOT / "scripts" / "dispatch_host_request.py"),
+                "--run-dir", str(self.run_dir),
+                "--request-id", request_id,
+                "--kind", "drive.search_page",
+                "--request-sha256", sha256_bytes(request_bytes),
+                "--request-path", str(request_path),
+            ],
+            input=control,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
+        lines = result.stdout.splitlines()
+        self.assertRegex(lines[0], r"^SCHOOL_OS_NATIVE_REQUEST dispatch-1 [0-9a-f]{64} ")
+        response_control = json.loads(lines[-1])
+        response = json.loads(Path(response_control["response_path"]).read_text())
+        self.assertEqual({"results": [], "next_page_token": None}, response["result"])
+        self.assertFalse(native_result_path.exists())
+        self.assertFalse((self.run_dir / f"{request_id}.native-request.json").exists())
+
     def test_tool_exception_wrapper_is_unknown_and_cannot_authorize_success(self) -> None:
         path = self.run_dir / "error.response.json"
         data = canonical_json_bytes({"protocol": 1, "request_id": "error", "error": {"class": "tool_exception", "effect": "unknown"}})

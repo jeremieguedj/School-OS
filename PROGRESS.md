@@ -2584,3 +2584,28 @@ requirements, then read this log from top to bottom.
   candidate source checkpoint, build and validate its exact immutable package,
   record interpreter/dependency evidence, then perform the authorized empty-root
   and empty-Sheet gate before the first live unsent source/task/brief journey.
+
+## 2026-09-09 — recovery MVP Phase 1 live setup gate
+
+- Committed and pushed the reconciled candidate as `b8ca4f3`; exact remote-ref
+  readback matched. Its reproducible alpha.13 archive and extracted tree both
+  passed installed validation, and the installed connected-operation entrypoint
+  returned `INSTALLED_ENTRYPOINT_VERIFIED`.
+- Created one new isolated Drive root and one native task Sheet on the
+  authorized test surface. The external Sheet was moved to the authorized tests
+  parent after readback exposed the installer's empty-root boundary. Final
+  readback proves the root has zero children, the Sheet has one empty `Tasks`
+  tab, and no values, charts, or provider data exist. Exact IDs, URLs, hashes,
+  source bounds, and private settings remain only in ignored evidence.
+- Added a finite host-dispatch CLI for the existing JSONL bridge. It validates
+  the request through `HostBindingDispatcher`, exposes only the reviewed native
+  binding through a mode-0600 private file, validates the returned connector
+  envelope, and writes the exact child response. Its focused regression passes.
+- Prepared and locally validated the ignored early setup plan from the exact
+  frozen package and private companion: two source domains, four ordered
+  household groups, one recipient, empty CC/BCC, Sheets selected, no scheduler,
+  no audio, and the fixed 14-day `[start,end)` source bounds.
+- Next: rebuild the exact candidate package with the host-dispatch CLI, re-run
+  installed validation, then execute the create-only installation through that
+  bridge before the first bounded unsent preview. Todoist, delivery, audio, and
+  scheduling remain untouched.
