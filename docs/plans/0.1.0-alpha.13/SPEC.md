@@ -99,6 +99,19 @@ HTML/attachment inventory to existing import helpers; raw MIME is not canonical
 storage and HTML is never converted to text. Attachment extraction and direct
 resource retrieval require separate connected bindings and remain unaccepted.
 
+### Connected source and task workers (2026-09-08)
+
+The integrated `connected_ingestion`, `connected_tasks`, and `connected_sheets`
+workers use one exact `connected_storage` implementation. Source work preserves
+complete ordered Gmail thread/raw correspondence, durable discovery and
+continuation evidence, exact normalized source custody, audit-bound Facts, and
+rechecks changed threads before suppression. Task work separates canonical
+reconciliation from Sheets provider effects, uses complete current snapshots,
+literal-value guards for identity and managed cells, durable effect recovery,
+and exact readback. These repository workers do not by themselves provide a
+bootstrap, seven-phase composition, attachment/direct-resource extraction,
+provider capability qualification, delivery, scheduler, or private acceptance.
+
 ## Existing implementation inventory
 
 The current repository is mostly contracts and recipes. Documented behavior is

@@ -2368,3 +2368,24 @@ requirements, then read this log from top to bottom.
   delivery, schedule, or private acceptance.
 - Next: run the focused normalizer/custody/semantic tests and repository privacy
   checks on this integrated tree, then commit this scoped integration locally.
+
+## 2026-09-08 — connected source and task workers integrated
+
+- Integrated accepted source delta
+  `a69ce99f79a9feb88f4affffcf57788c41af85cb..0352ed1b3a9afc6f0be22bf49f117c37a568f003`
+  and accepted task delta
+  `512b408..65d890d6c58624f3a90c8da4bbadb2a392463e5d`, preserving the
+  current MIME/brief/release work. Both supplied the same reviewed
+  `connected_storage` implementation, now present once.
+- The source worker rereads complete changed threads and binds full/raw Gmail
+  message and thread identities before source custody/audit artifacts. The task
+  and Sheets workers preserve canonical-before-provider ordering, guarded
+  literal cells, parent/provider recovery, and exact readback. Their respective
+  independent reviews accepted the repaired counterexamples.
+- Combined focused source/task/Sheets/custody/semantic/bridge validation passed
+  58 tests; the full ordinary-CPython validator then passed on exact local
+  commit `ba30a265189bde5442eb5f537e9e975294c88e6b`, including package and
+  tracked privacy gates. These are repository
+  workers only: bootstrap/daily composition, attachment/direct-resource
+  extraction, observed provider binding, delivery/scheduler, and private
+  acceptance remain open.
