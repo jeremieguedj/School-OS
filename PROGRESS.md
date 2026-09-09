@@ -2431,3 +2431,31 @@ requirements, then read this log from top to bottom.
 - Focused source/recovery/custody/semantic/bridge/task validation passed 45
   tests. The complete ordinary-CPython validator then passed with schema,
   package, and tracked-file privacy checks; `git diff --check` passed.
+
+## 2026-09-08 — alpha.13 connected task reconcile/task-sync phase split
+
+- Split the concrete task worker without changing task-core, Sheets, shared
+  storage, Fact, audit, or brief policy. `ConnectedTaskWorker.reconcile(...)`
+  admits audited Fact references (or the existing verified empty disposition),
+  reconciles and guarded-persists the canonical register, then returns its
+  exact current `StoredArtifact` reference and the canonical unresolved-task
+  view. `task_sync(...)` consumes that reference plus provider state and runs
+  only the existing provider reconciliation/effect recovery path; it does not
+  read Facts or call canonical source reconciliation. `run_once(...)` remains
+  the compatibility composition of those two explicit stages.
+- The provider-only phase retains current-pointer/readback behavior, canonical
+  result persistence, parent/user-added/task completion/reminder handling,
+  pre-dispatch unknown-effect checkpoints, native literal scope guards, final
+  canonical/provider references, and post-sync brief view. The upcoming daily
+  composition must call `reconcile`, carry `canonical_tasks.reference` exactly
+  into `task_sync`, and pass its final `brief_tasks` to the accepted v2 brief
+  builder; derived knowledge remains that later composition's responsibility.
+- Focused CPython 3.12.14 task/Sheets/provider recovery matrix passed 31 tests,
+  including the real fresh-process create/reminder hard exits and v2 brief-input
+  compatibility. The new direct API regression corrupts the Fact bytes after
+  reconcile and proves task_sync neither reads them nor re-derives source state.
+  Full `scripts/validate.py` passed all 278 tests plus JSON-schema, manifest,
+  package-smoke, and privacy checks; direct privacy scan and `git diff --check`
+  also passed. The compact `/private/tmp` handoff is present and the scoped diff
+  is ready for one local commit. No provider, private source, email, schedule,
+  release, push, or production effect occurred.

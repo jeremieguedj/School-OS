@@ -26,9 +26,11 @@ class MemoryStore:
     def __init__(self, values: dict[str, bytes]) -> None:
         self.values = dict(values)
         self.writes: list[str] = []
+        self.reads: list[str] = []
         self.versions = {key: "v1" for key in values}
 
     def read(self, reference: DriveReference) -> StoredArtifact:
+        self.reads.append(reference.object_id)
         version = self.versions[reference.object_id]
         if reference.version is not None and reference.version != version:
             raise AssertionError("stale durable reference")
@@ -98,6 +100,30 @@ class ConnectedTaskWorkerTests(unittest.TestCase):
         self.assertEqual("https://example.invalid/source/message-1", second.brief_tasks["tasks"][0]["source_link"])
         self.assertGreaterEqual(store.writes.count(tasks.object_id), 2)
         self.assertGreaterEqual(store.writes.count(provider_state.object_id), 3)  # intent, pre-dispatch, final state
+
+    def test_public_reconcile_then_provider_sync_uses_returned_reference_without_facts(self) -> None:
+        facts, tasks, provider_state = self.refs()
+        store = MemoryStore({
+            facts.object_id: canonical_json_bytes({"schema_version": 1, "record_id": "record-1", "facts": [self.fact()]}),
+            tasks.object_id: canonical_json_bytes({"schema_version": 1, "tasks": []}),
+            provider_state.object_id: canonical_json_bytes({"provider_id": "synthetic", "adapter_id": "synthetic-tasks", "provider_revision": None, "bindings": [], "cursor": None, "cursor_evidence": {}, "verified_readback": {}}),
+        })
+        worker = self.worker(store)
+        links = {canonical_task_id("fact-action"): "https://example.invalid/source/message-1"}
+        reconciled = worker.reconcile(facts=[facts], canonical_tasks=tasks, task_source_links=links)
+        self.assertEqual("tasks", reconciled.canonical_tasks.reference.object_id)
+        self.assertEqual([], json.loads(store.values[provider_state.object_id]).get("effect_intents", []))
+        # A provider-only pass must consume only the returned canonical pointer,
+        # not rederive canonical state from the Fact artifact.
+        store.values[facts.object_id] = b"not provider input"
+        store.reads.clear()
+        first = worker.task_sync(
+            canonical_tasks=reconciled.canonical_tasks.reference, provider_state=provider_state,
+            provider=FixtureTasks(), task_source_links=links,
+        )
+        self.assertNotIn(facts.object_id, store.reads)
+        self.assertEqual("pending", json.loads(first.provider_state.data)["effect_intents"][0]["outcome"])
+        self.assertEqual("all_unresolved_finite", first.brief_tasks["selection"])
 
     def test_fresh_process_production_sheets_create_and_reminder_recovery(self) -> None:
         """Hard exits use the concrete worker, Sheets port, and durable references.

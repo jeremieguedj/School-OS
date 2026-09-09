@@ -107,6 +107,14 @@ class ConnectedTaskResult:
     continuation_required: bool
 
 
+@dataclass(frozen=True)
+class ConnectedTaskReconcileResult:
+    """The canonical-only handoff from ``reconcile`` to ``task_sync``."""
+
+    canonical_tasks: StoredArtifact
+    brief_tasks: dict[str, Any]
+
+
 class ConnectedTaskWorker:
     """Persist source-canonical state before provider advancement and read back.
 
@@ -125,12 +133,12 @@ class ConnectedTaskWorker:
         self.register_schema = dict(register_schema)
         self.provider_state_schema = dict(provider_state_schema)
 
-    def run_once(
+    def reconcile(
         self, *, facts: Sequence[DriveReference], canonical_tasks: DriveReference,
-        provider_state: DriveReference, provider: Any,
         task_source_links: Mapping[str, str] | None = None,
         source_disposition: Mapping[str, Any] | None = None,
-    ) -> ConnectedTaskResult:
+    ) -> ConnectedTaskReconcileResult:
+        """Persist audited Fact reconciliation without touching a task provider."""
         if not facts:
             if not isinstance(source_disposition, Mapping) or source_disposition.get("verified") is not True or source_disposition.get("phase_complete") is not True or source_disposition.get("remaining_work") != {}:
                 raise ConnectedTaskError("empty Fact input requires a verified complete upstream source disposition")
@@ -148,15 +156,11 @@ class ConnectedTaskWorker:
         # operation checkpoint.  Exact object identity survives, while the
         # shared store refreshes current observed version evidence on this read.
         register_artifact = _read_exact(self.store, canonical_tasks.current(), "canonical task register")
-        state_artifact = _read_exact(self.store, provider_state.current(), "provider state")
         register = _json_object(register_artifact.data, "canonical task register")
-        state = _json_object(state_artifact.data, "provider state")
         source_reconciled = reconcile_canonical_tasks(
             register, collected, fact_schema=self.fact_schema, task_schema=self.task_schema,
             register_schema=self.register_schema,
         )
-        # This first write establishes source facts and any previously accepted
-        # canonical parent state before a provider claim/create can be attempted.
         canonical_artifact = _replace_exact(
             # The first replacement must use the version just observed above,
             # rather than a caller's pre-reset checkpoint reference.  A new
@@ -165,8 +169,27 @@ class ConnectedTaskWorker:
             self.store, register_artifact.reference,
             serialize_canonical_tasks(source_reconciled, self.register_schema), "canonical task register",
         )
+        return ConnectedTaskReconcileResult(
+            canonical_artifact,
+            unresolved_finite_task_selection(source_reconciled, task_source_links=task_source_links),
+        )
 
-        canonical_pointer = canonical_artifact.reference
+    def task_sync(
+        self, *, canonical_tasks: DriveReference, provider_state: DriveReference,
+        provider: Any, task_source_links: Mapping[str, str] | None = None,
+    ) -> ConnectedTaskResult:
+        """Synchronize one verified canonical register without rereading Facts.
+
+        The caller supplies the exact reference emitted by :meth:`reconcile`.
+        A reset may still resolve its mutable version through ``current()``, but
+        no source-Fact derivation occurs in this provider-only phase.
+        """
+        register_artifact = _read_exact(self.store, canonical_tasks.current(), "canonical task register")
+        state_artifact = _read_exact(self.store, provider_state.current(), "provider state")
+        register = _json_object(register_artifact.data, "canonical task register")
+        state = _json_object(state_artifact.data, "provider state")
+
+        canonical_pointer = register_artifact.reference
         provider_pointer = state_artifact.reference
         durable_state = state
 
@@ -199,7 +222,7 @@ class ConnectedTaskWorker:
             return dict(matched[0])
 
         reconciliation = reconcile_provider_tasks(
-            provider, source_reconciled, state, task_schema=self.task_schema,
+            provider, register, state, task_schema=self.task_schema,
             register_schema=self.register_schema, provider_state_schema=self.provider_state_schema,
             checkpoint_effect_intent=checkpoint_effect,
         )
@@ -216,4 +239,21 @@ class ConnectedTaskWorker:
             canonical_artifact, provider_artifact, reconciliation,
             unresolved_finite_task_selection(reconciliation.tasks, task_source_links=task_source_links),
             bool(reconciliation.provider_state.get("claim_intents") or reconciliation.provider_state.get("effect_intents")),
+        )
+
+    def run_once(
+        self, *, facts: Sequence[DriveReference], canonical_tasks: DriveReference,
+        provider_state: DriveReference, provider: Any,
+        task_source_links: Mapping[str, str] | None = None,
+        source_disposition: Mapping[str, Any] | None = None,
+    ) -> ConnectedTaskResult:
+        """Compatibility composition of the explicit canonical and provider phases."""
+        reconciled = self.reconcile(
+            facts=facts, canonical_tasks=canonical_tasks,
+            task_source_links=task_source_links, source_disposition=source_disposition,
+        )
+        return self.task_sync(
+            canonical_tasks=reconciled.canonical_tasks.reference,
+            provider_state=provider_state, provider=provider,
+            task_source_links=task_source_links,
         )
