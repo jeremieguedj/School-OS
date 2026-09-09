@@ -125,6 +125,43 @@ class ConnectedTaskWorkerTests(unittest.TestCase):
         self.assertEqual("pending", json.loads(first.provider_state.data)["effect_intents"][0]["outcome"])
         self.assertEqual("all_unresolved_finite", first.brief_tasks["selection"])
 
+    def test_task_sync_rejects_a_newer_canonical_version_before_provider_read(self) -> None:
+        facts, tasks, provider_state = self.refs()
+        store = MemoryStore({
+            facts.object_id: canonical_json_bytes({"schema_version": 1, "record_id": "record-1", "facts": [self.fact()]}),
+            tasks.object_id: canonical_json_bytes({"schema_version": 1, "tasks": []}),
+            provider_state.object_id: canonical_json_bytes({"provider_id": "synthetic", "adapter_id": "synthetic-tasks", "provider_revision": None, "bindings": [], "cursor": None, "cursor_evidence": {}, "verified_readback": {}}),
+        })
+        worker = self.worker(store)
+        links = {canonical_task_id("fact-action"): "https://example.invalid/source/message-1"}
+        reconciled = worker.reconcile(facts=[facts], canonical_tasks=tasks, task_source_links=links)
+        exact_data = reconciled.canonical_tasks.data
+        exact_version = reconciled.canonical_tasks.reference.version
+        substituted = json.loads(exact_data)
+        substituted["tasks"][0]["action"] = "substituted after handoff"
+        store.values[tasks.object_id] = canonical_json_bytes(substituted)
+        store.versions[tasks.object_id] = "v3"
+        provider = FixtureTasks()
+        store.reads.clear()
+        with self.assertRaisesRegex(AssertionError, "stale durable reference"):
+            worker.task_sync(
+                canonical_tasks=reconciled.canonical_tasks.reference, provider_state=provider_state,
+                provider=provider, task_source_links=links,
+            )
+        self.assertEqual([tasks.object_id], store.reads)
+        self.assertEqual([], provider.calls)
+
+        # The exact v2 handoff remains valid and still does not reread Facts.
+        store.values[tasks.object_id] = exact_data
+        store.versions[tasks.object_id] = exact_version
+        store.reads.clear()
+        result = worker.task_sync(
+            canonical_tasks=reconciled.canonical_tasks.reference, provider_state=provider_state,
+            provider=provider, task_source_links=links,
+        )
+        self.assertNotIn(facts.object_id, store.reads)
+        self.assertTrue(result.continuation_required)
+
     def test_fresh_process_production_sheets_create_and_reminder_recovery(self) -> None:
         """Hard exits use the concrete worker, Sheets port, and durable references.
 

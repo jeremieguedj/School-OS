@@ -2459,3 +2459,25 @@ requirements, then read this log from top to bottom.
   also passed. The compact `/private/tmp` handoff is present and the scoped diff
   is ready for one local commit. No provider, private source, email, schedule,
   release, push, or production effect occurred.
+
+## 2026-09-08 — alpha.13 task-sync exact canonical handoff repair
+
+- Independent review found that `task_sync` discarded the version on the exact
+  canonical artifact returned by `reconcile` through `.current()`. A valid
+  later mutable write could therefore substitute canonical bytes and drive a
+  provider effect across the explicit phase boundary. The repair keeps
+  `.current()` only in `reconcile`, the explicit Fact/readmission phase, and
+  reads the supplied canonical handoff version intact in `task_sync` before it
+  reads provider state or can invoke a provider effect.
+- The added v2-to-v3 regression advances the canonical object to valid but
+  substituted bytes after `reconcile`; `task_sync(v2)` rejects immediately,
+  has only the attempted canonical read, and leaves the provider untouched. It
+  restores v2 to prove the exact handoff succeeds and still does not reread
+  Facts. No recovery framework was added: a restart must explicitly re-enter
+  `reconcile` to obtain a newly admitted exact handoff before `task_sync`.
+- Focused bundled-CPython task/Sheets/core recovery validation passed 32 tests,
+  including real fresh-process create/reminder hard exits and the original
+  phase API/v2 brief compatibility checks. Required completion: direct
+  privacy/diff checks, compact handoff update, and one local commit. No
+  provider, private source, email, schedule, release, push, or production
+  effect occurred.

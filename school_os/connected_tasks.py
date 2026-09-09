@@ -152,9 +152,8 @@ class ConnectedTaskWorker:
                     raise ConnectedTaskError("audited Fact artifacts have duplicate or missing Fact IDs")
                 seen_fact_ids.add(fact_id)
                 collected.append(fact)
-        # A fresh process may hold a stale mutable version from its last
-        # operation checkpoint.  Exact object identity survives, while the
-        # shared store refreshes current observed version evidence on this read.
+        # Reconciliation is the explicit mutable-pointer readmission boundary.
+        # A fresh process may hold a stale reference from its last checkpoint.
         register_artifact = _read_exact(self.store, canonical_tasks.current(), "canonical task register")
         register = _json_object(register_artifact.data, "canonical task register")
         source_reconciled = reconcile_canonical_tasks(
@@ -181,10 +180,10 @@ class ConnectedTaskWorker:
         """Synchronize one verified canonical register without rereading Facts.
 
         The caller supplies the exact reference emitted by :meth:`reconcile`.
-        A reset may still resolve its mutable version through ``current()``, but
-        no source-Fact derivation occurs in this provider-only phase.
+        Recovery/readmission belongs to that preceding phase; this provider-only
+        phase must not silently weaken its canonical handoff version.
         """
-        register_artifact = _read_exact(self.store, canonical_tasks.current(), "canonical task register")
+        register_artifact = _read_exact(self.store, canonical_tasks, "canonical task register")
         state_artifact = _read_exact(self.store, provider_state.current(), "provider state")
         register = _json_object(register_artifact.data, "canonical task register")
         state = _json_object(state_artifact.data, "provider state")
