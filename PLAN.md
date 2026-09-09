@@ -1,11 +1,11 @@
 # School-OS implementation plan
 
-Status: recovery MVP implementation in progress; Phase 0 candidate reconciliation active
+Status: recovery MVP implementation in progress; Phase 0 complete and Phase 1 fresh-install qualification active
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 ## Next-release planning
 
-Implementation is currently stopped. The active recovery route is the
+Implementation is active under timed user-authorized execution intervals. The active recovery route is the
 [recovery MVP plan and implementation specification](docs/plans/mvp-recovery/PLAN.md),
 with a copyable [new-session Sol High handoff](docs/plans/mvp-recovery/SOL-HANDOFF.md).
 It supersedes the alpha.13 completion sequence as the operational plan while

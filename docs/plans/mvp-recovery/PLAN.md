@@ -1,7 +1,7 @@
 # School-OS recovery MVP plan and implementation specification
 
-- Status: recovery implementation in progress; Phase 0 candidate reconciliation
-  active in the authorized GPT-5.6 Sol High execution session
+- Status: recovery implementation in progress; Phase 0 reconciliation is
+  complete and Phase 1 fresh-install qualification is active
 - Written: 2026-09-09
 - Release identity: record the early candidate in Phase 0 and freeze the final
   identity in Phase 2; do not assume that `main`,
@@ -275,6 +275,14 @@ and Sheets; and the stored unsent brief must be deterministic. No fabricated
 success and no import cursor advance before all bounded
 source work has durable evidence. This is early integration evidence, not
 completed delivery, audio, or full-window acceptance.
+
+The live Drive adapter may accept the finite provider-reported MIME set
+`application/octet-stream`, `application/gzip`, or `application/x-gzip` only
+for the pinned `system/package/release.archive`, and only when its bytes have
+the gzip signature and match the already-frozen package size/hash. Persist the
+provider's actual MIME in the object reference. Every other managed object
+retains exact MIME matching. Drive create/readback failures must identify the
+specific failed identity, kind, name, parent, MIME, URL, or byte predicate.
 
 ### Phase 2 — finish bindings and freeze the final candidate
 

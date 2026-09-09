@@ -2653,3 +2653,21 @@ requirements, then read this log from top to bottom.
   sanitized per-create predicate journal, reproduce the manifest mismatch on a
   fresh root, and repair only the proven provider disagreement before another
   package/root cycle.
+
+## 2026-09-09 — recovery MVP archive MIME diagnosis and approved repair
+
+- Read-only reconstruction of the fourth fresh-install attempt corrected the
+  prior stage description: the blocked object was the pinned
+  `system/package/release.archive` immediately before manifest creation, not
+  the manifest itself.
+- Exact-ID metadata and raw-byte readback proved the object ID, name, parent,
+  URL, byte length, complete bytes, and frozen package hash. The sole mismatch
+  was Drive classifying the gzip bytes as `application/x-gzip` after the
+  installer requested `application/octet-stream`.
+- The approved repair admits a finite gzip MIME equivalence only for that
+  byte-proven pinned archive, persists the actual provider MIME, and keeps
+  every other MIME exact. Create failures now name individual failed predicates
+  instead of collapsing them into one ambiguous error.
+- Next: pass focused and full repository validation, publish the repaired
+  checkpoint, rebuild and verify its immutable package, and use a new empty
+  Drive root and Sheet for the next early integration attempt.

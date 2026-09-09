@@ -19,7 +19,8 @@ from .connected_profiles import initial_profile_registry
 from .contracts import canonical_json_bytes, dump_mapping_yaml, load_mapping_yaml, sha256_bytes
 from .install import (
     DAILY_REFERENCE_KINDS, FILE_MAP_PATH, INTEGRATION_REFERENCE_KINDS,
-    OPERATION_STATE_PATH, InstallationError, compose_create_only_candidate_payloads,
+    OPERATION_STATE_PATH, PACKAGE_ARCHIVE_PATH, InstallationError,
+    compose_create_only_candidate_payloads,
     managed_mime_type,
     initial_operation_state_bytes, install_create_only_generation,
 )
@@ -32,6 +33,35 @@ OBSERVED_FILE_ROLES = (
     set(DAILY_REFERENCE_KINDS) | set(INTEGRATION_REFERENCE_KINDS)
 ) - {"source_catalog_folder", "task_provider_selector"}
 SETUP_FILE_ROLES = OBSERVED_FILE_ROLES | {"task_sync_state"}
+DRIVE_GZIP_MIME_TYPES = frozenset({
+    "application/gzip", "application/x-gzip", "application/octet-stream",
+})
+GZIP_SIGNATURE = b"\x1f\x8b\x08"
+
+
+def _admitted_drive_mime_types(name: str, data: bytes, requested: str) -> frozenset[str]:
+    """Keep MIME exact except for a byte-proven pinned gzip release archive."""
+    if name != PACKAGE_ARCHIVE_PATH:
+        return frozenset({requested})
+    if not data.startswith(GZIP_SIGNATURE):
+        raise InstallationError("pinned release archive lacks the gzip signature")
+    return DRIVE_GZIP_MIME_TYPES
+
+
+def _failed_create_readback_checks(
+    value: StoredObject | None, *, parent_id: str, name: str, data: bytes,
+    admitted_mime_types: frozenset[str],
+) -> tuple[str, ...]:
+    if value is None:
+        return ("identity",)
+    checks = (
+        ("kind", value.kind == "file"),
+        ("name", value.name == name),
+        ("parent", value.parent_id == parent_id and parent_id in value.ancestor_ids),
+        ("MIME", value.mime_type in admitted_mime_types),
+        ("bytes", value.data == data),
+    )
+    return tuple(label for label, passed in checks if not passed)
 
 
 def _object_reference(value: StoredObject, root_id: str) -> dict[str, Any]:
@@ -54,6 +84,7 @@ class CodexDriveCreateOnlyStorage(CodexDriveReferenceStorage):
     def create_file(self, parent_id: str, name: str, data: bytes, mime_type: str) -> StoredObject:
         if not parent_id or not name or not isinstance(data, bytes) or not mime_type:
             raise InstallationError("Drive create requires exact parent, name, bytes, and MIME type")
+        admitted_mime_types = _admitted_drive_mime_types(name, data, mime_type)
         self.scratch_directory.mkdir(parents=True, exist_ok=True, mode=0o700)
         os.chmod(self.scratch_directory, 0o700)
         descriptor, raw_path = tempfile.mkstemp(prefix="setup-", dir=self.scratch_directory)
@@ -80,7 +111,7 @@ class CodexDriveCreateOnlyStorage(CodexDriveReferenceStorage):
         if (
             not isinstance(result, Mapping) or result.get("success") is not True
             or not isinstance(result.get("id"), str) or not result["id"]
-            or result.get("mime_type") != mime_type or result.get("parent_id") != parent_id
+            or result.get("mime_type") not in admitted_mime_types or result.get("parent_id") != parent_id
             or not isinstance(result.get("url"), str) or not result["url"]
         ):
             if isinstance(result, Mapping) and isinstance(result.get("id"), str) and result["id"]:
@@ -90,17 +121,32 @@ class CodexDriveCreateOnlyStorage(CodexDriveReferenceStorage):
                     raise InstallationError(
                         "Drive create receipt and identity readback are incomplete"
                     ) from exc
-                if (
-                    recovered is not None and recovered.kind == "file"
-                    and recovered.name == name and recovered.parent_id == parent_id
-                    and recovered.mime_type == mime_type and recovered.data == data
-                ):
+                failed = _failed_create_readback_checks(
+                    recovered, parent_id=parent_id, name=name, data=data,
+                    admitted_mime_types=admitted_mime_types,
+                )
+                if not failed:
+                    self.expected_urls[result["id"]] = self._urls[result["id"]]
                     return recovered
-            raise InstallationError("Drive create receipt lacks exact identity, MIME, parent, or URL")
+                raise InstallationError(
+                    "Drive create readback mismatch: " + ", ".join(failed)
+                )
+            receipt_checks = (
+                ("identity", isinstance(result, Mapping) and result.get("success") is True),
+                ("MIME", isinstance(result, Mapping) and result.get("mime_type") in admitted_mime_types),
+                ("parent", isinstance(result, Mapping) and result.get("parent_id") == parent_id),
+                ("URL", isinstance(result, Mapping) and isinstance(result.get("url"), str) and bool(result["url"])),
+            )
+            failed = tuple(label for label, passed in receipt_checks if not passed)
+            raise InstallationError("Drive create receipt mismatch: " + ", ".join(failed))
         self.expected_urls[result["id"]] = result["url"]
         readback = self.read(result["id"])
-        if readback is None or readback.name != name or readback.data != data:
-            raise InstallationError("Drive create readback differs from intended name or bytes")
+        failed = _failed_create_readback_checks(
+            readback, parent_id=parent_id, name=name, data=data,
+            admitted_mime_types=admitted_mime_types,
+        )
+        if failed:
+            raise InstallationError("Drive create readback mismatch: " + ", ".join(failed))
         return readback
 
     def create_folder(self, parent_id: str, name: str) -> StoredObject:

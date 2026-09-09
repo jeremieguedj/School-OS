@@ -539,6 +539,73 @@ class InstanceScaffoldingTests(unittest.TestCase):
         self.assertEqual("state/example.json", created.name)
         self.assertEqual(b"{}\n", created.data)
 
+    def test_connected_create_admits_only_byte_proven_archive_mime_equivalents(self) -> None:
+        archive = gzip.compress(b"pinned release archive")
+        for observed_mime in (
+            "application/octet-stream", "application/gzip", "application/x-gzip",
+        ):
+            with self.subTest(observed_mime=observed_mime):
+                drive = ConnectedSetupDrive()
+                original_upload = drive.upload
+
+                def normalized_upload(*args, _observed=observed_mime, **kwargs):
+                    result = original_upload(*args, **kwargs)
+                    result["mime_type"] = _observed
+                    drive.objects[result["id"]]["mime_type"] = _observed
+                    return result
+
+                drive.upload = normalized_upload
+                created = CodexDriveCreateOnlyStorage(
+                    drive, scratch_directory=self.base / f"scratch-{observed_mime.rsplit('/', 1)[-1]}",
+                ).create_file(
+                    "instance-root", PACKAGE_ARCHIVE_PATH, archive,
+                    "application/octet-stream",
+                )
+                self.assertEqual(observed_mime, created.mime_type)
+                self.assertEqual(archive, created.data)
+
+        drive = ConnectedSetupDrive()
+        original_upload = drive.upload
+
+        def invalid_normalization(*args, **kwargs):
+            result = original_upload(*args, **kwargs)
+            result["mime_type"] = "text/plain"
+            drive.objects[result["id"]]["mime_type"] = "text/plain"
+            return result
+
+        drive.upload = invalid_normalization
+        with self.assertRaisesRegex(InstallationError, "readback mismatch: MIME"):
+            CodexDriveCreateOnlyStorage(
+                drive, scratch_directory=self.base / "scratch-invalid-mime",
+            ).create_file(
+                "instance-root", PACKAGE_ARCHIVE_PATH, archive,
+                "application/octet-stream",
+            )
+        with self.assertRaisesRegex(InstallationError, "gzip signature"):
+            CodexDriveCreateOnlyStorage(
+                ConnectedSetupDrive(), scratch_directory=self.base / "scratch-invalid-bytes",
+            ).create_file(
+                "instance-root", PACKAGE_ARCHIVE_PATH, b"not gzip",
+                "application/octet-stream",
+            )
+
+    def test_connected_create_names_the_exact_failed_readback_property(self) -> None:
+        drive = ConnectedSetupDrive()
+        original_upload = drive.upload
+
+        def renamed_upload(*args, **kwargs):
+            result = original_upload(*args, **kwargs)
+            drive.objects[result["id"]]["title"] = "different.json"
+            return result
+
+        drive.upload = renamed_upload
+        with self.assertRaisesRegex(InstallationError, "readback mismatch: name"):
+            CodexDriveCreateOnlyStorage(
+                drive, scratch_directory=self.base / "scratch-renamed",
+            ).create_file(
+                "instance-root", "state/example.json", b"{}\n", "application/json",
+            )
+
     def test_connected_setup_refuses_nonempty_root_before_sheet_write(self) -> None:
         scope = GoogleSheetsScope(
             "sheet-1", "https://sheets.example.invalid/sheet-1", 7, "Tasks",
