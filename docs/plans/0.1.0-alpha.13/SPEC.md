@@ -134,6 +134,26 @@ the sole owner that may apply an eligible cursor. This repository boundary does
 not itself compose the daily phases, invoke live providers, deliver a brief, or
 qualify manual/scheduled/private acceptance.
 
+### Repaired connected bootstrap boundary (2026-09-08)
+
+The bootstrap candidate admits only a versioned exact Drive folder with the
+Drive folder MIME type and an exact directly contained Markdown bootstrap file.
+Its bootstrap URL is a canonical HTTPS URL. Recovery reads and verifies root
+metadata before it resolves the bootstrap and translates storage failures into
+a single `BootstrapError` boundary.
+
+The finite host bridge accepts only reviewed request types and advertised
+connector bindings. Drive upload/update effects require a canonical,
+non-symlink, mode-0600 regular file beneath the admitted mode-0700 bridge run
+directory, plus the child-provided size and SHA-256 rechecked immediately
+before dispatch. Structured connector replies are validated by request kind;
+arbitrary JSON cannot authorize metadata or write success. Bootstrap-document
+mode reads no ambient checkout profile, schema, or capability qualification:
+it recovers and execs the extracted package, whose entrypoint is the later
+owner of package configuration and connected composition. This remains a
+bootstrap-only repository boundary; it neither invokes providers nor claims a
+daily run, delivery, scheduler, or private acceptance.
+
 ## Existing implementation inventory
 
 The current repository is mostly contracts and recipes. Documented behavior is

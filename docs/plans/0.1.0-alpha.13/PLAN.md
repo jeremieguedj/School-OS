@@ -1047,3 +1047,9 @@ evidence that does not need to be repeatedly printed into model context.
   remain valid while unanchored nonempty conversation inventory blocks. Daily
   composition, qualified provider observation, and private acceptance remain
   separate gates.
+- Revision 41: repaired the isolated bootstrap candidate's private-file
+  confinement, finite request/result contracts, advertised Sheets/comment
+  bindings, versioned exact Drive-root admission, canonical HTTPS bootstrap
+  URL, storage-error boundary, and no-ambient bootstrap-document handoff. It
+  remains a bootstrap-only repository candidate pending independent review and
+  the separate connected composition/provider acceptance gates.

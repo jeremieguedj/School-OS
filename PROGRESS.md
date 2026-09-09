@@ -2501,3 +2501,35 @@ requirements, then read this log from top to bottom.
   bind observed authenticated providers, and obtain the outstanding M4-008 and
   M4-009 acceptance evidence. No provider, private source, mail, scheduler,
   release, tag, push, or shared-main mutation occurred.
+## 2026-09-08 — isolated bootstrap candidate review repair
+
+- Repaired only the rejected bootstrap/storage/CLI candidate in its isolated
+  worktree. Drive upload/update bridge dispatch now confines a canonical,
+  non-symlink, mode-0600 file to the admitted mode-0700 run directory and
+  recomputes the child-provided size/SHA-256 immediately before the fixed host
+  effect. Request values and response shapes are finite and kind-specific;
+  Sheets metadata and comment bindings use the advertised connector names.
+- Bootstrap admission now requires a versioned Drive-folder root, exact root
+  metadata readback, canonical HTTPS bootstrap URL, direct Markdown child, and
+  a `BootstrapError` wrapper for storage faults. Bootstrap-document mode avoids
+  ambient checkout profile/schema/capability reads before extracted-package
+  handoff. Counterexamples cover path escape/symlink/hash mutation, malformed
+  host metadata, HTTP/wrong-root admission, storage wrapping, binding names,
+  and no-profile document mode.
+- Focused bootstrap/CLI/source/task/Sheets/custody/semantic/bridge validation
+  passed 70 tests on the repository runtime. This is not a provider execution,
+  composed daily run, delivery, scheduler, private-instance, tag, or release.
+  The complete repository validator then passed on this rebased isolated
+  candidate, including schema, package, and tracked-file privacy checks. This
+  candidate is rebased on the local CI portability correction; next submit it
+  for independent review.
+
+## 2026-09-08 — integration CI verification continuity
+
+- The portability correction `000fd387c962b42d4b9ab4ef5c73f99a5ab33991`
+  was published to `origin/main` with matching remote SHA. Its exact GitHub
+  Actions **Validate** run `34295354704` completed successfully. This closes
+  the stale-temporary-worktree CI failure for the published source/task/MIME/
+  brief integration only; it does not accept this isolated bootstrap candidate
+  or authorize provider, private-instance, delivery, schedule, tag, or release
+  work.

@@ -11,6 +11,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
 
+from .references import ReferenceStorage, StoredObject
+
 
 class ConnectedStorageError(ValueError):
     """Raised when a connected Drive artifact cannot be trusted."""
@@ -228,3 +230,89 @@ class CodexDriveArtifactStore:
         if readback.data != data:
             raise ConnectedStorageError("replaced Drive artifact does not read back exactly")
         return readback
+
+
+class CodexDriveReferenceStorage(ReferenceStorage):
+    """Expose exact Drive objects to admitted-generation recovery.
+
+    This adapter intentionally supports direct ID reads, which is all package
+    recovery needs.  A name lookup is available only when the finite bridge
+    returns an explicitly complete bounded listing; an omitted completeness
+    proof is a blocker rather than an invitation to enumerate more broadly.
+    """
+
+    _FOLDER_MIME = "application/vnd.google-apps.folder"
+
+    def __init__(self, drive: Any, *, expected_urls: Mapping[str, str] | None = None) -> None:
+        self.drive = drive
+        self.expected_urls = dict(expected_urls or {})
+        self._urls: dict[str, str] = {}
+
+    @staticmethod
+    def _metadata(value: Any, object_id: str) -> tuple[str, tuple[str, ...], str | None, str, str, int]:
+        if not isinstance(value, Mapping) or value.get("id") != object_id:
+            raise ConnectedStorageError("Drive metadata disagrees with requested object identity")
+        mime_type = value.get("mime_type")
+        url = value.get("url")
+        name = value.get("title")
+        parents = value.get("parent_ids")
+        version = value.get("modified_time")
+        if not all(isinstance(item, str) and item for item in (mime_type, url, name, version)):
+            raise ConnectedStorageError("Drive metadata lacks exact object fields")
+        if not isinstance(parents, list) or any(not isinstance(item, str) or not item for item in parents):
+            raise ConnectedStorageError("Drive metadata lacks exact parent evidence")
+        size = 0 if mime_type == CodexDriveReferenceStorage._FOLDER_MIME else _size(value.get("size"), "Drive metadata")
+        return mime_type, tuple(parents), version, url, name, size
+
+    def _read_metadata(self, object_id: str) -> tuple[str, tuple[str, ...], str, str, str, int]:
+        if not isinstance(object_id, str) or not object_id:
+            raise ConnectedStorageError("Drive object ID is required")
+        result = self._metadata(
+            self.drive.metadata(object_id, fields="id,name,mimeType,parents,modifiedTime,size,webViewLink"), object_id,
+        )
+        self._urls[object_id] = result[3]
+        return result
+
+    def read(self, object_id: str) -> StoredObject | None:
+        mime_type, parents, version, url, name, size = self._read_metadata(object_id)
+        expected_url = self.expected_urls.get(object_id)
+        if expected_url is not None and expected_url != url:
+            raise ConnectedStorageError("Drive metadata URL differs from the admitted object URL")
+        kind = "folder" if mime_type == self._FOLDER_MIME else "file"
+        if kind == "folder":
+            return StoredObject(object_id, kind, parents[0] if len(parents) == 1 else None, parents, mime_type, version, name, None)
+        fetched = self.drive.fetch(url, raw=True, include_base64=True)
+        if not isinstance(fetched, Mapping) or fetched.get("id") != object_id:
+            raise ConnectedStorageError("Drive fetch identity disagrees with metadata")
+        data = CodexDriveArtifactStore._bytes(fetched.get("b64_string"))
+        if _size(fetched.get("file_size_bytes"), "Drive fetch") != len(data) or size != len(data):
+            raise ConnectedStorageError("Drive fetched byte size disagrees with metadata")
+        if fetched.get("is_empty") is not (len(data) == 0):
+            raise ConnectedStorageError("Drive fetch empty marker disagrees with bytes")
+        return StoredObject(object_id, kind, parents[0] if len(parents) == 1 else None, parents, mime_type, version, name, data)
+
+    def list_scoped(self, parent_id: str) -> list[StoredObject]:
+        if not isinstance(parent_id, str) or not parent_id:
+            raise ConnectedStorageError("Drive listing parent identity is required")
+        parent = self.read(parent_id)
+        if parent is None or parent.kind != "folder":
+            raise ConnectedStorageError("Drive listing parent is not an exact folder")
+        listing = self.drive.list_folder(self._urls[parent_id], top_k=1000)
+        if not isinstance(listing, Mapping) or listing.get("complete") is not True:
+            raise ConnectedStorageError("Drive listing lacks complete bounded evidence")
+        files = listing.get("files")
+        if not isinstance(files, list):
+            raise ConnectedStorageError("Drive listing is malformed")
+        objects: list[StoredObject] = []
+        for item in files:
+            if not isinstance(item, Mapping):
+                raise ConnectedStorageError("Drive listing member is malformed")
+            identifier = item.get("id")
+            parents = item.get("parent_ids")
+            if not isinstance(identifier, str) or not identifier or parents != [parent_id]:
+                raise ConnectedStorageError("Drive listing member lacks direct parent evidence")
+            object_ = self.read(identifier)
+            if object_ is None or object_.parent_id != parent_id:
+                raise ConnectedStorageError("Drive listing member readback differs from listing")
+            objects.append(object_)
+        return objects
