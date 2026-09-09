@@ -82,6 +82,7 @@ def _handoff_recovered_package(
     operation: str, entrypoint: str, operation_id: str, attempt_id: str,
     instance_reference: str,
     scheduler_admitted: bool = False,
+    preview_only: bool = False,
 ) -> Any:
     """Recover only the admitted package, then stop importing this checkout."""
     document = load_bootstrap_document(bootstrap_document)
@@ -95,6 +96,7 @@ def _handoff_recovered_package(
         recovered, operation=operation, entrypoint=entrypoint, operation_id=operation_id,
         attempt_id=attempt_id, run_directory=run_directory, instance_reference=instance_reference,
         scheduler_admitted=scheduler_admitted,
+        preview_only=preview_only,
     )
 
 
@@ -112,10 +114,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--operation-id", required=True)
     parser.add_argument("--attempt-id", required=True)
     parser.add_argument("--scheduler-admitted", action="store_true")
+    parser.add_argument("--preview-only", action="store_true")
     args = parser.parse_args(argv)
 
     if args.stage_results is not None:
-        if args.host_jsonl is not None or args.bootstrap_reference is not None or args.bootstrap_document is not None or args.entrypoint is not None or args.scheduler_admitted:
+        if args.host_jsonl is not None or args.bootstrap_reference is not None or args.bootstrap_document is not None or args.entrypoint is not None or args.scheduler_admitted or args.preview_only:
             parser.error("--stage-results is synthetic and mutually exclusive with host/bootstrap/entrypoint options")
         args.entrypoint = "manual"
     else:
@@ -123,6 +126,8 @@ def main(argv: list[str] | None = None) -> int:
             parser.error("--host-jsonl requires --bootstrap-reference and --entrypoint (or --bootstrap-document)")
         if args.bootstrap_reference is not None and args.bootstrap_document is not None:
             parser.error("--host-jsonl accepts exactly one bootstrap input")
+        if args.preview_only and (args.bootstrap_document is None or args.entrypoint != "manual" or args.scheduler_admitted):
+            parser.error("--preview-only requires the manual admitted bootstrap path without scheduler admission")
         # Admission recovery intentionally reads no checkout profile, schema, or
         # capability evidence.  Those are package-owned concerns after exec.
         if args.bootstrap_document is not None:
@@ -134,6 +139,7 @@ def main(argv: list[str] | None = None) -> int:
                     entrypoint=args.entrypoint, operation_id=args.operation_id,
                     attempt_id=args.attempt_id, instance_reference=args.instance,
                     scheduler_admitted=args.scheduler_admitted,
+                    preview_only=args.preview_only,
                 )
             except (BridgeError, BootstrapError, DailyError) as exc:
                 print(f"blocked: {exc}", file=sys.stderr)
@@ -156,6 +162,7 @@ def main(argv: list[str] | None = None) -> int:
                     operation=args.operation, entrypoint=args.entrypoint, operation_id=args.operation_id,
                     attempt_id=args.attempt_id, instance_reference=args.instance,
                     scheduler_admitted=args.scheduler_admitted,
+                    preview_only=args.preview_only,
                 )
             bootstrap = _object(args.bootstrap_reference, "bootstrap reference")
             if set(bootstrap) != {"object_id", "url"} or not all(isinstance(bootstrap[key], str) and bootstrap[key] for key in bootstrap):

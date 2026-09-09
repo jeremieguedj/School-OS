@@ -144,10 +144,13 @@ def installed_command(
     run_directory: Path,
     instance_reference: str,
     scheduler_admitted: bool = False,
+    preview_only: bool = False,
 ) -> tuple[str, list[str], dict[str, str]]:
     """Build a no-ambient-import exec invocation for the extracted package."""
     if operation != "daily-run" or entrypoint not in {"manual", "scheduled"}:
         raise BootstrapError("installed handoff has an unsupported operation or entrypoint")
+    if preview_only and entrypoint != "manual":
+        raise BootstrapError("the installed unsent preview is manual-only")
     if any(_IDENTIFIER.fullmatch(value) is None for value in (operation_id, attempt_id)):
         raise BootstrapError("installed handoff identifiers are unsafe")
     resolved_run = run_directory.resolve(strict=True)
@@ -162,6 +165,8 @@ def installed_command(
     ]
     if scheduler_admitted:
         arguments.append("--scheduler-admitted")
+    if preview_only:
+        arguments.append("--preview-only")
     recovery = recovered.recovery
     if isinstance(recovery, Mapping) and isinstance(recovery.get("manifest"), Mapping):
         document = {
@@ -195,6 +200,7 @@ def exec_installed_entrypoint(
     run_directory: Path,
     instance_reference: str,
     scheduler_admitted: bool = False,
+    preview_only: bool = False,
     executor: Callable[[str, list[str], Mapping[str, str]], Any] = os.execve,
 ) -> Any:
     """Replace the bootstrap process; the extracted package becomes authoritative."""
@@ -202,5 +208,6 @@ def exec_installed_entrypoint(
         recovered, operation=operation, entrypoint=entrypoint, operation_id=operation_id,
         attempt_id=attempt_id, run_directory=run_directory, instance_reference=instance_reference,
         scheduler_admitted=scheduler_admitted,
+        preview_only=preview_only,
     )
     return executor(executable, arguments, environment)

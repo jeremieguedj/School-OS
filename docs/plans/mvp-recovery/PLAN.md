@@ -244,8 +244,11 @@ blocks the affected path.
 
 ### Phase 1 — early live integration
 
-**Status: in progress; the repaired immutable package is installed and admitted
-on a fresh root, and the bounded source/task/unsent-preview journey remains.**
+**Status: in progress; the first repaired package was installed and admitted,
+but pre-source inspection found that the stable bootstrap did not forward the
+already-implemented manual-only unsent-preview flag. The narrow handoff repair
+is under test; because it changes executable bytes, the next attempt requires a
+rebuilt package and another new empty root.**
 The mandatory one-hour status checkpoint applies even if this phase has not
 started or finished. Use the Phase 0 `window_start_ms` and
 `window_end_ms` 14-day `[start,end)` bounds, recorded only in private evidence.

@@ -61,6 +61,18 @@ class RunOperationCliTests(unittest.TestCase):
             self.assertNotEqual(0, result.returncode)
             self.assertIn("requires --bootstrap-reference and --entrypoint", result.stderr)
 
+    def test_preview_only_requires_manual_admitted_bootstrap(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            profile, _ = self.files(Path(temporary))
+            run_dir = Path(temporary) / "run"
+            run_dir.mkdir(mode=0o700)
+            result = subprocess.run(
+                self.command(profile) + ["--host-jsonl", str(run_dir), "--bootstrap-reference", str(Path(temporary) / "bootstrap.json"), "--entrypoint", "manual", "--preview-only"],
+                text=True, capture_output=True, check=False,
+            )
+            self.assertNotEqual(0, result.returncode)
+            self.assertIn("manual admitted bootstrap path", result.stderr)
+
     def test_host_mode_requires_narrow_profile_and_complete_exact_bootstrap_bytes(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             base = Path(temporary)

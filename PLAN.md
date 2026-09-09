@@ -84,6 +84,11 @@ private recipient; those values remain outside Git. The corrected generic
 M4-001/M4-007 source-custody and semantic-audit implementation is complete and
 regression-tested; authenticated invocation, independent private accuracy, and
 view projection remain M4-003/M4-009 acceptance work.
+The recovery execution also found that the stable bootstrap handoff did not
+forward the installed runner's manual-only unsent-preview mode. That finite CLI
+handoff is being repaired and regression-tested before any source read; the
+changed executable package will be rebuilt and installed only into a new empty
+test root.
 M4-004 now has a reproducible synthetic measurement command and measured
 checkpoint-before-limit behavior refreshed against the corrected source path.
 Its task-sync measurements now exercise the accepted durable effect callback

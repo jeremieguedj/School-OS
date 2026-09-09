@@ -2696,3 +2696,18 @@ requirements, then read this log from top to bottom.
 - Next: recover through the stable bootstrap using only installed package bytes,
   then run the bounded real source/task/Sheets/render path to the unsent preview
   gate without reserving or sending a delivery.
+
+## 2026-09-09 — recovery MVP unsent-preview bootstrap handoff repair
+
+- Pre-source inspection of the admitted runtime found that the installed daily
+  entrypoint already implements the required manual-only `--preview-only` path,
+  but the stable bootstrap wrapper neither accepted nor forwarded that flag.
+  Running the wrapper as admitted would therefore enter delivery composition,
+  which is forbidden before the early gate; no source or delivery call was made.
+- Added the finite flag across the bootstrap handoff and rejected preview use
+  with the scheduled entrypoint, legacy bootstrap-readback mode, scheduler
+  admission, or synthetic stage results. Focused bootstrap/CLI tests pass.
+- This is executable-package drift, so the previously admitted root is retired
+  from runtime evidence without modification. Next: pass full validation,
+  checkpoint and push the repair, rebuild the immutable package, and install it
+  only into another new empty root and isolated Sheet before the preview.

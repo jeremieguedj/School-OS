@@ -392,6 +392,25 @@ class ConnectedBootstrapTests(unittest.TestCase):
             self.assertNotIn("PYTHONPATH", environment)
             self.assertNotIn("PYTHONHOME", environment)
 
+    def test_handoff_command_forwards_manual_preview_only(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            run = Path(temporary); entrypoint = run / "run_connected_operation.py"; entrypoint.write_text("", encoding="utf-8")
+            recovered = RecoveredEntrypoint(run, entrypoint, {})
+            _, command, _ = installed_command(
+                recovered, operation="daily-run", entrypoint="manual",
+                operation_id="op-1", attempt_id="attempt-1",
+                run_directory=run, instance_reference="instance-1",
+                preview_only=True,
+            )
+            self.assertIn("--preview-only", command)
+            with self.assertRaisesRegex(BootstrapError, "manual-only"):
+                installed_command(
+                    recovered, operation="daily-run", entrypoint="scheduled",
+                    operation_id="op-2", attempt_id="attempt-1",
+                    run_directory=run, instance_reference="instance-1",
+                    preview_only=True,
+                )
+
 
 if __name__ == "__main__":
     unittest.main()
