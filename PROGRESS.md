@@ -2671,3 +2671,28 @@ requirements, then read this log from top to bottom.
 - Next: pass focused and full repository validation, publish the repaired
   checkpoint, rebuild and verify its immutable package, and use a new empty
   Drive root and Sheet for the next early integration attempt.
+
+## 2026-09-09 — recovery MVP fresh installation admitted
+
+- The finite archive MIME repair and per-property readback diagnostics passed
+  331 repository tests, installed-package checks, schema/template validation,
+  and tracked privacy checks. Commit `5c7c57d` was pushed and exact remote-ref
+  readback matched.
+- Built and installed-validated the immutable alpha.13 archive from that exact
+  commit. An independent rebuild was byte-identical. The frozen archive
+  SHA-256 is `ad96c783a4d4500225f9a09fe96642ab969572309c99acf4ec40268b999650ad`.
+- Created a new isolated Drive root and native Sheet under the authorized test
+  parent. Initial readback proved the root empty and the Sheet contained one
+  empty `Tasks` tab before the packaged installer wrote anything.
+- The packaged create-only installer completed beyond the prior archive gate
+  and produced the manifest, verified admission, and bootstrap. Exact inventory
+  readback found all 29 expected installed objects with no missing or unexpected
+  child. The Sheet was then moved into the installed root as planned; readback
+  proved 30 total exact children, one Sheet parent, all 13 required headers,
+  and zero task rows.
+- No source import, task creation, delivery reservation, Todoist operation,
+  audio call, email, or schedule action occurred. Private identities, bootstrap,
+  setup plan, and receipts remain only in ignored recovery evidence.
+- Next: recover through the stable bootstrap using only installed package bytes,
+  then run the bounded real source/task/Sheets/render path to the unsent preview
+  gate without reserving or sending a delivery.

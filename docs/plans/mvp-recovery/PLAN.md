@@ -244,7 +244,8 @@ blocks the affected path.
 
 ### Phase 1 — early live integration
 
-**Status: in progress; first implementation target, without a completion deadline.**
+**Status: in progress; the repaired immutable package is installed and admitted
+on a fresh root, and the bounded source/task/unsent-preview journey remains.**
 The mandatory one-hour status checkpoint applies even if this phase has not
 started or finished. Use the Phase 0 `window_start_ms` and
 `window_end_ms` 14-day `[start,end)` bounds, recorded only in private evidence.
