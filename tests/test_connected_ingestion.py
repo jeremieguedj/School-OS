@@ -25,7 +25,7 @@ from school_os.connected_ingestion import (
     DriveReference,
     StoredArtifact,
 )
-from school_os.contracts import canonical_json_bytes
+from school_os.contracts import canonical_json_bytes, sha256_bytes
 
 
 def _part(data: bytes) -> dict[str, Any]:
@@ -314,6 +314,85 @@ class ConnectedIngestionTests(unittest.TestCase):
             {"schema_version", "completed_conversation_ids", "units", "discovery_sha256"},
             set(json.loads(resumed.work.data)),
         )
+
+    def test_empty_complete_discovery_catalogs_no_provider_work_and_retains_index(self) -> None:
+        source = Source({})
+        retained_index = canonical_json_bytes({
+            "schema_version": 1,
+            "records": [{"record_id": "retained-record", "record_sha256": "a" * 64, "fact_ids": []}],
+        })
+        self.store.seed(self.index, retained_index)
+        worker = self.worker(source)
+        discovery = worker.discover(
+            scope={"query": "bounded"}, discovery_parent=self.parent,
+            discovery_name="runs/empty/discovery.json",
+        )
+        self.assertEqual((), discovery.conversation_ids)
+        self.assertEqual([None], source.search_calls)
+        result = worker.catalog(
+            discovery_reference=discovery.inventory.reference, catalog_parent=self.parent,
+            index_reference=self.index, work_reference=self.state, max_records=1, max_bytes=4096,
+        )
+        self.assertTrue(result.phase_complete)
+        self.assertEqual((), result.completed_units)
+        self.assertEqual({}, result.remaining_work)
+        self.assertEqual((), result.artifacts)
+        self.assertEqual([], source.read_calls)
+        self.assertEqual(0, self.interpret_calls)
+        self.assertEqual(0, self.audit_calls)
+        self.assertEqual(retained_index, result.index.data)
+        self.assertEqual(self.index, result.index.reference)
+        self.assertEqual([], result.proposed_cursor["completed_conversation_ids"])
+        self.assertEqual(sha256_bytes(discovery.inventory.data), result.proposed_cursor["discovery_sha256"])
+        self.assertEqual(sha256_bytes(discovery.inventory.data), json.loads(result.work.data)["discovery_sha256"])
+
+    def test_discovery_requires_message_anchors_in_source_and_persisted_inventory(self) -> None:
+        class MissingHitSource(Source):
+            def search(inner_self, _scope: dict[str, Any], token: str | None) -> Page:
+                inner_self.search_calls.append(token)
+                if token is not None:
+                    raise AssertionError("unexpected discovery page")
+                return Page(({
+                    "conversation_id": "thread-1", "byte_size": 1, "discovery_message_ids": [],
+                },), None)
+
+        missing = MissingHitSource({"thread-1": "Body"})
+        with self.assertRaisesRegex(ConnectedIngestionError, "no immutable discovery-hit identity"):
+            self.worker(missing).discover(
+                scope={"query": "bounded"}, discovery_parent=self.parent,
+                discovery_name="runs/missing-hit/discovery.json",
+            )
+        self.assertEqual([], missing.read_calls)
+        self.assertEqual({}, self.store.names)
+
+        source = Source({"thread-1": "Body"})
+        worker = self.worker(source)
+        discovery = worker.discover(
+            scope={"query": "bounded"}, discovery_parent=self.parent,
+            discovery_name="runs/anchored/discovery.json",
+        )
+        base = json.loads(discovery.inventory.data)
+        for label, mutate in (
+            ("page-hit", lambda value: value["pages"][0]["hits"][0].__setitem__("message_ids", [])),
+            ("conversation", lambda value: value["conversations"][0].__setitem__("discovery_message_ids", [])),
+        ):
+            with self.subTest(evidence=label):
+                malformed = json.loads(json.dumps(base))
+                mutate(malformed)
+                artifact = self.store.write_immutable(
+                    self.parent, f"runs/malformed-{label}/discovery.json",
+                    canonical_json_bytes(malformed), "application/json",
+                )
+                before_work = self.store.read(self.state).data
+                before_index = self.store.read(self.index).data
+                with self.assertRaisesRegex(ConnectedIngestionError, "(page hit|conversation has invalid evidence)"):
+                    worker.catalog(
+                        discovery_reference=artifact.reference, catalog_parent=self.parent,
+                        index_reference=self.index, work_reference=self.state, max_records=1, max_bytes=4096,
+                    )
+                self.assertEqual(before_work, self.store.read(self.state).data)
+                self.assertEqual(before_index, self.store.read(self.index).data)
+        self.assertEqual([], source.read_calls)
 
     def test_unbound_direct_resource_blocks_before_any_catalog_state_advance(self) -> None:
         source = Source({"thread-1": "Body"})

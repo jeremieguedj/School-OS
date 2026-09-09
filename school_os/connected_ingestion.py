@@ -494,9 +494,10 @@ def _discovery_inventory(source: SourcePort, scope: Mapping[str, Any]) -> dict[s
             message_ids = raw.get("discovery_message_ids", [])
             if (
                 not isinstance(message_ids, list)
+                or not message_ids
                 or any(not isinstance(item, str) or not item for item in message_ids)
             ):
-                raise ConnectedIngestionError("enumerated conversation has malformed discovery identities")
+                raise ConnectedIngestionError("enumerated conversation has no immutable discovery-hit identity")
             hits.setdefault(conversation_id, set()).update(message_ids)
             page_hits.append({
                 "conversation_id": conversation_id,
@@ -581,6 +582,7 @@ def _discovery_from_artifact(data: bytes) -> tuple[dict[str, Any], list[dict[str
                 not isinstance(item, Mapping) or set(item) != {"conversation_id", "message_ids"}
                 or not isinstance(item.get("conversation_id"), str) or not item["conversation_id"]
                 or not isinstance(item.get("message_ids"), list)
+                or not item["message_ids"]
                 or any(not isinstance(hit, str) or not hit for hit in item["message_ids"])
                 or len(item["message_ids"]) != len(set(item["message_ids"]))
             ):
@@ -598,8 +600,8 @@ def _discovery_from_artifact(data: bytes) -> tuple[dict[str, Any], list[dict[str
     ):
         raise ConnectedIngestionError("discovery inventory dispositions are malformed")
     conversations = value.get("conversations")
-    if not isinstance(conversations, list) or not conversations:
-        raise ConnectedIngestionError("discovery inventory has no conversations")
+    if not isinstance(conversations, list):
+        raise ConnectedIngestionError("discovery inventory conversations are malformed")
     normalized: list[dict[str, Any]] = []
     ids: list[str] = []
     for item in conversations:
@@ -610,7 +612,8 @@ def _discovery_from_artifact(data: bytes) -> tuple[dict[str, Any], list[dict[str
         hits = item.get("discovery_message_ids")
         if (
             isinstance(byte_size, bool) or not isinstance(byte_size, int) or byte_size < 0
-            or not isinstance(hits, list) or any(not isinstance(hit, str) or not hit for hit in hits)
+            or not isinstance(hits, list) or not hits
+            or any(not isinstance(hit, str) or not hit for hit in hits)
             or len(hits) != len(set(hits))
         ):
             raise ConnectedIngestionError("discovery inventory conversation has invalid evidence")
