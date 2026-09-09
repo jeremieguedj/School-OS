@@ -23,20 +23,35 @@ from school_os.package import INVENTORY_NAME, inventory_bytes, verify_extracted_
 class FakeDrive:
     def __init__(self) -> None:
         self.objects = {
-            "root": {"id": "root", "mime_type": "application/vnd.google-apps.folder", "parent_ids": ["test-parent"], "modified_time": "root-v1", "size": 0, "url": "https://example.invalid/root", "title": "root"},
-            "bootstrap": {"id": "bootstrap", "mime_type": "text/markdown", "parent_ids": ["root"], "modified_time": "v1", "size": 4, "url": "https://example.invalid/bootstrap", "title": "BOOTSTRAP.md"},
+            "root": {"id": "root", "mime_type": "application/vnd.google-apps.folder", "parent_ids": ["test-parent"], "modified_time": "root-v1", "size": 0, "url": "https://example.invalid/root", "title": "root", "data": None},
+            "bootstrap": {"id": "bootstrap", "mime_type": "text/markdown", "parent_ids": ["root"], "modified_time": "v1", "size": 4, "url": "https://example.invalid/bootstrap", "title": "BOOTSTRAP.md", "data": b"test"},
         }
+        self.search_pages = None
+        self.search_calls = []
 
     def metadata(self, object_id: str, *, fields: str):
         return dict(self.objects[object_id])
 
     def fetch(self, url: str, *, raw: bool, include_base64: bool):
-        if url != self.objects["bootstrap"]["url"]:
-            raise AssertionError("unexpected fetch URL")
-        return {"id": "bootstrap", "b64_string": "dGVzdA==", "file_size_bytes": 4, "is_empty": False}
+        item = next(item for item in self.objects.values() if item["url"] == url)
+        data = item["data"]
+        return {"id": item["id"], "b64_string": __import__("base64").b64encode(data).decode("ascii"), "file_size_bytes": len(data), "is_empty": not data}
 
-    def list_folder(self, url: str, *, top_k: int):
-        return {"complete": True, "files": [dict(self.objects["bootstrap"])]}
+    def search_page(self, parent_id: str, *, item_type: str, topn: int, page_token: str | None = None):
+        self.search_calls.append((parent_id, item_type, topn, page_token))
+        if self.search_pages is not None:
+            return self.search_pages[(item_type, page_token)]
+        values = []
+        for item in self.objects.values():
+            if item["parent_ids"] != [parent_id]:
+                continue
+            observed_type = (
+                "folder" if item["mime_type"] == "application/vnd.google-apps.folder"
+                else "image" if item["mime_type"].startswith("image/") else "document"
+            )
+            if observed_type == item_type:
+                values.append({key: item[key] for key in ("id", "title", "mime_type", "url", "parent_ids")})
+        return {"results": values, "next_page_token": None}
 
 
 class ConnectedBootstrapTests(unittest.TestCase):
@@ -51,12 +66,45 @@ class ConnectedBootstrapTests(unittest.TestCase):
         self.assertEqual(b"test", artifact.data)
         self.assertEqual("root", artifact.parent_id)
         self.assertEqual(["bootstrap"], [item.object_id for item in storage.list_scoped("root")])
-        drive.list_folder = lambda *_args, **_kwargs: {"files": []}  # type: ignore[method-assign]
-        with self.assertRaisesRegex(ConnectedStorageError, "complete"):
-            storage.list_scoped("root")
         drive.objects["bootstrap"]["url"] = "https://example.invalid/substituted"
         with self.assertRaisesRegex(ConnectedStorageError, "URL"):
             storage.read("bootstrap")
+
+    def test_reference_storage_observed_empty_search_exhausts_every_category(self) -> None:
+        drive = FakeDrive()
+        del drive.objects["bootstrap"]
+        self.assertEqual([], CodexDriveReferenceStorage(drive).list_scoped("root"))
+        self.assertEqual(
+            [("root", item_type, 1000, None) for item_type in ("document", "image", "folder")],
+            drive.search_calls,
+        )
+
+    def test_reference_storage_paginates_documents_images_and_folders(self) -> None:
+        drive = FakeDrive()
+        drive.objects.update({
+            "second": {"id": "second", "mime_type": "application/pdf", "parent_ids": ["root"], "modified_time": "v1", "size": 3, "url": "https://example.invalid/second", "title": "second.pdf", "data": b"pdf"},
+            "image": {"id": "image", "mime_type": "image/png", "parent_ids": ["root"], "modified_time": "v1", "size": 3, "url": "https://example.invalid/image", "title": "image.png", "data": b"png"},
+            "folder": {"id": "folder", "mime_type": "application/vnd.google-apps.folder", "parent_ids": ["root"], "modified_time": "v1", "size": 0, "url": "https://example.invalid/folder", "title": "folder", "data": None},
+        })
+        listed = lambda identifier: {key: drive.objects[identifier][key] for key in ("id", "title", "mime_type", "url", "parent_ids")}
+        drive.search_pages = {
+            ("document", None): {"results": [listed("bootstrap")], "next_page_token": "documents-2"},
+            ("document", "documents-2"): {"results": [listed("second")], "next_page_token": None},
+            ("image", None): {"results": [listed("image")], "next_page_token": None},
+            ("folder", None): {"results": [listed("folder")], "next_page_token": None},
+        }
+        result = CodexDriveReferenceStorage(drive).list_scoped("root")
+        self.assertEqual(["bootstrap", "second", "image", "folder"], [item.object_id for item in result])
+        self.assertIn(("root", "document", 1000, "documents-2"), drive.search_calls)
+
+    def test_reference_storage_rejects_repeated_or_unknown_continuation(self) -> None:
+        drive = FakeDrive()
+        drive.search_pages = {
+            ("document", None): {"results": [], "next_page_token": "repeat"},
+            ("document", "repeat"): {"results": [], "next_page_token": "repeat"},
+        }
+        with self.assertRaisesRegex(ConnectedStorageError, "continuation"):
+            CodexDriveReferenceStorage(drive).list_scoped("root")
 
     def test_bootstrap_document_is_exact_root_and_markdown_admission(self) -> None:
         valid = {
@@ -91,6 +139,42 @@ class ConnectedBootstrapTests(unittest.TestCase):
             dispatcher.dispatch("drive.upload_file", evidence, lambda *_: self._tool_result({}))
         with self.assertRaisesRegex(BridgeError, "unexpected"):
             dispatcher.dispatch("tools.execute", {}, lambda *_: self._tool_result({}))
+
+    def test_dispatcher_maps_scoped_page_to_advertised_drive_search(self) -> None:
+        dispatcher = HostBindingDispatcher()
+        calls: list[tuple[str, dict[str, object]]] = []
+        page = {"results": [], "next_page_token": None}
+        result = dispatcher.dispatch(
+            "drive.search_page",
+            {"parent_id": "folder_1", "item_type": "document", "topn": 1000},
+            lambda tool, args: calls.append((tool, dict(args))) or self._tool_result(page),
+        )
+        self.assertEqual(page, result)
+        self.assertEqual("mcp__codex_apps__google_drive_search", calls[0][0])
+        self.assertEqual({
+            "special_filter_query_str": "'folder_1' in parents and trashed = false",
+            "item_type": "document", "topn": 1000,
+        }, calls[0][1])
+        dispatcher.dispatch(
+            "drive.search_page",
+            {"parent_id": "folder_1", "item_type": "document", "topn": 1000, "page_token": "opaque-2"},
+            lambda tool, args: calls.append((tool, dict(args))) or self._tool_result(page),
+        )
+        self.assertEqual("opaque-2", calls[1][1]["page_token"])
+        with self.assertRaisesRegex(BridgeError, "unsupported page shape"):
+            dispatcher.dispatch(
+                "drive.search_page",
+                {"parent_id": "folder_1", "item_type": "folder", "topn": 1000},
+                lambda *_: self._tool_result({"files": []}),
+            )
+        invoked: list[bool] = []
+        with self.assertRaisesRegex(BridgeError, "advertised paginated category"):
+            dispatcher.dispatch(
+                "drive.search_page",
+                {"parent_id": "folder_1", "item_type": "all", "topn": 1000},
+                lambda *_: invoked.append(True) or self._tool_result(page),
+            )
+        self.assertEqual([], invoked)
 
     def test_dispatcher_confines_drive_write_and_rechecks_child_evidence(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

@@ -108,14 +108,19 @@ class ConnectedSetupDrive:
             "file_size_bytes": len(data), "is_empty": not data,
         }
 
-    def list_folder(self, url: str, *, top_k: int):
-        parent = next(value for value in self.objects.values() if value["url"] == url)
+    def search_page(self, parent_id: str, *, item_type: str, topn: int, page_token: str | None = None):
+        if page_token is not None:
+            raise AssertionError("synthetic setup listing has one page per type")
         files = [
             {"id": item["id"], "title": item["title"], "mime_type": item["mime_type"],
              "url": item["url"], "parent_ids": item["parent_ids"]}
-            for item in self.objects.values() if item["parent_ids"] == [parent["id"]]
+            for item in self.objects.values()
+            if item["parent_ids"] == [parent_id] and (
+                "folder" if item["mime_type"] == "application/vnd.google-apps.folder"
+                else "image" if item["mime_type"].startswith("image/") else "document"
+            ) == item_type
         ]
-        return {"complete": True, "files": files}
+        return {"results": files, "next_page_token": None}
 
     def upload(self, file_uri: str, *, file_name: str, mime_type: str, parent_folder_id: str):
         self.sequence += 1

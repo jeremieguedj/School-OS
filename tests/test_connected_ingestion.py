@@ -672,8 +672,18 @@ class CodexDriveArtifactStoreTests(unittest.TestCase):
             value = next(item for item in self.items.values() if item["url"] == url)
             return {"id": value["id"], "b64_string": base64.b64encode(value["data"]).decode(), "file_size_bytes": len(value["data"]), "is_empty": not value["data"]}
 
-        def list_folder(self, _url: str, *, top_k: int) -> dict[str, Any]:
-            return {"files": [{key: item[key] for key in ("id", "title", "mime_type", "url")} | {"parent_ids": [item["parent_id"]]} for item in self.items.values() if item["parent_id"] == "root"]}
+        def search_page(self, parent_id: str, *, item_type: str, topn: int, page_token: str | None = None) -> dict[str, Any]:
+            if page_token is not None:
+                raise AssertionError("synthetic artifact listing has one page per type")
+            results = [
+                {key: item[key] for key in ("id", "title", "mime_type", "url")} | {"parent_ids": [item["parent_id"]]}
+                for item in self.items.values()
+                if item["parent_id"] == parent_id and (
+                    "folder" if item["mime_type"] == "application/vnd.google-apps.folder"
+                    else "image" if item["mime_type"].startswith("image/") else "document"
+                ) == item_type
+            ]
+            return {"results": results, "next_page_token": None}
 
         def upload(self, file_uri: str, *, file_name: str, mime_type: str, parent_folder_id: str) -> dict[str, Any]:
             self.count += 1; identifier = f"new-{self.count}"

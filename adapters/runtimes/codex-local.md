@@ -90,8 +90,13 @@ tools; text content blocks and metadata never establish semantic verification.
 
 ## Selected connector limits
 
-- Drive folder listing has a bounded `top_k` and no continuation token on this
-  surface. A result that reaches the configured cap is incomplete and blocks.
+- Drive scoped listing uses the metadata-only paginated search shape, never the
+  legacy non-paginated folder response. The host constructs one exact
+  `'<parent_id>' in parents and trashed = false` filter and exhausts the
+  advertised `document`, `image`, and `folder` categories independently,
+  returning each opaque `next_page_token` unchanged. Legacy response shapes
+  and malformed, repeated, or over-bound continuation evidence block
+  completeness.
 - Drive raw-file replacement exposes no atomic revision precondition. It is
   permitted only under proven serialization with exact file ID, immediate
   pre-write `modified_time` plus complete-byte SHA-256 guard, and immediate

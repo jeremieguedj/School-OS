@@ -49,7 +49,10 @@ class HostBinding:
 REQUEST_SPECS: dict[str, RequestSpec] = {
     "drive.get_metadata": RequestSpec(frozenset({"fileId"}), frozenset({"fields", "supportsAllDrives"})),
     "drive.fetch": RequestSpec(frozenset({"url"}), frozenset({"download_raw_file", "include_base64", "raw_export_mime_type"})),
-    "drive.list_folder": RequestSpec(frozenset({"url", "top_k"})),
+    "drive.search_page": RequestSpec(
+        frozenset({"parent_id", "item_type", "topn"}),
+        frozenset({"page_token"}),
+    ),
     "drive.create_folder": RequestSpec(frozenset({"name"}), frozenset({"parent_folder"})),
     "drive.upload_file": RequestSpec(frozenset({"file_uri", "file_sha256", "file_size_bytes"}), frozenset({"file_name", "mime_type", "parent_folder_id"})),
     "drive.update_file": RequestSpec(frozenset({"fileId", "file_uri", "file_sha256", "file_size_bytes"}), frozenset({"mime_type", "name", "addParents", "removeParents"})),
@@ -75,7 +78,7 @@ REQUEST_SPECS: dict[str, RequestSpec] = {
 HOST_BINDINGS: dict[str, HostBinding] = {
     "drive.get_metadata": HostBinding("mcp__codex_apps__google_drive_get_file_metadata"),
     "drive.fetch": HostBinding("mcp__codex_apps__google_drive_fetch"),
-    "drive.list_folder": HostBinding("mcp__codex_apps__google_drive_list_folder"),
+    "drive.search_page": HostBinding("mcp__codex_apps__google_drive_search"),
     "drive.create_folder": HostBinding("mcp__codex_apps__google_drive_create_folder"),
     "drive.upload_file": HostBinding("mcp__codex_apps__google_drive_upload_file"),
     "drive.update_file": HostBinding("mcp__codex_apps__google_drive_update_file"),
@@ -102,7 +105,7 @@ HOST_BINDINGS: dict[str, HostBinding] = {
 CAPTURED_HOST_CAPABILITIES: frozenset[str] = frozenset({
     "mcp__codex_apps__google_drive_get_file_metadata",
     "mcp__codex_apps__google_drive_fetch",
-    "mcp__codex_apps__google_drive_list_folder",
+    "mcp__codex_apps__google_drive_search",
     "mcp__codex_apps__google_drive_create_folder",
     "mcp__codex_apps__google_drive_upload_file",
     "mcp__codex_apps__google_drive_update_file",
@@ -237,10 +240,10 @@ def _validate_request(kind: str, args: Mapping[str, Any]) -> None:
     keys = set(args)
     if not spec.required <= keys or not keys <= spec.required | spec.optional:
         raise BridgeError(f"invalid argument keys for {kind}")
-    for key in ("fileId", "message_id", "thread_id", "attachment_id", "filename", "url", "name", "file_name", "mime_type", "parent_folder", "parent_folder_id", "query", "next_page_token", "page_token", "from_address", "reply_message_id", "reply_to", "fields", "cell_fields", "spreadsheet_id", "spreadsheet_url"):
+    for key in ("fileId", "parent_id", "item_type", "message_id", "thread_id", "attachment_id", "filename", "url", "name", "file_name", "mime_type", "parent_folder", "parent_folder_id", "query", "next_page_token", "page_token", "from_address", "reply_message_id", "reply_to", "fields", "cell_fields", "spreadsheet_id", "spreadsheet_url"):
         if key in args:
             _nonempty_string(args[key], f"{kind}.{key}")
-    for key in ("top_k", "max_results", "max_messages", "page_size"):
+    for key in ("top_k", "topn", "max_results", "max_messages", "page_size"):
         if key in args:
             _positive_int(args[key], f"{kind}.{key}")
     for key in ("label_ids", "ranges", "response_ranges"):
@@ -251,6 +254,13 @@ def _validate_request(kind: str, args: Mapping[str, Any]) -> None:
             raise BridgeError(f"{kind}.{key} must be boolean")
     if "supportsAllDrives" in args and args["supportsAllDrives"] is not None and not isinstance(args["supportsAllDrives"], bool):
         raise BridgeError("drive.get_metadata.supportsAllDrives must be boolean or null")
+    if kind == "drive.search_page":
+        if re.fullmatch(r"[A-Za-z0-9_-]+", args["parent_id"]) is None:
+            raise BridgeError("drive.search_page.parent_id is not a Drive object ID")
+        if args["item_type"] not in {"document", "image", "folder"}:
+            raise BridgeError("drive.search_page.item_type is not an advertised paginated category")
+        if args["topn"] > 1000:
+            raise BridgeError("drive.search_page.topn exceeds the finite page bound")
     if kind in {"drive.upload_file", "drive.update_file"}:
         raw_path = args.get("file_uri")
         if not isinstance(raw_path, str) or not Path(raw_path).is_absolute():
@@ -350,9 +360,17 @@ def _validate_result(kind: str, result: Any, args: Mapping[str, Any] | None = No
             raise BridgeError("drive.fetch result byte length disagrees with base64")
         if not isinstance(result.get("is_empty"), bool) or result["is_empty"] != (len(raw) == 0):
             raise BridgeError("drive.fetch result empty marker disagrees with bytes")
-    elif kind == "drive.list_folder":
-        if not isinstance(result.get("files"), list):
-            raise BridgeError("drive.list_folder result.files must be a list")
+    elif kind == "drive.search_page":
+        if set(result) - {"results", "next_page_token"} or not isinstance(result.get("results"), list):
+            raise BridgeError("drive.search_page result has an unsupported page shape")
+        for item in result["results"]:
+            if not isinstance(item, Mapping):
+                raise BridgeError("drive.search_page result member must be an object")
+            _nonempty_string(item.get("id"), "drive.search_page result member.id")
+            _nonempty_string(item.get("title"), "drive.search_page result member.title")
+        token = result.get("next_page_token")
+        if token is not None:
+            _nonempty_string(token, "drive.search_page result.next_page_token")
     elif kind == "drive.create_folder":
         if result.get("success") is not True:
             raise BridgeError("drive.create_folder result lacks success evidence")
@@ -484,6 +502,13 @@ class HostBindingDispatcher:
             raise BridgeError("host binding invoker is unavailable")
         native_args = dict(args)
         snapshots: list[Path] = []
+        if kind == "drive.search_page":
+            native_args = {
+                "special_filter_query_str": f"'{args['parent_id']}' in parents and trashed = false",
+                "item_type": args["item_type"], "topn": args["topn"],
+            }
+            if "page_token" in args:
+                native_args["page_token"] = args["page_token"]
         if kind in {"drive.upload_file", "drive.update_file"}:
             data = self._private_file_bytes(
                 args["file_uri"], evidence=args, label="Drive write file_uri",
@@ -751,12 +776,14 @@ class CodexDrivePort:
     def fetch(self, url: str, *, raw: bool = True, include_base64: bool = True) -> Any:
         return self.peer.connector_call("drive.fetch", {"url": url, "download_raw_file": raw, "include_base64": include_base64})
 
-    def list_folder(self, url: str, *, top_k: int) -> Any:
-        result = self.peer.connector_call("drive.list_folder", {"url": url, "top_k": top_k})
-        files = result.get("files") if isinstance(result, Mapping) else None
-        if not isinstance(files, list) or len(files) >= top_k:
-            raise BridgeError("Drive folder listing is invalid or reached its non-paginated cap")
-        return result
+    def search_page(
+        self, parent_id: str, *, item_type: str, topn: int,
+        page_token: str | None = None,
+    ) -> Any:
+        args = {"parent_id": parent_id, "item_type": item_type, "topn": topn}
+        if page_token is not None:
+            args["page_token"] = page_token
+        return self.peer.connector_call("drive.search_page", args)
 
     def create_folder(self, name: str, parent_folder: str) -> Any:
         return self.peer.connector_call("drive.create_folder", {"name": name, "parent_folder": parent_folder})

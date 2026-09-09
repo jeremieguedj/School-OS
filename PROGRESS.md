@@ -2731,3 +2731,35 @@ requirements, then read this log from top to bottom.
   main mutation, private/provider access, or external effect occurred. Next:
   hand the immutable repair commit to the root task for publication and a new
   exact-SHA GitHub Validate dispatch.
+
+## 2026-09-08 — live empty-root Drive pagination repair
+
+- Reproduced the first live setup blocker without making a provider call or
+  write: the advertised legacy Drive `list_folder(url, top_k)` result contains
+  `files` but no pagination/completeness field, while the installer correctly
+  refused to treat the observed `files: []` response as an exhaustive empty
+  root. The callable Drive metadata confirms that explicit `item_type` search
+  requests return exactly one metadata-only provider page plus an opaque
+  `next_page_token`; calls without that explicit mode retain legacy behavior.
+- Replaced the finite child/host `drive.list_folder` binding with confined
+  `drive.search_page`. The child can supply only a validated Drive parent ID,
+  one advertised `document`/`image`/`folder` category, a bounded page size, and
+  an optional opaque token. The host alone constructs the exact
+  `'<parent_id>' in parents and trashed = false` filter. The storage adapter
+  exhausts every token for all three categories before it returns either an
+  empty or populated scope, and exact metadata/readback still proves every
+  returned object's direct parent.
+- Legacy response shapes, malformed/oversized pages, duplicate object IDs,
+  malformed or repeated tokens, and more than the finite per-category page
+  bound all block. The same complete search is used for immutable-name adoption
+  after uncertain creates, preserving ambiguity refusal rather than merely
+  unblocking fresh-root setup.
+- Added focused observed-empty, nonempty multi-page/all-category, opaque-token,
+  legacy-shape, and invalid-continuation regressions. The focused dependency-
+  free bootstrap/ingestion/setup run passed 52 tests. The exact-HEAD full
+  dependency-free validator passed all 319 tests, including package,
+  installed-entrypoint, privacy, and release checks; `git diff --check` is
+  clean. No live-provider call, Drive/Sheet/Gmail write, private-data access,
+  main mutation, push, or release occurred. Next: hand the immutable repair
+  commit to the root task for publication, exact-SHA CI, replacement-package
+  verification, and continuation by the already authorized live executor.

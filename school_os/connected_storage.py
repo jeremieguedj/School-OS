@@ -56,6 +56,55 @@ def _size(value: Any, label: str) -> int:
     raise ConnectedStorageError(f"{label} lacks an exact byte size")
 
 
+_SCOPED_ITEM_TYPES = ("document", "image", "folder")
+_SCOPED_PAGE_SIZE = 1000
+_MAX_SCOPED_PAGES_PER_TYPE = 1000
+
+
+def _complete_scoped_search(drive: Any, parent_id: str) -> tuple[dict[str, Any], ...]:
+    """Exhaust every advertised metadata category for one exact Drive parent."""
+    if not isinstance(parent_id, str) or not parent_id:
+        raise ConnectedStorageError("Drive listing parent identity is required")
+    items: list[dict[str, Any]] = []
+    seen_ids: set[str] = set()
+    for item_type in _SCOPED_ITEM_TYPES:
+        token: str | None = None
+        seen_tokens: set[str] = set()
+        for _page_number in range(_MAX_SCOPED_PAGES_PER_TYPE):
+            page = drive.search_page(
+                parent_id, item_type=item_type, topn=_SCOPED_PAGE_SIZE,
+                page_token=token,
+            )
+            if (
+                not isinstance(page, Mapping)
+                or set(page) - {"results", "next_page_token"}
+                or not isinstance(page.get("results"), list)
+                or len(page["results"]) > _SCOPED_PAGE_SIZE
+            ):
+                raise ConnectedStorageError("Drive scoped search page is malformed")
+            for value in page["results"]:
+                if not isinstance(value, Mapping):
+                    raise ConnectedStorageError("Drive scoped search member is malformed")
+                identifier = value.get("id")
+                title = value.get("title")
+                if not isinstance(identifier, str) or not identifier or not isinstance(title, str) or not title:
+                    raise ConnectedStorageError("Drive scoped search member lacks exact identity or title")
+                if identifier in seen_ids:
+                    raise ConnectedStorageError("Drive scoped search returned a duplicate object identity")
+                seen_ids.add(identifier)
+                items.append(dict(value))
+            next_token = page.get("next_page_token")
+            if next_token is None:
+                break
+            if not isinstance(next_token, str) or not next_token or next_token in seen_tokens:
+                raise ConnectedStorageError("Drive scoped search continuation is invalid or repeated")
+            seen_tokens.add(next_token)
+            token = next_token
+        else:
+            raise ConnectedStorageError("Drive scoped search exceeded its finite page bound")
+    return tuple(items)
+
+
 class CodexDriveArtifactStore:
     """Map the observed Codex Drive shapes to exact artifact read/write guards."""
 
@@ -107,10 +156,7 @@ class CodexDriveArtifactStore:
         return StoredArtifact(current, data)
 
     def read_named(self, parent: DriveReference, name: str) -> StoredArtifact | None:
-        listing = self.drive.list_folder(parent.url, top_k=1000)
-        files = listing.get("files") if isinstance(listing, Mapping) else None
-        if not isinstance(files, list):
-            raise ConnectedStorageError("Drive folder listing is malformed")
+        files = _complete_scoped_search(self.drive, parent.object_id)
         matches = [
             item for item in files
             if isinstance(item, Mapping) and item.get("title") == name
@@ -236,9 +282,9 @@ class CodexDriveReferenceStorage(ReferenceStorage):
     """Expose exact Drive objects to admitted-generation recovery.
 
     This adapter intentionally supports direct ID reads, which is all package
-    recovery needs.  A name lookup is available only when the finite bridge
-    returns an explicitly complete bounded listing; an omitted completeness
-    proof is a blocker rather than an invitation to enumerate more broadly.
+    recovery needs. A name lookup is available only after the finite bridge
+    exhausts every advertised scoped-search category and continuation token;
+    malformed or repeated pagination evidence blocks completeness.
     """
 
     _FOLDER_MIME = "application/vnd.google-apps.folder"
@@ -297,12 +343,7 @@ class CodexDriveReferenceStorage(ReferenceStorage):
         parent = self.read(parent_id)
         if parent is None or parent.kind != "folder":
             raise ConnectedStorageError("Drive listing parent is not an exact folder")
-        listing = self.drive.list_folder(self._urls[parent_id], top_k=1000)
-        if not isinstance(listing, Mapping) or listing.get("complete") is not True:
-            raise ConnectedStorageError("Drive listing lacks complete bounded evidence")
-        files = listing.get("files")
-        if not isinstance(files, list):
-            raise ConnectedStorageError("Drive listing is malformed")
+        files = _complete_scoped_search(self.drive, parent_id)
         objects: list[StoredObject] = []
         for item in files:
             if not isinstance(item, Mapping):
