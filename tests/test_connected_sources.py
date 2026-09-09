@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import base64
 import email.message
-import io
 import json
 import os
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -21,19 +21,51 @@ from school_os.connected_sources import (
 )
 from school_os.codex_bridge import HostBindingDispatcher
 from school_os.contracts import canonical_json_bytes, sha256_bytes
-from PIL import Image
-from pypdf import PdfWriter
 from scripts.run_source_host import complete_image as complete_host_image
 from scripts.run_source_host import prepare as prepare_host_request
 
 
-def _png() -> bytes:
-    output = io.BytesIO()
-    Image.new("RGBA", (1, 1), (1, 2, 3, 255)).save(output, format="PNG")
-    return output.getvalue()
+PNG = base64.b64decode(
+    "".join((
+        "iVBORw0K", "GgoAAAAN", "SUhEUgAA", "AAEAAAAB", "CAQAAAC1",
+        "HAwCAAAA", "C0lEQVR4", "2mNk+A8A", "AQUBAScY", "42YAAAAA",
+        "SUVORK5C", "YII=",
+    ))
+)
+PDF = b"%PDF-1.7\n% dependency-free synthetic parser input\n"
 
 
-PNG = _png()
+class FakeBox:
+    def __init__(self, width: float, height: float) -> None:
+        self.left = 0
+        self.bottom = 0
+        self.right = width
+        self.top = height
+
+
+class FakeIndirect:
+    def __init__(self, value: object) -> None:
+        self.value = value
+
+    def get_object(self) -> object:
+        return self.value
+
+
+class FakePage(dict):
+    def __init__(self, width: float = 72, height: float = 72) -> None:
+        super().__init__()
+        self.mediabox = FakeBox(width, height)
+        self.cropbox = FakeBox(width, height)
+
+
+class FakeReader:
+    def __init__(self, pages: list[FakePage], *, embedded: bool = False) -> None:
+        self.is_encrypted = False
+        self.pages = pages
+        root: dict[str, object] = {}
+        if embedded:
+            root["/Names"] = FakeIndirect({"/EmbeddedFiles": object()})
+        self.trailer = {"/Root": FakeIndirect(root)}
 
 
 class FakeResponse:
@@ -103,6 +135,9 @@ class ConnectedSourcesTests(unittest.TestCase):
         os.chmod(self.run, 0o700)
         self.peer = Peer(self.run)
         self.adapter = ConnectedSourceAdapters(peer=self.peer, run_directory=self.run)
+        self.image_probe = patch("school_os.connected_sources._image_details", return_value=(1, 1))
+        self.image_probe.start()
+        self.addCleanup(self.image_probe.stop)
 
     def tearDown(self) -> None:
         self.temporary.cleanup()
@@ -264,22 +299,20 @@ class ConnectedSourcesTests(unittest.TestCase):
         helper.cleanup_image(handoff)
 
     def test_pdf_renders_each_page_through_the_bounded_image_callback(self) -> None:
-        output = io.BytesIO()
-        writer = PdfWriter()
-        writer.add_blank_page(width=72, height=72)
-        writer.add_blank_page(width=72, height=72)
-        writer.write(output)
-        extracted = self.adapter.extract_pdf(source_id="attachment-pdf", data=output.getvalue())
+        def fake_run(command: list[str], **_kwargs: object) -> None:
+            Path(command[-1] + ".png").write_bytes(PNG)
+
+        reader = FakeReader([FakePage(), FakePage()])
+        with patch("school_os.connected_sources._pdf_reader", return_value=reader), patch(
+            "school_os.connected_sources.subprocess.run", side_effect=fake_run,
+        ):
+            extracted = self.adapter.extract_pdf(source_id="attachment-pdf", data=PDF)
         self.assertEqual(("page:1", "page:2"), extracted.complete_units)
         self.assertEqual(2, extracted.unit_count)
         self.assertEqual("extracted_text_span", extracted.locator["kind"])
         self.assertEqual(["extract.image", "extract.image"], self.peer.calls)
 
     def test_pdf_passes_precomputed_dimension_and_pixel_scale_to_renderer(self) -> None:
-        output = io.BytesIO()
-        writer = PdfWriter()
-        writer.add_blank_page(width=720, height=360)
-        writer.write(output)
         bounds = SourceBounds(max_image_dimension=100, max_image_pixels=5_000)
         adapter = ConnectedSourceAdapters(peer=self.peer, run_directory=self.run, bounds=bounds)
         commands: list[list[str]] = []
@@ -288,48 +321,63 @@ class ConnectedSourcesTests(unittest.TestCase):
             commands.append(command)
             Path(command[-1] + ".png").write_bytes(PNG)
 
-        with patch("school_os.connected_sources.subprocess.run", side_effect=fake_run):
-            adapter.extract_pdf(source_id="pdf", data=output.getvalue())
+        with patch("school_os.connected_sources._pdf_reader", return_value=FakeReader([FakePage(720, 360)])), patch(
+            "school_os.connected_sources.subprocess.run", side_effect=fake_run,
+        ):
+            adapter.extract_pdf(source_id="pdf", data=PDF)
         self.assertIn("-scale-to", commands[0])
         scale = int(commands[0][commands[0].index("-scale-to") + 1])
         self.assertLessEqual(scale, 100)
         self.assertLessEqual(scale * (scale // 2), 5_000)
 
     def test_pdf_rejects_oversized_page_box_before_renderer(self) -> None:
-        output = io.BytesIO()
-        writer = PdfWriter()
-        writer.add_blank_page(width=20_000, height=72)
-        writer.write(output)
-        with patch("school_os.connected_sources.subprocess.run") as renderer:
+        with patch("school_os.connected_sources._pdf_reader", return_value=FakeReader([FakePage(20_000, 72)])), patch(
+            "school_os.connected_sources.subprocess.run",
+        ) as renderer:
             with self.assertRaisesRegex(ConnectedSourcesError, "pre-render"):
-                self.adapter.extract_pdf(source_id="pdf", data=output.getvalue())
+                self.adapter.extract_pdf(source_id="pdf", data=PDF)
         renderer.assert_not_called()
 
     def test_pdf_rejects_aggregate_pixel_plan_before_first_render(self) -> None:
-        output = io.BytesIO()
-        writer = PdfWriter()
-        writer.add_blank_page(width=72, height=72)
-        writer.add_blank_page(width=72, height=72)
-        writer.write(output)
         adapter = ConnectedSourceAdapters(
             peer=self.peer, run_directory=self.run,
             bounds=SourceBounds(max_image_pixels=1, max_image_dimension=1, max_pdf_rendered_pixels=1),
         )
-        with patch("school_os.connected_sources.subprocess.run") as renderer:
+        reader = FakeReader([FakePage(), FakePage()])
+        with patch("school_os.connected_sources._pdf_reader", return_value=reader), patch(
+            "school_os.connected_sources.subprocess.run",
+        ) as renderer:
             with self.assertRaisesRegex(ConnectedSourcesError, "aggregate pre-render"):
-                adapter.extract_pdf(source_id="pdf", data=output.getvalue())
+                adapter.extract_pdf(source_id="pdf", data=PDF)
         renderer.assert_not_called()
 
     def test_pdf_rejects_embedded_files_without_reading_hidden_payload(self) -> None:
-        output = io.BytesIO()
-        writer = PdfWriter()
-        writer.add_blank_page(width=72, height=72)
-        writer.add_attachment("hidden.txt", b"must not be extracted")
-        writer.write(output)
-        with patch("school_os.connected_sources.subprocess.run") as renderer:
+        with patch("school_os.connected_sources._pdf_reader", return_value=FakeReader([FakePage()], embedded=True)), patch(
+            "school_os.connected_sources.subprocess.run",
+        ) as renderer:
             with self.assertRaisesRegex(ConnectedSourcesError, "embedded files"):
-                self.adapter.extract_pdf(source_id="pdf", data=output.getvalue())
+                self.adapter.extract_pdf(source_id="pdf", data=PDF)
         renderer.assert_not_called()
+
+    def test_module_import_is_dependency_free_and_missing_decoders_fail_closed(self) -> None:
+        command = """
+from school_os.connected_sources import ConnectedSourcesError, _image_details, _pdf_reader
+for call in (
+    lambda: _image_details(b'\\x89PNG\\r\\n\\x1a\\n', 'image/png', max_pixels=1, max_dimension=1),
+    lambda: _pdf_reader(b'%PDF-1.7\\n'),
+):
+    try:
+        call()
+    except ConnectedSourcesError as exc:
+        assert 'selected runtime lacks the qualified' in str(exc)
+    else:
+        raise AssertionError('optional decoder unexpectedly available under -S')
+"""
+        result = subprocess.run(
+            [sys.executable, "-S", "-c", command], cwd=ROOT,
+            text=True, capture_output=True, check=False,
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
 
     def test_host_dispatch_union_exposes_only_the_two_named_source_helpers(self) -> None:
         url = "https://assets.example/file.pdf"

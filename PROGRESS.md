@@ -2704,3 +2704,30 @@ requirements, then read this log from top to bottom.
   pushed or published and has made no provider, private-instance, source,
   delivery, scheduler, tag, release, or main-tree change. Next: one independent
   final review, then the separately authorized Terra live acceptance.
+
+## 2026-09-08 — dependency-free connected-source CI repair
+
+- Reproduced GitHub Actions Validate run `34302830921` against exact published
+  candidate `93577334ed3bb42d2730c4f7e9d132148ba20c22`. Its only failures were
+  two test-module import errors caused by `school_os.connected_sources`
+  importing Pillow at module load in the clean Python 3.12 runner. The same
+  boundary also carried an undeclared eager `pypdf` import. Adding downloads to
+  CI would contradict the repository's dependency-free validation contract.
+- Moved both optional decoders behind their selected image/PDF extraction
+  calls. Missing qualified decoders now produce explicit fail-closed
+  `ConnectedSourcesError` outcomes without preventing package import, plain
+  message ingestion, or other daily phases. Qualified Pillow and pypdf behavior
+  remains unchanged and was exercised directly with a one-pixel PNG and
+  one-page PDF in the bundled runtime.
+- Replaced test-time Pillow/pypdf construction with fixed synthetic bytes and
+  injected reader/probe fakes. The tests still cover image custody, page order,
+  reader-visible feature rejection, scale/pixel/byte/text bounds, renderer
+  invocation, and host-response identity, and now additionally prove under
+  Python `-S` that module import is dependency-free and unavailable decoders
+  fail closed. The focused dependency-free run passed 28 source/composition
+  tests; the exact-HEAD full dependency-free validator passed all 315 tests,
+  including package, installed-entrypoint, privacy, and release checks.
+  `git diff --check` is clean. No workflow suppression, dependency download,
+  main mutation, private/provider access, or external effect occurred. Next:
+  hand the immutable repair commit to the root task for publication and a new
+  exact-SHA GitHub Validate dispatch.

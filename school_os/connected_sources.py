@@ -28,9 +28,6 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urljoin, urlparse
 
-from PIL import Image, UnidentifiedImageError
-from pypdf import PdfReader
-
 from .codex_bridge import CodexGmailPort, CodexSourceHostPort, JsonlPeer
 from .contracts import sha256_bytes
 from .importer import AttachmentExtraction, AttachmentRead, DirectResourceRead
@@ -279,6 +276,10 @@ def _image_details(data: bytes, mime_type: str, *, max_pixels: int, max_dimensio
     if signature is None or not data.startswith(signature):
         raise ConnectedSourcesError("image signature disagrees with declared MIME type")
     try:
+        from PIL import Image, UnidentifiedImageError
+    except ImportError as exc:
+        raise ConnectedSourcesError("selected runtime lacks the qualified image decoder") from exc
+    try:
         with Image.open(io.BytesIO(data)) as image:
             if image.get_format_mimetype() != mime_type or getattr(image, "n_frames", 1) != 1:
                 raise ConnectedSourcesError("image MIME or frame count is unsupported")
@@ -350,7 +351,18 @@ def _pdf_render_scale(page: Any, bounds: "SourceBounds") -> tuple[int, int]:
     return scale, pixels
 
 
-def _reject_unsupported_pdf_features(reader: PdfReader, pages: list[Any]) -> None:
+def _pdf_reader(data: bytes) -> Any:
+    try:
+        from pypdf import PdfReader
+    except ImportError as exc:
+        raise ConnectedSourcesError("selected runtime lacks the qualified PDF decoder") from exc
+    try:
+        return PdfReader(io.BytesIO(data), strict=True)
+    except Exception as exc:
+        raise ConnectedSourcesError("PDF cannot be parsed completely") from exc
+
+
+def _reject_unsupported_pdf_features(reader: Any, pages: list[Any]) -> None:
     """Inventory only feature keys; never extract hidden or embedded payloads."""
     try:
         root = reader.trailer["/Root"].get_object()
@@ -544,7 +556,7 @@ class ConnectedSourceAdapters:
         if not isinstance(source_id, str) or not source_id or not data.startswith(b"%PDF-") or len(data) > self.bounds.max_bytes:
             raise ConnectedSourcesError("PDF extraction input is invalid")
         try:
-            reader = PdfReader(io.BytesIO(data), strict=True)
+            reader = _pdf_reader(data)
             if reader.is_encrypted:
                 raise ConnectedSourcesError("encrypted PDF cannot establish complete reader-visible content")
             pages = list(reader.pages)
