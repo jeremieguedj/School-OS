@@ -71,7 +71,10 @@ remote asset verification, audio delta regression, and the ordinary-Python
 package-cache correction. One integrated repository candidate now contains the
 installed seven-phase connected runner, all-current catalog view, exact Gmail
 timestamps, and create-only Drive/Sheet setup. Its provider-shaped nonempty and
-zero-new-hit paths pass synthetically; independent review, authenticated private
+zero-new-hit paths pass synthetically. The independent-review repair adds real
+fresh-process composition recovery, exact manual/scheduled profile selection
+and readmission, finite configured TEST variants, and exact epoch-ms seed
+filtering without dropping selected-thread context. Authenticated private
 acceptance, final CI, remote release, and visual checks remain open. The user approved a narrow
 provider-independent recipe exception: eligible user-added tasks without an
 email received date appear under Parent-added tasks in their ordinary action

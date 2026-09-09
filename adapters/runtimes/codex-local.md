@@ -101,8 +101,12 @@ tools; text content blocks and metadata never establish semantic verification.
   permitted only under proven serialization with exact file ID, immediate
   pre-write `modified_time` plus complete-byte SHA-256 guard, and immediate
   exact readback. Create-only installation remains a separate protocol.
-- Gmail discovery follows every `next_page_token`; the search overfetches whole
-  boundary seconds and code filters `internal_date` to exact `[start,end)`.
+- Gmail discovery follows every `next_page_token`. Optional private
+  `seed_after_inclusive_ms`/`seed_before_exclusive_ms` bounds add deliberately
+  widened epoch-second provider predicates: the inclusive start backs up one
+  whole second and the exclusive end advances one whole second. Every returned
+  search hit is then read in `full` form and its exact 13-digit `internal_date`
+  is filtered to `[start,end)`. A competing provider date predicate blocks.
   Complete conversation membership is read separately. Reaching the bounded
   thread-message cap is incomplete and blocks. Raw RFC 2822 and provider `full`
   Unicode are distinct reads and must satisfy the strict source-admission gate.
@@ -119,6 +123,13 @@ Manual and scheduled profiles are distinct. An observed interactive connector
 probe does not establish background authorization, timeout, retry, overlap, or
 scheduler conformance. No private IDs, queries, recipients, or credentials
 belong in this adapter.
+
+The installed profile-selection object retains exact immutable profile bytes
+independently for `manual` and `scheduled`. The guarded
+`scripts/readmit_connected_profile.py` route qualifies one observed profile for
+its matching entrypoint, creates and reads it back, then replaces and reads back
+that selector by its existing exact Drive ID. It cannot promote an unverified
+profile or use manual evidence for scheduled admission.
 
 The current `scripts/run_operation.py --host-jsonl` path stops after exact
 bootstrap identity/readback and reports `BOOTSTRAP_READBACK_VERIFIED`. Before

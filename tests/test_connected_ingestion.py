@@ -832,6 +832,64 @@ class CodexGmailSourceAdapterTests(unittest.TestCase):
         with self.assertRaisesRegex(ConnectedIngestionError, "message/thread identity"):
             adapter.read_conversation("thread-1")
 
+    def test_gmail_seed_window_filters_full_hits_but_retains_selected_thread_context(self) -> None:
+        start, end = 1788854400000, 1788940800000
+
+        class WindowGmail:
+            def __init__(inner_self) -> None:
+                inner_self.query = None
+                inner_self.messages = {
+                    "before": ("thread-before", start - 1),
+                    "at-start": ("thread-selected", start),
+                    "at-last": ("thread-last", end - 1),
+                    "at-end": ("thread-end", end),
+                    "older-context": ("thread-selected", start - 86_400_000),
+                }
+
+            def search_ids(inner_self, **arguments):
+                inner_self.query = arguments["query"]
+                return {"message_ids": ["before", "at-start", "at-last", "at-end"], "next_page_token": None}
+
+            def read(inner_self, message_id: str, format: str):
+                thread_id, timestamp = inner_self.messages[message_id]
+                return {"id": message_id, "thread_id": thread_id, "internal_date": str(timestamp), "format": format}
+
+            def read_thread(inner_self, thread_id: str, *, max_messages: int):
+                identities = [
+                    identity for identity, (member_thread, _timestamp) in inner_self.messages.items()
+                    if member_thread == thread_id
+                ]
+                return {"id": thread_id, "messages": [inner_self.read(identity, "full") for identity in identities]}
+
+            def read_attachment(inner_self, _message_id: str, attachment_id: str):
+                return {"id": attachment_id}
+
+        gmail = WindowGmail()
+        adapter = CodexGmailSourceAdapter(
+            gmail, max_thread_messages=10,
+            normalize_message=lambda full, _raw: {
+                "message_id": full["id"], "thread_id": full["thread_id"],
+                "received_at": "2026-09-08T00:00:00Z", "received_date": "2026-09-08",
+                "gmail_internal_date_ms": int(full["internal_date"]),
+                "mime_tree_complete": True, "parts": [_part(b"body")],
+                "attachments": [], "html_parts": [],
+            },
+            normalize_attachment=lambda _message, _attachment, _raw: None,
+        )
+        page = adapter.search({
+            "query": "from:school", "label_ids": ["INBOX"], "max_results": 100,
+            "seed_after_inclusive_ms": start, "seed_before_exclusive_ms": end,
+        }, None)
+        self.assertEqual("from:school after:1788854399 before:1788940801", gmail.query)
+        self.assertEqual(["thread-selected", "thread-last"], [item["conversation_id"] for item in page.items])
+        selected = adapter.read_conversation("thread-selected")
+        self.assertEqual(["at-start", "older-context"], [item["message_id"] for item in selected["messages"]])
+        with self.assertRaisesRegex(ConnectedIngestionError, "provider date predicate"):
+            adapter.search({
+                "query": "from:school newer_than:14d", "label_ids": ["INBOX"], "max_results": 100,
+                "seed_after_inclusive_ms": start, "seed_before_exclusive_ms": end,
+            }, None)
+
     def test_semantic_callbacks_use_separate_fixed_calls(self) -> None:
         class Semantic:
             def __init__(self) -> None:

@@ -10,6 +10,7 @@ success flag supplied by a connector is trusted as verification.
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any, Protocol
@@ -125,7 +126,31 @@ class CodexGmailSourceAdapter:
             or isinstance(max_results, bool) or not isinstance(max_results, int) or max_results < 1
         ):
             raise ConnectedIngestionError("Gmail source scope lacks bounded query, labels, or page size")
-        arguments: dict[str, Any] = {"query": query, "label_ids": list(labels), "max_results": max_results}
+        for key in ("seed_after_inclusive_ms", "seed_before_exclusive_ms"):
+            bound = scope.get(key)
+            if bound is not None and (
+                isinstance(bound, bool) or not isinstance(bound, int) or bound < 0
+            ):
+                raise ConnectedIngestionError("Gmail seed bounds must be nonnegative epoch milliseconds")
+        if (
+            scope.get("seed_after_inclusive_ms") is not None
+            and scope.get("seed_before_exclusive_ms") is not None
+            and scope["seed_after_inclusive_ms"] >= scope["seed_before_exclusive_ms"]
+        ):
+            raise ConnectedIngestionError("Gmail seed interval must have positive width")
+        start = scope.get("seed_after_inclusive_ms")
+        end = scope.get("seed_before_exclusive_ms")
+        provider_query = query
+        if start is not None or end is not None:
+            if re.search(r"(?i)(?:after|before|older|newer|older_than|newer_than):", query):
+                raise ConnectedIngestionError("exact Gmail seed bounds cannot be combined with a provider date predicate")
+            predicates = []
+            if start is not None:
+                predicates.append(f"after:{max(0, start // 1000 - 1)}")
+            if end is not None:
+                predicates.append(f"before:{end // 1000 + 1}")
+            provider_query = " ".join((query, *predicates))
+        arguments: dict[str, Any] = {"query": provider_query, "label_ids": list(labels), "max_results": max_results}
         if page_token is not None:
             arguments["next_page_token"] = page_token
         result = self.gmail.search_ids(**arguments)
@@ -142,6 +167,15 @@ class CodexGmailSourceAdapter:
             observed_id, thread_id = self._full_identity(full, "full-message")
             if observed_id != message_id:
                 raise ConnectedIngestionError("Gmail full-message identity disagrees with search")
+            if start is not None or end is not None:
+                raw_timestamp = full.get("internal_date")
+                if not isinstance(raw_timestamp, str) or len(raw_timestamp) != 13 or not raw_timestamp.isascii() or not raw_timestamp.isdecimal():
+                    raise ConnectedIngestionError("Gmail discovery hit lacks exact epoch-millisecond internal date")
+                timestamp = int(raw_timestamp)
+                if start is not None and timestamp < start:
+                    continue
+                if end is not None and timestamp >= end:
+                    continue
             discovered = self._discovery_by_thread.setdefault(thread_id, set())
             discovered.add(message_id)
             # The byte estimate is intentionally one: the immutable worker

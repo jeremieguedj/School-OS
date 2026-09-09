@@ -15,21 +15,26 @@ from zoneinfo import ZoneInfo
 from .brief import build_brief_input, delivery_key, render_brief
 from .connected_ingestion import (
     CodexGmailSourceAdapter, CodexSemanticCallbacks, ConnectedIngestionWorker,
+    DiscoveryResult, IngestionArtifacts, IngestionResult,
 )
+from .connected_profiles import readmit_capability_profile, select_capability_profile
 from .connected_sheets import CodexSheetsTaskPort, GoogleSheetsScope
 from .connected_sources import ConnectedSourceAdapters
 from .connected_storage import (
     ArtifactStore, CodexDriveArtifactStore, CodexDriveReferenceStorage,
     DriveReference, StoredArtifact,
 )
-from .connected_tasks import ConnectedTaskWorker
+from .connected_tasks import (
+    ConnectedTaskReconcileResult, ConnectedTaskWorker,
+    unresolved_finite_task_selection,
+)
 from .contracts import canonical_json_bytes, load_mapping_yaml, sha256_bytes, validate
 from .daily import PHASES, OperationResult, run_daily
 from .delivery import ExactDeliveryRequest, deliver_exact
 from .gmail_source import GmailMimeNormalizer
 from .install import FILE_MAP_PATH, OPERATION_STATE_PATH, parse_daily_values
 from .operations import (
-    checkpoint_pointer, discover_recovery_chain, resume_from_chain,
+    RecoveryChain, checkpoint_pointer, discover_recovery_chain, resume_from_chain,
     validate_checkpoint, validate_operation_state, validate_transition,
 )
 from .sheets import GoogleSheetsTaskAdapter
@@ -78,6 +83,22 @@ def _artifact_mapping(artifact: StoredArtifact) -> dict[str, Any]:
     return {**_reference_mapping(artifact.reference), "sha256": sha256_bytes(artifact.data), "byte_length": len(artifact.data)}
 
 
+def _artifact_from_mapping(store: ArtifactStore, value: Any, label: str) -> StoredArtifact:
+    expected = {"object_id", "parent_id", "mime_type", "url", "version", "sha256", "byte_length"}
+    if not isinstance(value, Mapping) or set(value) != expected:
+        raise ConnectedDailyError(f"{label} has an unsupported durable artifact shape")
+    if not all(isinstance(value.get(key), str) and value[key] for key in ("object_id", "parent_id", "mime_type", "url", "version")):
+        raise ConnectedDailyError(f"{label} lacks an exact durable reference")
+    if isinstance(value.get("byte_length"), bool) or not isinstance(value.get("byte_length"), int) or value["byte_length"] < 0:
+        raise ConnectedDailyError(f"{label} lacks an exact byte length")
+    artifact = store.read(DriveReference(
+        value["object_id"], value["parent_id"], value["mime_type"], value["url"], value["version"],
+    ))
+    if len(artifact.data) != value["byte_length"] or sha256_bytes(artifact.data) != value.get("sha256"):
+        raise ConnectedDailyError(f"{label} differs from its checkpointed bytes")
+    return artifact
+
+
 def _require_keys(value: Mapping[str, Any], expected: set[str], label: str) -> None:
     if set(value) != expected:
         raise ConnectedDailyError(f"{label} has unsupported fields")
@@ -86,20 +107,34 @@ def _require_keys(value: Mapping[str, Any], expected: set[str], label: str) -> N
 def _scope(value: Any) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise ConnectedDailyError("source scope must be an object")
-    _require_keys(value, {"schema_version", "adapter_id", "query", "label_ids", "max_results", "max_thread_messages"}, "source scope")
+    required = {"schema_version", "adapter_id", "query", "label_ids", "max_results", "max_thread_messages"}
+    optional = {"seed_after_inclusive_ms", "seed_before_exclusive_ms"}
+    if not required <= set(value) or set(value) - required - optional:
+        raise ConnectedDailyError("source scope has unsupported fields")
     if (
         value["schema_version"] != 1 or not all(isinstance(value[key], str) and value[key] for key in ("adapter_id", "query"))
         or not isinstance(value["label_ids"], list) or any(not isinstance(item, str) or not item for item in value["label_ids"])
         or any(isinstance(value[key], bool) or not isinstance(value[key], int) or value[key] < 1 for key in ("max_results", "max_thread_messages"))
     ):
         raise ConnectedDailyError("source scope is malformed or unbounded")
+    for key in optional:
+        bound = value.get(key)
+        if bound is not None and (
+            isinstance(bound, bool) or not isinstance(bound, int) or bound < 0
+        ):
+            raise ConnectedDailyError("source seed bounds must be nonnegative epoch milliseconds")
+    start, end = value.get("seed_after_inclusive_ms"), value.get("seed_before_exclusive_ms")
+    if start is not None and end is not None and start >= end:
+        raise ConnectedDailyError("source seed interval must have positive width")
     return dict(value)
 
 
 def _delivery_configuration(value: Any) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise ConnectedDailyError("delivery configuration must be an object")
-    _require_keys(value, {"schema_version", "variant", "to", "cc", "bcc", "subject_prefix"}, "delivery configuration")
+    required = {"schema_version", "variant", "to", "cc", "bcc", "subject_prefix"}
+    if not required <= set(value) or set(value) - required - {"test_variants"}:
+        raise ConnectedDailyError("delivery configuration has unsupported fields")
     if value["schema_version"] != 1 or not all(isinstance(value[key], str) and value[key] for key in ("variant", "subject_prefix")):
         raise ConnectedDailyError("delivery configuration has invalid identity fields")
     for key in ("to", "cc", "bcc"):
@@ -107,7 +142,29 @@ def _delivery_configuration(value: Any) -> dict[str, Any]:
             raise ConnectedDailyError("delivery recipient lists are malformed")
     if not value["to"]:
         raise ConnectedDailyError("delivery configuration requires a To recipient")
+    variants = value.get("test_variants")
+    if variants is not None:
+        if (
+            not isinstance(variants, Mapping)
+            or set(variants) != {"manual", "scheduled"}
+            or any(not isinstance(item, str) or not item for item in variants.values())
+            or len(set(variants.values())) != 2
+            or value["variant"] in variants.values()
+        ):
+            raise ConnectedDailyError("delivery TEST variants must be two distinct finite entrypoint values")
     return dict(value)
+
+
+def _selected_delivery(value: Mapping[str, Any], entrypoint: str, requested: str | None) -> dict[str, Any]:
+    """Select only the ordinary variant or the configured TEST variant for this entrypoint."""
+    delivery = dict(value)
+    if requested is None:
+        return delivery
+    variants = delivery.get("test_variants")
+    if not isinstance(variants, Mapping) or variants.get(entrypoint) != requested:
+        raise ConnectedDailyError("requested delivery variant is not the configured TEST variant for this entrypoint")
+    delivery["variant"] = requested
+    return delivery
 
 
 def validate_connected_seed_payloads(payloads: Mapping[str, Mapping[str, Any]], package_root: Path) -> None:
@@ -144,6 +201,7 @@ class _ResolvedInstance:
     root: DriveReference
     file_map: dict[str, DriveReference]
     profile: dict[str, Any]
+    profile_artifact: StoredArtifact
     source_scope: dict[str, Any]
     delivery: dict[str, Any]
     sheet_scope: GoogleSheetsScope
@@ -198,7 +256,7 @@ class _Resolver:
             raise ConnectedDailyError(f"admitted managed file readback disagrees for {path}")
         return item.data
 
-    def resolve(self) -> _ResolvedInstance:
+    def resolve(self, *, entrypoint: str, delivery_variant: str | None = None) -> _ResolvedInstance:
         instance = load_mapping_yaml(self._managed("instance.yaml").decode("utf-8"))
         household = load_mapping_yaml(self._managed("config/household.yaml").decode("utf-8"))
         policies = load_mapping_yaml(self._managed("config/policies.yaml").decode("utf-8"))
@@ -218,6 +276,7 @@ class _Resolver:
             "operation_state", "source_checkpoint", "current_index", "source_catalog_index",
             "canonical_tasks", "guidelines", "rolling_updates", "task_sync_state",
             "delivery_state", "final_run_checkpoint",
+            "capability_profile", "durable_profiles",
         }
         references = {
             role: self._drive_reference(
@@ -230,13 +289,16 @@ class _Resolver:
             if references[{"canonical_action_register": "canonical_tasks", "runtime_profile": "capability_profile"}.get(role, role)].object_id != mapping.get("object_id"):
                 raise ConnectedDailyError(f"daily values reference disagrees with file map for {role}")
         store = CodexDriveArtifactStore(self.drive, scratch_directory=self.package_root.parent / "artifact-scratch")
-        profile = _json(store.read(references["capability_profile"]).data, "runtime profile")
+        profile, profile_artifact, _profile_selection = select_capability_profile(
+            store, references["durable_profiles"], entrypoint=entrypoint,
+            profile_schema=_schema(self.package_root, "capability-profile.schema.json"),
+        )
         delivery_reference = self._drive_reference(
             integrations["mail"]["delivery_configuration_reference"], "file", "delivery configuration"
         )
-        delivery = _delivery_configuration(
+        delivery = _selected_delivery(_delivery_configuration(
             _json(store.read(delivery_reference).data, "delivery configuration")
-        )
+        ), entrypoint, delivery_variant)
         source_reference = self._drive_reference(integrations["mail"]["source_scope_reference"], "file", "source scope")
         if source_reference.object_id != references["family_scope"].object_id:
             raise ConnectedDailyError("integration source scope disagrees with file map")
@@ -250,8 +312,32 @@ class _Resolver:
             "instance": instance, "household": household, "policies": policies,
             "daily_values": daily_values, "source_scope": source_scope,
             "delivery": delivery, "sheet_scope": selector,
+            "profile_sha256": sha256_bytes(profile_artifact.data),
         }))
-        return _ResolvedInstance(self.root, references, profile, source_scope, delivery, sheet_scope, household, policies, daily_values, instance, brief_template, fingerprint)
+        return _ResolvedInstance(self.root, references, profile, profile_artifact, source_scope, delivery, sheet_scope, household, policies, daily_values, instance, brief_template, fingerprint)
+
+
+def readmit_connected_profile(
+    *, installed_root: Path, recovery: Mapping[str, Any], run_directory: Path,
+    drive: Any, entrypoint: str, profile_data: bytes,
+) -> dict[str, Any]:
+    """Adopt one observed entrypoint profile without replacing the installed generation."""
+    resolver = _Resolver(root=installed_root, recovery=recovery, drive=drive)
+    file_map = load_mapping_yaml(resolver._managed(FILE_MAP_PATH).decode("utf-8"))
+    files = file_map.get("files")
+    if file_map.get("mapping_status") != "configured" or not isinstance(files, Mapping):
+        raise ConnectedDailyError("installed file map is not fully configured")
+    selection = resolver._drive_reference(
+        files.get("durable_profiles"), "file", "capability-profile selection",
+        allow_stale_version=True,
+    )
+    store = CodexDriveArtifactStore(drive, scratch_directory=run_directory / "profile-scratch")
+    return readmit_capability_profile(
+        store, instance_root=resolver.root, selection_reference=selection,
+        entrypoint=entrypoint, profile_data=profile_data,
+        profile_schema=_schema(installed_root, "capability-profile.schema.json"),
+        required_capabilities=REQUIRED_CAPABILITIES,
+    )
 
 
 class _CheckpointManager:
@@ -274,7 +360,126 @@ class _CheckpointManager:
         self.chain = discover_recovery_chain(candidates, operation_id, self.checkpoint_schema) if candidates else None
         self.sequence = 0 if self.chain is None else self.chain.tip["sequence"] + 1
         self.predecessor = None if self.chain is None else checkpoint_pointer(self.chain.tip)
-        self.completed: list[str] = []
+        self.completed: list[str] = [] if self.chain is None else list(self.chain.tip["completed_phases"])
+        self.resume_after: str | None = None
+        self.durable_predecessor_output: dict[str, Any] | None = None
+        if self.chain is None:
+            if self.state["status"] in {"running", "needs_continuation", "blocked"}:
+                raise ConnectedDailyError("another admitted operation is active without this recovery chain")
+            return
+        recovered_scope = self.chain.tip.get("scope")
+        if not isinstance(recovered_scope, Mapping):
+            raise ConnectedDailyError("recovery chain lacks exact operation inputs")
+        requested_inputs = {key: value for key, value in self.scope.items() if key != "run_local_date"}
+        recovered_inputs = {key: value for key, value in recovered_scope.items() if key != "run_local_date"}
+        if requested_inputs != recovered_inputs or not isinstance(recovered_scope.get("run_local_date"), str):
+            raise ConnectedDailyError("recovery operation inputs differ from the admitted scope")
+        self.scope = dict(recovered_scope)
+        for checkpoint in self.chain.checkpoints:
+            if checkpoint["pinned_release"] != self.release or checkpoint["configuration_fingerprint"] != self.fingerprint:
+                raise ConnectedDailyError("recovery release or configuration changed and requires reconciliation")
+            if checkpoint["scope"] != self.scope:
+                raise ConnectedDailyError("recovery operation inputs differ from the admitted scope")
+        if self.state["status"] not in {"running", "needs_continuation", "blocked"}:
+            raise ConnectedDailyError("operation recovery chain is not the active durable operation")
+        current = self.state.get("current_operation")
+        if not isinstance(current, Mapping) or current.get("operation_id") != operation_id or self.state.get("checkpoint") != checkpoint_pointer(self.chain.tip):
+            raise ConnectedDailyError("operation state does not identify the verified recovery-chain tip")
+        if current.get("attempt_id") == attempt_id:
+            raise ConnectedDailyError("operation recovery requires a new attempt identity")
+        if self.state["status"] == "running":
+            self._record_hard_stop(current["attempt_id"])
+        self.completed = list(self.chain.tip["completed_phases"])
+        for checkpoint in reversed(self.chain.checkpoints):
+            output = checkpoint.get("verification", {}).get("phase_output")
+            if isinstance(output, Mapping) and output.get("verified") is True:
+                self.resume_after = checkpoint["phase"]
+                self.durable_predecessor_output = dict(output)
+                break
+        if self.resume_after is None or self.durable_predecessor_output is None:
+            raise ConnectedDailyError("recovery chain lacks a verified durable phase output")
+        self._admit_resume()
+
+    def _record_hard_stop(self, prior_attempt_id: str) -> None:
+        """Turn the abandoned running attempt into the existing blocked state."""
+        if self.serialization_mode != "attended_single_writer":
+            raise ConnectedDailyError("hard-stop recovery requires the attended single-writer mode")
+        completed = list(self.chain.tip["completed_phases"])
+        failed_phase = PHASES[len(completed)] if len(completed) < len(PHASES) else self.chain.tip["phase"]
+        checkpoint = {
+            "schema_version": 1, "checkpoint_id": f"{self.operation_id}-checkpoint-{self.sequence:04d}",
+            "operation_id": self.operation_id, "attempt_id": prior_attempt_id,
+            "pinned_release": self.release, "scope": self.scope,
+            "configuration_fingerprint": self.fingerprint, "phase": failed_phase,
+            "completed_phases": completed, "completed_units": [],
+            "remaining_work": {"phase": failed_phase, "recovery": "hard_process_stop"},
+            "artifacts": [], "effects": [],
+            "verification": {"hard_process_stop": True, "attended_single_writer": True},
+            "blocker": {"kind": "hard_process_stop", "phase": failed_phase},
+            "predecessor": self.predecessor, "sequence": self.sequence,
+        }
+        validate_checkpoint(checkpoint, self.checkpoint_schema)
+        artifact = self.store.write_immutable(
+            self.folder, f"{self.operation_id}-checkpoint-{self.sequence:04d}.json",
+            canonical_json_bytes(checkpoint), "application/json",
+        )
+        if artifact.data != canonical_json_bytes(checkpoint):
+            raise ConnectedDailyError("hard-stop recovery checkpoint did not read back exactly")
+        pointer = checkpoint_pointer(checkpoint)
+        candidate = {
+            "schema_version": 1, "status": "blocked",
+            "current_operation": {"operation_id": self.operation_id, "attempt_id": prior_attempt_id},
+            "serialization": self.state["serialization"], "checkpoint": pointer, "last_terminal": None,
+        }
+        self._write_state(candidate, checkpoint)
+        self.chain = RecoveryChain(self.operation_id, (*self.chain.checkpoints, checkpoint))
+        self.predecessor, self.sequence = pointer, self.sequence + 1
+
+    def _admit_resume(self) -> None:
+        """Persist the new attempt before any resumed phase can fail or make an effect."""
+        if self.chain is None or self.resume_after is None or self.durable_predecessor_output is None:
+            raise ConnectedDailyError("resume admission lacks its durable predecessor")
+        resume_work_phase = self.resume_after
+        if self.durable_predecessor_output.get("phase_complete") is True:
+            position = PHASES.index(self.resume_after)
+            resume_work_phase = PHASES[position + 1] if position + 1 < len(PHASES) else self.resume_after
+        checkpoint = {
+            "schema_version": 1, "checkpoint_id": f"{self.operation_id}-checkpoint-{self.sequence:04d}",
+            "operation_id": self.operation_id, "attempt_id": self.attempt_id,
+            "pinned_release": self.release, "scope": self.scope,
+            "configuration_fingerprint": self.fingerprint, "phase": self.resume_after,
+            "completed_phases": list(self.completed),
+            "completed_units": list(self.durable_predecessor_output.get("completed_units", [])),
+            "remaining_work": {"phase": resume_work_phase, "recovery": "new_attempt"},
+            "artifacts": [], "effects": list(self.chain.tip.get("effects", [])),
+            "verification": {
+                "phase_output": dict(self.durable_predecessor_output),
+                "resume_admission": {"predecessor_attempt_id": self.chain.tip["attempt_id"]},
+            },
+            "blocker": None, "predecessor": self.predecessor, "sequence": self.sequence,
+        }
+        validate_checkpoint(checkpoint, self.checkpoint_schema)
+        artifact = self.store.write_immutable(
+            self.folder, f"{self.operation_id}-checkpoint-{self.sequence:04d}.json",
+            canonical_json_bytes(checkpoint), "application/json",
+        )
+        if artifact.data != canonical_json_bytes(checkpoint):
+            raise ConnectedDailyError("resume admission checkpoint did not read back exactly")
+        resume_from_chain(
+            self.state, self.chain, checkpoint, state_schema=self.state_schema,
+            checkpoint_schema=self.checkpoint_schema, pinned_release=self.release,
+            configuration_fingerprint=self.fingerprint,
+        )
+        pointer = checkpoint_pointer(checkpoint)
+        candidate = {
+            "schema_version": 1, "status": "running",
+            "current_operation": {"operation_id": self.operation_id, "attempt_id": self.attempt_id},
+            "serialization": {"mode": self.serialization_mode, "evidence": {"entrypoint": self.entrypoint}},
+            "checkpoint": pointer, "last_terminal": None,
+        }
+        self._write_state(candidate, checkpoint)
+        self.chain = RecoveryChain(self.operation_id, (*self.chain.checkpoints, checkpoint))
+        self.predecessor, self.sequence = pointer, self.sequence + 1
 
     def _write_state(self, candidate: dict[str, Any], checkpoint: dict[str, Any], required: tuple[str, ...] = ()) -> None:
         previous = self.state
@@ -374,6 +579,113 @@ class _CheckpointManager:
         return artifact.reference.url
 
 
+def _reference_from_mapping(value: Any, label: str) -> DriveReference:
+    expected = {"object_id", "parent_id", "mime_type", "url", "version"}
+    if not isinstance(value, Mapping) or set(value) != expected or not all(
+        isinstance(value.get(key), str) and value[key]
+        for key in expected
+    ):
+        raise ConnectedDailyError(f"{label} lacks an exact checkpointed reference")
+    return DriveReference(
+        value["object_id"], value["parent_id"], value["mime_type"], value["url"], value["version"],
+    )
+
+
+def _restore_daily_state(
+    *, manager: _CheckpointManager, store: ArtifactStore,
+    ingestion: ConnectedIngestionWorker,
+    mutable: dict[str, DriveReference], max_bytes: int,
+) -> dict[str, Any]:
+    """Re-admit the exact persisted handoffs needed after the verified chain tip."""
+    if manager.chain is None:
+        return {}
+    outputs: dict[str, dict[str, Any]] = {}
+    for checkpoint in manager.chain.checkpoints:
+        output = checkpoint.get("verification", {}).get("phase_output")
+        if isinstance(output, Mapping) and output.get("verified") is True:
+            outputs[checkpoint["phase"]] = dict(output)
+    context: dict[str, Any] = {}
+    discovered = outputs.get("discover")
+    if discovered is not None:
+        inventory = _artifact_from_mapping(store, discovered.get("discovery_inventory"), "discovery inventory")
+        identities = discovered.get("conversation_ids")
+        if not isinstance(identities, list) or any(not isinstance(item, str) or not item for item in identities):
+            raise ConnectedDailyError("checkpointed discovery identities are malformed")
+        context["discovery"] = DiscoveryResult(
+            inventory, discovered.get("scope_sha256"), tuple(identities),
+        )
+    catalog = outputs.get("catalog")
+    if catalog is not None:
+        work = _artifact_from_mapping(store, catalog.get("source_work"), "source work")
+        index = _artifact_from_mapping(store, catalog.get("catalog_index"), "catalog index")
+        discovery = _artifact_from_mapping(store, catalog.get("discovery_inventory"), "catalog discovery")
+        records: list[IngestionArtifacts] = []
+        for record in catalog.get("records", []):
+            if not isinstance(record, Mapping) or set(record) != {"catalog", "interpretation", "audit", "facts"}:
+                raise ConnectedDailyError("checkpointed catalog record bundle is malformed")
+            records.append(IngestionArtifacts(*(
+                _artifact_from_mapping(store, record[key], f"catalog {key}")
+                for key in ("catalog", "interpretation", "audit", "facts")
+            )))
+        completed_units = catalog.get("completed_units", [])
+        remaining = catalog.get("remaining_work", {})
+        if (
+            not isinstance(completed_units, list)
+            or any(not isinstance(item, str) or not item for item in completed_units)
+            or not isinstance(remaining, Mapping)
+        ):
+            raise ConnectedDailyError("checkpointed catalog continuation is malformed")
+        result = IngestionResult(
+            True, catalog.get("phase_complete") is True, tuple(completed_units), dict(remaining),
+            work, index, tuple(records), discovery,
+            None if catalog.get("proposed_source_cursor") is None else dict(catalog["proposed_source_cursor"]),
+        )
+        context["work"], context["catalog"] = work, result
+        mutable["source_catalog_index"] = index.reference
+    reconcile = outputs.get("reconcile")
+    task_sync = outputs.get("task_sync")
+    if reconcile is not None:
+        if task_sync is None:
+            canonical = _artifact_from_mapping(store, reconcile.get("canonical_tasks"), "reconciled canonical tasks")
+            mutable["canonical_tasks"] = canonical.reference
+        mutable["guidelines"] = _artifact_from_mapping(store, reconcile.get("guidelines"), "guidelines").reference
+        mutable["rolling_updates"] = _artifact_from_mapping(store, reconcile.get("rolling_updates"), "rolling updates").reference
+    if task_sync is not None:
+        canonical = _artifact_from_mapping(store, task_sync.get("canonical_tasks"), "task-synced canonical tasks")
+        provider = _artifact_from_mapping(store, task_sync.get("provider_state"), "task provider state")
+        mutable["canonical_tasks"], mutable["task_sync_state"] = canonical.reference, provider.reference
+        completed = task_sync.get("completed_units", [])
+        if not isinstance(completed, list) or any(not isinstance(item, str) or not item for item in completed):
+            raise ConnectedDailyError("checkpointed task continuation is malformed")
+        context["task_completed_units"] = list(completed)
+    if catalog is not None and catalog.get("phase_complete") is True and reconcile is not None:
+        view = ingestion.current_catalog_view(
+            catalog_parent=mutable["source_catalog_folder"],
+            index_reference=mutable["source_catalog_index"], max_bytes=max_bytes,
+        )
+        register = _json(store.read(mutable["canonical_tasks"]).data, "checkpointed canonical tasks")
+        brief_tasks = unresolved_finite_task_selection(register, task_source_links=view.task_source_links)
+        context.update({
+            "view": view,
+            "reconciled": ConnectedTaskReconcileResult(store.read(mutable["canonical_tasks"]), brief_tasks),
+            "brief_tasks": brief_tasks,
+        })
+    delivered = outputs.get("brief_delivery")
+    if delivered is not None:
+        state_reference = _reference_from_mapping(delivered.get("delivery_state"), "delivery state")
+        mutable["delivery_state"] = state_reference
+        delivery = delivered.get("delivery")
+        if not isinstance(delivery, Mapping):
+            raise ConnectedDailyError("checkpointed delivery result is malformed")
+        context.update({
+            "delivery": dict(delivery),
+            "brief_input": _artifact_from_mapping(store, delivered.get("brief_input"), "brief input"),
+            "brief_html": _artifact_from_mapping(store, delivered.get("brief_html"), "brief HTML"),
+            "brief_text": _artifact_from_mapping(store, delivered.get("brief_text"), "brief text"),
+        })
+    return context
+
+
 class ConnectedDailyRuntime:
     """Resolve one admitted instance and execute its concrete connected stages."""
 
@@ -382,8 +694,11 @@ class ConnectedDailyRuntime:
         self.root, self.recovery, self.run_directory = installed_root, dict(recovery), run_directory
         self.drive, self.gmail, self.sheets, self.semantic = drive, gmail, sheets, semantic
 
-    def run(self, *, entrypoint: str, operation_id: str, attempt_id: str, scheduler_admitted: bool = False) -> OperationResult:
-        instance = _Resolver(root=self.root, recovery=self.recovery, drive=self.drive).resolve()
+    def run(self, *, entrypoint: str, operation_id: str, attempt_id: str,
+            scheduler_admitted: bool = False, delivery_variant: str | None = None) -> OperationResult:
+        instance = _Resolver(root=self.root, recovery=self.recovery, drive=self.drive).resolve(
+            entrypoint=entrypoint, delivery_variant=delivery_variant,
+        )
         store = CodexDriveArtifactStore(self.drive, scratch_directory=self.run_directory / "artifact-scratch")
         listing = CodexDriveReferenceStorage(self.drive)
         normalizer = GmailMimeNormalizer(instance.household["timezone"])
@@ -422,17 +737,27 @@ class ConnectedDailyRuntime:
             "version": self.recovery["manifest"]["package"]["version"],
             "source_commit": self.recovery["manifest"]["package"]["source_identity"]["commit"],
         }
+        local_date = datetime.now(ZoneInfo(instance.household["timezone"])).date().isoformat()
         manager = _CheckpointManager(
             store=store, listing=listing, state=instance.file_map["operation_state"],
             folder=instance.file_map["operation_checkpoints_folder"], operation_id=operation_id,
             attempt_id=attempt_id, entrypoint=entrypoint, release=release,
             fingerprint=instance.configuration_fingerprint,
-            scope={"source_scope_sha256": sha256_bytes(canonical_json_bytes(instance.source_scope))},
+            scope={
+                "source_scope_sha256": sha256_bytes(canonical_json_bytes(instance.source_scope)),
+                "entrypoint": entrypoint,
+                "profile_sha256": sha256_bytes(instance.profile_artifact.data),
+                "delivery_variant": instance.delivery["variant"],
+                "run_local_date": local_date,
+            },
             schemas={"state": _schema(self.root, "operation-state.schema.json"), "checkpoint": _schema(self.root, "operation-checkpoint.schema.json")},
             serialization_mode=instance.policies["execution"]["serialization_mode"],
         )
-        context: dict[str, Any] = {}
         mutable = dict(instance.file_map)
+        context = _restore_daily_state(
+            manager=manager, store=store, ingestion=ingestion,
+            mutable=mutable, max_bytes=instance.policies["execution"]["max_bytes_per_unit"],
+        )
         current_phase = "preflight"
 
         def preflight(_previous: Mapping[str, Any]) -> dict[str, Any]:
@@ -444,7 +769,14 @@ class ConnectedDailyRuntime:
             nonlocal current_phase
             current_phase = "discover"
             result = ingestion.discover(
-                scope={key: instance.source_scope[key] for key in ("query", "label_ids", "max_results")},
+                scope={
+                    key: instance.source_scope[key]
+                    for key in (
+                        "query", "label_ids", "max_results",
+                        "seed_after_inclusive_ms", "seed_before_exclusive_ms",
+                    )
+                    if key in instance.source_scope
+                },
                 discovery_parent=instance.root,
                 discovery_name=f"state/runs/{operation_id}-discovery.json",
             )
@@ -460,7 +792,10 @@ class ConnectedDailyRuntime:
             work = context.get("work")
             if work is None:
                 initial = canonical_json_bytes({"schema_version": 1, "discovery_sha256": None, "completed_conversation_ids": [], "units": []})
-                work = store.write_immutable(instance.root, f"state/runs/{operation_id}-source-work.json", initial, "application/json")
+                name = f"state/runs/{operation_id}-source-work.json"
+                work = store.read_named(instance.root, name)
+                if work is None:
+                    work = store.write_immutable(instance.root, name, initial, "application/json")
             result = ingestion.catalog(
                 discovery_reference=discovery.inventory.reference,
                 catalog_parent=mutable["source_catalog_folder"], index_reference=mutable["source_catalog_index"],
@@ -534,7 +869,7 @@ class ConnectedDailyRuntime:
             view, brief_tasks = context.get("view"), context.get("brief_tasks")
             if view is None or brief_tasks is None:
                 raise ConnectedDailyError("brief lacks all-current catalog and task views")
-            today = datetime.now(ZoneInfo(instance.household["timezone"])).date().isoformat()
+            today = manager.scope["run_local_date"]
             entities = [
                 {"entity_id": item["entity_id"], "display_name": item["display_name"], "kind": "household" if item["type"] == "shared" else "child"}
                 for item in sorted(instance.household["entities"], key=lambda item: item["sort_order"])
@@ -638,6 +973,8 @@ class ConnectedDailyRuntime:
                 entrypoint=entrypoint, operation_id=operation_id, attempt_id=attempt_id,
                 stages=stages, required_capabilities=REQUIRED_CAPABILITIES,
                 scheduler_admission=(lambda: scheduler_admitted), checkpoint=manager.persist,
+                resume_after=manager.resume_after,
+                durable_predecessor_output=manager.durable_predecessor_output,
             )
         except Exception as exc:
             effects = []

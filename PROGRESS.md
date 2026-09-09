@@ -2783,3 +2783,51 @@ requirements, then read this log from top to bottom.
   provider call, private-data access, main change, push, release, or live retry
   occurred. Next: commit this isolated repair and send its small delta to the
   integration owner for composition with the broader live-setup fixes.
+
+## 2026-09-08 — connected composition review repair
+
+- Reproduced the four remaining independent-review boundaries from exact base
+  `127219b81980710a8cf8965fe1d44e91287961e9`. The composed runner discovered
+  checkpoints but reset its context and mutable pointers, setup's truthful
+  unknown profile had no later exact readmission/entrypoint-selection path, one
+  delivery variant could not represent the two authorized TEST sends, and the
+  source scope could neither represent nor enforce exact seed timestamps.
+- The installed runner now binds source/profile/entrypoint/variant/local-date
+  inputs, admits a new attempt from the one verified chain before resumed work,
+  records abandoned `running` state through the existing attended-single-writer
+  blocked transition, reconstructs exact phase artifacts and current mutable
+  references, and supplies the existing `run_daily` resume inputs. Changed
+  source-work is adopted by exact name/readback rather than recreated from
+  initial bytes. Actual subprocess tests delete local run state and recover
+  caught and hard-death accepted-send responses through one exact Sent match,
+  with no second discovery, task phase, or mail send.
+- Fresh setup now creates a mutable profile-selection object pointing at its
+  truthful setup profile. `school_os.connected_profiles` and the extracted
+  `scripts/readmit_connected_profile.py` command qualify only independently
+  observed exact-entrypoint profiles, create/read back immutable profile bytes,
+  and guardedly replace/read back the selector. Manual and scheduled profiles
+  remain separate. The first readmission of a legacy `127219b`
+  `durable_profiles` object preserves its prior bytes and converts that same ID;
+  it does not rerun empty-root setup or replace private canonical state.
+- Delivery configuration may contain only two distinct finite TEST variants,
+  one for manual and one for scheduled. Explicit selection is entrypoint-bound;
+  the ordinary shared variant and same-variant/day suppression are unchanged.
+  Source scope now accepts optional inclusive-start/exclusive-end epoch-ms
+  bounds. The Gmail adapter rejects competing provider date predicates, uses
+  deliberately widened epoch-second search predicates, full-reads and exactly
+  filters every hit, then retains every ordered member of each selected thread.
+- Integrated the separately reviewed same-object Drive URL-decoration fix. The
+  concurrent live setup observation also showed that Sheet headers can precede
+  the first Drive artifact and a header-only partial attempt is not an
+  idempotent installer resume. That controlled TEST cleanup/retry remains live
+  coordination evidence, not a new product recovery claim; this bounded repair
+  intentionally adds no onboarding recovery framework.
+- Focused reviewer-boundary checks passed 5/5. The related connected setup,
+  runtime, ingestion, bootstrap, daily, delivery, fresh-process, and capability
+  suites passed 96/96 under bundled dependency-free CPython; changed-file
+  privacy and `git diff --check` are clean. No private/provider read, write,
+  mail, task, schedule, main, release, or push was performed by this repair.
+  Next: commit the bounded delta, make reviewed commit
+  `cef9190e2120b96a005a92385535c0f4c7935eb6` its ancestor, then run the one
+  final exact-commit full package/privacy validation and hand the commit to the
+  root task for publication and authenticated acceptance.

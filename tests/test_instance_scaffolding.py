@@ -4,6 +4,7 @@ import gzip
 import base64
 import hashlib
 import json
+import pickle
 import shutil
 import subprocess
 import sys
@@ -44,7 +45,9 @@ from school_os.connected_setup import (  # noqa: E402
     install_connected_instance,
 )
 from school_os.connected_sheets import GoogleSheetsScope  # noqa: E402
-from school_os.connected_daily import ConnectedDailyRuntime, REQUIRED_CAPABILITIES  # noqa: E402
+from school_os.connected_daily import (  # noqa: E402
+    ConnectedDailyRuntime, REQUIRED_CAPABILITIES, readmit_connected_profile,
+)
 from school_os.daily import PHASES  # noqa: E402
 
 
@@ -409,6 +412,22 @@ class InstanceScaffoldingTests(unittest.TestCase):
         })
         return profile
 
+    def make_scheduled_profile(self) -> dict:
+        profile = self.make_connected_profile()
+        profile.update({
+            "profile_id": "connected-scheduled-test",
+            "execution_surface": "scheduled", "evidence_class": "observed",
+            "selected_adapters": {**profile["selected_adapters"], "scheduler": "schedulers/test.md"},
+            "adapter_versions": {**profile["adapter_versions"], "scheduler": "1"},
+            "network_paths": {**profile["network_paths"], "scheduler": {"status": "available"}},
+            "scheduler_behavior": {"verified": True},
+        })
+        profile["capabilities"] += [
+            {"capability_id": name, "status": "available", "verification": {"observed": True}, "degradation": "stop"}
+            for name in ("scheduler.inspect", "scheduler.verify")
+        ]
+        return profile
+
     def test_confirmed_inputs_create_byte_stable_schema_valid_candidate(self) -> None:
         first = self.base / "first"
         second = self.base / "second"
@@ -654,6 +673,224 @@ class InstanceScaffoldingTests(unittest.TestCase):
         second_input = next(item for item in drive.objects.values() if item["title"] == "state/runs/zero-after-nonempty-brief-input.json")
         second_value = json.loads(second_input["data"])
         self.assertEqual(first_value["tasks"], second_value["tasks"])
+
+    def test_connected_runtime_recovers_unknown_send_after_local_reset(self) -> None:
+        for hard_stop in (False, True):
+            with self.subTest(hard_stop=hard_stop):
+                scope = GoogleSheetsScope(
+                    "sheet-1", "https://sheets.example.invalid/sheet-1", 7, "Tasks",
+                    1, 20, 1, 13,
+                )
+                drive, sheets = ConnectedSetupDrive(), ConnectedSetupSheets(scope)
+                storage = CodexDriveCreateOnlyStorage(drive, scratch_directory=self.base / f"setup-{hard_stop}")
+                root = {
+                    "object_id": "instance-root", "kind": "folder",
+                    "permitted_ancestor_id": "instance-root",
+                    "mime_type": "application/vnd.google-apps.folder", "version": "1",
+                }
+                installed = install_connected_instance(
+                    storage=storage, sheets=sheets, root_reference=root, answers=self.answers,
+                    observed_payloads=self.make_connected_observed(self.make_connected_profile()), sheet_scope=scope,
+                )
+                recovery = recover_create_only_generation(
+                    storage, root_reference=root,
+                    bootstrap_reference=installed["bootstrap_document"]["bootstrap_reference"],
+                )
+                run_directory = self.base / f"reset-{hard_stop}"
+                run_directory.mkdir(mode=0o700)
+
+                class LostAfterAcceptance(ConnectedRuntimeGmail):
+                    def send(inner_self, request):
+                        result = super(LostAfterAcceptance, inner_self).send(request)
+                        if hard_stop:
+                            raise SystemExit("synthetic hard process stop")
+                        raise RuntimeError("synthetic lost send response")
+
+                gmail = LostAfterAcceptance()
+                first = ConnectedDailyRuntime(
+                    installed_root=self.package_root, recovery=recovery,
+                    run_directory=run_directory, drive=drive, gmail=gmail,
+                    sheets=sheets, semantic=object(),
+                )
+                with self.assertRaises(SystemExit if hard_stop else Exception):
+                    first.run(entrypoint="manual", operation_id=f"resume-{hard_stop}", attempt_id="attempt-1")
+                shutil.rmtree(run_directory)
+                run_directory.mkdir(mode=0o700)
+                result = ConnectedDailyRuntime(
+                    installed_root=self.package_root, recovery=recovery,
+                    run_directory=run_directory, drive=drive, gmail=gmail,
+                    sheets=sheets, semantic=object(),
+                ).run(entrypoint="manual", operation_id=f"resume-{hard_stop}", attempt_id="attempt-2")
+                self.assertEqual("COMPLETE", result.outcome)
+                self.assertEqual(("brief_delivery", "commit"), tuple(result.outputs))
+                self.assertEqual(1, gmail.send_count)
+
+    def test_connected_runtime_recovers_caught_and_hard_unknown_send_in_fresh_processes(self) -> None:
+        for failure in ("caught", "hard"):
+            with self.subTest(failure=failure):
+                scope = GoogleSheetsScope(
+                    "sheet-1", "https://sheets.example.invalid/sheet-1", 7, "Tasks",
+                    1, 20, 1, 13,
+                )
+                drive, sheets = ConnectedSetupDrive(), ConnectedSetupSheets(scope)
+                storage = CodexDriveCreateOnlyStorage(drive, scratch_directory=self.base / f"process-setup-{failure}")
+                root = {
+                    "object_id": "instance-root", "kind": "folder",
+                    "permitted_ancestor_id": "instance-root",
+                    "mime_type": "application/vnd.google-apps.folder", "version": "1",
+                }
+                installed = install_connected_instance(
+                    storage=storage, sheets=sheets, root_reference=root, answers=self.answers,
+                    observed_payloads=self.make_connected_observed(self.make_connected_profile()), sheet_scope=scope,
+                )
+                recovery = recover_create_only_generation(
+                    storage, root_reference=root,
+                    bootstrap_reference=installed["bootstrap_document"]["bootstrap_reference"],
+                )
+                run_directory = self.base / f"process-run-{failure}"
+                run_directory.mkdir(mode=0o700)
+                state_path = self.base / f"process-state-{failure}.pickle"
+                state = {
+                    "sheet_scope": {
+                        "spreadsheet_id": scope.spreadsheet_id, "spreadsheet_url": scope.spreadsheet_url,
+                        "sheet_id": scope.sheet_id, "sheet_title": scope.sheet_title,
+                        "first_row": scope.first_row, "last_row": scope.last_row,
+                        "first_column": scope.first_column, "last_column": scope.last_column,
+                    },
+                    "drive_objects": drive.objects, "drive_sequence": drive.sequence,
+                    "sheet_grid": sheets.grid, "sheet_headers": sheets.headers,
+                    "gmail_messages": {}, "gmail_send_count": 0,
+                    "recovery": recovery, "run_directory": str(run_directory),
+                    "operation_id": f"process-resume-{failure}", "attempt_id": "attempt-1",
+                    "failure": failure,
+                }
+                state_path.write_bytes(pickle.dumps(state))
+                command = [
+                    sys.executable, str(ROOT / "tests/support/connected_daily_process.py"),
+                    str(state_path), str(self.package_root),
+                ]
+                first = subprocess.run(command, cwd=ROOT, text=True, capture_output=True, check=False)
+                self.assertNotEqual(0, first.returncode)
+                saved = pickle.loads(state_path.read_bytes())
+                self.assertEqual(1, saved["gmail_send_count"], first.stderr)
+                shutil.rmtree(run_directory)
+                run_directory.mkdir(mode=0o700)
+                saved.update({"failure": None, "attempt_id": "attempt-2"})
+                state_path.write_bytes(pickle.dumps(saved))
+                second = subprocess.run(command, cwd=ROOT, text=True, capture_output=True, check=False)
+                self.assertEqual(0, second.returncode, second.stderr)
+                outcome = json.loads(second.stdout)
+                self.assertEqual("COMPLETE", outcome["outcome"])
+                self.assertEqual(["brief_delivery", "commit"], outcome["outputs"])
+                self.assertEqual(1, outcome["send_count"])
+
+    def test_profile_readmission_selects_distinct_manual_and_scheduled_evidence(self) -> None:
+        scope = GoogleSheetsScope(
+            "sheet-1", "https://sheets.example.invalid/sheet-1", 7, "Tasks",
+            1, 20, 1, 13,
+        )
+        drive, sheets = ConnectedSetupDrive(), ConnectedSetupSheets(scope)
+        storage = CodexDriveCreateOnlyStorage(drive, scratch_directory=self.base / "setup-profile")
+        root = {
+            "object_id": "instance-root", "kind": "folder",
+            "permitted_ancestor_id": "instance-root",
+            "mime_type": "application/vnd.google-apps.folder", "version": "1",
+        }
+        installed = install_connected_instance(
+            storage=storage, sheets=sheets, root_reference=root, answers=self.answers,
+            observed_payloads=self.make_connected_observed(), sheet_scope=scope,
+        )
+        recovery = recover_create_only_generation(
+            storage, root_reference=root,
+            bootstrap_reference=installed["bootstrap_document"]["bootstrap_reference"],
+        )
+        run_directory = self.base / "profile-run"
+        run_directory.mkdir(mode=0o700)
+        with self.assertRaisesRegex(Exception, "not declared conformant|authentication is 'unknown'"):
+            ConnectedDailyRuntime(
+                installed_root=self.package_root, recovery=recovery, run_directory=run_directory,
+                drive=drive, gmail=ConnectedRuntimeGmail(), sheets=sheets, semantic=object(),
+            ).run(entrypoint="manual", operation_id="unknown-profile", attempt_id="attempt-1")
+        manual = self.make_connected_profile()
+        manual["evidence_class"] = "observed"
+        admitted_manual = readmit_connected_profile(
+            installed_root=self.package_root, recovery=recovery, run_directory=run_directory,
+            drive=drive, entrypoint="manual", profile_data=canonical_json_bytes(manual),
+        )
+        scheduled = self.make_scheduled_profile()
+        admitted_scheduled = readmit_connected_profile(
+            installed_root=self.package_root, recovery=recovery, run_directory=run_directory,
+            drive=drive, entrypoint="scheduled", profile_data=canonical_json_bytes(scheduled),
+        )
+        self.assertEqual("connected-test", admitted_manual["profile_id"])
+        self.assertEqual("connected-scheduled-test", admitted_scheduled["profile_id"])
+        result = ConnectedDailyRuntime(
+            installed_root=self.package_root, recovery=recovery, run_directory=run_directory,
+            drive=drive, gmail=ConnectedRuntimeGmail(), sheets=sheets, semantic=object(),
+        ).run(
+            entrypoint="scheduled", operation_id="scheduled-profile", attempt_id="attempt-1",
+            scheduler_admitted=True,
+        )
+        self.assertEqual("COMPLETE", result.outcome)
+
+    def test_configured_test_variants_send_once_each_and_same_variant_replay_suppresses(self) -> None:
+        scope = GoogleSheetsScope(
+            "sheet-1", "https://sheets.example.invalid/sheet-1", 7, "Tasks",
+            1, 20, 1, 13,
+        )
+        drive, sheets = ConnectedSetupDrive(), ConnectedSetupSheets(scope)
+        storage = CodexDriveCreateOnlyStorage(drive, scratch_directory=self.base / "setup-variants")
+        root = {
+            "object_id": "instance-root", "kind": "folder",
+            "permitted_ancestor_id": "instance-root",
+            "mime_type": "application/vnd.google-apps.folder", "version": "1",
+        }
+        observed = self.make_connected_observed(self.make_connected_profile())
+        delivery = {
+            "schema_version": 1, "variant": "ordinary-daily",
+            "test_variants": {"manual": "manual-acceptance-test", "scheduled": "scheduled-acceptance-test"},
+            "to": ["parent@example.invalid"], "cc": [], "bcc": [], "subject_prefix": "TEST School updates",
+        }
+        observed["delivery_configuration"]["data"] = canonical_json_bytes(delivery)
+        installed = install_connected_instance(
+            storage=storage, sheets=sheets, root_reference=root, answers=self.answers,
+            observed_payloads=observed, sheet_scope=scope,
+        )
+        recovery = recover_create_only_generation(
+            storage, root_reference=root,
+            bootstrap_reference=installed["bootstrap_document"]["bootstrap_reference"],
+        )
+        run_directory = self.base / "variant-run"
+        run_directory.mkdir(mode=0o700)
+        readmit_connected_profile(
+            installed_root=self.package_root, recovery=recovery, run_directory=run_directory,
+            drive=drive, entrypoint="scheduled", profile_data=canonical_json_bytes(self.make_scheduled_profile()),
+        )
+        gmail = ConnectedRuntimeGmail()
+
+        def run(entrypoint: str, operation_id: str, variant: str) -> None:
+            result = ConnectedDailyRuntime(
+                installed_root=self.package_root, recovery=recovery, run_directory=run_directory,
+                drive=drive, gmail=gmail, sheets=sheets, semantic=object(),
+            ).run(
+                entrypoint=entrypoint, operation_id=operation_id, attempt_id="attempt-1",
+                scheduler_admitted=entrypoint == "scheduled", delivery_variant=variant,
+            )
+            self.assertEqual("COMPLETE", result.outcome)
+
+        run("manual", "manual-test-send", "manual-acceptance-test")
+        run("scheduled", "scheduled-test-send", "scheduled-acceptance-test")
+        run("manual", "manual-test-replay", "manual-acceptance-test")
+        self.assertEqual(2, gmail.send_count)
+        state = json.loads(next(
+            item["data"] for item in drive.objects.values()
+            if item["title"] == "observed/delivery_state.json"
+        ))
+        self.assertEqual(
+            {"manual-acceptance-test", "scheduled-acceptance-test"},
+            {item["intent"]["variant"] for item in state["deliveries"].values()},
+        )
+        self.assertTrue(all(item["intent"]["to"] == ["parent@example.invalid"] for item in state["deliveries"].values()))
 
     def test_create_only_generation_adopts_one_lost_response_without_retry(self) -> None:
         storage = CreateOnlyFakeStorage(lose_after_create=True)

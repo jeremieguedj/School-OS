@@ -37,6 +37,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--instance-reference", required=True)
     parser.add_argument("--instance-document", type=Path)
     parser.add_argument("--scheduler-admitted", action="store_true")
+    parser.add_argument("--delivery-variant")
     parser.add_argument("--verify-only", action="store_true")
     args = parser.parse_args(argv)
     try:
@@ -73,6 +74,7 @@ def main(argv: list[str] | None = None) -> int:
         ).run(
             entrypoint=args.entrypoint, operation_id=args.operation_id,
             attempt_id=args.attempt_id, scheduler_admitted=args.scheduler_admitted,
+            delivery_variant=args.delivery_variant,
         )
     except Exception as exc:
         print(f"blocked: {exc}", file=sys.stderr)

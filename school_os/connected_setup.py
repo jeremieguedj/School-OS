@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import base64
 import binascii
+import json
 import os
 import tempfile
 from collections.abc import Mapping
@@ -11,7 +12,10 @@ from pathlib import Path
 from typing import Any
 
 from .connected_sheets import CodexSheetsTaskPort, GoogleSheetsScope
-from .connected_storage import CodexDriveReferenceStorage, ConnectedStorageError
+from .connected_storage import (
+    CodexDriveReferenceStorage, ConnectedStorageError, DriveReference, StoredArtifact,
+)
+from .connected_profiles import initial_profile_registry
 from .contracts import canonical_json_bytes, dump_mapping_yaml, load_mapping_yaml, sha256_bytes
 from .install import (
     DAILY_REFERENCE_KINDS, FILE_MAP_PATH, INTEGRATION_REFERENCE_KINDS,
@@ -250,6 +254,25 @@ def install_connected_instance(
         else:
             observed[role] = reference
 
+    profile_reference = observed["runtime_profile"]
+    profile_artifact = StoredArtifact(
+        DriveReference(
+            profile_reference["object_id"], root_id,
+            profile_reference["mime_type"], storage.expected_urls[profile_reference["object_id"]],
+            profile_reference["version"],
+        ),
+        normalized_payloads["runtime_profile"]["data"],
+    )
+    profile_registry = storage.create_file(
+        root_id, "config/runtime-profile-selection.json",
+        initial_profile_registry(
+            profile_artifact,
+            json.loads((Path(answers["package_root"]) / "schemas" / "capability-profile.schema.json").read_text(encoding="utf-8")),
+        ),
+        "application/json",
+    )
+    profile_registry_reference = _object_reference(profile_registry, root_id)
+
     catalog_folder = storage.create_folder(root_id, "source-catalog")
     checkpoint_folder = storage.create_folder(root_id, "operation-checkpoints")
     observed["source_catalog_folder"] = _object_reference(catalog_folder, root_id)
@@ -295,7 +318,7 @@ def install_connected_instance(
         "delivery_state": observed["delivery_state"],
         "final_run_checkpoint": observed["final_run_checkpoint"],
         "manual_run_recipe": _object_reference(recipe, root_id),
-        "durable_profiles": observed["runtime_profile"],
+        "durable_profiles": profile_registry_reference,
     }
     payloads[FILE_MAP_PATH] = dump_mapping_yaml(file_map)
     recovery = install_create_only_generation(

@@ -938,9 +938,10 @@ complete paginated Sent search and accepts exactly one full-context match; zero,
 inconclusive, or multiple matches block instead of blindly retrying an unknown
 send. Equal-body test variants remain distinct by key.
 
-The concrete installed connected-daily entrypoint must compose the seven
-existing phase callables from their real predecessor artifacts and pass the
-exact selected capability set to qualification. It is not yet implemented;
+The concrete installed connected-daily entrypoint composes the seven existing
+phase callables from their real predecessor artifacts and passes the exact
+selected capability set to qualification. Its repository implementation is
+synthetic evidence only;
 bootstrap readback and arbitrary callback composition are not substitutes.
 `school_os.daily` may repeat verified bounded units within one
 phase: each unit reports `phase_complete`, `completed_units`, and
@@ -956,6 +957,41 @@ and complete readback. Drive list caps block at the bound; interactive evidence
 does not imply unattended scheduler conformance. Repository implementation and
 synthetic bridge tests do not complete M4-003: authenticated manual and
 scheduled observations remain pending M4-003/M4-009 acceptance.
+
+**Connected composition repair (2026-09-08):** The installed runner now reads
+one verified longest checkpoint chain, records an attended hard-stop as an
+ordinary blocked transition when the prior process died while `running`, and
+persists the new-attempt admission before resumed work. It restores exact
+discovery, source-work/index, canonical/derived/task, brief, delivery, and
+current mutable references from checkpointed output, then supplies
+`resume_after` and `durable_predecessor_output` to `school_os.daily`. The
+operation scope freezes the local date and binds the source-scope hash,
+entrypoint, selected profile bytes, and delivery variant. Fresh-process tests
+delete all local run files and recover both a caught lost response and a hard
+death after provider acceptance through one exact Sent match and no second
+send. This uses the existing attended single-writer state machine; it adds no
+lock or recovery service.
+
+Setup continues to admit a schema-valid unknown profile without fabricating
+later capabilities. A mutable exact-ID selector now points to separate
+immutable manual and scheduled profile artifacts. The executable readmission
+command accepts only an `observed` profile that qualifies for its exact
+entrypoint, creates and reads back its bytes, guardedly replaces the selector,
+and reads the selection back. Its first use on the `127219b` legacy layout
+preserves the former single-profile bytes before converting that same
+`durable_profiles` object; no second empty-root install or canonical-state
+replacement is required.
+
+Private delivery configuration may declare exactly two distinct TEST variants,
+one per entrypoint. A run can select only its configured entrypoint value; the
+ordinary variant remains shared, and same-variant/day replay retains existing
+duplicate suppression. Private source scope may independently declare
+`seed_after_inclusive_ms` and `seed_before_exclusive_ms`. The adapter adds only
+widened whole-second provider predicates, rejects competing date predicates,
+full-reads every returned hit, filters its exact
+13-digit internal epoch milliseconds, and only then seeds a conversation. Every
+ordered member of a selected thread remains in the catalog even when outside
+the seed interval.
 
 **M4-003 primitive-review correction (2026-09-08):** Sent verification binds
 the observed raw message ID to the exact requested provider ID in post-send,

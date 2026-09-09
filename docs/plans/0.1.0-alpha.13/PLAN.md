@@ -1071,3 +1071,18 @@ evidence that does not need to be repeatedly printed into model context.
   independent final review and the separately authorized authenticated
   fresh-instance/manual/scheduled acceptance. No private instance, provider,
   schedule, tag, release, push, or main-tree effect occurred.
+- Revision 44: repaired the independent connected-composition findings without
+  adding a second operation or coordination framework. The concrete installed
+  runner now admits a new attempt from the verified checkpoint chain, restores
+  exact phase artifacts and current mutable references, binds the frozen local
+  date/source/profile/entrypoint/variant inputs, and resumes through the shared
+  `run_daily` controls. A guarded Drive selector retains separately observed
+  manual and scheduled profiles and has an executable readmission path,
+  including conversion of the legacy `127219b` single-profile object at the
+  same exact ID. Delivery accepts only the ordinary variant or one of two
+  explicitly configured entrypoint TEST variants. Optional exact epoch-ms seed
+  bounds filter full search hits as `[start,end)` while selected threads retain
+  all ordered context. These are repository/synthetic corrections;
+  authenticated qualification, private source ingestion, both real TEST sends,
+  temporary schedule verification, visual/audio acceptance, release
+  publication, and final M4-006 remain open.
