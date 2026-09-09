@@ -220,16 +220,37 @@ class IngestionArtifacts:
 
 
 @dataclass(frozen=True)
+class DiscoveryResult:
+    """One exact, body-free Gmail search inventory for a single catalog run."""
+
+    inventory: StoredArtifact
+    scope_sha256: str
+    conversation_ids: tuple[str, ...]
+
+    def as_stage_result(self) -> dict[str, Any]:
+        return {
+            "verified": True,
+            "phase": "discover",
+            "phase_complete": True,
+            "discovery_inventory": _artifact_pointer(self.inventory),
+            "scope_sha256": self.scope_sha256,
+            "conversation_ids": list(self.conversation_ids),
+        }
+
+
+@dataclass(frozen=True)
 class IngestionResult:
-    """One verified bounded result suitable for the existing ``catalog`` phase."""
+    """One verified bounded catalog result; eligible cursors are output only."""
 
     verified: bool
     phase_complete: bool
     completed_units: tuple[str, ...]
     remaining_work: dict[str, Any]
-    state: StoredArtifact
+    work: StoredArtifact
     index: StoredArtifact
     artifacts: tuple[IngestionArtifacts, ...]
+    discovery: StoredArtifact
+    proposed_cursor: dict[str, Any] | None
 
     def as_stage_result(self) -> dict[str, Any]:
         return {
@@ -239,8 +260,10 @@ class IngestionResult:
             "completed_units": list(self.completed_units),
             "remaining_work": dict(self.remaining_work),
             "progressed": bool(self.artifacts),
-            "source_state": _artifact_pointer(self.state),
+            "source_work": _artifact_pointer(self.work),
             "catalog_index": _artifact_pointer(self.index),
+            "discovery_inventory": _artifact_pointer(self.discovery),
+            "proposed_source_cursor": None if self.proposed_cursor is None else dict(self.proposed_cursor),
             "records": [
                 {
                     "catalog": _artifact_pointer(item.catalog),
@@ -275,11 +298,12 @@ def _json_object(data: bytes, label: str) -> dict[str, Any]:
     return value
 
 
-def _continuation(data: bytes) -> dict[str, Any]:
-    value = _json_object(data, "source continuation")
-    allowed = {"schema_version", "completed_conversation_ids", "units", "scope_sha256", "discovery"}
+def _work_continuation(data: bytes) -> dict[str, Any]:
+    """Read run-scoped catalog work; this is never an eligible source cursor."""
+    value = _json_object(data, "source work continuation")
+    allowed = {"schema_version", "completed_conversation_ids", "units", "discovery_sha256"}
     if not set(value) <= allowed or not {"schema_version", "completed_conversation_ids", "units"} <= set(value) or value["schema_version"] != 1:
-        raise ConnectedIngestionError("source continuation has an unsupported shape")
+        raise ConnectedIngestionError("source work continuation has an unsupported shape")
     completed = value["completed_conversation_ids"]
     units = value["units"]
     if (
@@ -288,7 +312,7 @@ def _continuation(data: bytes) -> dict[str, Any]:
         or len(completed) != len(set(completed))
         or not isinstance(units, list)
     ):
-        raise ConnectedIngestionError("source continuation has invalid completed units")
+        raise ConnectedIngestionError("source work continuation has invalid completed units")
     unit_ids: set[str] = set()
     for unit in units:
         unit_allowed = {
@@ -298,7 +322,7 @@ def _continuation(data: bytes) -> dict[str, Any]:
         if not isinstance(unit, Mapping) or not set(unit) <= unit_allowed or not {
             "conversation_id", "record_id", "record_sha256", "fact_ids"
         } <= set(unit):
-            raise ConnectedIngestionError("source continuation unit has an unsupported shape")
+            raise ConnectedIngestionError("source work continuation unit has an unsupported shape")
         conversation_id = unit.get("conversation_id")
         record_id = unit.get("record_id")
         digest = unit.get("record_sha256")
@@ -312,7 +336,7 @@ def _continuation(data: bytes) -> dict[str, Any]:
             or len(fact_ids) != len(set(fact_ids))
             or conversation_id in unit_ids
         ):
-            raise ConnectedIngestionError("source continuation unit has invalid identity evidence")
+            raise ConnectedIngestionError("source work continuation unit has invalid identity evidence")
         for key in ("discovery_message_ids", "full_message_ids"):
             identities = unit.get(key, [])
             if (
@@ -320,28 +344,23 @@ def _continuation(data: bytes) -> dict[str, Any]:
                 or any(not isinstance(item, str) or not item for item in identities)
                 or len(identities) != len(set(identities))
             ):
-                raise ConnectedIngestionError("source continuation unit has invalid membership evidence")
+                raise ConnectedIngestionError("source work continuation unit has invalid membership evidence")
         unit_ids.add(conversation_id)
     if unit_ids != set(completed):
-        raise ConnectedIngestionError("source continuation identities and units disagree")
-    scope_sha256 = value.get("scope_sha256")
-    if scope_sha256 is not None and (
-        not isinstance(scope_sha256, str) or len(scope_sha256) != 64
-        or any(character not in "0123456789abcdef" for character in scope_sha256)
+        raise ConnectedIngestionError("source work continuation identities and units disagree")
+    discovery_sha256 = value.get("discovery_sha256")
+    if discovery_sha256 is not None and (
+        not isinstance(discovery_sha256, str) or len(discovery_sha256) != 64 or any(
+            character not in "0123456789abcdef" for character in discovery_sha256
+        )
     ):
-        raise ConnectedIngestionError("source continuation has invalid scope evidence")
-    discovery = value.get("discovery")
-    if discovery is not None and not isinstance(discovery, Mapping):
-        raise ConnectedIngestionError("source continuation has malformed discovery evidence")
+        raise ConnectedIngestionError("source work continuation has invalid discovery evidence")
     result = {
         "schema_version": 1,
         "completed_conversation_ids": list(completed),
         "units": [dict(item) for item in units],
     }
-    if scope_sha256 is not None:
-        result["scope_sha256"] = scope_sha256
-    if discovery is not None:
-        result["discovery"] = dict(discovery)
+    result["discovery_sha256"] = discovery_sha256
     return result
 
 
@@ -460,10 +479,8 @@ def _scope_sha256(scope: Mapping[str, Any]) -> str:
     return sha256_bytes(canonical_json_bytes(dict(scope)))
 
 
-def _discovery_evidence(
-    source: SourcePort, scope: Mapping[str, Any],
-) -> tuple[Any, dict[str, tuple[str, ...]], dict[str, Any]]:
-    """Enumerate once while retaining every search hit before deduplication."""
+def _discovery_inventory(source: SourcePort, scope: Mapping[str, Any]) -> dict[str, Any]:
+    """Enumerate once and return the complete, body-free durable inventory."""
     hits: dict[str, set[str]] = {}
     pages: list[dict[str, Any]] = []
 
@@ -494,15 +511,132 @@ def _discovery_evidence(
 
     enumeration = enumerate_conversations(search)
     ordered_hits = {key: tuple(sorted(value)) for key, value in sorted(hits.items())}
-    evidence = {
+    conversations: list[dict[str, Any]] = []
+    for item in enumeration.conversations:
+        copied = dict(item)
+        conversation_id = _require_string(copied, "conversation_id", "enumerated conversation")
+        byte_size = copied.get("byte_size")
+        if isinstance(byte_size, bool) or not isinstance(byte_size, int) or byte_size < 0:
+            raise ConnectedIngestionError("enumerated conversation has invalid byte-size evidence")
+        conversations.append({
+            "conversation_id": conversation_id,
+            "byte_size": byte_size,
+            "discovery_message_ids": list(ordered_hits.get(conversation_id, ())),
+        })
+    return {
+        "schema_version": 1,
+        "scope": dict(scope),
+        "scope_sha256": _scope_sha256(scope),
+        "page_tokens": list(enumeration.page_tokens),
         "pages": pages,
         "dispositions": [dict(item) for item in enumeration.dispositions],
         "hits": [
             {"conversation_id": key, "message_ids": list(value)}
             for key, value in ordered_hits.items()
         ],
+        "conversations": conversations,
+        # Catalog must re-read every selected thread, including a unit whose
+        # stored hit IDs have not changed, before accepting prior work.
+        "thread_recheck_conversation_ids": [item["conversation_id"] for item in conversations],
     }
-    return enumeration, ordered_hits, evidence
+
+
+def _discovery_from_artifact(data: bytes) -> tuple[dict[str, Any], list[dict[str, Any]], str]:
+    """Validate the exact discovery artifact used by every catalog continuation."""
+    value = _json_object(data, "discovery inventory")
+    required = {
+        "schema_version", "scope", "scope_sha256", "page_tokens", "pages",
+        "dispositions", "hits", "conversations", "thread_recheck_conversation_ids",
+    }
+    if set(value) != required or value.get("schema_version") != 1 or not isinstance(value.get("scope"), Mapping):
+        raise ConnectedIngestionError("discovery inventory has an unsupported shape")
+    scope = dict(value["scope"])
+    scope_sha256 = value.get("scope_sha256")
+    if not isinstance(scope_sha256, str) or scope_sha256 != _scope_sha256(scope):
+        raise ConnectedIngestionError("discovery inventory scope hash disagrees")
+    tokens = value.get("page_tokens")
+    if not isinstance(tokens, list) or not tokens or tokens[0] is not None or any(
+        token is not None and (not isinstance(token, str) or not token) for token in tokens
+    ) or len(tokens) != len(set(tokens)):
+        raise ConnectedIngestionError("discovery inventory has invalid page-token evidence")
+    pages = value.get("pages")
+    if not isinstance(pages, list) or len(pages) != len(tokens):
+        raise ConnectedIngestionError("discovery inventory has incomplete page evidence")
+    page_hit_items: list[dict[str, Any]] = []
+    for position, page in enumerate(pages):
+        if not isinstance(page, Mapping) or set(page) != {"page_token", "next_page_token", "hits"} or page.get("page_token") != tokens[position]:
+            raise ConnectedIngestionError("discovery inventory page evidence is malformed")
+        next_token = page.get("next_page_token")
+        if next_token is not None and (not isinstance(next_token, str) or not next_token):
+            raise ConnectedIngestionError("discovery inventory page has invalid next token")
+        if position + 1 < len(tokens) and next_token != tokens[position + 1]:
+            raise ConnectedIngestionError("discovery inventory page order is incomplete")
+        if position + 1 == len(tokens) and next_token is not None:
+            raise ConnectedIngestionError("discovery inventory final page is incomplete")
+        page_hits = page.get("hits")
+        if not isinstance(page_hits, list):
+            raise ConnectedIngestionError("discovery inventory page hits are malformed")
+        for item in page_hits:
+            if (
+                not isinstance(item, Mapping) or set(item) != {"conversation_id", "message_ids"}
+                or not isinstance(item.get("conversation_id"), str) or not item["conversation_id"]
+                or not isinstance(item.get("message_ids"), list)
+                or any(not isinstance(hit, str) or not hit for hit in item["message_ids"])
+                or len(item["message_ids"]) != len(set(item["message_ids"]))
+            ):
+                raise ConnectedIngestionError("discovery inventory page hit is malformed")
+            page_hit_items.append({
+                "conversation_id": item["conversation_id"],
+                "message_ids": list(item["message_ids"]),
+            })
+    dispositions = value.get("dispositions")
+    if not isinstance(dispositions, list) or any(
+        not isinstance(item, Mapping) or set(item) != {"conversation_id", "outcome"}
+        or not isinstance(item.get("conversation_id"), str) or not item["conversation_id"]
+        or item.get("outcome") not in {"included", "duplicate"}
+        for item in dispositions
+    ):
+        raise ConnectedIngestionError("discovery inventory dispositions are malformed")
+    conversations = value.get("conversations")
+    if not isinstance(conversations, list) or not conversations:
+        raise ConnectedIngestionError("discovery inventory has no conversations")
+    normalized: list[dict[str, Any]] = []
+    ids: list[str] = []
+    for item in conversations:
+        if not isinstance(item, Mapping) or set(item) != {"conversation_id", "byte_size", "discovery_message_ids"}:
+            raise ConnectedIngestionError("discovery inventory conversation has an unsupported shape")
+        conversation_id = _require_string(item, "conversation_id", "discovery inventory conversation")
+        byte_size = item.get("byte_size")
+        hits = item.get("discovery_message_ids")
+        if (
+            isinstance(byte_size, bool) or not isinstance(byte_size, int) or byte_size < 0
+            or not isinstance(hits, list) or any(not isinstance(hit, str) or not hit for hit in hits)
+            or len(hits) != len(set(hits))
+        ):
+            raise ConnectedIngestionError("discovery inventory conversation has invalid evidence")
+        ids.append(conversation_id)
+        normalized.append({"conversation_id": conversation_id, "byte_size": byte_size, "discovery_message_ids": list(hits)})
+    if ids != sorted(ids) or len(ids) != len(set(ids)) or value.get("thread_recheck_conversation_ids") != ids:
+        raise ConnectedIngestionError("discovery inventory thread recheck evidence is incomplete")
+    expected_hits = [{"conversation_id": item["conversation_id"], "message_ids": item["discovery_message_ids"]} for item in normalized]
+    if value.get("hits") != expected_hits:
+        raise ConnectedIngestionError("discovery inventory hit evidence disagrees with conversations")
+    page_seen: set[str] = set()
+    expected_dispositions: list[dict[str, str]] = []
+    page_hit_ids: dict[str, set[str]] = {}
+    for item in page_hit_items:
+        conversation_id = item["conversation_id"]
+        expected_dispositions.append({
+            "conversation_id": conversation_id,
+            "outcome": "duplicate" if conversation_id in page_seen else "included",
+        })
+        page_seen.add(conversation_id)
+        page_hit_ids.setdefault(conversation_id, set()).update(item["message_ids"])
+    if dispositions != expected_dispositions or {
+        conversation_id: sorted(message_ids) for conversation_id, message_ids in page_hit_ids.items()
+    } != {item["conversation_id"]: item["discovery_message_ids"] for item in normalized}:
+        raise ConnectedIngestionError("discovery inventory page evidence disagrees with durable hits")
+    return scope, normalized, scope_sha256
 
 
 def _named(
@@ -771,27 +905,54 @@ class ConnectedIngestionWorker:
             raise ConnectedIngestionError("Facts artifact differs from its verified interpretation")
         return IngestionArtifacts(catalog, interpretation, audit_artifact, facts), interpreted
 
-    def run(
-        self, *, scope: Mapping[str, Any], catalog_parent: DriveReference,
-        index_reference: DriveReference, continuation_reference: DriveReference,
+    def discover(
+        self, *, scope: Mapping[str, Any], discovery_parent: DriveReference,
+        discovery_name: str,
+    ) -> DiscoveryResult:
+        """Execute the bounded Gmail search once and persist its exact inventory.
+
+        A retry for the same operation-scoped name adopts the verified immutable
+        inventory; it never silently starts a second catalog search.
+        """
+        if not isinstance(discovery_name, str) or not discovery_name:
+            raise ConnectedIngestionError("discovery artifact name is required")
+        existing = _named(self.store, discovery_parent, discovery_name, "application/json")
+        if existing is None:
+            inventory = canonical_json_bytes(_discovery_inventory(self.source, scope))
+            existing = self.store.write_immutable(
+                discovery_parent, discovery_name, inventory, "application/json"
+            )
+            if existing.data != inventory:
+                raise ConnectedIngestionError("discovery inventory readback differs from intended bytes")
+        discovered_scope, conversations, scope_sha256 = _discovery_from_artifact(existing.data)
+        if discovered_scope != dict(scope):
+            raise ConnectedIngestionError("existing discovery inventory scope differs from requested scope")
+        return DiscoveryResult(existing, scope_sha256, tuple(item["conversation_id"] for item in conversations))
+
+    def catalog(
+        self, *, discovery_reference: DriveReference, catalog_parent: DriveReference,
+        index_reference: DriveReference, work_reference: DriveReference,
         max_records: int, max_bytes: int,
     ) -> IngestionResult:
+        """Consume one verified discovery inventory without performing a search."""
         if max_records < 1 or max_bytes < 1:
             raise ConnectedIngestionError("source unit bounds must be positive")
         # Inputs may be durable pointers from an earlier process. Resolve the
         # same exact object IDs afresh, then retain every returned write guard.
-        continuation_artifact = self.store.read(continuation_reference.current())
-        continuation = _continuation(continuation_artifact.data)
+        if not isinstance(discovery_reference.version, str) or not discovery_reference.version:
+            raise ConnectedIngestionError("catalog requires the exact verified discovery reference")
+        discovery_artifact = self.store.read(discovery_reference)
+        if discovery_artifact.reference.mime_type != "application/json":
+            raise ConnectedIngestionError("discovery inventory has the wrong MIME type")
+        scope, conversations, scope_sha256 = _discovery_from_artifact(discovery_artifact.data)
+        discovery_sha256 = sha256_bytes(discovery_artifact.data)
+        continuation_artifact = self.store.read(work_reference.current())
+        continuation = _work_continuation(continuation_artifact.data)
+        if continuation["discovery_sha256"] not in {None, discovery_sha256}:
+            raise ConnectedIngestionError("source work continuation belongs to a different discovery inventory")
         index_artifact = self.store.read(index_reference.current())
         index = _json_object(index_artifact.data, "catalog index")
         _index_row(index, "__shape_check__")
-        enumeration, discovery_hits, discovery = _discovery_evidence(self.source, scope)
-        conversations = []
-        for item in enumeration.conversations:
-            copied = dict(item)
-            conversation_id = _require_string(copied, "conversation_id", "enumerated conversation")
-            copied["discovery_message_ids"] = list(discovery_hits.get(conversation_id, ()))
-            conversations.append(copied)
 
         prior_units = {
             item["conversation_id"]: item for item in continuation["units"]
@@ -838,11 +999,11 @@ class ConnectedIngestionWorker:
                 "conversation_id": conversation_id, "scope": dict(scope),
                 "pagination": {
                     "completed": True,
-                    "page_tokens": list(enumeration.page_tokens),
+                    "page_tokens": list(_json_object(discovery_artifact.data, "discovery inventory")["page_tokens"]),
                     "discovery_message_ids": list(listed["discovery_message_ids"]),
                     "full_message_ids": [item["message_id"] for item in messages],
                     "dispositions": [
-                        dict(item) for item in enumeration.dispositions
+                        dict(item) for item in _json_object(discovery_artifact.data, "discovery inventory")["dispositions"]
                         if item["conversation_id"] == conversation_id
                     ],
                 },
@@ -915,10 +1076,9 @@ class ConnectedIngestionWorker:
             ordered_ids = sorted(valid_units)
             state_value = {
                 "schema_version": 1,
-                "scope_sha256": _scope_sha256(scope),
+                "discovery_sha256": discovery_sha256,
                 "completed_conversation_ids": ordered_ids,
                 "units": [valid_units[identity] for identity in ordered_ids],
-                "discovery": discovery,
             }
             state_bytes = canonical_json_bytes(state_value)
             continuation_artifact = self.store.replace(
@@ -933,16 +1093,22 @@ class ConnectedIngestionWorker:
         ordered_ids = sorted(valid_units)
         final_state = canonical_json_bytes({
             "schema_version": 1,
-            "scope_sha256": _scope_sha256(scope),
+            "discovery_sha256": discovery_sha256,
             "completed_conversation_ids": ordered_ids,
             "units": [valid_units[identity] for identity in ordered_ids],
-            "discovery": discovery,
         })
         if continuation_artifact.data != final_state:
             continuation_artifact = self.store.replace(
                 continuation_artifact.reference, final_state, "application/json"
             )
+        proposed_cursor = None if remaining else {
+            "schema_version": 1,
+            "scope_sha256": scope_sha256,
+            "discovery_sha256": discovery_sha256,
+            "completed_conversation_ids": ordered_ids,
+        }
         return IngestionResult(
             True, not remaining, tuple(ordered_ids), remaining,
             continuation_artifact, index_artifact, tuple(written),
+            discovery_artifact, proposed_cursor,
         )

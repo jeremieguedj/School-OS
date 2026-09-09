@@ -198,18 +198,21 @@ def main(directory: Path) -> None:
         extraction_schema=schemas["extraction-result.schema.json"],
         interpreter=interpreter, auditor=auditor,
     )
-    result = worker.run(
-        scope={"query": "bounded"},
-        catalog_parent=DriveReference(
-            "catalog", "root", "application/vnd.google-apps.folder", "https://drive.test/catalog", "1"
-        ),
-        index_reference=index, continuation_reference=state,
-        max_records=1, max_bytes=4096,
+    catalog_parent = DriveReference(
+        "catalog", "root", "application/vnd.google-apps.folder", "https://drive.test/catalog", "1"
+    )
+    discovery = worker.discover(
+        scope={"query": "bounded"}, discovery_parent=catalog_parent,
+        discovery_name="runs/fresh-process/discovery.json",
+    )
+    result = worker.catalog(
+        discovery_reference=discovery.inventory.reference, catalog_parent=catalog_parent,
+        index_reference=index, work_reference=state, max_records=1, max_bytes=4096,
     )
     print(json.dumps({
         "completed": list(result.completed_units), "written": len(result.artifacts),
         "index_version": result.index.reference.version,
-        "state_version": result.state.reference.version,
+        "state_version": result.work.reference.version,
     }, sort_keys=True))
 
 

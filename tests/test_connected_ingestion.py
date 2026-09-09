@@ -225,11 +225,29 @@ class ConnectedIngestionTests(unittest.TestCase):
             }
             return outcome
 
-        return ConnectedIngestionWorker(
+        worker = ConnectedIngestionWorker(
             source=source, store=self.store, adapter_id="gmail-connected",
             catalog_schema=self.schemas["source-conversation.schema.json"], fact_schema=self.schemas["fact.schema.json"],
             extraction_schema=self.schemas["extraction-result.schema.json"], interpreter=interpret, auditor=audit,
         )
+        # Existing custody/recovery cases share this test-only two-phase
+        # convenience wrapper. The production worker deliberately has no
+        # combined search/catalog entrypoint.
+        def run(*, scope: dict[str, Any], catalog_parent: DriveReference,
+                index_reference: DriveReference, continuation_reference: DriveReference,
+                max_records: int, max_bytes: int) -> Any:
+            discovery = worker.discover(
+                scope=scope, discovery_parent=catalog_parent,
+                discovery_name=f"test-discovery-{hashlib.sha256(canonical_json_bytes(scope)).hexdigest()}.json",
+            )
+            return worker.catalog(
+                discovery_reference=discovery.inventory.reference,
+                catalog_parent=catalog_parent, index_reference=index_reference,
+                work_reference=continuation_reference, max_records=max_records,
+                max_bytes=max_bytes,
+            )
+        setattr(worker, "run", run)
+        return worker
 
     def test_binds_complete_source_bytes_to_readback_catalog_facts_audit_index_and_state(self) -> None:
         source = Source({"thread-1": "Exact Unicode café\n"})
@@ -242,11 +260,11 @@ class ConnectedIngestionTests(unittest.TestCase):
         record = result.artifacts[0]
         self.assertIn(b"Exact Unicode caf\xc3\xa9\n", record.catalog.data)
         self.assertEqual(["fact-"], [json.loads(record.facts.data)["facts"][0]["fact_id"][:5]])
-        self.assertEqual(["thread-1"], json.loads(result.state.data)["completed_conversation_ids"])
+        self.assertEqual(["thread-1"], json.loads(result.work.data)["completed_conversation_ids"])
         self.assertEqual(1, len(json.loads(result.index.data)["records"]))
 
         # A fresh worker reads durable continuation and does not rerun completed immutable units.
-        replay = self.worker(source).run(scope={"query": "bounded"}, catalog_parent=self.parent, index_reference=result.index.reference, continuation_reference=result.state.reference, max_records=1, max_bytes=4096)
+        replay = self.worker(source).run(scope={"query": "bounded"}, catalog_parent=self.parent, index_reference=result.index.reference, continuation_reference=result.work.reference, max_records=1, max_bytes=4096)
         self.assertEqual((), replay.artifacts)
         self.assertEqual(1, self.interpret_calls)
         self.assertEqual(1, self.audit_calls)
@@ -256,10 +274,46 @@ class ConnectedIngestionTests(unittest.TestCase):
         first = self.worker(source).run(scope={"query": "bounded"}, catalog_parent=self.parent, index_reference=self.index, continuation_reference=self.state, max_records=1, max_bytes=4096)
         self.assertFalse(first.phase_complete)
         self.assertEqual({"conversation_ids": ["thread-2"]}, first.remaining_work)
-        resumed = self.worker(source).run(scope={"query": "bounded"}, catalog_parent=self.parent, index_reference=first.index.reference, continuation_reference=first.state.reference, max_records=1, max_bytes=4096)
+        resumed = self.worker(source).run(scope={"query": "bounded"}, catalog_parent=self.parent, index_reference=first.index.reference, continuation_reference=first.work.reference, max_records=1, max_bytes=4096)
         self.assertTrue(resumed.phase_complete)
         self.assertEqual(("thread-1", "thread-2"), resumed.completed_units)
         self.assertEqual(2, len(json.loads(resumed.index.data)["records"]))
+
+    def test_catalog_reuses_one_verified_discovery_without_search_or_eligible_cursor_write(self) -> None:
+        source = Source({"thread-1": "First", "thread-2": "Second"})
+        eligible = DriveReference("eligible", "root", "application/json", "https://drive.test/eligible", "1")
+        eligible_bytes = canonical_json_bytes({"eligible": "unchanged"})
+        self.store.seed(eligible, eligible_bytes)
+        worker = self.worker(source)
+        discovery = worker.discover(
+            scope={"query": "bounded"}, discovery_parent=self.parent,
+            discovery_name="runs/operation-1/discovery.json",
+        )
+        self.assertEqual([None], source.search_calls)
+        with self.assertRaisesRegex(ConnectedIngestionError, "exact verified discovery"):
+            worker.catalog(
+                discovery_reference=discovery.inventory.reference.current(), catalog_parent=self.parent,
+                index_reference=self.index, work_reference=self.state, max_records=1, max_bytes=4096,
+            )
+        first = worker.catalog(
+            discovery_reference=discovery.inventory.reference, catalog_parent=self.parent,
+            index_reference=self.index, work_reference=self.state, max_records=1, max_bytes=4096,
+        )
+        self.assertFalse(first.phase_complete)
+        self.assertIsNone(first.proposed_cursor)
+        resumed = worker.catalog(
+            discovery_reference=discovery.inventory.reference, catalog_parent=self.parent,
+            index_reference=first.index.reference, work_reference=first.work.reference,
+            max_records=1, max_bytes=4096,
+        )
+        self.assertTrue(resumed.phase_complete)
+        self.assertEqual([None], source.search_calls)
+        self.assertEqual(["thread-1", "thread-2"], resumed.proposed_cursor["completed_conversation_ids"])
+        self.assertEqual(eligible_bytes, self.store.read(eligible).data)
+        self.assertEqual(
+            {"schema_version", "completed_conversation_ids", "units", "discovery_sha256"},
+            set(json.loads(resumed.work.data)),
+        )
 
     def test_unbound_direct_resource_blocks_before_any_catalog_state_advance(self) -> None:
         source = Source({"thread-1": "Body"})
@@ -281,28 +335,36 @@ class ConnectedIngestionTests(unittest.TestCase):
 
     def test_changed_thread_refreshes_exact_stable_artifacts_and_index(self) -> None:
         source = ReplySource()
-        first = self.worker(source).run(
-            scope={"query": "bounded"}, catalog_parent=self.parent,
-            index_reference=self.index, continuation_reference=self.state,
-            max_records=1, max_bytes=8192,
+        worker = self.worker(source)
+        first_discovery = worker.discover(
+            scope={"query": "bounded"}, discovery_parent=self.parent,
+            discovery_name="runs/first/discovery.json",
+        )
+        first = worker.catalog(
+            discovery_reference=first_discovery.inventory.reference, catalog_parent=self.parent,
+            index_reference=self.index, work_reference=self.state, max_records=1, max_bytes=8192,
         )
         first_ids = tuple(item.reference.object_id for item in first.artifacts[0].__dict__.values())
         source.reply = True
-        second = self.worker(source).run(
-            scope={"query": "bounded"}, catalog_parent=self.parent,
-            # A fresh caller may still hold only its original durable pointers.
-            index_reference=self.index, continuation_reference=self.state,
-            max_records=1, max_bytes=8192,
+        work = DriveReference("work-2", "root", "application/json", "https://drive.test/work-2", "1")
+        self.store.seed(work, canonical_json_bytes({"schema_version": 1, "completed_conversation_ids": [], "units": []}))
+        second_discovery = worker.discover(
+            scope={"query": "bounded"}, discovery_parent=self.parent,
+            discovery_name="runs/second/discovery.json",
+        )
+        second = worker.catalog(
+            discovery_reference=second_discovery.inventory.reference, catalog_parent=self.parent,
+            index_reference=self.index, work_reference=work, max_records=1, max_bytes=8192,
         )
         self.assertEqual(1, len(second.artifacts))
         self.assertEqual(first_ids, tuple(item.reference.object_id for item in second.artifacts[0].__dict__.values()))
         self.assertIn(b"New reply", second.artifacts[0].catalog.data)
         self.assertEqual(2, self.interpret_calls)
-        state = json.loads(second.state.data)
+        state = json.loads(second.work.data)
         self.assertEqual(["thread-1-message", "reply-message"], state["units"][0]["full_message_ids"])
         self.assertEqual(["reply-message"], state["units"][0]["discovery_message_ids"])
         rows = json.loads(second.index.data)["records"]
-        self.assertEqual(second.state.reference.parent_id, "root")
+        self.assertEqual(second.work.reference.parent_id, "root")
         self.assertEqual(1, len(rows))
         self.assertEqual(state["units"][0]["record_sha256"], rows[0]["record_sha256"])
 
@@ -323,7 +385,7 @@ class ConnectedIngestionTests(unittest.TestCase):
         self.assertEqual(1, len(source.read_calls) - prior_reads)
         self.assertEqual(1, len(second.artifacts))
         self.assertIn(b"New reply", second.artifacts[0].catalog.data)
-        state = json.loads(second.state.data)
+        state = json.loads(second.work.data)
         self.assertEqual(
             ["thread-1-message", "reply-message"],
             state["units"][0]["full_message_ids"],
@@ -332,6 +394,7 @@ class ConnectedIngestionTests(unittest.TestCase):
             ["thread-1-message"],
             state["units"][0]["discovery_message_ids"],
         )
+        self.assertEqual([None], source.search_calls)
 
     def test_untrusted_completion_claim_is_rebuilt_and_reconciled(self) -> None:
         self.store.seed(self.state, canonical_json_bytes({
@@ -349,7 +412,7 @@ class ConnectedIngestionTests(unittest.TestCase):
         )
         self.assertEqual(1, len(result.artifacts))
         self.assertEqual(1, len(json.loads(result.index.data)["records"]))
-        self.assertNotEqual("missing-record", json.loads(result.state.data)["units"][0]["record_id"])
+        self.assertNotEqual("missing-record", json.loads(result.work.data)["units"][0]["record_id"])
 
     def test_missing_fact_artifact_is_recovered_without_reinterpreting(self) -> None:
         source = Source({"thread-1": "Body"})
@@ -434,24 +497,20 @@ class ConnectedIngestionTests(unittest.TestCase):
         self.assertNotEqual(first["index_version"], second["index_version"])
         self.assertNotEqual(first["state_version"], second["state_version"])
 
-    def test_scope_change_rebinds_catalog_and_continuation(self) -> None:
+    def test_work_continuation_rejects_a_different_discovery_inventory(self) -> None:
         source = Source({"thread-1": "Body"})
         self.worker(source).run(
             scope={"query": "first"}, catalog_parent=self.parent,
             index_reference=self.index, continuation_reference=self.state,
             max_records=1, max_bytes=4096,
         )
-        changed = self.worker(source).run(
-            scope={"query": "second"}, catalog_parent=self.parent,
-            index_reference=self.index, continuation_reference=self.state,
-            max_records=1, max_bytes=4096,
-        )
-        self.assertEqual(1, len(changed.artifacts))
-        self.assertEqual(2, self.interpret_calls)
-        self.assertEqual(
-            hashlib.sha256(canonical_json_bytes({"query": "second"})).hexdigest(),
-            json.loads(changed.state.data)["scope_sha256"],
-        )
+        with self.assertRaisesRegex(ConnectedIngestionError, "different discovery inventory"):
+            self.worker(source).run(
+                scope={"query": "second"}, catalog_parent=self.parent,
+                index_reference=self.index, continuation_reference=self.state,
+                max_records=1, max_bytes=4096,
+            )
+        self.assertEqual(1, self.interpret_calls)
 
     def test_duplicate_discovery_hits_are_distinct_from_full_membership(self) -> None:
         class DuplicateHitSource(Source):
@@ -484,12 +543,12 @@ class ConnectedIngestionTests(unittest.TestCase):
             index_reference=self.index, continuation_reference=self.state,
             max_records=1, max_bytes=8192,
         )
-        state = json.loads(result.state.data)
+        state = json.loads(result.work.data)
         self.assertEqual(["hit-1", "hit-2"], state["units"][0]["discovery_message_ids"])
         self.assertEqual(["hit-1", "hit-2", "member-3"], state["units"][0]["full_message_ids"])
         self.assertEqual(
             ["included", "duplicate"],
-            [item["outcome"] for item in state["discovery"]["dispositions"]],
+            [item["outcome"] for item in json.loads(result.discovery.data)["dispositions"]],
         )
 
 
