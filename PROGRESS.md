@@ -2582,3 +2582,53 @@ requirements, then read this log from top to bottom.
   independently accepted source-host delta on current main, then implement the
   minimum connected daily/catalog/setup gaps in one runnable candidate before
   review and separately authorized provider acceptance.
+- Prior publication evidence: `275f20036e5591d6e826dc486e8a96da8d3bc05f`
+  is verified at `origin/main`; GitHub Actions Validate run `34292452755`
+  succeeded for that exact commit. This isolated worktree is based on that SHA.
+- Imported the independently reviewed shared `connected_storage` dependency
+  exactly from `5aa6c8449f6c388ccebeb6cf6a306ad8b0caf678`, preserving its
+  `ArtifactStore`/`DriveReference` contract. Added exact Drive
+  `ReferenceStorage` recovery reads, complete-listing refusal, immutable
+  root/bootstrap admission parsing, admitted archive recovery/extraction, and
+  a no-ambient-import installed entrypoint. The finite host binding table
+  rejects arbitrary dispatch, malformed argument sets, and relative `file_uri`
+  writes; synthetic mode remains unchanged.
+- Focused ordinary CPython 3.12.14 validation passed 27 bridge, bootstrap,
+  installation, and package tests, including an extracted no-Git subprocess
+  that verifies the installed entrypoint. Privacy scanning and `git diff
+  --check` passed. No provider, Drive, Gmail, Sheets, source, send, scheduler,
+  release, or private-instance action occurred.
+- This candidate deliberately does not implement connected daily composition,
+  source/task phase splits, attachment/direct-resource extraction, or provider
+  effects. The complete ordinary-CPython validator also passed against exact
+  local commit `0260c6f118fae82c468d45a34be30fd03f2a432d`, including the
+  candidate's archive/inventory, installed-package, and tracked privacy gates.
+  Next: review this bounded delta, then integrate only after approval.
+
+## 2026-09-08 — connected source bytes/extraction adapter candidate
+
+- Based exactly on bootstrap/finite-bridge candidate
+  `45e76abc5a136fdd230638e6faa49a9b12a19928`; it remains separately
+  review-pending. Added only `school_os.connected_sources` and the two finite
+  bridge kinds `resource.fetch_https` and `extract.image`.
+- `ConnectedSourceAdapters.gmail_attachment(...)` accepts only a contained
+  regular original-byte file with exact message/attachment/MIME/size evidence.
+  `fetch_https(url)` accepts the fixed, identity-content-encoding HTTPS result
+  and returns the existing `DirectResourceRead`. `extract_image(...)` rechecks
+  a mode-0600 contained static PNG/JPEG, hash, byte length, MIME, dimensions,
+  and one frame before its exact structured host response becomes one
+  `image:1` `AttachmentExtraction`. `extract_pdf(...)` renders every ordered
+  page and invokes that same image callback; any renderer/image failure blocks.
+- The host dispatch interface is explicitly finite: its surrounding host must
+  route `resource.fetch_https` to a bounded no-cookie/no-credential HTTPS
+  helper and `extract.image` to original-detail image viewing plus structured
+  response. Synthetic tests prove request identity/custody only; live HTTPS
+  qualification and image semantic correctness remain unqualified gates.
+- Focused adapter/bridge tests (12), wider source-custody/semantic/runner
+  tests (25), and the complete ordinary-CPython 3.12.14 suite (257) passed;
+  tracked privacy scanning and `git diff --check` passed. The compact
+  integration handoff is `/private/tmp/schoolos-alpha13-connected-sources-handoff.md`.
+  The upstream bootstrap candidate was subsequently returned for repair, so
+  this candidate stays unintegrated until the accepted repaired dependency can
+  be incorporated and revalidated. No provider, network, private source, or
+  external write was performed.

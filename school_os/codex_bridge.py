@@ -65,6 +65,8 @@ REQUEST_SPECS: dict[str, RequestSpec] = {
     "comments.write_file": RequestSpec(frozenset(), frozenset({"id", "url", "comments", "replies", "resolutions"})),
     "semantic.interpret": RequestSpec(frozenset({"packet"})),
     "semantic.audit": RequestSpec(frozenset({"packet", "interpretation"})),
+    "resource.fetch_https": RequestSpec(frozenset({"url", "max_bytes", "max_redirects", "timeout_ms"})),
+    "extract.image": RequestSpec(frozenset({"path", "source_id", "mime_type", "original_sha256", "byte_length", "width", "height"})),
 }
 
 # Kept next to the request union so host dispatch cannot broaden independently
@@ -89,6 +91,10 @@ HOST_BINDINGS: dict[str, HostBinding] = {
     "comments.write_file": HostBinding("mcp__codex_apps__google_drive_bulk_update_file_comments"),
     "semantic.interpret": HostBinding("semantic.interpret"),
     "semantic.audit": HostBinding("semantic.audit"),
+    # These are finite host helpers, not connector tool names supplied by a
+    # child. The host must bind them to the reviewed byte-fetch/image-view path.
+    "resource.fetch_https": HostBinding("resource.fetch_https"),
+    "extract.image": HostBinding("extract.image"),
 }
 
 # Captured from the connected-host capability inventory.  Keep this finite
@@ -309,6 +315,14 @@ def _validate_request(kind: str, args: Mapping[str, Any]) -> None:
         for key, value in args.items():
             if not isinstance(value, Mapping):
                 raise BridgeError(f"{kind}.{key} must be an object")
+    if kind == "extract.image":
+        raw_path = args.get("path")
+        if not isinstance(raw_path, str) or not Path(raw_path).is_absolute():
+            raise BridgeError("image extraction path must be an absolute local path")
+    if kind == "resource.fetch_https":
+        url = args.get("url")
+        if not isinstance(url, str) or not url.startswith("https://"):
+            raise BridgeError("resource fetch requires an HTTPS URL")
     _json_safe(args, "bridge request args")
 
 
@@ -848,3 +862,19 @@ class CodexSemanticPort:
 
     def audit(self, packet: Mapping[str, Any], interpretation: Mapping[str, Any]) -> Any:
         return self.peer.call("semantic.audit", {"packet": dict(packet), "interpretation": dict(interpretation)})
+
+
+@dataclass(frozen=True)
+class CodexSourceHostPort:
+    """Finite byte/image host calls used by ``connected_sources`` only."""
+
+    peer: JsonlPeer
+
+    def fetch_https(self, *, url: str, max_bytes: int, max_redirects: int, timeout_ms: int) -> Any:
+        return self.peer.connector_call("resource.fetch_https", {
+            "url": url, "max_bytes": max_bytes, "max_redirects": max_redirects,
+            "timeout_ms": timeout_ms,
+        })
+
+    def extract_image(self, **arguments: Any) -> Any:
+        return self.peer.call("extract.image", arguments)
