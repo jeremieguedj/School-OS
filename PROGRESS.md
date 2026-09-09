@@ -2533,3 +2533,27 @@ requirements, then read this log from top to bottom.
   brief integration only; it does not accept this isolated bootstrap candidate
   or authorize provider, private-instance, delivery, schedule, tag, or release
   work.
+
+## 2026-09-08 — bootstrap native-contract repair
+
+- Applied the second independent re-review only in a fresh worktree based on
+  `4ce1918a1a190460e14f296715cbac6aa2e3fe70`. The host dispatcher now consumes
+  bridge-only write hash/size evidence, copies the verified private bytes to a
+  host-owned mode-0600 snapshot, and sends the connector only its advertised
+  native arguments. A change to the original child path after admission cannot
+  change the bytes the connector consumes; contained Sheets image URI bytes are
+  likewise snapshotted.
+- Native calls require one `structuredContent.result` wrapper. Validation now
+  accepts the captured decimal Drive sizes, singular upload parent, Gmail
+  recipient strings, comma-separated Drive parent strings, and single Sheets
+  image URI strings while rejecting malformed metadata fields, attachment-less
+  reads, and empty/invalid comment operations before invocation. Existing exact
+  metadata/content readbacks continue to establish final write identity.
+- Focused bootstrap/bridge validation passed. No live connector/provider,
+  private-instance, delivery, schedule, tag, or release action occurred. Next:
+  submit this isolated correction for independent re-review.
+- Broader bridge-dependent validation passed 69 tests; the complete
+  ordinary-CPython validator then passed with schema, package, and tracked-file
+  privacy checks. `git diff --check` passed. The only intermediate failure was
+  a newly added non-reserved synthetic email, corrected to the repository's
+  reserved `.example.invalid` test domain before the passing full run.

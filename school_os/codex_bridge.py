@@ -136,6 +136,64 @@ def _exactly_one(args: Mapping[str, Any], *keys: str) -> None:
         raise BridgeError(f"exactly one of {', '.join(keys)} is required")
 
 
+def _nullable_string(value: Any, label: str) -> None:
+    if value is not None:
+        _nonempty_string(value, label)
+
+
+def _mime_payload(value: Any) -> None:
+    """Validate the finite structured MIME form used by the Gmail binding."""
+    if not isinstance(value, Mapping):
+        raise BridgeError("gmail.send.payload must be an object")
+    mime_type = value.get("mime_type")
+    _nonempty_string(mime_type, "gmail.send.payload.mime_type")
+    has_body, has_parts = "body" in value, "parts" in value
+    if has_body == has_parts:
+        raise BridgeError("gmail.send.payload requires exactly one of body or parts")
+    if has_body:
+        body = value["body"]
+        if not isinstance(body, Mapping) or set(body) != {"content"} or not isinstance(body["content"], str):
+            raise BridgeError("gmail.send.payload.body must contain one string content")
+        return
+    parts = value["parts"]
+    if not isinstance(parts, list) or not parts:
+        raise BridgeError("gmail.send.payload.parts must be a nonempty list")
+    for part in parts:
+        if not isinstance(part, Mapping) or not {"mime_type", "body"} <= set(part):
+            raise BridgeError("gmail.send.payload part is malformed")
+        _nonempty_string(part["mime_type"], "gmail.send.payload part MIME type")
+        body = part["body"]
+        if not isinstance(body, Mapping) or set(body) != {"content"} or not isinstance(body["content"], str):
+            raise BridgeError("gmail.send.payload part body is malformed")
+        for key in ("charset", "content_disposition"):
+            if key in part:
+                _nonempty_string(part[key], f"gmail.send.payload part.{key}")
+
+
+def _comment_operations(args: Mapping[str, Any]) -> None:
+    _exactly_one(args, "id", "url")
+    total = 0
+    for key in ("comments", "replies", "resolutions"):
+        if key not in args:
+            continue
+        values = args[key]
+        if not isinstance(values, list) or any(not isinstance(item, Mapping) or not item for item in values):
+            raise BridgeError(f"comments.write_file.{key} must be nonempty objects")
+        total += len(values)
+    if not 1 <= total <= 20:
+        raise BridgeError("comments.write_file requires 1 through 20 operations")
+
+
+def _decimal_size(value: Any, label: str, *, allow_none: bool = False) -> int | None:
+    if value is None and allow_none:
+        return None
+    if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
+        return value
+    if isinstance(value, str) and value.isdigit():
+        return int(value)
+    raise BridgeError(f"{label} must be an exact nonnegative decimal size")
+
+
 def _json_safe(value: Any, label: str) -> None:
     try:
         json.dumps(value, allow_nan=False)
@@ -152,18 +210,20 @@ def _validate_request(kind: str, args: Mapping[str, Any]) -> None:
     keys = set(args)
     if not spec.required <= keys or not keys <= spec.required | spec.optional:
         raise BridgeError(f"invalid argument keys for {kind}")
-    for key in ("fileId", "message_id", "thread_id", "attachment_id", "url", "name", "file_name", "mime_type", "parent_folder", "parent_folder_id", "query", "next_page_token", "page_token", "from_address", "reply_message_id", "reply_to"):
+    for key in ("fileId", "message_id", "thread_id", "attachment_id", "filename", "url", "name", "file_name", "mime_type", "parent_folder", "parent_folder_id", "query", "next_page_token", "page_token", "from_address", "reply_message_id", "reply_to", "fields", "cell_fields", "spreadsheet_id", "spreadsheet_url"):
         if key in args:
             _nonempty_string(args[key], f"{kind}.{key}")
     for key in ("top_k", "max_results", "max_messages", "page_size"):
         if key in args:
             _positive_int(args[key], f"{kind}.{key}")
-    for key in ("label_ids", "addParents", "removeParents", "ranges", "response_ranges", "image_uris"):
+    for key in ("label_ids", "ranges", "response_ranges"):
         if key in args:
             _string_list(args[key], f"{kind}.{key}")
     for key in ("download_raw_file", "include_base64", "charts_only", "include_conditional_format_rules", "include_deleted", "include_spreadsheet_in_response", "response_include_grid_data"):
         if key in args and not isinstance(args[key], bool):
             raise BridgeError(f"{kind}.{key} must be boolean")
+    if "supportsAllDrives" in args and args["supportsAllDrives"] is not None and not isinstance(args["supportsAllDrives"], bool):
+        raise BridgeError("drive.get_metadata.supportsAllDrives must be boolean or null")
     if kind in {"drive.upload_file", "drive.update_file"}:
         raw_path = args.get("file_uri")
         if not isinstance(raw_path, str) or not Path(raw_path).is_absolute():
@@ -178,16 +238,34 @@ def _validate_request(kind: str, args: Mapping[str, Any]) -> None:
         _exactly_one(args, "spreadsheet_id", "spreadsheet_url")
     if kind == "sheets.batch_update":
         _exactly_one(args, "spreadsheet_id", "spreadsheet_url")
-        if not isinstance(args["requests"], list):
-            raise BridgeError("sheets.batch_update.requests must be a list")
+        if not isinstance(args["requests"], list) or not args["requests"] or any(not isinstance(item, Mapping) or not item for item in args["requests"]):
+            raise BridgeError("sheets.batch_update.requests must be nonempty operation objects")
+        if "image_uris" in args:
+            _nonempty_string(args["image_uris"], "sheets.batch_update.image_uris")
+    if kind == "drive.update_file":
+        for key in ("addParents", "removeParents"):
+            if key in args:
+                _nullable_string(args[key], f"drive.update_file.{key}")
     if kind == "gmail.read" and args.get("format") not in {"full", "metadata", "minimal", "raw"}:
         raise BridgeError("gmail.read.format is not an admitted Gmail format")
+    if kind == "gmail.read_attachment":
+        _exactly_one(args, "attachment_id", "filename")
     if kind == "gmail.send":
         for key in ("to", "cc", "bcc"):
             if key in args:
-                _string_list(args[key], f"gmail.send.{key}")
-        if not isinstance(args["payload"], Mapping):
-            raise BridgeError("gmail.send.payload must be an object")
+                _nonempty_string(args[key], f"gmail.send.{key}")
+        _mime_payload(args["payload"])
+        if "response_fields" in args:
+            _string_list(args["response_fields"], "gmail.send.response_fields")
+            if not set(args["response_fields"]) <= {"id", "thread_id", "label_ids", "raw"}:
+                raise BridgeError("gmail.send.response_fields contains an unadvertised field")
+        if "classification_label_values" in args and (
+            not isinstance(args["classification_label_values"], Mapping)
+            or any(not isinstance(key, str) or not key or not isinstance(value, str) for key, value in args["classification_label_values"].items())
+        ):
+            raise BridgeError("gmail.send.classification_label_values has an invalid nested shape")
+    if kind == "comments.write_file":
+        _comment_operations(args)
     if kind.startswith("semantic."):
         for key, value in args.items():
             if not isinstance(value, Mapping):
@@ -195,17 +273,18 @@ def _validate_request(kind: str, args: Mapping[str, Any]) -> None:
     _json_safe(args, "bridge request args")
 
 
-def _validate_result(kind: str, result: Any) -> None:
+def _validate_result(kind: str, result: Any) -> dict[str, Any]:
     """Reject malformed connector replies before they cross the bridge."""
     if not isinstance(result, Mapping):
         raise BridgeError(f"{kind} result must be an object")
+    normalized = dict(result)
     if kind == "drive.get_metadata":
         for key in ("id", "mime_type", "url", "title", "modified_time"):
             _nonempty_string(result.get(key), f"{kind} result.{key}")
         _string_list(result.get("parent_ids"), f"{kind} result.parent_ids")
         mime_type = result["mime_type"]
         if mime_type != "application/vnd.google-apps.folder":
-            _positive_int(result.get("size"), f"{kind} result.size", allow_zero=True)
+            normalized["size"] = _decimal_size(result.get("size"), f"{kind} result.size")
     elif kind == "drive.fetch":
         _nonempty_string(result.get("id"), f"{kind} result.id")
         encoded = result.get("b64_string")
@@ -222,12 +301,19 @@ def _validate_result(kind: str, result: Any) -> None:
     elif kind == "drive.list_folder":
         if not isinstance(result.get("files"), list):
             raise BridgeError("drive.list_folder result.files must be a list")
-    elif kind in {"drive.upload_file", "drive.update_file"}:
+    elif kind == "drive.upload_file":
+        if result.get("success") is not True:
+            raise BridgeError(f"{kind} result lacks success evidence")
+        for key in ("id", "mime_type", "url", "parent_id"):
+            _nonempty_string(result.get(key), f"{kind} result.{key}")
+    elif kind == "drive.update_file":
         if result.get("success") is not True:
             raise BridgeError(f"{kind} result lacks success evidence")
         for key in ("id", "mime_type", "url", "modified_time"):
             _nonempty_string(result.get(key), f"{kind} result.{key}")
         _string_list(result.get("parent_ids"), f"{kind} result.parent_ids")
+        if "size" in result:
+            normalized["size"] = _decimal_size(result["size"], f"{kind} result.size", allow_none=True)
     elif kind == "gmail.search_ids":
         _string_list(result.get("message_ids"), f"{kind} result.message_ids")
         token = result.get("next_page_token")
@@ -239,7 +325,14 @@ def _validate_result(kind: str, result: Any) -> None:
     elif kind == "comments.read_spreadsheet":
         if not isinstance(result.get("comments"), list):
             raise BridgeError("comments.read_spreadsheet result.comments must be a list")
+    elif kind == "gmail.send":
+        _nonempty_string(result.get("id"), "gmail.send result.id")
+    elif kind == "sheets.batch_update":
+        _nonempty_string(result.get("spreadsheetId"), "sheets.batch_update result.spreadsheetId")
+        if not isinstance(result.get("replies"), list):
+            raise BridgeError("sheets.batch_update result.replies must be a list")
     _json_safe(result, "host binding result")
+    return normalized
 
 
 class HostBindingDispatcher:
@@ -248,10 +341,14 @@ class HostBindingDispatcher:
     def __init__(self, run_directory: Path | None = None) -> None:
         self.run_directory = _verify_run_directory(run_directory) if run_directory is not None else None
 
-    def _validate_private_write(self, args: Mapping[str, Any]) -> None:
+    def _private_file_bytes(
+        self, raw_value: Any, *, evidence: Mapping[str, Any] | None, label: str,
+    ) -> bytes:
         if self.run_directory is None:
-            raise BridgeError("Drive writes require an admitted private run directory")
-        raw_path = Path(str(args["file_uri"]))
+            raise BridgeError(f"{label} requires an admitted private run directory")
+        if not isinstance(raw_value, str) or not Path(raw_value).is_absolute():
+            raise BridgeError(f"{label} must be an absolute local path")
+        raw_path = Path(raw_value)
         try:
             relative = raw_path.relative_to(self.run_directory)
             if any(part in {"", ".", ".."} for part in relative.parts):
@@ -265,22 +362,62 @@ class HostBindingDispatcher:
             resolved = raw_path.resolve(strict=True)
             resolved.relative_to(self.run_directory)
         except (OSError, ValueError) as exc:
-            raise BridgeError("Drive write file_uri escapes the private run directory") from exc
+            raise BridgeError(f"{label} escapes the private run directory") from exc
         if stat.S_ISLNK(status.st_mode) or not stat.S_ISREG(status.st_mode) or stat.S_IMODE(status.st_mode) != 0o600:
-            raise BridgeError("Drive write must use a mode-0600 non-symlink regular private file")
+            raise BridgeError(f"{label} must use a mode-0600 non-symlink regular private file")
         data = resolved.read_bytes()
-        if len(data) != args["file_size_bytes"] or sha256_bytes(data) != args["file_sha256"]:
+        if evidence is not None and (
+            len(data) != evidence["file_size_bytes"] or sha256_bytes(data) != evidence["file_sha256"]
+        ):
             raise BridgeError("Drive write file identity, size, or hash changed before effect")
+        return data
+
+    def _host_snapshot(self, data: bytes) -> Path:
+        if self.run_directory is None:
+            raise BridgeError("host snapshot requires an admitted private run directory")
+        snapshot = self.run_directory / f"host-snapshot-{uuid.uuid4().hex}"
+        _exclusive_write(snapshot, data)
+        return snapshot
+
+    @staticmethod
+    def _native_tool_result(value: Any) -> Any:
+        """Consume the one native CallToolResult shape accepted by dispatch."""
+        if not isinstance(value, Mapping) or value.get("isError") is True:
+            raise BridgeError("host tool returned an error; effect outcome is unknown")
+        structured = value.get("structuredContent")
+        if not isinstance(structured, Mapping) or "result" not in structured:
+            raise BridgeError("host tool response lacks structuredContent.result")
+        result = structured["result"]
+        _json_safe(result, "normalized host result")
+        return result
 
     def dispatch(self, kind: str, args: Mapping[str, Any], invoke: Any) -> Any:
         _validate_request(kind, args)
         if not callable(invoke):
             raise BridgeError("host binding invoker is unavailable")
+        native_args = dict(args)
+        snapshots: list[Path] = []
         if kind in {"drive.upload_file", "drive.update_file"}:
-            self._validate_private_write(args)
-        result = invoke(HOST_BINDINGS[kind].tool_name, dict(args))
-        _validate_result(kind, result)
-        return result
+            data = self._private_file_bytes(
+                args["file_uri"], evidence=args, label="Drive write file_uri",
+            )
+            snapshot = self._host_snapshot(data)
+            snapshots.append(snapshot)
+            native_args["file_uri"] = str(snapshot)
+            native_args.pop("file_sha256")
+            native_args.pop("file_size_bytes")
+        if kind == "sheets.batch_update" and "image_uris" in args:
+            snapshot = self._host_snapshot(self._private_file_bytes(
+                args["image_uris"], evidence=None, label="Sheets image_uris",
+            ))
+            snapshots.append(snapshot)
+            native_args["image_uris"] = str(snapshot)
+        try:
+            result = self._native_tool_result(invoke(HOST_BINDINGS[kind].tool_name, native_args))
+            return _validate_result(kind, result)
+        finally:
+            for snapshot in snapshots:
+                snapshot.unlink(missing_ok=True)
 
 
 def _contained(path: Path, root: Path) -> Path:

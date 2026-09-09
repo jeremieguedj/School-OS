@@ -40,6 +40,10 @@ class FakeDrive:
 
 
 class ConnectedBootstrapTests(unittest.TestCase):
+    @staticmethod
+    def _tool_result(result: object) -> dict[str, object]:
+        return {"structuredContent": {"result": result}}
+
     def test_reference_storage_requires_exact_bytes_and_complete_listing(self) -> None:
         drive = FakeDrive()
         storage = CodexDriveReferenceStorage(drive, expected_urls={"bootstrap": "https://example.invalid/bootstrap"})
@@ -78,15 +82,15 @@ class ConnectedBootstrapTests(unittest.TestCase):
         dispatcher = HostBindingDispatcher()
         calls: list[tuple[str, dict[str, object]]] = []
         metadata = {"id": "f", "mime_type": "text/plain", "url": "https://example.invalid/f", "title": "f", "parent_ids": ["root"], "modified_time": "v1", "size": 1}
-        self.assertEqual(metadata, dispatcher.dispatch("drive.get_metadata", {"fileId": "f"}, lambda tool, args: calls.append((tool, args)) or metadata))
+        self.assertEqual(metadata, dispatcher.dispatch("drive.get_metadata", {"fileId": "f"}, lambda tool, args: calls.append((tool, args)) or self._tool_result(metadata)))
         self.assertEqual("mcp__codex_apps__google_drive_get_file_metadata", calls[0][0])
         with self.assertRaisesRegex(BridgeError, "result.mime_type"):
-            dispatcher.dispatch("drive.get_metadata", {"fileId": "f"}, lambda *_: {"id": "f"})
+            dispatcher.dispatch("drive.get_metadata", {"fileId": "f"}, lambda *_: self._tool_result({"id": "f"}))
         evidence = {"file_uri": "relative.txt", "file_sha256": "0" * 64, "file_size_bytes": 0}
         with self.assertRaisesRegex(BridgeError, "absolute"):
-            dispatcher.dispatch("drive.upload_file", evidence, lambda *_: {})
+            dispatcher.dispatch("drive.upload_file", evidence, lambda *_: self._tool_result({}))
         with self.assertRaisesRegex(BridgeError, "unexpected"):
-            dispatcher.dispatch("tools.execute", {}, lambda *_: {})
+            dispatcher.dispatch("tools.execute", {}, lambda *_: self._tool_result({}))
 
     def test_dispatcher_confines_drive_write_and_rechecks_child_evidence(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -94,16 +98,62 @@ class ConnectedBootstrapTests(unittest.TestCase):
             payload = run / "payload"; payload.write_bytes(b"private bytes"); payload.chmod(0o600)
             dispatcher = HostBindingDispatcher(run)
             evidence = {"file_uri": str(payload.resolve(strict=True)), "file_sha256": __import__("hashlib").sha256(b"private bytes").hexdigest(), "file_size_bytes": 13}
-            written = {"success": True, "id": "new", "mime_type": "text/plain", "url": "https://example.invalid/new", "parent_ids": ["root"], "modified_time": "v2"}
-            self.assertEqual(written, dispatcher.dispatch("drive.upload_file", {**evidence, "file_name": "payload", "mime_type": "text/plain", "parent_folder_id": "root"}, lambda *_: written))
+            written = {"success": True, "id": "new", "mime_type": "text/plain", "url": "https://example.invalid/new", "parent_id": "root"}
+            native_calls: list[dict[str, object]] = []
+            def consume(_tool, arguments):
+                native_calls.append(arguments)
+                payload.write_bytes(b"changed after admission")
+                payload.chmod(0o600)
+                self.assertEqual(b"private bytes", Path(arguments["file_uri"]).read_bytes())
+                self.assertNotIn("file_sha256", arguments)
+                self.assertNotIn("file_size_bytes", arguments)
+                return self._tool_result(written)
+            self.assertEqual(written, dispatcher.dispatch("drive.upload_file", {**evidence, "file_name": "payload", "mime_type": "text/plain", "parent_folder_id": "root"}, consume))
+            self.assertEqual(1, len(native_calls))
+            self.assertNotEqual(evidence["file_uri"], native_calls[0]["file_uri"])
+            self.assertFalse(Path(native_calls[0]["file_uri"]).exists())
+            payload.write_bytes(b"private bytes"); payload.chmod(0o600)
             with self.assertRaisesRegex(BridgeError, "identity, size, or hash"):
-                dispatcher.dispatch("drive.upload_file", {**evidence, "file_sha256": "0" * 64, "file_name": "payload", "mime_type": "text/plain", "parent_folder_id": "root"}, lambda *_: written)
+                dispatcher.dispatch("drive.upload_file", {**evidence, "file_sha256": "0" * 64, "file_name": "payload", "mime_type": "text/plain", "parent_folder_id": "root"}, lambda *_: self._tool_result(written))
             alias = run / "alias"; alias.symlink_to(payload)
             with self.assertRaisesRegex(BridgeError, "escapes|symlink"):
-                dispatcher.dispatch("drive.upload_file", {**evidence, "file_uri": str(alias), "file_name": "alias", "mime_type": "text/plain", "parent_folder_id": "root"}, lambda *_: written)
+                dispatcher.dispatch("drive.upload_file", {**evidence, "file_uri": str(alias), "file_name": "alias", "mime_type": "text/plain", "parent_folder_id": "root"}, lambda *_: self._tool_result(written))
             escaped = {**evidence, "file_uri": "/etc/hosts"}
             with self.assertRaisesRegex(BridgeError, "escapes"):
-                dispatcher.dispatch("drive.upload_file", {**escaped, "file_name": "hosts", "mime_type": "text/plain", "parent_folder_id": "root"}, lambda *_: written)
+                dispatcher.dispatch("drive.upload_file", {**escaped, "file_name": "hosts", "mime_type": "text/plain", "parent_folder_id": "root"}, lambda *_: self._tool_result(written))
+
+    def test_advertised_native_request_and_result_shapes_are_accepted(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            run = Path(temporary) / "bridge"; run.mkdir(mode=0o700)
+            payload = run / "payload"; payload.write_bytes(b"payload"); payload.chmod(0o600)
+            image = run / "image"; image.write_bytes(b"image"); image.chmod(0o600)
+            evidence = {"file_uri": str(payload.resolve(strict=True)), "file_sha256": __import__("hashlib").sha256(b"payload").hexdigest(), "file_size_bytes": 7}
+            dispatcher = HostBindingDispatcher(run)
+            metadata = {"id": "file", "mime_type": "text/plain", "url": "https://example.invalid/file", "title": "file", "parent_ids": ["root"], "modified_time": "v1", "size": "7"}
+            self.assertEqual(7, dispatcher.dispatch("drive.get_metadata", {"fileId": "file"}, lambda *_: self._tool_result(metadata))["size"])
+            seen: list[dict[str, object]] = []
+            updated = {"success": True, "id": "file", "mime_type": "text/plain", "url": "https://example.invalid/file", "modified_time": "v2", "parent_ids": ["new-parent"], "size": "7"}
+            dispatcher.dispatch("drive.update_file", {"fileId": "file", **evidence, "mime_type": "text/plain", "addParents": "new-parent"}, lambda _tool, args: seen.append(args) or self._tool_result(updated))
+            self.assertEqual("new-parent", seen[0]["addParents"])
+            self.assertEqual({"fileId", "file_uri", "mime_type", "addParents"}, set(seen[0]))
+            delivered = dispatcher.dispatch("gmail.send", {"to": "tester@example.invalid", "subject": "Subject", "payload": {"mime_type": "text/plain", "body": {"content": "hello"}}}, lambda *_: self._tool_result({"id": "message"}))
+            self.assertEqual("message", delivered["id"])
+            images: list[dict[str, object]] = []
+            dispatcher.dispatch("sheets.batch_update", {"spreadsheet_id": "sheet", "requests": [{"addSheet": {"properties": {"title": "X"}}}], "image_uris": str(image.resolve(strict=True))}, lambda _tool, args: images.append(args) or self._tool_result({"spreadsheetId": "sheet", "replies": []}))
+            self.assertNotEqual(str(image.resolve(strict=True)), images[0]["image_uris"])
+            self.assertFalse(Path(images[0]["image_uris"]).exists())
+
+    def test_malformed_native_requests_block_before_invocation(self) -> None:
+        dispatcher = HostBindingDispatcher()
+        invoked: list[str] = []
+        for kind, arguments in (
+            ("drive.get_metadata", {"fileId": "file", "fields": 7}),
+            ("gmail.read_attachment", {"message_id": "message"}),
+            ("comments.write_file", {}),
+        ):
+            with self.assertRaises(BridgeError):
+                dispatcher.dispatch(kind, arguments, lambda *_: invoked.append(kind) or self._tool_result({}))
+        self.assertEqual([], invoked)
 
     def test_every_host_binding_is_captured_and_uses_advertised_sheet_comment_names(self) -> None:
         provider_bindings = {binding.tool_name for binding in HOST_BINDINGS.values() if binding.tool_name.startswith("mcp__")}

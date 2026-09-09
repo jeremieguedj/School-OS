@@ -146,13 +146,20 @@ The finite host bridge accepts only reviewed request types and advertised
 connector bindings. Drive upload/update effects require a canonical,
 non-symlink, mode-0600 regular file beneath the admitted mode-0700 bridge run
 directory, plus the child-provided size and SHA-256 rechecked immediately
-before dispatch. Structured connector replies are validated by request kind;
-arbitrary JSON cannot authorize metadata or write success. Bootstrap-document
-mode reads no ambient checkout profile, schema, or capability qualification:
-it recovers and execs the extracted package, whose entrypoint is the later
-owner of package configuration and connected composition. This remains a
-bootstrap-only repository boundary; it neither invokes providers nor claims a
-daily run, delivery, scheduler, or private acceptance.
+before dispatch. The host copies those verified bytes to an owned private
+snapshot and passes only that snapshot to the native connector; bridge-only
+hash/size evidence is never forwarded as a provider argument. A Sheets image
+URI follows the same contained host-snapshot path. The dispatcher consumes one
+wrapped `structuredContent.result` response shape and validates native result
+fields against the advertised operation contract before School-OS's existing
+metadata/content readbacks establish version, parent, size, and bytes.
+
+Bootstrap-document mode reads no ambient checkout profile, schema, or
+capability qualification: it recovers and execs the extracted package, whose
+entrypoint is the later owner of package configuration and connected
+composition. This remains a bootstrap-only repository boundary; it neither
+invokes providers nor claims a daily run, delivery, scheduler, or private
+acceptance.
 
 ## Existing implementation inventory
 

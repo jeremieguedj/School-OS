@@ -1053,3 +1053,9 @@ evidence that does not need to be repeatedly printed into model context.
   URL, storage-error boundary, and no-ambient bootstrap-document handoff. It
   remains a bootstrap-only repository candidate pending independent review and
   the separate connected composition/provider acceptance gates.
+- Revision 42: aligned the isolated bootstrap bridge with captured native
+  connector contracts. Host-only write evidence is consumed before dispatch;
+  host-owned byte snapshots prevent post-admission pathname mutation; native
+  request/result types use the advertised Drive/Gmail/Sheets/comment forms.
+  Exact storage readback and all bootstrap boundaries remain unchanged pending
+  independent re-review.
