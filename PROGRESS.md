@@ -2408,3 +2408,26 @@ requirements, then read this log from top to bottom.
 - Next: commit and publish this minimal portability correction, then verify the
   resulting exact remote SHA and GitHub Validate run. The failed run remains
   evidence that `683ba296...` itself is not publication-verified.
+
+## 2026-09-08 — connected ingestion discovery/catalog phase split integrated
+
+- Verified `main` began clean at published
+  `000fd387c962b42d4b9ab4ef5c73f99a5ab33991`; remote readback matched and its
+  exact GitHub Actions **Validate** run `34295354704` passed. Integrated only
+  the independently accepted ingestion delta
+  `0352ed1b3a9afc6f0be22bf49f117c37a568f003..14031a1ee9df6309f5bad84840850934e75bcdc9`.
+- Discovery now performs one bounded search and persists a body-free immutable
+  inventory with exact page, hit, disposition, scope, anchor, and recheck
+  evidence. Catalog takes the versioned inventory reference, never searches,
+  maintains only run-scoped work, and exposes an eligible cursor only as a
+  completion-time proposal for a later commit phase. Complete zero-hit
+  inventory is accepted without catalog writes; a nonempty conversation without
+  an immutable searched-message anchor blocks both construction and persisted
+  artifact validation.
+- The accepted source-custody, full-thread recheck, Facts/audit, and shared
+  storage behavior remains intact. This is repository-only ingestion staging:
+  no daily composition, live connector/provider call, delivery, scheduler,
+  private-instance action, tag, or release occurred.
+- Focused source/recovery/custody/semantic/bridge/task validation passed 45
+  tests. The complete ordinary-CPython validator then passed with schema,
+  package, and tracked-file privacy checks; `git diff --check` passed.

@@ -112,6 +112,28 @@ and exact readback. These repository workers do not by themselves provide a
 bootstrap, seven-phase composition, attachment/direct-resource extraction,
 provider capability qualification, delivery, scheduler, or private acceptance.
 
+### Connected ingestion discovery/catalog boundary (2026-09-08)
+
+`ConnectedIngestionWorker.discover(scope, discovery_parent, discovery_name)`
+is the sole bounded Gmail-search phase. It writes and readback-verifies one
+body-free immutable inventory for an operation-scoped name; retry adopts that
+exact inventory instead of searching again. The inventory binds scope hash,
+complete page/token chain, page hits/dispositions, selected conversations,
+immutable searched-message anchors, and required thread rechecks. A complete
+zero-hit inventory is valid; a nonempty conversation without at least one
+searched-message anchor is not.
+
+`catalog(discovery_reference, catalog_parent, index_reference,
+work_reference, max_records, max_bytes)` consumes only the exact versioned
+inventory. It does not search and it neither accepts nor writes an eligible
+source cursor. Catalog work is a separate run-scoped continuation. It rereads
+each selected complete thread before accepting prior work, uses immediately
+returned artifact versions for every mutation, and returns a proposed cursor
+only after all inventory units complete. A later composed `commit` phase is
+the sole owner that may apply an eligible cursor. This repository boundary does
+not itself compose the daily phases, invoke live providers, deliver a brief, or
+qualify manual/scheduled/private acceptance.
+
 ## Existing implementation inventory
 
 The current repository is mostly contracts and recipes. Documented behavior is

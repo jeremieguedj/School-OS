@@ -1031,3 +1031,10 @@ evidence that does not need to be repeatedly printed into model context.
   task/Sheets workers with one shared exact storage implementation. They remain
   repository workers pending bootstrap/daily composition, qualified extraction,
   provider-surface observation, and fresh-instance acceptance.
+- Revision 41: integrated the independently accepted connected-ingestion
+  discovery/catalog phase split. A single immutable body-free discovery
+  inventory separates bounded Gmail search from catalog work; only a later
+  composed commit phase may apply its proposed cursor. Complete zero-hit runs
+  remain valid while unanchored nonempty conversation inventory blocks. Daily
+  composition, qualified provider observation, and private acceptance remain
+  separate gates.
