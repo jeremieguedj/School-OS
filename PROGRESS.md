@@ -2541,3 +2541,18 @@ requirements, then read this log from top to bottom.
   remote readback under repository continuity. After publication, the next
   action is to open a new GPT-5.6 Sol High session with the private companion and
   paste the handoff prompt. Implementation remains unstarted.
+
+## 2026-09-09 — one-hour recovery status checkpoint
+
+- Replaced the recovery plan and Sol handoff's 90-minute milestone target and
+  four-hour autonomous cap with a mandatory status check-in after 60 elapsed
+  wall-clock minutes, including setup, helper work, tool calls, and waiting.
+  The recorded deadline survives compaction, delegation, and phase changes.
+- The hour is explicitly not a completion deadline. Scope, quality, live
+  coverage, validation, and consultation requirements remain unchanged. At the
+  checkpoint, preserve unfinished work, report evidence and remaining work,
+  propose the next step, and await user direction. Necessary cleanup must not
+  become an excuse to postpone the report.
+- Documentation-only change; implementation and live testing remain unstarted.
+  Next: publish this timing correction, then use the updated Sol handoff when
+  the user starts execution.

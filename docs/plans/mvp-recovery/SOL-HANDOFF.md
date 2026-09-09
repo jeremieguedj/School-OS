@@ -68,22 +68,37 @@ new exact 14-day inclusive-start/exclusive-end window using the private timezone
 and the same two private domains. Store exact values only in the private
 companion/evidence.
 
-Within 90 active wall-clock minutes of implementation start, including setup,
-helper/checker time, review, and fixes, drive the first thin live path through an
+Prioritize the first thin live path through an
 admitted candidate package/bootstrap, a bounded real source batch, complete
 custody/Facts, canonical task plus Sheets row, and rendered unsent brief. Compose
 this preview from existing
 import, task-sync, and render entrypoints: commit only completed source/task
 operations and their eligible import cursor, leave delivery unreserved, and do
 not claim a completed daily-send outcome. Do not send or bind Todoist/audio before
-this checkpoint. There are exactly two allowed emails: the final full-
+this early integration gate passes. There are exactly two allowed emails: the final full-
 window manual and scheduled TEST variants. Never add a smoke variant, clear the
-ledger, or change recipe content. If the 90-minute target is missed, stop new
-implementation, analysis, and effects; preserve the durable checkpoint/evidence,
-perform only necessary schedule cleanup/publication housekeeping, and await the
-user's budget/next-step decision. The total execution cap is four active wall-
-clock hours with no automatic extensions. Waiting for the fixed scheduled fire
-is excluded and must not become indefinite polling.
+ledger, or change recipe content.
+
+Check in with me after 60 minutes of elapsed wall-clock time from execution
+start, regardless of progress. Include setup, helper work, tool calls, and
+waiting. Record the start and deadline durably; do not reset the clock after
+compaction, delegation, repairs, or phase changes. This replaces the old
+90-minute target and four-hour autonomous cap.
+
+The hour is a status checkpoint, NOT a completion deadline. Do not take shortcuts,
+rush changes, remove scope, weaken contracts, skip tests or verification, reduce
+live coverage, substitute synthetic evidence, or mark incomplete work complete
+to fit it. Preserve all acceptance criteria and consultation rules. Report honest
+partial progress when work remains.
+
+At the checkpoint, stop starting new work, safely pause helpers, checkpoint
+unfinished work and pending external outcomes, and report: verified outcomes,
+what remains, blockers or decisions, and the proposed next step with estimated
+time. Await my direction before continuing. Do not delay the report to finish a
+milestone, test suite, or commit. Use bounded tool calls near the deadline; do
+only necessary cleanup to avoid abandoning an in-flight write or leaving a test
+schedule active, and report that cleanup separately. An authorized continuation
+starts another one-hour check-in interval unless I specify otherwise.
 
 Complete every E2E case in the recovery plan: exhaustive source inventory with
 complete bodies/images/PDF attachments and bounded direct referenced assets;

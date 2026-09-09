@@ -159,21 +159,35 @@ scope. If the specification proves flawed, stop the affected path, record the
 conflict, and request the actual product/architecture/scope/access/budget decision.
 
 Do not pause for known authorized provider calls, private test writes, the two
-test sends, temporary scheduling, or adapter reads. Pause only for a real missing
-decision or unavailable authorization/capability. Do not create goals or
+test sends, temporary scheduling, or adapter reads. Pause for the mandatory
+status checkpoint, a real missing decision, or unavailable authorization/capability. Do not create goals or
 production effects. Repository commits and pushes are required continuity steps
 for accepted work. A release may be created only after all live gates pass using
 the exact same immutable tested package and the user-authorized release workflow;
 it never activates production. Do not run continual monitor/wait loops.
 
-The first checkpoint is capped at 90 active wall-clock minutes. The whole
-execution is capped at four active wall-clock hours, including setup, helper or
-checker time, review, and repairs before the first demonstration. At either
-missed ceiling, stop new implementation, analysis, and effects; preserve durable
-state and evidence; perform only necessary schedule cleanup and publication
-housekeeping; and await the user's budget/next-step decision. Do not grant hourly
-extensions without the user. Waiting for the fixed scheduler deadline is
-excluded from active time and must not become indefinite polling.
+Check in with the user after 60 minutes of elapsed wall-clock time from the
+start of execution, regardless of the phase reached or amount completed. Count
+setup, helper work, tool calls, and waiting; do not reset the clock after
+compaction, delegation, a repair, or a phase change. Record the start and check-in
+deadline in durable progress and consult the clock between bounded work units.
+This rule replaces the previous 90-minute target and four-hour autonomous cap.
+
+One hour is a communication checkpoint, not a deadline to finish the MVP or any
+milestone. Preserve every feature, acceptance criterion, evidence requirement,
+and consultation rule. Do not rush changes, skip verification, weaken contracts,
+reduce coverage, substitute synthetic results, or claim incomplete work is done
+to fit the hour. An honest partial result is the expected report when work remains.
+
+At the checkpoint, stop starting new work, pause helpers safely, preserve the
+exact unfinished state and any pending external outcome, and report to the user.
+Give completed outcomes with evidence, unfinished work, blockers or decisions,
+and the proposed next step with estimated time. Await the user's direction before
+resuming. Do not postpone the report to finish a milestone, test suite, or commit;
+report any necessary bounded cleanup separately. Avoid long blocking calls near
+the deadline and do not abandon an in-flight write or leave a test schedule
+running unintentionally. A user-authorized continuation starts a new one-hour
+check-in interval unless the user specifies otherwise.
 
 Freeze one candidate package/configuration/interpreter for the early thin run.
 After its findings and the Todoist/audio bindings are complete, freeze one exact
@@ -226,11 +240,11 @@ before the authorized creation that returns it. Todoist and schedule objects are
 created and recorded in their later phases. A failed or ambiguous reconciliation
 blocks the affected path.
 
-### Phase 1 — early live integration within 90 minutes
+### Phase 1 — early live integration
 
-**Status: pending; first implementation target.** The 90-minute clock starts when
-implementation work begins and includes candidate reconciliation, package build,
-private setup, and the live thin run. Use the Phase 0 `window_start_ms` and
+**Status: pending; first implementation target, without a completion deadline.**
+The mandatory one-hour status checkpoint applies even if this phase has not
+started or finished. Use the Phase 0 `window_start_ms` and
 `window_end_ms` 14-day `[start,end)` bounds, recorded only in private evidence.
 Use a new
 empty folder under the authorized School OS Tests parent and an empty isolated
@@ -249,11 +263,9 @@ contain fewer sources than the full window, provided its bounded continuation is
 truthful and every admitted source unit is processed. The manual run has no
 scheduler dependency.
 
-At 90 minutes, apply the execution stop rule if the journey has not produced verified Drive
-inventory/Facts/tasks plus a rendered unsent brief preview.
-Preserve the exact checkpoint, evidence, blocker, and next action, then await the
-user's budget/next-step decision. Do not hide the miss by relaxing acceptance or
-switching packages.
+At the one-hour checkpoint, report the actual source, task, and preview outcomes
+achieved so far and preserve the exact next action. Incomplete integration is a
+valid status report; it does not justify relaxing this phase's acceptance gate.
 
 **Gate:** one source must be traceable from provider identity through complete
 catalog content and a Fact; one action must have the same canonical ID in Drive
