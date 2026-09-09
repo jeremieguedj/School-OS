@@ -520,6 +520,25 @@ class InstanceScaffoldingTests(unittest.TestCase):
         self.assertIn("source-catalog", created_names)
         self.assertIn("operation-checkpoints", created_names)
 
+    def test_connected_create_adopts_exact_id_when_receipt_omits_url(self) -> None:
+        drive = ConnectedSetupDrive()
+        original_upload = drive.upload
+
+        def incomplete_upload(*args, **kwargs):
+            result = original_upload(*args, **kwargs)
+            result.pop("url")
+            return result
+
+        drive.upload = incomplete_upload
+        storage = CodexDriveCreateOnlyStorage(
+            drive, scratch_directory=self.base / "scratch",
+        )
+        created = storage.create_file(
+            "instance-root", "state/example.json", b"{}\n", "application/json",
+        )
+        self.assertEqual("state/example.json", created.name)
+        self.assertEqual(b"{}\n", created.data)
+
     def test_connected_setup_refuses_nonempty_root_before_sheet_write(self) -> None:
         scope = GoogleSheetsScope(
             "sheet-1", "https://sheets.example.invalid/sheet-1", 7, "Tasks",

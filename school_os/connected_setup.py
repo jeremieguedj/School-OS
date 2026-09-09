@@ -83,6 +83,19 @@ class CodexDriveCreateOnlyStorage(CodexDriveReferenceStorage):
             or result.get("mime_type") != mime_type or result.get("parent_id") != parent_id
             or not isinstance(result.get("url"), str) or not result["url"]
         ):
+            if isinstance(result, Mapping) and isinstance(result.get("id"), str) and result["id"]:
+                try:
+                    recovered = self.read(result["id"])
+                except Exception as exc:
+                    raise InstallationError(
+                        "Drive create receipt and identity readback are incomplete"
+                    ) from exc
+                if (
+                    recovered is not None and recovered.kind == "file"
+                    and recovered.name == name and recovered.parent_id == parent_id
+                    and recovered.mime_type == mime_type and recovered.data == data
+                ):
+                    return recovered
             raise InstallationError("Drive create receipt lacks exact identity, MIME, parent, or URL")
         self.expected_urls[result["id"]] = result["url"]
         readback = self.read(result["id"])
