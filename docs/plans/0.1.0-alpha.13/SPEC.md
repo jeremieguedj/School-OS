@@ -667,6 +667,16 @@ activity history, and guarded updates cover Group/status/reopen. Providers that
 need distinct completed/activity/move/complete/reopen operations declare them
 as adapter-specific additions rather than imposing them on Google Sheets.
 
+**Connected task phase handoff (2026-09-08):** `ConnectedTaskWorker.reconcile`
+is the explicit Fact-to-canonical readmission boundary and returns a versioned
+canonical artifact. `task_sync` consumes that supplied artifact exactly rather
+than resolving the mutable current pointer, and rejects a substituted version
+before it reads provider state or dispatches an effect. `run_once` composes the
+two phases for compatibility; parent reconciliation, user-added tasks, guarded
+Sheets mutations, unknown-effect recovery, and the post-sync brief-task view
+are unchanged. Daily composition and observed M4-008/M4-009 acceptance remain
+open.
+
 **M4-001/M4-007 custody correction (2026-09-08):** Source admission requires an
 explicit complete MIME-tree assertion, exact raw-part hash/length/locator,
 strict transfer/charset decode equal to provider Unicode, and rejects high-bit

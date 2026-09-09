@@ -110,6 +110,15 @@ unobserved historical activity. M2/M3 chained package and M4-008/M4-009 observed
 acceptance remain open. The measurement command now executes the actual task
 intent/continuation path; final runtime/brief changes require another refresh.
 
+**Accepted connected task phase handoff (2026-09-08):** The connected worker
+now separates Fact-to-canonical `reconcile` from provider-only `task_sync`.
+Reconcile is the explicit mutable-reference readmission boundary; task sync
+consumes its returned versioned canonical artifact exactly and blocks a newer
+substitution before provider-state read or effect dispatch. Existing parent
+reconciliation, user-added tasks, guarded Sheets mutations, unknown-effect
+recovery, and the post-sync brief view remain unchanged. Concrete daily
+composition and observed M4-008/M4-009 acceptance remain open.
+
 **Source custody and semantic audit correction (2026-09-08):** The reopened
 M4-001/M4-007 repository correction is implemented and regression-tested.
 Complete source admission binds the selected raw MIME part, strict transport/

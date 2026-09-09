@@ -2481,3 +2481,23 @@ requirements, then read this log from top to bottom.
   privacy/diff checks, compact handoff update, and one local commit. No
   provider, private source, email, schedule, release, push, or production
   effect occurred.
+
+## 2026-09-08 — isolated task-phase integration prepared
+
+- Shared `main` was left unchanged at
+  `d18afffd692a83949e554ca243f84139ab454e90`. The accepted task-phase range
+  was replayed only in an isolated worktree, retaining `main`'s accepted
+  source discovery/catalog, MIME custody, brief, storage, documentation, and
+  CI-portability work. The resulting branch is a local fast-forward candidate,
+  not a publication or provider action.
+- The integrated worker makes `reconcile` the one mutable canonical-reference
+  readmission point and carries its returned versioned artifact directly into
+  `task_sync`. Task sync rejects a newer substituted canonical version before
+  provider-state read or effect dispatch; existing source reconciliation,
+  parent/user-added handling, literal Sheets guards, unknown-effect recovery,
+  and final brief view retain their prior semantics.
+- Remaining gates are unchanged: compose the real daily entrypoint with the
+  exact handoff, complete bootstrap/attachment and direct-resource extraction,
+  bind observed authenticated providers, and obtain the outstanding M4-008 and
+  M4-009 acceptance evidence. No provider, private source, mail, scheduler,
+  release, tag, push, or shared-main mutation occurred.
