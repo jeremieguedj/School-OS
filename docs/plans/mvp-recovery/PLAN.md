@@ -1,7 +1,7 @@
 # School-OS recovery MVP plan and implementation specification
 
-- Status: recovery specification ready; implementation stopped pending a new
-  GPT-5.6 Sol High execution session
+- Status: recovery implementation in progress; Phase 0 candidate reconciliation
+  active in the authorized GPT-5.6 Sol High execution session
 - Written: 2026-09-09
 - Release identity: record the early candidate in Phase 0 and freeze the final
   identity in Phase 2; do not assume that `main`,
@@ -208,7 +208,9 @@ window, and bytes match; final installed outputs must come from the final packag
 
 ### Phase 0 — reconcile and freeze the candidate
 
-**Status: pending.** Inspect `main`, all named candidate commits/branches,
+**Status: in progress.** Candidate code and tests are reconciled in
+[`RECONCILIATION.md`](RECONCILIATION.md); exact package freeze and live-gate
+preparation remain. Inspect `main`, all named candidate commits/branches,
 worktrees, history, current tests, and both private companion files. Produce a
 short reconciliation ledger classifying each candidate delta as retain, repair,
 supersede, archive-only, or reject. Start from `main`; selectively integrate the

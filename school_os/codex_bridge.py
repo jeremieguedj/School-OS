@@ -37,15 +37,25 @@ class RequestSpec:
     optional: frozenset[str] = frozenset()
 
 
+@dataclass(frozen=True)
+class HostBinding:
+    """One reviewed host capability; callers never provide the tool name."""
+
+    tool_name: str
+
+
 # This is the complete executable request union.  Adding a provider operation
 # requires a code review and a new fixed entry; callers cannot name tools.
 REQUEST_SPECS: dict[str, RequestSpec] = {
     "drive.get_metadata": RequestSpec(frozenset({"fileId"}), frozenset({"fields", "supportsAllDrives"})),
     "drive.fetch": RequestSpec(frozenset({"url"}), frozenset({"download_raw_file", "include_base64", "raw_export_mime_type"})),
-    "drive.list_folder": RequestSpec(frozenset({"url", "top_k"})),
+    "drive.search_page": RequestSpec(
+        frozenset({"parent_id", "item_type", "topn"}),
+        frozenset({"page_token"}),
+    ),
     "drive.create_folder": RequestSpec(frozenset({"name"}), frozenset({"parent_folder"})),
-    "drive.upload_file": RequestSpec(frozenset({"file_uri"}), frozenset({"file_name", "mime_type", "parent_folder_id"})),
-    "drive.update_file": RequestSpec(frozenset({"fileId"}), frozenset({"file_uri", "mime_type", "name", "addParents", "removeParents"})),
+    "drive.upload_file": RequestSpec(frozenset({"file_uri", "file_sha256", "file_size_bytes"}), frozenset({"file_name", "mime_type", "parent_folder_id"})),
+    "drive.update_file": RequestSpec(frozenset({"fileId", "file_uri", "file_sha256", "file_size_bytes"}), frozenset({"mime_type", "name", "addParents", "removeParents"})),
     "gmail.search_ids": RequestSpec(frozenset(), frozenset({"query", "label_ids", "max_results", "next_page_token"})),
     "gmail.read": RequestSpec(frozenset({"message_id", "format"})),
     "gmail.read_thread": RequestSpec(frozenset({"thread_id"}), frozenset({"max_messages"})),
@@ -58,7 +68,160 @@ REQUEST_SPECS: dict[str, RequestSpec] = {
     "comments.write_file": RequestSpec(frozenset(), frozenset({"id", "url", "comments", "replies", "resolutions"})),
     "semantic.interpret": RequestSpec(frozenset({"packet"})),
     "semantic.audit": RequestSpec(frozenset({"packet", "interpretation"})),
+    "resource.fetch_https": RequestSpec(frozenset({"url", "max_bytes", "max_redirects", "timeout_ms"})),
+    "extract.image": RequestSpec(frozenset({"path", "source_id", "mime_type", "original_sha256", "byte_length", "width", "height"})),
 }
+
+# Kept next to the request union so host dispatch cannot broaden independently
+# from child validation.  These names describe the current connector surface;
+# availability still requires operation-specific observed capability evidence.
+HOST_BINDINGS: dict[str, HostBinding] = {
+    "drive.get_metadata": HostBinding("mcp__codex_apps__google_drive_get_file_metadata"),
+    "drive.fetch": HostBinding("mcp__codex_apps__google_drive_fetch"),
+    "drive.search_page": HostBinding("mcp__codex_apps__google_drive_search"),
+    "drive.create_folder": HostBinding("mcp__codex_apps__google_drive_create_folder"),
+    "drive.upload_file": HostBinding("mcp__codex_apps__google_drive_upload_file"),
+    "drive.update_file": HostBinding("mcp__codex_apps__google_drive_update_file"),
+    "gmail.search_ids": HostBinding("mcp__codex_apps__gmail_search_email_ids"),
+    "gmail.read": HostBinding("mcp__codex_apps__gmail_read_email"),
+    "gmail.read_thread": HostBinding("mcp__codex_apps__gmail_read_email_thread"),
+    "gmail.read_attachment": HostBinding("mcp__codex_apps__gmail_read_attachment"),
+    "gmail.send": HostBinding("mcp__codex_apps__gmail_send_email"),
+    "sheets.get_metadata": HostBinding("mcp__codex_apps__google_drive_get_spreadsheet_metadata"),
+    "sheets.get_cells": HostBinding("mcp__codex_apps__google_drive_get_spreadsheet_cells"),
+    "sheets.batch_update": HostBinding("mcp__codex_apps__google_drive_batch_update_spreadsheet"),
+    "comments.read_spreadsheet": HostBinding("mcp__codex_apps__google_drive_get_spreadsheet_comments"),
+    "comments.write_file": HostBinding("mcp__codex_apps__google_drive_bulk_update_file_comments"),
+    "semantic.interpret": HostBinding("semantic.interpret"),
+    "semantic.audit": HostBinding("semantic.audit"),
+    # These labels are explicit local-host routes, not connector tool names.
+    "resource.fetch_https": HostBinding("school_os.source_host.fetch_https"),
+    "extract.image": HostBinding("school_os.source_host.view_image_original"),
+}
+
+# Captured from the connected-host capability inventory.  Keep this finite
+# evidence adjacent to the bindings: a request kind may not silently start
+# targeting a spelling which was never advertised by the host.
+CAPTURED_HOST_CAPABILITIES: frozenset[str] = frozenset({
+    "mcp__codex_apps__google_drive_get_file_metadata",
+    "mcp__codex_apps__google_drive_fetch",
+    "mcp__codex_apps__google_drive_search",
+    "mcp__codex_apps__google_drive_create_folder",
+    "mcp__codex_apps__google_drive_upload_file",
+    "mcp__codex_apps__google_drive_update_file",
+    "mcp__codex_apps__gmail_search_email_ids",
+    "mcp__codex_apps__gmail_read_email",
+    "mcp__codex_apps__gmail_read_email_thread",
+    "mcp__codex_apps__gmail_read_attachment",
+    "mcp__codex_apps__gmail_send_email",
+    "mcp__codex_apps__google_drive_get_spreadsheet_metadata",
+    "mcp__codex_apps__google_drive_get_spreadsheet_cells",
+    "mcp__codex_apps__google_drive_batch_update_spreadsheet",
+    "mcp__codex_apps__google_drive_get_spreadsheet_comments",
+    "mcp__codex_apps__google_drive_bulk_update_file_comments",
+})
+
+
+def _nonempty_string(value: Any, label: str) -> str:
+    if not isinstance(value, str) or not value:
+        raise BridgeError(f"{label} must be a nonempty string")
+    return value
+
+
+def _positive_int(value: Any, label: str, *, allow_zero: bool = False) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value < (0 if allow_zero else 1):
+        raise BridgeError(f"{label} must be a {'nonnegative' if allow_zero else 'positive'} integer")
+    return value
+
+
+def _string_list(value: Any, label: str) -> None:
+    if not isinstance(value, list) or any(not isinstance(item, str) or not item for item in value):
+        raise BridgeError(f"{label} must be a list of nonempty strings")
+
+
+def _exactly_one(args: Mapping[str, Any], *keys: str) -> None:
+    if sum(key in args for key in keys) != 1:
+        raise BridgeError(f"exactly one of {', '.join(keys)} is required")
+
+
+def _nullable_string(value: Any, label: str) -> None:
+    if value is not None:
+        _nonempty_string(value, label)
+
+
+def _mime_payload(value: Any) -> None:
+    """Validate the finite structured MIME form used by the Gmail binding."""
+    if not isinstance(value, Mapping):
+        raise BridgeError("gmail.send.payload must be an object")
+    mime_type = value.get("mime_type")
+    _nonempty_string(mime_type, "gmail.send.payload.mime_type")
+    has_body, has_parts = "body" in value, "parts" in value
+    if has_body == has_parts:
+        raise BridgeError("gmail.send.payload requires exactly one of body or parts")
+    if has_body:
+        body = value["body"]
+        if not isinstance(body, Mapping) or set(body) != {"content"} or not isinstance(body["content"], str):
+            raise BridgeError("gmail.send.payload.body must contain one string content")
+        return
+    parts = value["parts"]
+    if not isinstance(parts, list) or not parts:
+        raise BridgeError("gmail.send.payload.parts must be a nonempty list")
+    for part in parts:
+        if not isinstance(part, Mapping) or not {"mime_type", "body"} <= set(part):
+            raise BridgeError("gmail.send.payload part is malformed")
+        _nonempty_string(part["mime_type"], "gmail.send.payload part MIME type")
+        body = part["body"]
+        if not isinstance(body, Mapping) or set(body) != {"content"} or not isinstance(body["content"], str):
+            raise BridgeError("gmail.send.payload part body is malformed")
+        for key in ("charset", "content_disposition"):
+            if key in part:
+                _nonempty_string(part[key], f"gmail.send.payload part.{key}")
+
+
+def _comment_operations(args: Mapping[str, Any]) -> None:
+    _exactly_one(args, "id", "url")
+    total = 0
+    for key in ("comments", "replies", "resolutions"):
+        if key not in args:
+            continue
+        values = args[key]
+        if not isinstance(values, list) or any(not isinstance(item, Mapping) or not item for item in values):
+            raise BridgeError(f"comments.write_file.{key} must be nonempty objects")
+        for item in values:
+            if key == "comments":
+                allowed = {"content", "anchor", "quoted_text", "sheet_cell_range", "slide_number"}
+                if set(item) - allowed or "content" not in item:
+                    raise BridgeError("comments.write_file.comments item has an invalid shape")
+                _nonempty_string(item["content"], "comments.write_file.comments content")
+                for optional in ("anchor", "quoted_text", "sheet_cell_range"):
+                    if optional in item and item[optional] is not None:
+                        _nonempty_string(item[optional], f"comments.write_file.comments {optional}")
+                if "slide_number" in item and item["slide_number"] is not None:
+                    _positive_int(item["slide_number"], "comments.write_file.comments slide_number")
+            elif key == "replies":
+                if set(item) != {"comment_id", "content"}:
+                    raise BridgeError("comments.write_file.replies item has an invalid shape")
+                _nonempty_string(item["comment_id"], "comments.write_file.replies comment_id")
+                _nonempty_string(item["content"], "comments.write_file.replies content")
+            else:
+                if set(item) - {"comment_id", "reply_content"} or "comment_id" not in item:
+                    raise BridgeError("comments.write_file.resolutions item has an invalid shape")
+                _nonempty_string(item["comment_id"], "comments.write_file.resolutions comment_id")
+                if "reply_content" in item and item["reply_content"] is not None:
+                    _nonempty_string(item["reply_content"], "comments.write_file.resolutions reply_content")
+        total += len(values)
+    if not 1 <= total <= 20:
+        raise BridgeError("comments.write_file requires 1 through 20 operations")
+
+
+def _decimal_size(value: Any, label: str, *, allow_none: bool = False) -> int | None:
+    if value is None and allow_none:
+        return None
+    if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
+        return value
+    if isinstance(value, str) and value.isdigit():
+        return int(value)
+    raise BridgeError(f"{label} must be an exact nonnegative decimal size")
 
 
 def _json_safe(value: Any, label: str) -> None:
@@ -66,6 +229,379 @@ def _json_safe(value: Any, label: str) -> None:
         json.dumps(value, allow_nan=False)
     except (TypeError, ValueError) as exc:
         raise BridgeError(f"{label} is not finite JSON") from exc
+
+
+def _validate_request(kind: str, args: Mapping[str, Any]) -> None:
+    spec = REQUEST_SPECS.get(kind)
+    if spec is None or kind not in HOST_BINDINGS:
+        raise BridgeError(f"unexpected bridge request kind: {kind}")
+    if not isinstance(args, Mapping):
+        raise BridgeError("bridge request args must be an object")
+    keys = set(args)
+    if not spec.required <= keys or not keys <= spec.required | spec.optional:
+        raise BridgeError(f"invalid argument keys for {kind}")
+    for key in ("fileId", "parent_id", "item_type", "message_id", "thread_id", "attachment_id", "filename", "url", "name", "file_name", "mime_type", "parent_folder", "parent_folder_id", "query", "next_page_token", "page_token", "from_address", "reply_message_id", "reply_to", "fields", "cell_fields", "spreadsheet_id", "spreadsheet_url"):
+        if key in args:
+            _nonempty_string(args[key], f"{kind}.{key}")
+    for key in ("top_k", "topn", "max_results", "max_messages", "page_size"):
+        if key in args:
+            _positive_int(args[key], f"{kind}.{key}")
+    for key in ("label_ids", "ranges", "response_ranges"):
+        if key in args:
+            _string_list(args[key], f"{kind}.{key}")
+    for key in ("download_raw_file", "include_base64", "charts_only", "include_conditional_format_rules", "include_deleted", "include_spreadsheet_in_response", "response_include_grid_data"):
+        if key in args and not isinstance(args[key], bool):
+            raise BridgeError(f"{kind}.{key} must be boolean")
+    if "supportsAllDrives" in args and args["supportsAllDrives"] is not None and not isinstance(args["supportsAllDrives"], bool):
+        raise BridgeError("drive.get_metadata.supportsAllDrives must be boolean or null")
+    if kind == "drive.search_page":
+        if re.fullmatch(r"[A-Za-z0-9_-]+", args["parent_id"]) is None:
+            raise BridgeError("drive.search_page.parent_id is not a Drive object ID")
+        if args["item_type"] not in {"document", "image", "folder"}:
+            raise BridgeError("drive.search_page.item_type is not an advertised paginated category")
+        if args["topn"] > 1000:
+            raise BridgeError("drive.search_page.topn exceeds the finite page bound")
+    if kind in {"drive.upload_file", "drive.update_file"}:
+        raw_path = args.get("file_uri")
+        if not isinstance(raw_path, str) or not Path(raw_path).is_absolute():
+            raise BridgeError("Drive write file_uri must be an absolute local path")
+        digest = args.get("file_sha256")
+        if not isinstance(digest, str) or re.fullmatch(r"[0-9a-f]{64}", digest) is None:
+            raise BridgeError("Drive write file_sha256 must be a lowercase SHA-256 digest")
+        _positive_int(args.get("file_size_bytes"), "Drive write file_size_bytes", allow_zero=True)
+    if kind in {"sheets.get_metadata", "comments.read_spreadsheet"}:
+        _exactly_one(args, "spreadsheet_id", "spreadsheet_url")
+    if kind == "sheets.get_cells":
+        _exactly_one(args, "spreadsheet_id", "spreadsheet_url")
+    if kind == "sheets.batch_update":
+        _exactly_one(args, "spreadsheet_id", "spreadsheet_url")
+        if not isinstance(args["requests"], list) or not args["requests"] or any(not isinstance(item, Mapping) or not item for item in args["requests"]):
+            raise BridgeError("sheets.batch_update.requests must be nonempty operation objects")
+        if "image_uris" in args:
+            _nonempty_string(args["image_uris"], "sheets.batch_update.image_uris")
+    if kind == "drive.update_file":
+        for key in ("addParents", "removeParents"):
+            if key in args:
+                _nullable_string(args[key], f"drive.update_file.{key}")
+    if kind == "gmail.read" and args.get("format") not in {"full", "metadata", "minimal", "raw"}:
+        raise BridgeError("gmail.read.format is not an admitted Gmail format")
+    if kind == "gmail.read_attachment":
+        _exactly_one(args, "attachment_id", "filename")
+    if kind == "gmail.send":
+        for key in ("to", "cc", "bcc"):
+            if key in args:
+                _nonempty_string(args[key], f"gmail.send.{key}")
+        _mime_payload(args["payload"])
+        if "response_fields" in args:
+            _string_list(args["response_fields"], "gmail.send.response_fields")
+            if not set(args["response_fields"]) <= {
+                "id", "thread_id", "label_ids", "snippet", "history_id",
+                "internal_date", "payload", "size_estimate",
+                "classification_label_values",
+            }:
+                raise BridgeError("gmail.send.response_fields contains an unadvertised field")
+        if "classification_label_values" in args:
+            classifications = args["classification_label_values"]
+            if not isinstance(classifications, list):
+                raise BridgeError("gmail.send.classification_label_values must be an array")
+            for classification in classifications:
+                if not isinstance(classification, Mapping) or set(classification) - {"label_id", "fields"} or "label_id" not in classification:
+                    raise BridgeError("gmail.send.classification_label_values has an invalid label shape")
+                _nonempty_string(classification["label_id"], "gmail.send classification label_id")
+                if "fields" in classification and classification["fields"] is not None:
+                    fields = classification["fields"]
+                    if not isinstance(fields, list):
+                        raise BridgeError("gmail.send classification fields must be an array")
+                    for field in fields:
+                        if not isinstance(field, Mapping) or set(field) - {"field_id", "selection"} or "field_id" not in field:
+                            raise BridgeError("gmail.send classification field has an invalid shape")
+                        _nonempty_string(field["field_id"], "gmail.send classification field_id")
+                        if "selection" in field and field["selection"] is not None:
+                            _nonempty_string(field["selection"], "gmail.send classification selection")
+    if kind == "comments.write_file":
+        _comment_operations(args)
+    if kind.startswith("semantic."):
+        for key, value in args.items():
+            if not isinstance(value, Mapping):
+                raise BridgeError(f"{kind}.{key} must be an object")
+    if kind == "extract.image":
+        raw_path = args.get("path")
+        if not isinstance(raw_path, str) or not Path(raw_path).is_absolute():
+            raise BridgeError("image extraction path must be an absolute local path")
+    if kind == "resource.fetch_https":
+        url = args.get("url")
+        if not isinstance(url, str) or not url.startswith("https://"):
+            raise BridgeError("resource fetch requires an HTTPS URL")
+    _json_safe(args, "bridge request args")
+
+
+def _validate_result(kind: str, result: Any, args: Mapping[str, Any] | None = None) -> dict[str, Any]:
+    """Reject malformed connector replies before they cross the bridge."""
+    if not isinstance(result, Mapping):
+        raise BridgeError(f"{kind} result must be an object")
+    normalized = dict(result)
+    if kind == "drive.get_metadata":
+        for key in ("id", "mime_type", "url", "title", "modified_time"):
+            _nonempty_string(result.get(key), f"{kind} result.{key}")
+        _string_list(result.get("parent_ids"), f"{kind} result.parent_ids")
+        mime_type = result["mime_type"]
+        if mime_type != "application/vnd.google-apps.folder":
+            normalized["size"] = _decimal_size(result.get("size"), f"{kind} result.size")
+    elif kind == "drive.fetch":
+        _nonempty_string(result.get("id"), f"{kind} result.id")
+        encoded = result.get("b64_string")
+        if not isinstance(encoded, str):
+            raise BridgeError("drive.fetch result.b64_string must be a string")
+        try:
+            raw = __import__("base64").b64decode(encoded, validate=True)
+        except Exception as exc:  # binascii.Error is intentionally not host-facing.
+            raise BridgeError("drive.fetch result b64_string is invalid") from exc
+        if _positive_int(result.get("file_size_bytes"), f"{kind} result.file_size_bytes", allow_zero=True) != len(raw):
+            raise BridgeError("drive.fetch result byte length disagrees with base64")
+        if not isinstance(result.get("is_empty"), bool) or result["is_empty"] != (len(raw) == 0):
+            raise BridgeError("drive.fetch result empty marker disagrees with bytes")
+    elif kind == "drive.search_page":
+        if set(result) - {"results", "next_page_token"} or not isinstance(result.get("results"), list):
+            raise BridgeError("drive.search_page result has an unsupported page shape")
+        for item in result["results"]:
+            if not isinstance(item, Mapping):
+                raise BridgeError("drive.search_page result member must be an object")
+            _nonempty_string(item.get("id"), "drive.search_page result member.id")
+            _nonempty_string(item.get("title"), "drive.search_page result member.title")
+        token = result.get("next_page_token")
+        if token is not None:
+            _nonempty_string(token, "drive.search_page result.next_page_token")
+    elif kind == "drive.create_folder":
+        if result.get("success") is not True:
+            raise BridgeError("drive.create_folder result lacks success evidence")
+        for key in ("id", "parent_id", "title", "url"):
+            _nonempty_string(result.get(key), f"drive.create_folder result.{key}")
+    elif kind == "drive.upload_file":
+        if result.get("success") is not True:
+            raise BridgeError(f"{kind} result lacks success evidence")
+        for key in ("id", "mime_type", "url", "parent_id"):
+            _nonempty_string(result.get(key), f"{kind} result.{key}")
+    elif kind == "drive.update_file":
+        if result.get("success") is not True:
+            raise BridgeError(f"{kind} result lacks success evidence")
+        for key in ("id", "mime_type", "url", "modified_time"):
+            _nonempty_string(result.get(key), f"{kind} result.{key}")
+        _string_list(result.get("parent_ids"), f"{kind} result.parent_ids")
+        if "size" in result:
+            normalized["size"] = _decimal_size(result["size"], f"{kind} result.size", allow_none=True)
+    elif kind == "gmail.search_ids":
+        _string_list(result.get("message_ids"), f"{kind} result.message_ids")
+        token = result.get("next_page_token")
+        if token is not None:
+            _nonempty_string(token, f"{kind} result.next_page_token")
+    elif kind == "gmail.read_thread":
+        if not isinstance(result.get("messages"), list):
+            raise BridgeError("gmail.read_thread result.messages must be a list")
+    elif kind == "comments.read_spreadsheet":
+        if not isinstance(result.get("comments"), list):
+            raise BridgeError("comments.read_spreadsheet result.comments must be a list")
+        _nonempty_string(result.get("spreadsheetId"), "comments.read_spreadsheet result.spreadsheetId")
+        if result.get("nextPageToken") is not None:
+            _nonempty_string(result["nextPageToken"], "comments.read_spreadsheet result.nextPageToken")
+    elif kind == "comments.write_file":
+        for key in ("created_comments", "created_replies", "resolved_comments"):
+            values = result.get(key)
+            if not isinstance(values, list) or any(not isinstance(item, Mapping) for item in values):
+                raise BridgeError(f"comments.write_file result.{key} must be an object array")
+            for item in values:
+                _nonempty_string(item.get("id"), f"comments.write_file result.{key} item.id")
+        _nonempty_string(result.get("fileId"), "comments.write_file result.fileId")
+        total = _positive_int(result.get("total_operations"), "comments.write_file result.total_operations")
+        expected_total = sum(len(args.get(key, [])) for key in ("comments", "replies", "resolutions")) if args is not None else None
+        if expected_total is not None and total != expected_total:
+            raise BridgeError("comments.write_file result total_operations disagrees with request")
+    elif kind == "gmail.send":
+        _nonempty_string(result.get("id"), "gmail.send result.id")
+        for key in ("thread_id", "snippet", "history_id", "internal_date"):
+            if key in result and result[key] is not None:
+                _nonempty_string(result[key], f"gmail.send result.{key}")
+        if "label_ids" in result and result["label_ids"] is not None:
+            _string_list(result["label_ids"], "gmail.send result.label_ids")
+        if "payload" in result and result["payload"] is not None and not isinstance(result["payload"], Mapping):
+            raise BridgeError("gmail.send result.payload must be an object or null")
+        if "size_estimate" in result and result["size_estimate"] is not None:
+            _positive_int(result["size_estimate"], "gmail.send result.size_estimate", allow_zero=True)
+    elif kind == "sheets.batch_update":
+        _nonempty_string(result.get("spreadsheetId"), "sheets.batch_update result.spreadsheetId")
+        if not isinstance(result.get("replies"), list):
+            raise BridgeError("sheets.batch_update result.replies must be a list")
+    _json_safe(result, "host binding result")
+    return normalized
+
+
+class HostBindingDispatcher:
+    """Dispatch an already-validated request to exactly one reviewed binding."""
+
+    def __init__(self, run_directory: Path | None = None, *, source_helpers: Any | None = None) -> None:
+        self.run_directory = _verify_run_directory(run_directory) if run_directory is not None else None
+        self.source_helpers = source_helpers
+
+    def _private_file_bytes(
+        self, raw_value: Any, *, evidence: Mapping[str, Any] | None, label: str,
+    ) -> bytes:
+        if self.run_directory is None:
+            raise BridgeError(f"{label} requires an admitted private run directory")
+        if not isinstance(raw_value, str) or not Path(raw_value).is_absolute():
+            raise BridgeError(f"{label} must be an absolute local path")
+        raw_path = Path(raw_value)
+        try:
+            relative = raw_path.relative_to(self.run_directory)
+            if any(part in {"", ".", ".."} for part in relative.parts):
+                raise ValueError("non-canonical private file path")
+            checked = self.run_directory
+            for part in relative.parts:
+                checked = checked / part
+                if stat.S_ISLNK(checked.lstat().st_mode):
+                    raise ValueError("private file path contains a symlink")
+            status = raw_path.lstat()
+            resolved = raw_path.resolve(strict=True)
+            resolved.relative_to(self.run_directory)
+        except (OSError, ValueError) as exc:
+            raise BridgeError(f"{label} escapes the private run directory") from exc
+        if stat.S_ISLNK(status.st_mode) or not stat.S_ISREG(status.st_mode) or stat.S_IMODE(status.st_mode) != 0o600:
+            raise BridgeError(f"{label} must use a mode-0600 non-symlink regular private file")
+        data = resolved.read_bytes()
+        if evidence is not None and (
+            len(data) != evidence["file_size_bytes"] or sha256_bytes(data) != evidence["file_sha256"]
+        ):
+            raise BridgeError("Drive write file identity, size, or hash changed before effect")
+        return data
+
+    def _host_snapshot(self, data: bytes) -> Path:
+        if self.run_directory is None:
+            raise BridgeError("host snapshot requires an admitted private run directory")
+        snapshot = self.run_directory / f"host-snapshot-{uuid.uuid4().hex}"
+        _exclusive_write(snapshot, data)
+        return snapshot
+
+    @staticmethod
+    def _native_tool_result(value: Any) -> Any:
+        """Consume the one native CallToolResult shape accepted by dispatch."""
+        if not isinstance(value, Mapping) or value.get("isError") is True:
+            raise BridgeError("host tool returned an error; effect outcome is unknown")
+        structured = value.get("structuredContent")
+        if not isinstance(structured, Mapping) or "result" not in structured:
+            raise BridgeError("host tool response lacks structuredContent.result")
+        result = structured["result"]
+        _json_safe(result, "normalized host result")
+        return result
+    def dispatch(self, kind: str, args: Mapping[str, Any], invoke: Any) -> Any:
+        _validate_request(kind, args)
+        if kind in {"resource.fetch_https", "extract.image"}:
+            if self.source_helpers is None:
+                raise BridgeError("finite source host helpers are unavailable")
+            result = self.source_helpers.dispatch(kind, dict(args))
+            _json_safe(result, "source host helper result")
+            return result
+        if not callable(invoke):
+            raise BridgeError("host binding invoker is unavailable")
+        native_args = dict(args)
+        snapshots: list[Path] = []
+        if kind == "drive.search_page":
+            native_args = {
+                "special_filter_query_str": f"'{args['parent_id']}' in parents and trashed = false",
+                "item_type": args["item_type"], "topn": args["topn"],
+            }
+            if "page_token" in args:
+                native_args["page_token"] = args["page_token"]
+        if kind in {"drive.upload_file", "drive.update_file"}:
+            data = self._private_file_bytes(
+                args["file_uri"], evidence=args, label="Drive write file_uri",
+            )
+            snapshot = self._host_snapshot(data)
+            snapshots.append(snapshot)
+            native_args["file_uri"] = str(snapshot)
+            native_args.pop("file_sha256")
+            native_args.pop("file_size_bytes")
+        if kind == "sheets.batch_update" and "image_uris" in args:
+            snapshot = self._host_snapshot(self._private_file_bytes(
+                args["image_uris"], evidence=None, label="Sheets image_uris",
+            ))
+            snapshots.append(snapshot)
+            native_args["image_uris"] = str(snapshot)
+        try:
+            result = self._native_tool_result(invoke(HOST_BINDINGS[kind].tool_name, native_args))
+            return _validate_result(kind, result, args)
+        finally:
+            for snapshot in snapshots:
+                snapshot.unlink(missing_ok=True)
+
+    def dispatch_request_file(
+        self, *, request_id: str, kind: str, request_sha256: str,
+        request_path: Path, invoke: Any,
+    ) -> dict[str, str]:
+        """Run one complete child request through the mandatory host boundary.
+
+        The host must use this entrypoint (or an exact implementation of it),
+        rather than reading ``request.args`` and invoking a connector directly.
+        It binds the terminal control to the private request file, performs all
+        argument stripping/snapshotting/result validation in :meth:`dispatch`,
+        and writes the only response shape consumed by :class:`JsonlPeer`.
+        """
+        if self.run_directory is None:
+            raise BridgeError("host request dispatch requires an admitted private run directory")
+        if REQUEST_ID.fullmatch(request_id) is None or not isinstance(request_sha256, str) or re.fullmatch(r"[0-9a-f]{64}", request_sha256) is None:
+            raise BridgeError("host request control has invalid identity or hash")
+        path = _contained(request_path, self.run_directory)
+        if path.parent != self.run_directory or path.name != f"{request_id}.request.json":
+            raise BridgeError("host request path does not match request_id")
+        try:
+            status = path.lstat()
+        except OSError as exc:
+            raise BridgeError("host request file is unavailable") from exc
+        if stat.S_ISLNK(status.st_mode) or not stat.S_ISREG(status.st_mode) or stat.S_IMODE(status.st_mode) != 0o600:
+            raise BridgeError("host request must be a mode-0600 non-symlink regular file")
+        if status.st_size > MAX_REQUEST_BYTES:
+            raise BridgeError("host request exceeds the configured byte bound")
+        request_bytes = path.read_bytes()
+        if len(request_bytes) != status.st_size or sha256_bytes(request_bytes) != request_sha256:
+            raise BridgeError("host request length or hash disagrees")
+        try:
+            request = json.loads(request_bytes)
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise BridgeError("host request is not UTF-8 JSON") from exc
+        expected = {"args", "kind", "protocol", "request_id"}
+        if (
+            not isinstance(request, Mapping) or set(request) != expected
+            or request.get("protocol") != PROTOCOL
+            or request.get("request_id") != request_id
+            or request.get("kind") != kind
+            or not isinstance(request.get("args"), Mapping)
+        ):
+            raise BridgeError("host request wrapper disagrees with terminal control")
+        native_attempted = False
+
+        def guarded_invoke(tool_name: str, native_args: Mapping[str, Any]) -> Any:
+            nonlocal native_attempted
+            native_attempted = True
+            return invoke(tool_name, native_args)
+
+        try:
+            result = self.dispatch(kind, request["args"], guarded_invoke)
+            response_value: dict[str, Any] = {
+                "protocol": PROTOCOL, "request_id": request_id, "result": result,
+            }
+        except Exception:
+            if not native_attempted:
+                raise
+            # Once native dispatch is attempted, an exception cannot authorize
+            # retry.  The child must reconcile the effect by provider readback.
+            response_value = {
+                "protocol": PROTOCOL, "request_id": request_id,
+                "error": {"class": "tool_exception", "effect": "unknown"},
+            }
+        response_bytes = canonical_json_bytes(response_value)
+        response_path = self.run_directory / f"{request_id}.response.json"
+        _exclusive_write(response_path, response_bytes)
+        return {
+            "request_id": request_id, "response_path": str(response_path),
+            "sha256": sha256_bytes(response_bytes),
+        }
 
 
 def _contained(path: Path, root: Path) -> Path:
@@ -87,6 +623,8 @@ def create_run_directory(parent: Path, name: str | None = None) -> Path:
 
 
 def _verify_run_directory(run_dir: Path) -> Path:
+    if stat.S_ISLNK(run_dir.lstat().st_mode):
+        raise BridgeError("bridge run directory must not be a symlink")
     resolved = run_dir.resolve(strict=True)
     mode = stat.S_IMODE(resolved.stat().st_mode)
     if not resolved.is_dir() or mode != 0o700:
@@ -146,15 +684,7 @@ class JsonlPeer:
         self._consumed: set[str] = set()
 
     def call(self, kind: str, args: Mapping[str, Any], *, request_id: str | None = None) -> Any:
-        spec = REQUEST_SPECS.get(kind)
-        if spec is None:
-            raise BridgeError(f"unexpected bridge request kind: {kind}")
-        if not isinstance(args, Mapping):
-            raise BridgeError("bridge request args must be an object")
-        keys = set(args)
-        if not spec.required <= keys or not keys <= spec.required | spec.optional:
-            raise BridgeError(f"invalid argument keys for {kind}")
-        _json_safe(args, "bridge request args")
+        _validate_request(kind, args)
         identifier = request_id or uuid.uuid4().hex
         if REQUEST_ID.fullmatch(identifier) is None or identifier in self._issued:
             raise BridgeError("bridge request_id is invalid or replayed")
@@ -218,12 +748,27 @@ class JsonlPeer:
                 response_path.unlink(missing_ok=True)
 
     def connector_call(self, kind: str, args: Mapping[str, Any], *, request_id: str | None = None) -> Any:
-        return normalize_tool_result(self.call(kind, args, request_id=request_id))
+        # The mandatory host dispatcher is the sole connector-envelope
+        # normalization boundary.  JSONL carries only its validated raw result.
+        return self.call(kind, args, request_id=request_id)
 
 
 @dataclass(frozen=True)
 class CodexDrivePort:
     peer: JsonlPeer
+
+    @staticmethod
+    def _file_evidence(file_uri: str) -> dict[str, Any]:
+        path = Path(file_uri)
+        try:
+            status = path.lstat()
+            resolved = path.resolve(strict=True)
+        except OSError as exc:
+            raise BridgeError("Drive write source file is unavailable") from exc
+        if stat.S_ISLNK(status.st_mode) or not stat.S_ISREG(status.st_mode) or stat.S_IMODE(status.st_mode) != 0o600:
+            raise BridgeError("Drive write source must be a mode-0600 non-symlink regular file")
+        data = resolved.read_bytes()
+        return {"file_uri": str(resolved), "file_sha256": sha256_bytes(data), "file_size_bytes": len(data)}
 
     def metadata(self, file_id: str, *, fields: str) -> Any:
         return self.peer.connector_call("drive.get_metadata", {"fileId": file_id, "fields": fields})
@@ -231,21 +776,28 @@ class CodexDrivePort:
     def fetch(self, url: str, *, raw: bool = True, include_base64: bool = True) -> Any:
         return self.peer.connector_call("drive.fetch", {"url": url, "download_raw_file": raw, "include_base64": include_base64})
 
-    def list_folder(self, url: str, *, top_k: int) -> Any:
-        result = self.peer.connector_call("drive.list_folder", {"url": url, "top_k": top_k})
-        files = result.get("files") if isinstance(result, Mapping) else None
-        if not isinstance(files, list) or len(files) >= top_k:
-            raise BridgeError("Drive folder listing is invalid or reached its non-paginated cap")
-        return result
+    def search_page(
+        self, parent_id: str, *, item_type: str, topn: int,
+        page_token: str | None = None,
+    ) -> Any:
+        args = {"parent_id": parent_id, "item_type": item_type, "topn": topn}
+        if page_token is not None:
+            args["page_token"] = page_token
+        return self.peer.connector_call("drive.search_page", args)
 
     def create_folder(self, name: str, parent_folder: str) -> Any:
         return self.peer.connector_call("drive.create_folder", {"name": name, "parent_folder": parent_folder})
 
     def upload(self, file_uri: str, *, file_name: str, mime_type: str, parent_folder_id: str) -> Any:
-        return self.peer.connector_call("drive.upload_file", {"file_uri": file_uri, "file_name": file_name, "mime_type": mime_type, "parent_folder_id": parent_folder_id})
+        return self.peer.connector_call("drive.upload_file", {
+            **self._file_evidence(file_uri), "file_name": file_name,
+            "mime_type": mime_type, "parent_folder_id": parent_folder_id,
+        })
 
     def update(self, file_id: str, *, file_uri: str, mime_type: str) -> Any:
-        return self.peer.connector_call("drive.update_file", {"fileId": file_id, "file_uri": file_uri, "mime_type": mime_type})
+        return self.peer.connector_call("drive.update_file", {
+            "fileId": file_id, **self._file_evidence(file_uri), "mime_type": mime_type,
+        })
 
 
 @dataclass(frozen=True)
@@ -347,3 +899,19 @@ class CodexSemanticPort:
 
     def audit(self, packet: Mapping[str, Any], interpretation: Mapping[str, Any]) -> Any:
         return self.peer.call("semantic.audit", {"packet": dict(packet), "interpretation": dict(interpretation)})
+
+
+@dataclass(frozen=True)
+class CodexSourceHostPort:
+    """Finite byte/image host calls used by ``connected_sources`` only."""
+
+    peer: JsonlPeer
+
+    def fetch_https(self, *, url: str, max_bytes: int, max_redirects: int, timeout_ms: int) -> Any:
+        return self.peer.call("resource.fetch_https", {
+            "url": url, "max_bytes": max_bytes, "max_redirects": max_redirects,
+            "timeout_ms": timeout_ms,
+        })
+
+    def extract_image(self, **arguments: Any) -> Any:
+        return self.peer.call("extract.image", arguments)

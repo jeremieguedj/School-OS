@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Run synthetic conformance input or verify a Codex bridge bootstrap read.
+"""Run synthetic conformance, bootstrap readback, or an installed-package handoff.
 
 ``--stage-results`` is solely synthetic and cannot be combined with the host
-bridge, a bootstrap reference, or a real entrypoint.  ``--host-jsonl`` verifies
-only the exact bootstrap identity and readback through the finite bridge.  It is
-not a connected daily executor or runtime-readiness claim.
+bridge, a bootstrap reference, or a real entrypoint.  The legacy
+``--bootstrap-reference`` host path remains a readback-only proof.  The exact
+``--bootstrap-document`` path replaces this process with an admitted extracted
+package's fixed entrypoint; daily composition remains explicitly separate.
 """
 
 from __future__ import annotations
@@ -24,6 +25,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from school_os.capabilities import CapabilityError, qualify_bootstrap_read
+from school_os.connected_bootstrap import BootstrapError, exec_installed_entrypoint, load_bootstrap_document, recover_installed_entrypoint
+from school_os.connected_storage import CodexDriveReferenceStorage
 from school_os.codex_bridge import BridgeError, CodexDrivePort, JsonlPeer
 from school_os.contracts import canonical_json_bytes, sha256_bytes
 from school_os.daily import DailyError, PHASES, run_daily
@@ -74,39 +77,89 @@ def _verified_bootstrap_bytes(
     return content
 
 
+def _handoff_recovered_package(
+    drive: Any, *, bootstrap_document: Path, run_directory: Path,
+    operation: str, entrypoint: str, operation_id: str, attempt_id: str,
+    instance_reference: str,
+    scheduler_admitted: bool = False,
+) -> Any:
+    """Recover only the admitted package, then stop importing this checkout."""
+    document = load_bootstrap_document(bootstrap_document)
+    storage = CodexDriveReferenceStorage(
+        drive, expected_urls={document.bootstrap_reference["object_id"]: document.bootstrap_url},
+    )
+    recovered = recover_installed_entrypoint(
+        storage, document, run_directory=run_directory, operation_id=operation_id,
+    )
+    return exec_installed_entrypoint(
+        recovered, operation=operation, entrypoint=entrypoint, operation_id=operation_id,
+        attempt_id=attempt_id, run_directory=run_directory, instance_reference=instance_reference,
+        scheduler_admitted=scheduler_admitted,
+    )
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--instance", required=True, help="resolved instance reference for audit output")
     parser.add_argument("--operation", required=True, choices=("daily-run",))
     parser.add_argument("--entrypoint", choices=("manual", "scheduled"))
-    parser.add_argument("--profile", type=Path, required=True)
+    parser.add_argument("--profile", type=Path, help="required only for synthetic and legacy bootstrap-readback modes")
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--stage-results", type=Path, help="synthetic-only complete phase results")
     mode.add_argument("--host-jsonl", type=Path, metavar="RUN_DIR", help="private mode-0700 Codex bridge run directory")
-    parser.add_argument("--bootstrap-reference", type=Path, help="private JSON with exact Drive bootstrap id and URL")
+    parser.add_argument("--bootstrap-reference", type=Path, help="legacy readback-only JSON with exact Drive bootstrap id and URL")
+    parser.add_argument("--bootstrap-document", type=Path, help="exact root/bootstrap admission JSON for installed-package handoff")
     parser.add_argument("--operation-id", required=True)
     parser.add_argument("--attempt-id", required=True)
     parser.add_argument("--scheduler-admitted", action="store_true")
     args = parser.parse_args(argv)
 
     if args.stage_results is not None:
-        if args.host_jsonl is not None or args.bootstrap_reference is not None or args.entrypoint is not None or args.scheduler_admitted:
+        if args.host_jsonl is not None or args.bootstrap_reference is not None or args.bootstrap_document is not None or args.entrypoint is not None or args.scheduler_admitted:
             parser.error("--stage-results is synthetic and mutually exclusive with host/bootstrap/entrypoint options")
         args.entrypoint = "manual"
     else:
-        if args.bootstrap_reference is None or args.entrypoint is None:
-            parser.error("--host-jsonl requires --bootstrap-reference and --entrypoint")
+        if args.entrypoint is None or (args.bootstrap_reference is None and args.bootstrap_document is None):
+            parser.error("--host-jsonl requires --bootstrap-reference and --entrypoint (or --bootstrap-document)")
+        if args.bootstrap_reference is not None and args.bootstrap_document is not None:
+            parser.error("--host-jsonl accepts exactly one bootstrap input")
+        # Admission recovery intentionally reads no checkout profile, schema, or
+        # capability evidence.  Those are package-owned concerns after exec.
+        if args.bootstrap_document is not None:
+            try:
+                peer = JsonlPeer(args.host_jsonl)
+                return _handoff_recovered_package(
+                    CodexDrivePort(peer), bootstrap_document=args.bootstrap_document,
+                    run_directory=args.host_jsonl, operation=args.operation,
+                    entrypoint=args.entrypoint, operation_id=args.operation_id,
+                    attempt_id=args.attempt_id, instance_reference=args.instance,
+                    scheduler_admitted=args.scheduler_admitted,
+                )
+            except (BridgeError, BootstrapError, DailyError) as exc:
+                print(f"blocked: {exc}", file=sys.stderr)
+                return 1
+        if args.profile is None:
+            parser.error("--profile is required for legacy --bootstrap-reference readback")
 
     try:
+        if args.profile is None:
+            parser.error("--profile is required for synthetic execution")
         profile = _object(args.profile, "capability profile")
         schema = _object(ROOT / "schemas" / "capability-profile.schema.json", "capability schema")
         if args.host_jsonl is not None:
             qualify_bootstrap_read(profile, schema, entrypoint=args.entrypoint)
+            peer = JsonlPeer(args.host_jsonl)
+            drive = CodexDrivePort(peer)
+            if args.bootstrap_document is not None:
+                return _handoff_recovered_package(
+                    drive, bootstrap_document=args.bootstrap_document, run_directory=args.host_jsonl,
+                    operation=args.operation, entrypoint=args.entrypoint, operation_id=args.operation_id,
+                    attempt_id=args.attempt_id, instance_reference=args.instance,
+                    scheduler_admitted=args.scheduler_admitted,
+                )
             bootstrap = _object(args.bootstrap_reference, "bootstrap reference")
             if set(bootstrap) != {"object_id", "url"} or not all(isinstance(bootstrap[key], str) and bootstrap[key] for key in bootstrap):
                 raise DailyError("bootstrap reference must contain exact nonempty object_id and url")
-            peer = JsonlPeer(args.host_jsonl)
-            drive = CodexDrivePort(peer)
             metadata = drive.metadata(bootstrap["object_id"], fields="id,name,mimeType,parents,modifiedTime,size")
             fetched = drive.fetch(bootstrap["url"], raw=True, include_base64=True)
             bootstrap_bytes = _verified_bootstrap_bytes(metadata, fetched, bootstrap["object_id"])
@@ -138,7 +191,7 @@ def main(argv: list[str] | None = None) -> int:
             required_capabilities=("storage.read_complete", "mail.search", "tasks.list_complete"),
             scheduler_admission=(lambda: args.scheduler_admitted),
         )
-    except (BridgeError, CapabilityError, DailyError) as exc:
+    except (BridgeError, BootstrapError, CapabilityError, DailyError) as exc:
         print(f"blocked: {exc}", file=sys.stderr)
         return 1
     print(json.dumps({

@@ -2556,3 +2556,31 @@ requirements, then read this log from top to bottom.
 - Documentation-only change; implementation and live testing remain unstarted.
   Next: publish this timing correction, then use the updated Sol handoff when
   the user starts execution.
+
+## 2026-09-09 — recovery MVP Phase 0 candidate reconciled
+
+- Began the authorized fresh recovery execution from `main` at `8d66626`; the
+  ignored private clock fixes the one-hour checkpoint at 2026-09-09T18:43:30Z.
+  The exact 14-day source bounds and private-input hashes were frozen only in
+  ignored recovery evidence. No live resource or provider effect occurred in
+  this work unit.
+- Reviewed actual branches, worktrees, tags, history, the accepted `bc0128d`
+  runtime baseline, and stopped lineage through `e44c434`. The public
+  reconciliation ledger classifies each delta. Integrated only the lineage's
+  code, runtime documentation, scripts, and tests; current recovery-plan and
+  historical progress/status changes remain authoritative on `main` and were
+  not replayed.
+- Added an explicit manual unsent-preview path to the connected composition.
+  It excludes `mail.send` from admission, rejects scheduled or delivery-variant
+  use, persists deterministic brief input/HTML/text, leaves the delivery ledger
+  unmodified, records zero effects, commits the completed source/task state and
+  eligible cursor last, and returns `PREVIEW_READY` instead of claiming daily
+  delivery completion. Recovery re-admits the exact preview artifacts.
+- Bundled CPython 3.12.14 validation passed all 326 repository tests plus schema,
+  template-manifest, package-smoke, and tracked privacy checks. The focused
+  preview regression separately passed and proves zero sends, zero reservation,
+  unchanged delivery state, stored render references, and cursor-last order.
+- Next: run direct privacy/diff/link checks, commit and push this accepted
+  candidate source checkpoint, build and validate its exact immutable package,
+  record interpreter/dependency evidence, then perform the authorized empty-root
+  and empty-Sheet gate before the first live unsent source/task/brief journey.

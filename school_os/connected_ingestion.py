@@ -10,6 +10,7 @@ success flag supplied by a connector is trusted as verification.
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any, Protocol
@@ -48,6 +49,7 @@ from .semantic import (
     semantic_packet_from_verified_record,
     validate_independent_audit,
 )
+from .tasks import canonical_task_id
 
 
 ConnectedIngestionError = ConnectedStorageError
@@ -58,7 +60,8 @@ class SourcePort(Protocol):
 
     ``read_conversation`` must return ``conversation_id`` and every ordered
     member in ``messages``.  Each member must contain ``message_id``,
-    ``received_at``, ``received_date``, ``mime_tree_complete``, ``parts``, and
+    ``received_at``, ``received_date``, ``gmail_internal_date_ms``,
+    ``mime_tree_complete``, ``parts``, and
     ``attachments``.  ``parts`` are the exact adapter-returned MIME part bytes
     accepted by :func:`admit_exact_plaintext_representation`; it is not HTML
     converted text.  The port's concrete Gmail adapter is responsible for
@@ -123,7 +126,31 @@ class CodexGmailSourceAdapter:
             or isinstance(max_results, bool) or not isinstance(max_results, int) or max_results < 1
         ):
             raise ConnectedIngestionError("Gmail source scope lacks bounded query, labels, or page size")
-        arguments: dict[str, Any] = {"query": query, "label_ids": list(labels), "max_results": max_results}
+        for key in ("seed_after_inclusive_ms", "seed_before_exclusive_ms"):
+            bound = scope.get(key)
+            if bound is not None and (
+                isinstance(bound, bool) or not isinstance(bound, int) or bound < 0
+            ):
+                raise ConnectedIngestionError("Gmail seed bounds must be nonnegative epoch milliseconds")
+        if (
+            scope.get("seed_after_inclusive_ms") is not None
+            and scope.get("seed_before_exclusive_ms") is not None
+            and scope["seed_after_inclusive_ms"] >= scope["seed_before_exclusive_ms"]
+        ):
+            raise ConnectedIngestionError("Gmail seed interval must have positive width")
+        start = scope.get("seed_after_inclusive_ms")
+        end = scope.get("seed_before_exclusive_ms")
+        provider_query = query
+        if start is not None or end is not None:
+            if re.search(r"(?i)(?:after|before|older|newer|older_than|newer_than):", query):
+                raise ConnectedIngestionError("exact Gmail seed bounds cannot be combined with a provider date predicate")
+            predicates = []
+            if start is not None:
+                predicates.append(f"after:{max(0, start // 1000 - 1)}")
+            if end is not None:
+                predicates.append(f"before:{end // 1000 + 1}")
+            provider_query = " ".join((query, *predicates))
+        arguments: dict[str, Any] = {"query": provider_query, "label_ids": list(labels), "max_results": max_results}
         if page_token is not None:
             arguments["next_page_token"] = page_token
         result = self.gmail.search_ids(**arguments)
@@ -140,6 +167,15 @@ class CodexGmailSourceAdapter:
             observed_id, thread_id = self._full_identity(full, "full-message")
             if observed_id != message_id:
                 raise ConnectedIngestionError("Gmail full-message identity disagrees with search")
+            if start is not None or end is not None:
+                raw_timestamp = full.get("internal_date")
+                if not isinstance(raw_timestamp, str) or len(raw_timestamp) != 13 or not raw_timestamp.isascii() or not raw_timestamp.isdecimal():
+                    raise ConnectedIngestionError("Gmail discovery hit lacks exact epoch-millisecond internal date")
+                timestamp = int(raw_timestamp)
+                if start is not None and timestamp < start:
+                    continue
+                if end is not None and timestamp >= end:
+                    continue
             discovered = self._discovery_by_thread.setdefault(thread_id, set())
             discovered.add(message_id)
             # The byte estimate is intentionally one: the immutable worker
@@ -274,6 +310,18 @@ class IngestionResult:
                 for item in self.artifacts
             ],
         }
+
+
+@dataclass(frozen=True)
+class CurrentCatalogView:
+    """All audited Facts admitted by the verified current catalog index."""
+
+    index: StoredArtifact
+    artifacts: tuple[IngestionArtifacts, ...]
+    facts: tuple[dict[str, Any], ...]
+    source_record_map: dict[str, dict[str, Any]]
+    task_source_links: dict[str, str]
+    current_guideline_selection: tuple[dict[str, Any], ...]
 
 
 def _artifact_pointer(item: StoredArtifact) -> dict[str, Any]:
@@ -448,6 +496,7 @@ def _conversation_messages(
             message_id=message_id, received_at=received_at, received_date=received_date,
             admission=admission, attachment_outcomes=attachment_outcomes,
             resource_outcomes=resource_outcomes,
+            gmail_internal_date_ms=member.get("gmail_internal_date_ms"),
         ))
         source_bodies[message_id] = admission.plaintext.decode("utf-8", errors="strict")
     if not set(required_hits) <= seen_messages:
@@ -759,6 +808,104 @@ class ConnectedIngestionWorker:
         if facts.data != _facts_bytes(record_id, interpreted):
             raise ConnectedIngestionError("Facts artifact differs from its verified interpretation")
         return IngestionArtifacts(catalog, interpretation, audit_artifact, facts), interpreted
+
+    def current_catalog_view(
+        self, *, catalog_parent: DriveReference, index_reference: DriveReference,
+        max_bytes: int,
+    ) -> CurrentCatalogView:
+        """Read every current index row and re-admit its complete audited bundle.
+
+        This is the public reconcile/brief boundary. It deliberately does not
+        use the current run's ``IngestionResult.artifacts`` because an unchanged
+        or zero-hit run still needs older current Facts, guidelines, and tasks.
+        """
+        if max_bytes < 1:
+            raise ConnectedIngestionError("current catalog view byte bound must be positive")
+        index_artifact = self.store.read(index_reference.current())
+        index = _json_object(index_artifact.data, "catalog index")
+        _index_row(index, "__shape_check__")
+        rows = index.get("records")
+        if not isinstance(rows, list):
+            raise ConnectedIngestionError("catalog index records must be an array")
+        artifacts: list[IngestionArtifacts] = []
+        all_facts: list[dict[str, Any]] = []
+        source_record_map: dict[str, dict[str, Any]] = {}
+        task_source_links: dict[str, str] = {}
+        guideline_selection: list[dict[str, Any]] = []
+        seen_records: set[str] = set()
+        seen_facts: set[str] = set()
+        for row in sorted(rows, key=lambda item: item.get("record_id", "") if isinstance(item, Mapping) else ""):
+            if not isinstance(row, Mapping):
+                raise ConnectedIngestionError("catalog index row is malformed")
+            record_id = _require_string(row, "record_id", "catalog index row")
+            if record_id in seen_records:
+                raise ConnectedIngestionError("catalog index repeats a record identity")
+            seen_records.add(record_id)
+            catalog = _named(self.store, catalog_parent, f"{record_id}.md", "text/markdown")
+            if catalog is None or sha256_bytes(catalog.data) != row.get("record_sha256"):
+                raise ConnectedIngestionError("current catalog record hash disagrees with its index")
+            parsed = parse_v2_record(catalog.data)
+            if parsed.header.get("record_id") != record_id or parsed.header.get("adapter_id") != self.adapter_id:
+                raise ConnectedIngestionError("current catalog record identity disagrees")
+            source_bodies = _source_bodies_from_catalog(catalog.data)
+            packet = semantic_packet_from_verified_record(
+                catalog.data, source_bodies, max_segments=10_000, max_bytes=max_bytes,
+            )
+            bundle = self._validated_bundle(catalog_parent, catalog, record_id, packet)
+            if bundle is None:
+                raise ConnectedIngestionError("current catalog bundle is incomplete")
+            admitted, interpreted = bundle
+            facts = list(interpreted["facts"])
+            if [fact.get("fact_id") for fact in facts] != row.get("fact_ids"):
+                raise ConnectedIngestionError("current catalog Fact identities disagree with its index")
+            messages = parsed.header.get("messages")
+            if not isinstance(messages, list):
+                raise ConnectedIngestionError("current catalog record lacks message provenance")
+            by_message = {
+                item.get("message_id"): item for item in messages
+                if isinstance(item, Mapping) and isinstance(item.get("message_id"), str)
+            }
+            if len(by_message) != len(messages):
+                raise ConnectedIngestionError("current catalog message provenance is ambiguous")
+            for fact in facts:
+                fact_id = _require_string(fact, "fact_id", "current Fact")
+                message_id = _require_string(fact, "source_message_id", "current Fact")
+                if fact_id in seen_facts or message_id not in by_message:
+                    raise ConnectedIngestionError("current catalog Fact provenance is duplicate or absent")
+                message = by_message[message_id]
+                timestamp = message.get("gmail_internal_date_ms")
+                message_ordinal = fact.get("source_message_ordinal")
+                content_ordinal = fact.get("source_content_ordinal")
+                if (
+                    isinstance(timestamp, bool) or not isinstance(timestamp, int) or timestamp < 0
+                    or isinstance(message_ordinal, bool) or not isinstance(message_ordinal, int) or message_ordinal < 0
+                    or isinstance(content_ordinal, bool) or not isinstance(content_ordinal, int) or content_ordinal < 0
+                    or fact.get("source_received_at") != message.get("received_at")
+                ):
+                    raise ConnectedIngestionError("current catalog Fact lacks exact Gmail time coordinates")
+                link = f"{catalog.reference.url}#{fact_id}"
+                source_record_map[fact_id] = {
+                    "record_id": record_id, "source_message_id": message_id,
+                    "gmail_internal_date_ms": timestamp,
+                    "source_message_ordinal": message_ordinal,
+                    "source_content_ordinal": content_ordinal,
+                    "verified_link": link,
+                }
+                if fact.get("flags", {}).get("is_action") is True and not fact.get("task_relation"):
+                    task_source_links[canonical_task_id(fact_id)] = link
+                if fact.get("flags", {}).get("is_guideline") is True:
+                    guideline_selection.append({
+                        "fact_id": fact_id, "is_current": True,
+                        "latest_source_received_date": fact.get("received_date"),
+                        "verified_link": link,
+                    })
+                seen_facts.add(fact_id)
+                all_facts.append(dict(fact))
+            artifacts.append(admitted)
+        return CurrentCatalogView(
+            index_artifact, tuple(artifacts), tuple(all_facts), source_record_map,
+            task_source_links, tuple(guideline_selection),
+        )
 
     def _reconcile_completed_unit(
         self, *, unit: Mapping[str, Any], scope: Mapping[str, Any],

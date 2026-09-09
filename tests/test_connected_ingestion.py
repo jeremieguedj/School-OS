@@ -107,7 +107,8 @@ class Source:
             "conversation_id": identity,
             "messages": [{
                 "message_id": f"{identity}-message", "received_at": "2026-09-08T08:00:00Z",
-                "received_date": "2026-09-08", "mime_tree_complete": True,
+                "received_date": "2026-09-08", "gmail_internal_date_ms": 1788854400000,
+                "mime_tree_complete": True,
                 "parts": [_part(self.bodies[identity].encode("utf-8"))], "attachments": [], "html_parts": [],
             }],
         }
@@ -137,7 +138,7 @@ class ReplySource(Source):
             value["messages"].append({
                 "message_id": "reply-message",
                 "received_at": "2026-09-09T08:00:00Z",
-                "received_date": "2026-09-09",
+                "received_date": "2026-09-09", "gmail_internal_date_ms": 1788940800000,
                 "mime_tree_complete": True,
                 "parts": [_part(b"New reply")],
                 "attachments": [],
@@ -268,6 +269,30 @@ class ConnectedIngestionTests(unittest.TestCase):
         self.assertEqual((), replay.artifacts)
         self.assertEqual(1, self.interpret_calls)
         self.assertEqual(1, self.audit_calls)
+
+    def test_current_catalog_view_reloads_all_audited_facts_after_zero_new_writes(self) -> None:
+        source = Source({"thread-1": "First", "thread-2": "Second"})
+        worker = self.worker(source)
+        first = worker.run(
+            scope={"query": "bounded"}, catalog_parent=self.parent,
+            index_reference=self.index, continuation_reference=self.state,
+            max_records=2, max_bytes=8192,
+        )
+        replay = worker.run(
+            scope={"query": "bounded"}, catalog_parent=self.parent,
+            index_reference=first.index.reference, continuation_reference=first.work.reference,
+            max_records=2, max_bytes=8192,
+        )
+        self.assertEqual((), replay.artifacts)
+        view = worker.current_catalog_view(
+            catalog_parent=self.parent, index_reference=replay.index.reference,
+            max_bytes=8192,
+        )
+        self.assertEqual(2, len(view.artifacts))
+        self.assertEqual(2, len(view.facts))
+        self.assertEqual(set(fact["fact_id"] for fact in view.facts), set(view.source_record_map))
+        self.assertTrue(all(item["gmail_internal_date_ms"] == 1788854400000 for item in view.source_record_map.values()))
+        self.assertTrue(all(item["verified_link"].startswith("https://drive.test/") for item in view.source_record_map.values()))
 
     def test_interrupted_batch_advances_only_complete_units_then_resumes(self) -> None:
         source = Source({"thread-1": "First", "thread-2": "Second"})
@@ -647,8 +672,18 @@ class CodexDriveArtifactStoreTests(unittest.TestCase):
             value = next(item for item in self.items.values() if item["url"] == url)
             return {"id": value["id"], "b64_string": base64.b64encode(value["data"]).decode(), "file_size_bytes": len(value["data"]), "is_empty": not value["data"]}
 
-        def list_folder(self, _url: str, *, top_k: int) -> dict[str, Any]:
-            return {"files": [{key: item[key] for key in ("id", "title", "mime_type", "url")} | {"parent_ids": [item["parent_id"]]} for item in self.items.values() if item["parent_id"] == "root"]}
+        def search_page(self, parent_id: str, *, item_type: str, topn: int, page_token: str | None = None) -> dict[str, Any]:
+            if page_token is not None:
+                raise AssertionError("synthetic artifact listing has one page per type")
+            results = [
+                {key: item[key] for key in ("id", "title", "mime_type", "url")} | {"parent_ids": [item["parent_id"]]}
+                for item in self.items.values()
+                if item["parent_id"] == parent_id and (
+                    "folder" if item["mime_type"] == "application/vnd.google-apps.folder"
+                    else "image" if item["mime_type"].startswith("image/") else "document"
+                ) == item_type
+            ]
+            return {"results": results, "next_page_token": None}
 
         def upload(self, file_uri: str, *, file_name: str, mime_type: str, parent_folder_id: str) -> dict[str, Any]:
             self.count += 1; identifier = f"new-{self.count}"
@@ -796,6 +831,64 @@ class CodexGmailSourceAdapterTests(unittest.TestCase):
         )
         with self.assertRaisesRegex(ConnectedIngestionError, "message/thread identity"):
             adapter.read_conversation("thread-1")
+
+    def test_gmail_seed_window_filters_full_hits_but_retains_selected_thread_context(self) -> None:
+        start, end = 1788854400000, 1788940800000
+
+        class WindowGmail:
+            def __init__(inner_self) -> None:
+                inner_self.query = None
+                inner_self.messages = {
+                    "before": ("thread-before", start - 1),
+                    "at-start": ("thread-selected", start),
+                    "at-last": ("thread-last", end - 1),
+                    "at-end": ("thread-end", end),
+                    "older-context": ("thread-selected", start - 86_400_000),
+                }
+
+            def search_ids(inner_self, **arguments):
+                inner_self.query = arguments["query"]
+                return {"message_ids": ["before", "at-start", "at-last", "at-end"], "next_page_token": None}
+
+            def read(inner_self, message_id: str, format: str):
+                thread_id, timestamp = inner_self.messages[message_id]
+                return {"id": message_id, "thread_id": thread_id, "internal_date": str(timestamp), "format": format}
+
+            def read_thread(inner_self, thread_id: str, *, max_messages: int):
+                identities = [
+                    identity for identity, (member_thread, _timestamp) in inner_self.messages.items()
+                    if member_thread == thread_id
+                ]
+                return {"id": thread_id, "messages": [inner_self.read(identity, "full") for identity in identities]}
+
+            def read_attachment(inner_self, _message_id: str, attachment_id: str):
+                return {"id": attachment_id}
+
+        gmail = WindowGmail()
+        adapter = CodexGmailSourceAdapter(
+            gmail, max_thread_messages=10,
+            normalize_message=lambda full, _raw: {
+                "message_id": full["id"], "thread_id": full["thread_id"],
+                "received_at": "2026-09-08T00:00:00Z", "received_date": "2026-09-08",
+                "gmail_internal_date_ms": int(full["internal_date"]),
+                "mime_tree_complete": True, "parts": [_part(b"body")],
+                "attachments": [], "html_parts": [],
+            },
+            normalize_attachment=lambda _message, _attachment, _raw: None,
+        )
+        page = adapter.search({
+            "query": "from:school", "label_ids": ["INBOX"], "max_results": 100,
+            "seed_after_inclusive_ms": start, "seed_before_exclusive_ms": end,
+        }, None)
+        self.assertEqual("from:school after:1788854399 before:1788940801", gmail.query)
+        self.assertEqual(["thread-selected", "thread-last"], [item["conversation_id"] for item in page.items])
+        selected = adapter.read_conversation("thread-selected")
+        self.assertEqual(["at-start", "older-context"], [item["message_id"] for item in selected["messages"]])
+        with self.assertRaisesRegex(ConnectedIngestionError, "provider date predicate"):
+            adapter.search({
+                "query": "from:school newer_than:14d", "label_ids": ["INBOX"], "max_results": 100,
+                "seed_after_inclusive_ms": start, "seed_before_exclusive_ms": end,
+            }, None)
 
     def test_semantic_callbacks_use_separate_fixed_calls(self) -> None:
         class Semantic:

@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: recovery specification ready; implementation not started
+Status: recovery MVP implementation in progress; Phase 0 candidate reconciliation active
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 ## Next-release planning

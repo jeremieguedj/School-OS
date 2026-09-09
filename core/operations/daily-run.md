@@ -72,7 +72,11 @@ Interactive evidence does not prove scheduled-surface conformance. If authentica
 
 ### 1. Preflight
 
-1. Read the instance manifest, the private daily-values document, the routine runtime-profile header, and the integration selectors needed for this run. Capture one timestamp in the configured timezone.
+1. Read the instance manifest, the private daily-values document, the exact
+   profile-selection object and selected entrypoint profile, and the integration
+   selectors needed for this run. Capture one local date in the configured
+   timezone and bind it with the source scope, profile bytes, entrypoint, and
+   delivery variant in the operation checkpoint scope.
 2. Verify release version, installed reference, data compatibility, and completed migration state agree. Do not re-audit historical migrations on an unchanged routine release.
 3. Validate the approved runtime-profile revision/fingerprint and resolve the selected adapter only when entering its phase. A mismatch requires setup/health validation before side effects.
 4. Require operation admission and serialization evidence. A manual run uses its attended-single-writer evidence; a scheduled run uses verified scheduler/runtime serialization. Both invoke the same daily sequence. The scheduled runtime relies on its conformance record and need not require fresh run-now provenance. Do not create or wait for a separate Drive lease.
@@ -87,9 +91,20 @@ Interactive evidence does not prove scheduled-surface conformance. If authentica
 ### 2. Discover
 
 1. Read the most recent successful mail checkpoint. If none exists, use the configured initial-overlap window. Otherwise search from the earlier of the persisted checkpoint and the configured safety overlap.
-2. Build the provider query only from the private source-scope configuration and selected mail adapter. Exclude configured forbidden locations and content classes.
-3. Paginate to completion, preserve the provider cursor/page evidence, and deduplicate by immutable source conversation identity.
-4. Fetch each candidate conversation completely in source order. If a declared record/message/page limit is reached, treat that source as incomplete, do not catalogue it, and do not advance its checkpoint.
+2. Build the provider query only from the private source-scope configuration
+   and selected mail adapter. Exclude configured forbidden locations and
+   content classes. When exact epoch-millisecond seed bounds are configured,
+   use only adapter-owned widened provider predicates that cannot exclude a
+   valid boundary hit; a competing date predicate in the private query blocks.
+3. Paginate to completion, read every search hit in full, and admit it as a
+   seed only when `seed_after_inclusive_ms <= internal_date <
+   seed_before_exclusive_ms` for whichever optional bounds are present.
+   Preserve the provider cursor/page evidence and deduplicate by immutable
+   source conversation identity.
+4. Fetch every ordered member of each selected conversation, including context
+   outside the seed interval. If a declared record/message/page limit is
+   reached, treat that source as incomplete, do not catalogue it, and do not
+   advance its checkpoint.
 5. Resolve an existing catalog record through stored conversation and ordered message identities, never filename or title matching. Preserve intentionally folded records.
 
 ### 3. Catalog
@@ -114,7 +129,18 @@ Execute `task-sync.md` through the explicitly selected private task-provider con
 
 ### 6. Brief and delivery
 
-Execute `brief-rendering.md` from declared derived inputs; do not repeat source discovery. Delivery configuration and state own recipients, template selection, duplicate prevention, and send authorization. Before sending, read the delivery state and verify whether the same private delivery key already has a recorded, verified Gmail message ID or a matching Sent message. If it does, suppress the duplicate and report the existing delivery; otherwise send once. Immediately verify provider acceptance or Sent visibility, then record the verified message ID and delivery key. An unknown delivery outcome is terminal for the run and must not be retried blindly.
+Execute `brief-rendering.md` from declared derived inputs; do not repeat source
+discovery. Delivery configuration and state own recipients, template selection,
+duplicate prevention, and send authorization. The ordinary configured variant
+remains shared across entrypoints. A requested TEST variant is valid only when
+it exactly equals the finite private value configured for that entrypoint;
+manual and scheduled acceptance variants are distinct. Before sending, read
+the delivery state and verify whether the same private delivery key already has
+a recorded, verified Gmail message ID or a matching Sent message. If it does,
+suppress the duplicate and report the existing delivery; otherwise send once.
+Immediately verify provider acceptance or Sent visibility, then record the
+verified message ID and delivery key. An unknown delivery outcome is terminal
+for the run and must not be retried blindly.
 
 ### 7. Commit and report
 

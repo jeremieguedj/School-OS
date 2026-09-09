@@ -47,63 +47,66 @@ noncanonical transport at 65,591 and 1,048,634 bytes.
 
 ## Static host pump
 
-The Codex host implementation follows this exact dispatch shape. `readPrivate`
-and `writePrivate` below are implemented with bounded local commands whose
-outputs remain inside the functions executor; they are never appended to the
-model-visible result.
+Every request must use the checked-in `HostBindingDispatcher` complete-request
+entrypoint. Directly invoking a native tool with `request.args` is forbidden:
+that bypasses request validation, removes neither bridge-only hash/size fields,
+does not replace child paths with host-owned snapshots, and does not validate
+the native result. The executable host loop is exactly:
 
-```javascript
-const dispatch = Object.freeze({
-  "drive.get_metadata": tools.mcp__codex_apps__google_drive_get_file_metadata,
-  "drive.fetch": tools.mcp__codex_apps__google_drive_fetch,
-  "drive.list_folder": tools.mcp__codex_apps__google_drive_list_folder,
-  "drive.create_folder": tools.mcp__codex_apps__google_drive_create_folder,
-  "drive.upload_file": tools.mcp__codex_apps__google_drive_upload_file,
-  "drive.update_file": tools.mcp__codex_apps__google_drive_update_file,
-  "gmail.search_ids": tools.mcp__codex_apps__gmail_search_email_ids,
-  "gmail.read": tools.mcp__codex_apps__gmail_read_email,
-  "gmail.read_thread": tools.mcp__codex_apps__gmail_read_email_thread,
-  "gmail.read_attachment": tools.mcp__codex_apps__gmail_read_attachment,
-  "gmail.send": tools.mcp__codex_apps__gmail_send_email,
-  "sheets.get_metadata": tools.mcp__codex_apps__google_drive_get_spreadsheet_metadata,
-  "sheets.get_cells": tools.mcp__codex_apps__google_drive_get_spreadsheet_cells,
-  "sheets.batch_update": tools.mcp__codex_apps__google_drive_batch_update_spreadsheet,
-  "comments.read_spreadsheet": tools.mcp__codex_apps__google_drive_get_spreadsheet_comments,
-  "comments.write_file": tools.mcp__codex_apps__google_drive_bulk_update_file_comments,
-});
-const request = JSON.parse(await readPrivate(requestPath, requestSha256));
-const invoke = dispatch[request.kind];
-if (!invoke) throw new Error("unexpected School-OS request kind");
-let responseValue;
-try {
-  const toolResult = await invoke(request.args);
-  responseValue = {protocol: 1, request_id: request.request_id, result: toolResult};
-} catch (error) {
-  responseValue = {protocol: 1, request_id: request.request_id,
-                   error: {class: "tool_exception", effect: "unknown"}};
-}
-const response = asciiJson(responseValue) + "\n";
-await writePrivateNoncanonical(responsePath, response);
+```python
+dispatcher = HostBindingDispatcher(run_directory)
+control = dispatcher.dispatch_request_file(
+    request_id=request_id,
+    kind=kind,
+    request_sha256=request_sha256,
+    request_path=request_path,
+    invoke=invoke_fixed_native_tool,
+)
+child_stdin.write(json.dumps(control, separators=(",", ":")) + "\n")
+child_stdin.flush()
 ```
+
+`invoke_fixed_native_tool(tool_name, native_args)` resolves `tool_name` only
+from `HOST_BINDINGS`; it never accepts a child-provided tool name. The dispatcher
+reads and hashes the mode-0600 request, revalidates its wrapper and args, creates
+and later removes owned snapshots, unwraps the one native
+`CallToolResult.structuredContent.result`, validates that provider result, and
+exclusive-writes the raw validated result in the peer response wrapper. The
+child `JsonlPeer.connector_call` consumes that raw result and never unwraps a
+second connector envelope. Tool exceptions cross only as `effect: unknown`.
+
+`tests/support/host_roundtrip_child.py` plus
+`ConnectedBootstrapTests.test_child_ports_roundtrip_through_actual_host_dispatcher`
+exercise this exact child process/request file/dispatcher/native-result/response
+file path for Drive, Gmail attachment/send, Sheets, and comments. A host pump or
+sample that uses a different path is not a supported execution surface.
 
 The semantic kinds are separately dispatched to actual interpreter and
 independent-audit callbacks over the immutable packet boundary. Fixture or
 synthetic callbacks are labeled synthetic and cannot authorize provider writes.
-Connector structured content is inspected explicitly: current tools may return
-the payload flat or under `structuredContent.result`, with tool metadata beside
-it; both are normalized by checked-in code and error wrappers block. Text
-content blocks and metadata never establish semantic verification.
+Connector structured content is inspected explicitly by the mandatory host
+dispatcher. Only `structuredContent.result` is accepted from native connector
+tools; text content blocks and metadata never establish semantic verification.
 
 ## Selected connector limits
 
-- Drive folder listing has a bounded `top_k` and no continuation token on this
-  surface. A result that reaches the configured cap is incomplete and blocks.
+- Drive scoped listing uses the metadata-only paginated search shape, never the
+  legacy non-paginated folder response. The host constructs one exact
+  `'<parent_id>' in parents and trashed = false` filter and exhausts the
+  advertised `document`, `image`, and `folder` categories independently,
+  returning each opaque `next_page_token` unchanged. Legacy response shapes
+  and malformed, repeated, or over-bound continuation evidence block
+  completeness.
 - Drive raw-file replacement exposes no atomic revision precondition. It is
   permitted only under proven serialization with exact file ID, immediate
   pre-write `modified_time` plus complete-byte SHA-256 guard, and immediate
   exact readback. Create-only installation remains a separate protocol.
-- Gmail discovery follows every `next_page_token`; the search overfetches whole
-  boundary seconds and code filters `internal_date` to exact `[start,end)`.
+- Gmail discovery follows every `next_page_token`. Optional private
+  `seed_after_inclusive_ms`/`seed_before_exclusive_ms` bounds add deliberately
+  widened epoch-second provider predicates: the inclusive start backs up one
+  whole second and the exclusive end advances one whole second. Every returned
+  search hit is then read in `full` form and its exact 13-digit `internal_date`
+  is filtered to `[start,end)`. A competing provider date predicate blocks.
   Complete conversation membership is read separately. Reaching the bounded
   thread-message cap is incomplete and blocks. Raw RFC 2822 and provider `full`
   Unicode are distinct reads and must satisfy the strict source-admission gate.
@@ -120,6 +123,13 @@ Manual and scheduled profiles are distinct. An observed interactive connector
 probe does not establish background authorization, timeout, retry, overlap, or
 scheduler conformance. No private IDs, queries, recipients, or credentials
 belong in this adapter.
+
+The installed profile-selection object retains exact immutable profile bytes
+independently for `manual` and `scheduled`. The guarded
+`scripts/readmit_connected_profile.py` route qualifies one observed profile for
+its matching entrypoint, creates and reads it back, then replaces and reads back
+that selector by its existing exact Drive ID. It cannot promote an unverified
+profile or use manual evidence for scheduled admission.
 
 The current `scripts/run_operation.py --host-jsonl` path stops after exact
 bootstrap identity/readback and reports `BOOTSTRAP_READBACK_VERIFIED`. Before

@@ -298,7 +298,7 @@ def _headers_agree(full: _HeaderEvidence, raw: _HeaderEvidence) -> bool:
     )
 
 
-def _timestamp(value: Mapping[str, Any], timezone: ZoneInfo) -> tuple[str, str]:
+def _timestamp(value: Mapping[str, Any], timezone: ZoneInfo) -> tuple[str, str, int]:
     raw = _string(value, "internal_date", "Gmail full message")
     # Gmail's observed ``internal_date`` is its decimal epoch-milliseconds API
     # field.  Requiring exactly 13 digits prevents silently treating seconds as
@@ -309,7 +309,7 @@ def _timestamp(value: Mapping[str, Any], timezone: ZoneInfo) -> tuple[str, str]:
         instant = datetime.fromtimestamp(int(raw) / 1000, tz=UTC)
     except (OverflowError, OSError, ValueError) as exc:
         raise GmailSourceError("Gmail internal_date is outside the supported timestamp range") from exc
-    return instant.strftime("%Y-%m-%dT%H:%M:%SZ"), instant.astimezone(timezone).date().isoformat()
+    return instant.strftime("%Y-%m-%dT%H:%M:%SZ"), instant.astimezone(timezone).date().isoformat(), int(raw)
 
 
 class GmailMimeNormalizer:
@@ -333,7 +333,7 @@ class GmailMimeNormalizer:
         thread_id = _string(full, "thread_id", "Gmail full message")
         if _string(raw, "id", "Gmail raw message") != message_id or _string(raw, "thread_id", "Gmail raw message") != thread_id:
             raise GmailSourceError("Gmail full/raw message or thread identity disagrees")
-        received_at, received_date = _timestamp(full, self.timezone)
+        received_at, received_date, gmail_internal_date_ms = _timestamp(full, self.timezone)
         payload = full.get("payload")
         if not isinstance(payload, Mapping):
             raise GmailSourceError("Gmail full message lacks a complete MIME payload")
@@ -435,6 +435,7 @@ class GmailMimeNormalizer:
             "thread_id": thread_id,
             "received_at": received_at,
             "received_date": received_date,
+            "gmail_internal_date_ms": gmail_internal_date_ms,
             "mime_tree_complete": True,
             "parts": parts,
             "html_parts": html_parts,

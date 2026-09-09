@@ -30,12 +30,8 @@ class CodexBridgeTests(unittest.TestCase):
         os.chmod(path, 0o600)
         return path, sha256_bytes(data)
 
-    def test_private_file_round_trip_unwraps_flat_or_nested_structured_content(self) -> None:
-        path, digest = self.response("r1", {
-            "content": [{"type": "text", "text": "not authoritative"}],
-            "structuredContent": {"result": {"id": "file-1"}, "metadata": {"trace": "host-only"}},
-            "_meta": {"provider": "drive"},
-        })
+    def test_private_file_round_trip_consumes_dispatcher_validated_result(self) -> None:
+        path, digest = self.response("r1", {"id": "file-1"})
         control = json.dumps({"request_id": "r1", "response_path": str(path), "sha256": digest}) + "\n"
         output = io.StringIO()
         peer = JsonlPeer(self.run_dir, input_stream=io.StringIO(control), output_stream=output)

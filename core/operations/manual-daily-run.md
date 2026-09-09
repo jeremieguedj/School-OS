@@ -11,7 +11,7 @@ scheduled invocation.
 ## Admission
 
 1. Resolve the stable bootstrap, instance manifest, private daily values,
-   operation state, capability profile, delivery ledger, and this installed
+   operation state, profile-selection object and exact manual profile, delivery ledger, and this installed
    recipe. The logical file map is for recovery/maintenance; do not sweep it.
 2. Require an explicit owner request, `attended_single_writer` serialization
    evidence, and a qualified **manual** profile for storage, mail, and selected
@@ -24,7 +24,9 @@ scheduled invocation.
 
 ## Delivery
 
-The manual run uses the common delivery key, intended content hash, and durable
+The ordinary manual run uses the common delivery key, intended content hash, and durable
 ledger. It verifies delivery through the selected adapter before confirmation;
 an unknown outcome is reconciled or blocked, never blindly resent. An explicit
-authorized correction has a distinct policy-controlled variant.
+authorized correction has a distinct policy-controlled variant. A manual TEST
+run may select only the one finite manual TEST variant in private delivery
+configuration; its replay is suppressed under that same key.
