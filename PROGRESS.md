@@ -2557,3 +2557,28 @@ requirements, then read this log from top to bottom.
   privacy checks. `git diff --check` passed. The only intermediate failure was
   a newly added non-reserved synthetic email, corrected to the repository's
   reserved `.example.invalid` test domain before the passing full run.
+
+## 2026-09-08 — bootstrap host-pump composition repair
+
+- Repaired the independently reproduced host composition defect in a new
+  isolated worktree. `JsonlPeer.connector_call` now consumes the mandatory
+  host dispatcher's raw validated result instead of attempting to unwrap the
+  native connector envelope a second time. `HostBindingDispatcher` owns the
+  complete request-file path: terminal-control hash and mode checks, request
+  validation, bridge-only argument stripping, owned snapshots, exactly one
+  native `structuredContent.result` normalization, result validation, and the
+  exclusive private response write.
+- Aligned Gmail send classification labels and response-field validation with
+  the captured connector schema, removed the unadvertised `raw` response field,
+  and made comment creation/reply/resolution inputs and bulk-operation results
+  fail closed on malformed typed shapes. The runtime documentation now routes
+  every connector call through this checked-in path and contains no direct
+  `request.args` native invocation sample.
+- Added a direct child-process roundtrip covering `JsonlPeer` and the concrete
+  Drive, Gmail send/attachment, Sheets, and comment ports through the real host
+  dispatcher and synthetic native `CallToolResult` wrappers. No live connector,
+  private instance, source, delivery, scheduler, tag, release, or main-tree
+  effect occurred. Next: integrate this repaired bootstrap seam and the
+  independently accepted source-host delta on current main, then implement the
+  minimum connected daily/catalog/setup gaps in one runnable candidate before
+  review and separately authorized provider acceptance.

@@ -143,6 +143,74 @@ class ConnectedBootstrapTests(unittest.TestCase):
             self.assertNotEqual(str(image.resolve(strict=True)), images[0]["image_uris"])
             self.assertFalse(Path(images[0]["image_uris"]).exists())
 
+    def test_child_ports_roundtrip_through_actual_host_dispatcher(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            run = Path(temporary) / "bridge"; run.mkdir(mode=0o700)
+            process = subprocess.Popen(
+                [sys.executable, str(ROOT / "tests" / "support" / "host_roundtrip_child.py"), str(run)],
+                stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                text=True, bufsize=1,
+            )
+            self.addCleanup(lambda: process.poll() is None and process.kill())
+            native_results = {
+                "drive.get_metadata": {"id": "file-1", "mime_type": "text/plain", "url": "https://example.invalid/file-1", "title": "file-1", "parent_ids": ["root"], "modified_time": "v1", "size": "4"},
+                "gmail.send": {"id": "message-1", "snippet": "sent"},
+                "gmail.read_attachment": {"message_id": "message-1", "attachment_id": "attachment-1", "file_uri": {"download_url": "https://example.invalid/attachment-1", "mime_type": "application/pdf"}},
+                "sheets.batch_update": {"spreadsheetId": "sheet-1", "replies": []},
+                "comments.write_file": {"fileId": "sheet-1", "created_comments": [{"id": "comment-1", "content": "Exact note"}], "created_replies": [], "resolved_comments": [], "total_operations": 1},
+            }
+            observed: list[tuple[str, dict[str, object]]] = []
+            dispatcher = HostBindingDispatcher(run)
+            for _ in native_results:
+                line = process.stdout.readline().strip() if process.stdout is not None else ""
+                fields = line.split(" ", 4)
+                self.assertEqual("SCHOOL_OS_REQUEST", fields[0], line)
+                _, request_id, kind, digest, request_path = fields
+                control = dispatcher.dispatch_request_file(
+                    request_id=request_id, kind=kind, request_sha256=digest,
+                    request_path=Path(request_path),
+                    invoke=lambda tool, args, kind=kind: observed.append((tool, dict(args))) or self._tool_result(native_results[kind]),
+                )
+                assert process.stdin is not None
+                process.stdin.write(json.dumps(control) + "\n"); process.stdin.flush()
+            final = process.stdout.readline() if process.stdout is not None else ""
+            stderr = process.stderr.read() if process.stderr is not None else ""
+            self.assertEqual(0, process.wait(timeout=10), stderr)
+            if process.stdin is not None:
+                process.stdin.close()
+            if process.stdout is not None:
+                process.stdout.close()
+            if process.stderr is not None:
+                process.stderr.close()
+            results = json.loads(final)
+            self.assertEqual("file-1", results["drive"]["id"])
+            self.assertEqual("message-1", results["gmail"]["id"])
+            self.assertEqual("attachment-1", results["attachment"]["attachment_id"])
+            self.assertEqual("sheet-1", results["sheets"]["spreadsheetId"])
+            self.assertEqual("comment-1", results["comment"]["created_comments"][0]["id"])
+            self.assertEqual(
+                [HOST_BINDINGS[kind].tool_name for kind in native_results],
+                [tool for tool, _args in observed],
+            )
+
+    def test_advertised_gmail_and_comment_shapes_are_strict(self) -> None:
+        dispatcher = HostBindingDispatcher()
+        gmail_args = {
+            "to": "student@example.invalid", "subject": "Subject",
+            "payload": {"mime_type": "text/plain", "body": {"content": "hello"}},
+            "classification_label_values": [{"label_id": "label-1", "fields": [{"field_id": "field-1", "selection": "choice-1"}]}],
+            "response_fields": ["id", "snippet", "history_id", "internal_date", "payload", "size_estimate", "classification_label_values"],
+        }
+        self.assertEqual("message", dispatcher.dispatch("gmail.send", gmail_args, lambda *_: self._tool_result({"id": "message", "snippet": "sent"}))["id"])
+        with self.assertRaisesRegex(BridgeError, "unadvertised"):
+            dispatcher.dispatch("gmail.send", {**gmail_args, "response_fields": ["raw"]}, lambda *_: self._tool_result({"id": "message"}))
+        invoked: list[bool] = []
+        with self.assertRaisesRegex(BridgeError, "invalid shape"):
+            dispatcher.dispatch("comments.write_file", {"id": "file", "comments": [{"bogus": 1}]}, lambda *_: invoked.append(True) or self._tool_result({}))
+        self.assertEqual([], invoked)
+        with self.assertRaisesRegex(BridgeError, "created_comments"):
+            dispatcher.dispatch("comments.write_file", {"id": "file", "comments": [{"content": "note"}]}, lambda *_: self._tool_result({}))
+
     def test_malformed_native_requests_block_before_invocation(self) -> None:
         dispatcher = HostBindingDispatcher()
         invoked: list[str] = []

@@ -179,6 +179,28 @@ def _comment_operations(args: Mapping[str, Any]) -> None:
         values = args[key]
         if not isinstance(values, list) or any(not isinstance(item, Mapping) or not item for item in values):
             raise BridgeError(f"comments.write_file.{key} must be nonempty objects")
+        for item in values:
+            if key == "comments":
+                allowed = {"content", "anchor", "quoted_text", "sheet_cell_range", "slide_number"}
+                if set(item) - allowed or "content" not in item:
+                    raise BridgeError("comments.write_file.comments item has an invalid shape")
+                _nonempty_string(item["content"], "comments.write_file.comments content")
+                for optional in ("anchor", "quoted_text", "sheet_cell_range"):
+                    if optional in item and item[optional] is not None:
+                        _nonempty_string(item[optional], f"comments.write_file.comments {optional}")
+                if "slide_number" in item and item["slide_number"] is not None:
+                    _positive_int(item["slide_number"], "comments.write_file.comments slide_number")
+            elif key == "replies":
+                if set(item) != {"comment_id", "content"}:
+                    raise BridgeError("comments.write_file.replies item has an invalid shape")
+                _nonempty_string(item["comment_id"], "comments.write_file.replies comment_id")
+                _nonempty_string(item["content"], "comments.write_file.replies content")
+            else:
+                if set(item) - {"comment_id", "reply_content"} or "comment_id" not in item:
+                    raise BridgeError("comments.write_file.resolutions item has an invalid shape")
+                _nonempty_string(item["comment_id"], "comments.write_file.resolutions comment_id")
+                if "reply_content" in item and item["reply_content"] is not None:
+                    _nonempty_string(item["reply_content"], "comments.write_file.resolutions reply_content")
         total += len(values)
     if not 1 <= total <= 20:
         raise BridgeError("comments.write_file requires 1 through 20 operations")
@@ -257,13 +279,30 @@ def _validate_request(kind: str, args: Mapping[str, Any]) -> None:
         _mime_payload(args["payload"])
         if "response_fields" in args:
             _string_list(args["response_fields"], "gmail.send.response_fields")
-            if not set(args["response_fields"]) <= {"id", "thread_id", "label_ids", "raw"}:
+            if not set(args["response_fields"]) <= {
+                "id", "thread_id", "label_ids", "snippet", "history_id",
+                "internal_date", "payload", "size_estimate",
+                "classification_label_values",
+            }:
                 raise BridgeError("gmail.send.response_fields contains an unadvertised field")
-        if "classification_label_values" in args and (
-            not isinstance(args["classification_label_values"], Mapping)
-            or any(not isinstance(key, str) or not key or not isinstance(value, str) for key, value in args["classification_label_values"].items())
-        ):
-            raise BridgeError("gmail.send.classification_label_values has an invalid nested shape")
+        if "classification_label_values" in args:
+            classifications = args["classification_label_values"]
+            if not isinstance(classifications, list):
+                raise BridgeError("gmail.send.classification_label_values must be an array")
+            for classification in classifications:
+                if not isinstance(classification, Mapping) or set(classification) - {"label_id", "fields"} or "label_id" not in classification:
+                    raise BridgeError("gmail.send.classification_label_values has an invalid label shape")
+                _nonempty_string(classification["label_id"], "gmail.send classification label_id")
+                if "fields" in classification and classification["fields"] is not None:
+                    fields = classification["fields"]
+                    if not isinstance(fields, list):
+                        raise BridgeError("gmail.send classification fields must be an array")
+                    for field in fields:
+                        if not isinstance(field, Mapping) or set(field) - {"field_id", "selection"} or "field_id" not in field:
+                            raise BridgeError("gmail.send classification field has an invalid shape")
+                        _nonempty_string(field["field_id"], "gmail.send classification field_id")
+                        if "selection" in field and field["selection"] is not None:
+                            _nonempty_string(field["selection"], "gmail.send classification selection")
     if kind == "comments.write_file":
         _comment_operations(args)
     if kind.startswith("semantic."):
@@ -273,7 +312,7 @@ def _validate_request(kind: str, args: Mapping[str, Any]) -> None:
     _json_safe(args, "bridge request args")
 
 
-def _validate_result(kind: str, result: Any) -> dict[str, Any]:
+def _validate_result(kind: str, result: Any, args: Mapping[str, Any] | None = None) -> dict[str, Any]:
     """Reject malformed connector replies before they cross the bridge."""
     if not isinstance(result, Mapping):
         raise BridgeError(f"{kind} result must be an object")
@@ -325,8 +364,32 @@ def _validate_result(kind: str, result: Any) -> dict[str, Any]:
     elif kind == "comments.read_spreadsheet":
         if not isinstance(result.get("comments"), list):
             raise BridgeError("comments.read_spreadsheet result.comments must be a list")
+        _nonempty_string(result.get("spreadsheetId"), "comments.read_spreadsheet result.spreadsheetId")
+        if result.get("nextPageToken") is not None:
+            _nonempty_string(result["nextPageToken"], "comments.read_spreadsheet result.nextPageToken")
+    elif kind == "comments.write_file":
+        for key in ("created_comments", "created_replies", "resolved_comments"):
+            values = result.get(key)
+            if not isinstance(values, list) or any(not isinstance(item, Mapping) for item in values):
+                raise BridgeError(f"comments.write_file result.{key} must be an object array")
+            for item in values:
+                _nonempty_string(item.get("id"), f"comments.write_file result.{key} item.id")
+        _nonempty_string(result.get("fileId"), "comments.write_file result.fileId")
+        total = _positive_int(result.get("total_operations"), "comments.write_file result.total_operations")
+        expected_total = sum(len(args.get(key, [])) for key in ("comments", "replies", "resolutions")) if args is not None else None
+        if expected_total is not None and total != expected_total:
+            raise BridgeError("comments.write_file result total_operations disagrees with request")
     elif kind == "gmail.send":
         _nonempty_string(result.get("id"), "gmail.send result.id")
+        for key in ("thread_id", "snippet", "history_id", "internal_date"):
+            if key in result and result[key] is not None:
+                _nonempty_string(result[key], f"gmail.send result.{key}")
+        if "label_ids" in result and result["label_ids"] is not None:
+            _string_list(result["label_ids"], "gmail.send result.label_ids")
+        if "payload" in result and result["payload"] is not None and not isinstance(result["payload"], Mapping):
+            raise BridgeError("gmail.send result.payload must be an object or null")
+        if "size_estimate" in result and result["size_estimate"] is not None:
+            _positive_int(result["size_estimate"], "gmail.send result.size_estimate", allow_zero=True)
     elif kind == "sheets.batch_update":
         _nonempty_string(result.get("spreadsheetId"), "sheets.batch_update result.spreadsheetId")
         if not isinstance(result.get("replies"), list):
@@ -414,10 +477,82 @@ class HostBindingDispatcher:
             native_args["image_uris"] = str(snapshot)
         try:
             result = self._native_tool_result(invoke(HOST_BINDINGS[kind].tool_name, native_args))
-            return _validate_result(kind, result)
+            return _validate_result(kind, result, args)
         finally:
             for snapshot in snapshots:
                 snapshot.unlink(missing_ok=True)
+
+    def dispatch_request_file(
+        self, *, request_id: str, kind: str, request_sha256: str,
+        request_path: Path, invoke: Any,
+    ) -> dict[str, str]:
+        """Run one complete child request through the mandatory host boundary.
+
+        The host must use this entrypoint (or an exact implementation of it),
+        rather than reading ``request.args`` and invoking a connector directly.
+        It binds the terminal control to the private request file, performs all
+        argument stripping/snapshotting/result validation in :meth:`dispatch`,
+        and writes the only response shape consumed by :class:`JsonlPeer`.
+        """
+        if self.run_directory is None:
+            raise BridgeError("host request dispatch requires an admitted private run directory")
+        if REQUEST_ID.fullmatch(request_id) is None or not isinstance(request_sha256, str) or re.fullmatch(r"[0-9a-f]{64}", request_sha256) is None:
+            raise BridgeError("host request control has invalid identity or hash")
+        path = _contained(request_path, self.run_directory)
+        if path.parent != self.run_directory or path.name != f"{request_id}.request.json":
+            raise BridgeError("host request path does not match request_id")
+        try:
+            status = path.lstat()
+        except OSError as exc:
+            raise BridgeError("host request file is unavailable") from exc
+        if stat.S_ISLNK(status.st_mode) or not stat.S_ISREG(status.st_mode) or stat.S_IMODE(status.st_mode) != 0o600:
+            raise BridgeError("host request must be a mode-0600 non-symlink regular file")
+        if status.st_size > MAX_REQUEST_BYTES:
+            raise BridgeError("host request exceeds the configured byte bound")
+        request_bytes = path.read_bytes()
+        if len(request_bytes) != status.st_size or sha256_bytes(request_bytes) != request_sha256:
+            raise BridgeError("host request length or hash disagrees")
+        try:
+            request = json.loads(request_bytes)
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise BridgeError("host request is not UTF-8 JSON") from exc
+        expected = {"args", "kind", "protocol", "request_id"}
+        if (
+            not isinstance(request, Mapping) or set(request) != expected
+            or request.get("protocol") != PROTOCOL
+            or request.get("request_id") != request_id
+            or request.get("kind") != kind
+            or not isinstance(request.get("args"), Mapping)
+        ):
+            raise BridgeError("host request wrapper disagrees with terminal control")
+        native_attempted = False
+
+        def guarded_invoke(tool_name: str, native_args: Mapping[str, Any]) -> Any:
+            nonlocal native_attempted
+            native_attempted = True
+            return invoke(tool_name, native_args)
+
+        try:
+            result = self.dispatch(kind, request["args"], guarded_invoke)
+            response_value: dict[str, Any] = {
+                "protocol": PROTOCOL, "request_id": request_id, "result": result,
+            }
+        except Exception:
+            if not native_attempted:
+                raise
+            # Once native dispatch is attempted, an exception cannot authorize
+            # retry.  The child must reconcile the effect by provider readback.
+            response_value = {
+                "protocol": PROTOCOL, "request_id": request_id,
+                "error": {"class": "tool_exception", "effect": "unknown"},
+            }
+        response_bytes = canonical_json_bytes(response_value)
+        response_path = self.run_directory / f"{request_id}.response.json"
+        _exclusive_write(response_path, response_bytes)
+        return {
+            "request_id": request_id, "response_path": str(response_path),
+            "sha256": sha256_bytes(response_bytes),
+        }
 
 
 def _contained(path: Path, root: Path) -> Path:
@@ -564,7 +699,9 @@ class JsonlPeer:
                 response_path.unlink(missing_ok=True)
 
     def connector_call(self, kind: str, args: Mapping[str, Any], *, request_id: str | None = None) -> Any:
-        return normalize_tool_result(self.call(kind, args, request_id=request_id))
+        # The mandatory host dispatcher is the sole connector-envelope
+        # normalization boundary.  JSONL carries only its validated raw result.
+        return self.call(kind, args, request_id=request_id)
 
 
 @dataclass(frozen=True)
