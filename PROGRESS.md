@@ -2609,3 +2609,22 @@ requirements, then read this log from top to bottom.
   installed validation, then execute the create-only installation through that
   bridge before the first bounded unsent preview. Todoist, delivery, audio, and
   scheduling remain untouched.
+
+## 2026-09-09 — recovery MVP revised early package verified
+
+- Rebuilt the early alpha.13 package from `c75068d` after adding the required
+  host-dispatch boundary. Archive and extracted-tree installed validation
+  passed, the extracted preview entrypoint returned
+  `INSTALLED_ENTRYPOINT_VERIFIED`, and an independent rebuild produced
+  byte-identical archive bytes.
+- Rebuilt and validated the ignored setup plan against that exact extracted
+  package. Re-read the live gate immediately before installation: the Drive
+  root remains empty and the isolated Sheet remains blank.
+- The Sheet remains temporarily beside the root for the installer's initial
+  empty-root proof. After create-only installation it must be moved into the
+  test root and the selector, parent, and complete root inventory re-verified
+  before preview. No installation write, source import, task write, delivery,
+  Todoist binding, audio call, or schedule action has started.
+- Next: execute the create-only setup through the packaged host dispatcher,
+  move and verify the empty Sheet under the installed root, recover from the
+  stable bootstrap, and run the first bounded unsent preview.
