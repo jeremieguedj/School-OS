@@ -2632,3 +2632,39 @@ requirements, then read this log from top to bottom.
   this candidate stays unintegrated until the accepted repaired dependency can
   be incorporated and revalidated. No provider, network, private source, or
   external write was performed.
+
+## 2026-09-08 — connected source host integration repair candidate
+
+- Repaired the rejected source candidate
+  `d6892451b42899795b351bcd3aea6d8930378957` in a new isolated worktree;
+  the rejected tree remains unchanged. The source host now has a concrete
+  pinned-address streaming HTTPS implementation with public-address checks on
+  every redirect, TLS hostname verification, identity encoding, one deadline,
+  strict redirect/header/length handling, size-plus-one/EOF checks, and fixed
+  hard caps. `CodexSourceHostPort` consumes that raw helper result without
+  connector-envelope normalization.
+- Gmail attachment admission now accepts the inspected snake-case connector
+  result, validates the original/extraction file references, truncation flag,
+  message/attachment/file identities, MIME, and `size_bytes`, then downloads
+  only `file_uri.download_url` through the bounded source helper. Inline
+  provider content/images remain previews and never become evidence.
+- Added the executable `scripts/run_source_host.py` two-step host protocol. It
+  turns a validated `extract.image` bridge request into the exact native
+  `view_image(path, detail="original")` action, keeps a random host-owned copy,
+  and requires stable device/inode/size/mtime/SHA-256 evidence before and after
+  viewing before it writes the raw bridge response. Live image semantic
+  accuracy and authenticated Gmail response qualification remain pending.
+- PDF extraction now rejects invalid MediaBox/CropBox/rotation and unsupported
+  embedded/associated features before rendering, computes `-scale-to` from
+  both dimension and pixel limits, renders the reader-visible CropBox with a
+  per-process file-size limit, and enforces aggregate planned pixels, rendered
+  bytes, extracted text, pages, and time. It still routes every ordered page
+  through the stable original-detail image protocol and does not inspect hidden
+  metadata or embedded payloads.
+- CPython 3.12.14 checks passed: 14 connected-source tests, 34 focused
+  connected-source/importer/bootstrap/Gmail tests, and all 265 repository
+  tests. The tracked privacy scan and exact staged-delta whitespace check are
+  clean. No provider call, network fetch, private data, main-tree write,
+  release, push, or external effect occurred. Next: create the local repair
+  commit and hand it to independent review; authenticated Gmail and visual
+  semantic qualification remain separate acceptance gates.

@@ -91,10 +91,9 @@ HOST_BINDINGS: dict[str, HostBinding] = {
     "comments.write_file": HostBinding("mcp__codex_apps__google_drive_bulk_update_file_comments"),
     "semantic.interpret": HostBinding("semantic.interpret"),
     "semantic.audit": HostBinding("semantic.audit"),
-    # These are finite host helpers, not connector tool names supplied by a
-    # child. The host must bind them to the reviewed byte-fetch/image-view path.
-    "resource.fetch_https": HostBinding("resource.fetch_https"),
-    "extract.image": HostBinding("extract.image"),
+    # These labels are explicit local-host routes, not connector tool names.
+    "resource.fetch_https": HostBinding("school_os.source_host.fetch_https"),
+    "extract.image": HostBinding("school_os.source_host.view_image_original"),
 }
 
 # Captured from the connected-host capability inventory.  Keep this finite
@@ -415,8 +414,9 @@ def _validate_result(kind: str, result: Any, args: Mapping[str, Any] | None = No
 class HostBindingDispatcher:
     """Dispatch an already-validated request to exactly one reviewed binding."""
 
-    def __init__(self, run_directory: Path | None = None) -> None:
+    def __init__(self, run_directory: Path | None = None, *, source_helpers: Any | None = None) -> None:
         self.run_directory = _verify_run_directory(run_directory) if run_directory is not None else None
+        self.source_helpers = source_helpers
 
     def _private_file_bytes(
         self, raw_value: Any, *, evidence: Mapping[str, Any] | None, label: str,
@@ -467,9 +467,14 @@ class HostBindingDispatcher:
         result = structured["result"]
         _json_safe(result, "normalized host result")
         return result
-
     def dispatch(self, kind: str, args: Mapping[str, Any], invoke: Any) -> Any:
         _validate_request(kind, args)
+        if kind in {"resource.fetch_https", "extract.image"}:
+            if self.source_helpers is None:
+                raise BridgeError("finite source host helpers are unavailable")
+            result = self.source_helpers.dispatch(kind, dict(args))
+            _json_safe(result, "source host helper result")
+            return result
         if not callable(invoke):
             raise BridgeError("host binding invoker is unavailable")
         native_args = dict(args)
@@ -871,7 +876,7 @@ class CodexSourceHostPort:
     peer: JsonlPeer
 
     def fetch_https(self, *, url: str, max_bytes: int, max_redirects: int, timeout_ms: int) -> Any:
-        return self.peer.connector_call("resource.fetch_https", {
+        return self.peer.call("resource.fetch_https", {
             "url": url, "max_bytes": max_bytes, "max_redirects": max_redirects,
             "timeout_ms": timeout_ms,
         })
