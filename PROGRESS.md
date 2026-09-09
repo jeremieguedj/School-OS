@@ -2628,3 +2628,28 @@ requirements, then read this log from top to bottom.
 - Next: execute the create-only setup through the packaged host dispatcher,
   move and verify the empty Sheet under the installed root, recover from the
   stable bootstrap, and run the first bounded unsent preview.
+
+## 2026-09-09 — recovery MVP live setup adapter repairs
+
+- The first real dispatcher call failed closed before any write because the
+  Drive connector returns a flat structured-content envelope while the stopped
+  candidate admitted only a nested `result`. Added the observed flat-envelope
+  path without accepting text-only fallback; the full suite passed 328 tests.
+- A fresh install then exposed filename-derived Drive MIME behavior. JSON and
+  Markdown filenames do not remain `application/octet-stream`, so operation
+  state and managed payload creation now declare their provider-reported MIME.
+  Focused setup tests and the full 328-test validator passed.
+- A third fresh install reached manifest creation but its create receipt was
+  incomplete. Added exact-ID reconciliation that adopts only an object whose
+  name, parent, MIME, and bytes all read back exactly; the full suite passed 329
+  tests. These fixes are committed and pushed through `d65efdb`.
+- The fourth fresh install executed 101 validated bridge calls and repeated the
+  manifest boundary. Exact-ID metadata/content readback ran, but an exact
+  manifest identity predicate still disagreed, so installation correctly
+  blocked. The four attempted roots are retired and will not be reused. Exact
+  IDs and response evidence remain only in ignored recovery artifacts.
+- No bootstrap was admitted. Source import, task projection, delivery,
+  Todoist, audio, and scheduling remain untouched. Next: retain a private
+  sanitized per-create predicate journal, reproduce the manifest mismatch on a
+  fresh root, and repair only the proven provider disagreement before another
+  package/root cycle.
