@@ -64,6 +64,15 @@ INTEGRATION_REFERENCE_KINDS = {
 }
 
 
+def managed_mime_type(path: str) -> str:
+    """Return the MIME Drive reports for each managed filename."""
+    if path.endswith(".json"):
+        return "application/json"
+    if path.endswith(".md"):
+        return "text/markdown"
+    return "application/octet-stream"
+
+
 class CreateOnlyStorage(ReferenceStorage, Protocol):
     """Storage surface for installation generations that may never replace bytes."""
 
@@ -400,7 +409,7 @@ def compose_create_only_candidate_payloads(
             "object_id": f"transient-create-only-{index}",
             "kind": "file",
             "permitted_ancestor_id": root_mapping.get("object_id", ""),
-            "mime_type": "application/octet-stream",
+            "mime_type": managed_mime_type(path),
             "version": "transient",
         }
         for index, path in enumerate(MANAGED_PATHS, 1)
@@ -748,7 +757,10 @@ def install_create_only_generation(
         objects[path] = readback
     for path, data in sorted(payloads.items()):
         if path not in objects:
-            objects[path] = _create_or_adopt(storage, parent_id=root.object_id, name=path, data=data, mime_type="application/octet-stream")
+            objects[path] = _create_or_adopt(
+                storage, parent_id=root.object_id, name=path, data=data,
+                mime_type=managed_mime_type(path),
+            )
     admitted_package = dict(package)
     admitted_package.update({
         "archive_name": archive_name,

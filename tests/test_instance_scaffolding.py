@@ -979,7 +979,7 @@ class InstanceScaffoldingTests(unittest.TestCase):
     def test_staged_payload_builder_uses_the_first_created_state_reference(self) -> None:
         storage = CreateOnlyFakeStorage()
         state_bytes = initial_operation_state_bytes(self.package_root)
-        state = storage.create_file("instance-root", OPERATION_STATE_PATH, state_bytes, "application/octet-stream")
+        state = storage.create_file("instance-root", OPERATION_STATE_PATH, state_bytes, "application/json")
         state_reference = {
             "object_id": state.object_id,
             "kind": state.kind,

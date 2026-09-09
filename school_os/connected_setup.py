@@ -20,6 +20,7 @@ from .contracts import canonical_json_bytes, dump_mapping_yaml, load_mapping_yam
 from .install import (
     DAILY_REFERENCE_KINDS, FILE_MAP_PATH, INTEGRATION_REFERENCE_KINDS,
     OPERATION_STATE_PATH, InstallationError, compose_create_only_candidate_payloads,
+    managed_mime_type,
     initial_operation_state_bytes, install_create_only_generation,
 )
 from .references import ObjectReference, ReferenceError, StoredObject
@@ -289,7 +290,10 @@ def install_connected_instance(
 
     package_root = Path(answers["package_root"])
     operation_state_bytes = initial_operation_state_bytes(package_root)
-    operation_state = storage.create_file(root_id, OPERATION_STATE_PATH, operation_state_bytes, "application/octet-stream")
+    operation_state = storage.create_file(
+        root_id, OPERATION_STATE_PATH, operation_state_bytes,
+        managed_mime_type(OPERATION_STATE_PATH),
+    )
     operation_reference = _object_reference(operation_state, root_id)
     recipe = storage.create_file(
         root_id, "operations/daily-run.md",
