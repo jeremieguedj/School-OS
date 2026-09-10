@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/bundle-member-reference.schema.json",
+  "title": "School-OS exact immutable bundle member reference",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["bundle_reference", "bundle_sha256", "entry_path", "entry_sha256", "byte_length"],
+  "properties": {
+    "bundle_reference": {"type": "object"},
+    "bundle_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "entry_path": {"type": "string", "minLength": 1, "maxLength": 256},
+    "entry_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "byte_length": {"type": "integer", "minimum": 0}
+  }
+}

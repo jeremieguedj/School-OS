@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/bootstrap-descriptor.schema.json",
+  "title": "School-OS five-object installation bootstrap descriptor",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "instance_id", "root_reference", "package_reference", "package_sha256", "package_inventory_sha256", "settings_reference", "settings_sha256", "current_reference", "state_reference", "source_identity", "system_version", "runtime"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "instance_id": {"type": "string", "minLength": 1},
+    "root_reference": {"type": "object"},
+    "package_reference": {"type": "object"},
+    "package_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "package_inventory_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "settings_reference": {"type": "object"},
+    "settings_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "current_reference": {"type": "object"},
+    "state_reference": {"type": "object"},
+    "source_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "commit"],
+      "properties": {
+        "repository": {"type": "string", "minLength": 1},
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+      }
+    },
+    "system_version": {"type": "string", "minLength": 1},
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["implementation", "python_version", "dependency_fingerprint"],
+      "properties": {
+        "implementation": {"type": "string", "minLength": 1},
+        "python_version": {"type": "string", "minLength": 1},
+        "dependency_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/current-state.schema.json",
+  "title": "School-OS current state admission pointer",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "generation", "state", "previous", "package_sha256", "settings_sha256", "configuration_fingerprint", "serialization"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "generation": {"type": "integer", "minimum": 1},
+    "state": {"type": "object"},
+    "previous": {"type": ["object", "null"]},
+    "package_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "settings_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "configuration_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "serialization": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["mode", "evidence"],
+      "properties": {
+        "mode": {"enum": ["native_conditional", "runtime_serialized", "attended_single_writer"]},
+        "evidence": {"type": "object"}
+      }
+    }
+  }
+}

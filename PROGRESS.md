@@ -2738,3 +2738,25 @@ requirements, then read this log from top to bottom.
   validate and publish this documentation checkpoint, then implement the
   deterministic bundle codec and focused contracts before refactoring the
   installer/bootstrap path.
+
+## 2026-09-09 — recovery MVP deterministic bundle implementation
+
+- Published and remotely verified the approved storage specification checkpoint
+  at exact commit `e6e49edb05f68fe91eb9b612f43074e06d3ef28b` before changing runtime code.
+- Added the provider-neutral `school_os.bundles` codec. It produces byte-stable
+  uncompressed ustar archives with canonical inventory JSON, normalized member
+  metadata, exact hashes and lengths, predecessor binding, fixed state/source/
+  output bounds, and safe read-time rejection of traversal, links, duplicates,
+  undeclared members, tampering, oversize content, and nonzero trailers.
+- Added checked-in contracts for bundle manifests, bundle-member references,
+  the mutable current-state pointer, and the immutable bootstrap descriptor.
+  Six focused bundle tests pass, including rebuild equality and schema
+  validation.
+- The frozen Python 3.12.14 interpreter passed the complete repository
+  validation: 339 tests plus JSON-schema and template-manifest checks. A prior
+  invocation with macOS system Python 3.9 failed on pre-existing Python-version
+  requirements (`zip(strict=...)`, `datetime.UTC`, and `Path.stat` behavior);
+  it is not accepted validation and made no changes.
+- No provider call or external effect occurred. Next: publish this bounded codec
+  checkpoint, then implement the five-object installer/current/bootstrap
+  composition and fresh-process recovery against the new contracts.
