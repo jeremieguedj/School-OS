@@ -3005,3 +3005,23 @@ requirements, then read this log from top to bottom.
   persistence to source bundles and use this publisher at the first complete
   phase boundary. The active CLI remains on the archived route until the thin
   preview path is coherent.
+
+## 2026-09-09 — recovery MVP immutable content-bundle publication
+
+- Published and remotely verified the atomic hybrid operation boundary at exact
+  commit `d070638940c801cb2e101c21223a985ed42981e8`; 52 focused setup, bundle,
+  and operation-state tests passed.
+- Added bounded source/output bundle publication using the same exact create/
+  uncertain-response adoption/readback path as installation objects. It binds
+  the content to the admitted instance, package, settings, and configuration,
+  validates all bundle bytes, and deliberately does not advance `CURRENT.json`.
+- Focused coverage publishes complete text and PDF source bytes into one source
+  bundle, verifies its carrier and members, and proves current state remains on
+  the predecessor generation until a later state transaction records the full
+  content references. The storage specification now makes this two-step
+  durability/canonicality boundary explicit. No provider call or external
+  effect occurred.
+- Next: publish this checkpoint, add the catalog-state adoption transaction for
+  a verified source bundle, then compose discovery/catalog through that path.
+  The active CLI remains unchanged until the complete unsent preview chain is
+  wired and validated.

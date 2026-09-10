@@ -138,6 +138,15 @@ writer must:
   components, names that exceed ustar limits, links, devices, and directories;
 - produce identical bytes for identical logical entries and manifest metadata.
 
+Source/output publication is a two-step durability boundary. The bounded
+content bundle is first created and read back exactly; at that point its bytes
+are durable but are not part of canonical current state. A later state
+transaction records its full physical bundle/member references and advances
+`CURRENT.json`. If that state publication does not succeed, the content bundle
+is an orphan candidate that may be adopted only by exact identity/hash during
+bounded recovery; its existence alone cannot advance a cursor or authorize a
+dependent effect.
+
 The manifest records bundle format `school-os-bundle-v1`, bundle kind,
 generation or batch identity, instance ID, package archive hash, settings hash,
 configuration fingerprint, predecessor generation and hash when present, and

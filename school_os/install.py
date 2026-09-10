@@ -406,6 +406,47 @@ def recover_hybrid_generation(
     }
 
 
+def publish_hybrid_content_bundle(
+    storage: CreateOnlyStorage, *, recovery: Mapping[str, Any],
+    bundle_kind: str, identity: str, entries: Mapping[str, BundleEntry],
+) -> dict[str, Any]:
+    """Publish and verify one bounded source/output bundle without state advance."""
+    if bundle_kind not in {"source", "output"}:
+        raise InstallationError("hybrid content bundle kind must be source or output")
+    bootstrap = _require_mapping(recovery.get("bootstrap"), "recovered bootstrap")
+    current = _require_mapping(recovery.get("current"), "recovered current pointer")
+    root = _require_mapping(bootstrap.get("root_reference"), "recovered root reference")
+    root_id = root.get("object_id")
+    if not isinstance(root_id, str) or not root_id:
+        raise InstallationError("hybrid content publication lacks its root identity")
+    try:
+        bundle_bytes = build_bundle(
+            bundle_kind=bundle_kind, identity=identity,
+            instance_id=bootstrap["instance_id"],
+            package_sha256=bootstrap["package_sha256"],
+            settings_sha256=bootstrap["settings_sha256"],
+            configuration_fingerprint=current["configuration_fingerprint"],
+            entries=entries,
+        )
+    except (BundleError, KeyError) as exc:
+        raise InstallationError(f"hybrid {bundle_kind} bundle is invalid: {exc}") from exc
+    object_ = _hybrid_create_or_adopt(
+        storage, parent_id=root_id, name=f"{identity}.bundle",
+        data=bundle_bytes, mime_type=STATE_BUNDLE_MIME,
+    )
+    try:
+        verified = read_bundle(bundle_bytes, expected_kind=bundle_kind)
+    except BundleError as exc:
+        raise InstallationError(f"hybrid {bundle_kind} bundle readback is invalid: {exc}") from exc
+    return {
+        "bundle": verified,
+        "bundle_bytes": bundle_bytes,
+        "bundle_reference": _hybrid_reference(object_, root_id),
+        "bundle_sha256": verified.sha256,
+        "identity": identity,
+    }
+
+
 def _validated_serialization(value: Any) -> dict[str, Any]:
     if not isinstance(value, Mapping) or set(value) != {"mode", "evidence"}:
         raise InstallationError("state publication requires exact serialization evidence")

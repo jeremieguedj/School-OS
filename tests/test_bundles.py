@@ -15,7 +15,8 @@ from school_os.contracts import canonical_json_bytes, sha256_bytes, validate
 from school_os.install import (
     HYBRID_BOOTSTRAP_PATH, HYBRID_CURRENT_PATH, HYBRID_PACKAGE_PATH,
     HYBRID_SETTINGS_PATH, INITIAL_STATE_PATH, InstallationError,
-    extract_hybrid_package, install_hybrid_generation, publish_hybrid_state,
+    extract_hybrid_package, install_hybrid_generation,
+    publish_hybrid_content_bundle, publish_hybrid_state,
     recover_hybrid_generation,
 )
 from school_os.connected_storage import (
@@ -405,6 +406,28 @@ class HybridInstallTests(unittest.TestCase):
             committed.working.recovery["state"].entries[checkpoint_path],
         )
         self.assertEqual(2, committed.working.recovery["current"]["generation"])
+
+    def test_source_bundle_is_verified_but_not_canonical_until_state_points_to_it(self):
+        storage = HybridStorage()
+        recovery = self.install(storage)
+        published = publish_hybrid_content_bundle(
+            storage, recovery=recovery, bundle_kind="source",
+            identity="source-batch-000001",
+            entries={
+                "sources/thread-1/body.txt": BundleEntry(
+                    b"complete body", "source_body", "text/plain",
+                ),
+                "sources/thread-1/attachment.pdf": BundleEntry(
+                    b"%PDF-exact", "source_attachment", "application/pdf",
+                ),
+            },
+        )
+        self.assertEqual("source", published["bundle"].manifest["bundle_kind"])
+        self.assertEqual(1, recovery["current"]["generation"])
+        self.assertEqual(
+            b"complete body", published["bundle"].entries["sources/thread-1/body.txt"],
+        )
+        self.assertEqual(6, len(storage.objects))
 
 
 if __name__ == "__main__":
