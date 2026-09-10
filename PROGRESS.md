@@ -3290,3 +3290,25 @@ requirements, then read this log from top to bottom.
   package, create a new empty acceptance root and isolated Sheet, repeat install,
   binding, cold recovery, and execute live ingestion through canonical Drive
   publication and independent validation.
+
+## 2026-09-10 — recovery MVP publication gate blocked
+
+- Committed the validated bounded-resource repair locally as exact runtime
+  commit `b5a8d461353d0931cc7235ca4227948a779d6035`. The environment denied both
+  attempts to push to the configured private GitHub origin because it requires
+  a new explicit authorization for that destination. The branch is one commit
+  ahead of its remote; no alternate publication path was attempted.
+- Built the exact `0.1.0-alpha.13` immutable package from that commit. Its
+  archive SHA-256 is
+  `8c64b5e50a66bd419b8252830ca12c6686d9a108ca0d0ca5b65a7d826d758606`;
+  checksum verification and both extracted-tree and archive installed-package
+  validation pass under frozen CPython 3.12.14.
+- Safely terminated the superseded local ingestion worker while it was waiting
+  for the already-diagnosed oversized resource response. That root remains at
+  generation 2 with no source bundle or ingestion state advance and no task,
+  delivery, audio, Todoist, or scheduler effect.
+- Per `START-HERE.md`, do not create the next live root from an unpublished
+  runtime. Next: obtain explicit authorization for the configured private
+  GitHub push, push and verify the remote exact commit, then create the new
+  empty root and Sheet and execute install, bind, cold recovery, ingestion, and
+  canonical validation from the already-verified package.
