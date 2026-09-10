@@ -17,7 +17,7 @@ sys.path.insert(0, str(ROOT))
 
 from school_os.connected_sources import (
     BoundedHttpsFetcher, ConnectedSourceAdapters, ConnectedSourcesError,
-    SourceBounds, SourceHostHelpers,
+    SourceBounds, SourceHostHelpers, _image_details,
 )
 from school_os.codex_bridge import HostBindingDispatcher
 from school_os.contracts import canonical_json_bytes, sha256_bytes
@@ -33,6 +33,18 @@ PNG = base64.b64decode(
     ))
 )
 PDF = b"%PDF-1.7\n% dependency-free synthetic parser input\n"
+GIF = (
+    b"GIF89a\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xff\xff\xff"
+    b"!\xf9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00"
+    b"\x00\x02\x02D\x01\x00;"
+)
+
+
+class ImageDetailsTests(unittest.TestCase):
+    def test_single_frame_gif_has_exact_signature_mime_and_dimensions(self) -> None:
+        self.assertEqual((1, 1), _image_details(GIF, "image/gif", max_pixels=1, max_dimension=1))
+        with self.assertRaisesRegex(ConnectedSourcesError, "signature"):
+            _image_details(GIF, "image/png", max_pixels=1, max_dimension=1)
 
 
 class FakeBox:

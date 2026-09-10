@@ -259,6 +259,23 @@ class ImportRunnerTests(unittest.TestCase):
             max_redirects=0,
         )
         self.assertEqual("manual_review", blocked[0].outcome)
+        gif = (
+            b"GIF89a\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xff\xff\xff"
+            b"!\xf9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00"
+            b"\x00\x02\x02D\x01\x00;"
+        )
+        gif_outcome = process_direct_html_resources(
+            resources[:1],
+            fetch_resource=lambda _url: DirectResourceRead(
+                "https://assets.example/notice.png",
+                ("https://assets.example/notice.png",), gif, "image/gif",
+                200, True, True, len(gif), len(gif),
+            ),
+            extractors={"image/gif": extract_image},
+            max_bytes=64,
+            max_redirects=0,
+        )
+        self.assertEqual("extracted", gif_outcome[0].outcome)
         with self.assertRaisesRegex(ImportError, "coverage"):
             require_message_source_coverage(b"", blocked)
         with self.assertRaisesRegex(ImportError, "attachment coverage"):

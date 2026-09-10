@@ -3148,3 +3148,35 @@ requirements, then read this log from top to bottom.
 - Next: publish this fix, build and verify its exact immutable package, use a new
   empty authorized root and isolated Sheet, then repeat installation, binding,
   cold recovery, and execute the live ingestion through canonical validation.
+
+## 2026-09-10 — recovery MVP direct-resource extractor binding
+
+- Published and remotely verified CSS direct-resource inventory support at
+  exact commit `0df55f7e73c8c03ff664e9875b510c3193ba00d2`. Its exact immutable
+  package passed installed validation, then a new isolated instance completed
+  the five-file install, post-install Sheet binding at generation 2, and cold
+  Drive recovery. Measured connector calls were 30 for install, 24 for binding,
+  and 13 for recovery; underlying Drive API operations and hidden retries remain
+  unavailable from the connector.
+- The live run enumerated and read the complete bounded Gmail selection and
+  fetched ten direct HTTPS resources, then correctly stopped before Drive/state
+  publication because resource coverage remained unresolved. Private metadata-
+  only diagnosis found eight exact PNG resources and two exact single-frame GIF
+  resources, all with successful, complete, byte-count-consistent reads.
+- The failure was an ordinary composition omission: the installed hybrid worker
+  configured the existing attachment extractors but did not pass the existing
+  image/PDF extractors to its direct-resource seam. The two GIFs also exercised
+  an omitted single-frame MIME admission even though the selected Pillow decoder
+  can verify their exact signature, MIME, frame count, and dimensions.
+- Bound the existing PDF/image extractors to direct resources using deterministic
+  content identities and admitted only exact single-frame GIF images through the
+  same signature/MIME/dimension/frame checks. No storage, canonical-reference,
+  source-policy, extraction, or provider architecture changed; animated or
+  malformed GIFs still fail closed.
+- Focused source/import/hybrid tests pass, and the complete frozen Python 3.12.14
+  gate passes 363 tests plus schema/template validation and the tracked privacy
+  scan. The diagnosed generation-2 instance is retained only as private evidence
+  and has no canonical ingestion or downstream effect.
+- Next: publish this compatible fix, rebuild the exact immutable package, create
+  a new empty root and isolated Sheet, and repeat install, bind, cold recovery,
+  live ingestion, and canonical result validation.

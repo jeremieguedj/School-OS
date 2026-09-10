@@ -5,6 +5,7 @@ import json
 import sys
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
 from unittest.mock import patch
 
@@ -16,7 +17,7 @@ from school_os.bundles import BundleEntry, build_bundle, read_bundle
 from school_os.connected_ingestion import ConnectedIngestionWorker
 from school_os.hybrid_ingestion import (
     LocalIngestionStore, SourceByteCapture, publish_ingestion_result,
-    stage_ingestion,
+    stage_connected_ingestion, stage_ingestion,
 )
 
 
@@ -65,6 +66,33 @@ class FakeTransaction:
 
 
 class HybridIngestionTests(unittest.TestCase):
+    def test_connected_composer_binds_existing_extractors_for_direct_resources(self) -> None:
+        resolved = SimpleNamespace(
+            household={"timezone": "UTC"},
+            source_scope={"max_thread_messages": 10, "adapter_id": "gmail-v1"},
+            policies={"execution": {"max_records_per_unit": 5, "max_bytes_per_unit": 65_536}},
+        )
+
+        def inspect_worker(*, worker_factory: Any, **_kwargs: Any) -> str:
+            worker = worker_factory(LocalIngestionStore())
+            self.assertEqual(
+                {"application/pdf", "image/gif", "image/jpeg", "image/png"},
+                set(worker.resource_extractors),
+            )
+            self.assertIn("image/gif", worker.supported_attachment_mime_types)
+            return "staged"
+
+        with patch("school_os.hybrid_ingestion.stage_ingestion", side_effect=inspect_worker):
+            result = stage_connected_ingestion(
+                installed_root=ROOT,
+                resolved=resolved,
+                run_directory=ROOT,
+                gmail=SimpleNamespace(peer=object()),
+                semantic=object(),
+                capture=SourceByteCapture(),
+            )
+        self.assertEqual("staged", result)
+
     def worker(self, store: LocalIngestionStore) -> ConnectedIngestionWorker:
         schemas = {
             name: json.loads((ROOT / "schemas" / name).read_text())

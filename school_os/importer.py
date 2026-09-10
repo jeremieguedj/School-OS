@@ -355,6 +355,8 @@ def _expected_resource_mime(data: bytes) -> str | None:
         return "image/png"
     if data.startswith(b"\xff\xd8\xff"):
         return "image/jpeg"
+    if data.startswith((b"GIF87a", b"GIF89a")):
+        return "image/gif"
     return None
 
 
@@ -365,7 +367,7 @@ def _validated_extraction(
     if not isinstance(extracted.text, str):
         raise ValueError("extracted text is not Unicode")
     text = extracted.text.encode("utf-8", errors="strict")
-    if mime_type in {"application/pdf", "image/png", "image/jpeg"} and not text:
+    if (mime_type == "application/pdf" or mime_type.startswith("image/")) and not text:
         raise ValueError("selected PDF/image extraction is empty")
     unit_count = extracted.unit_count
     if not isinstance(unit_count, int) or unit_count < 1:

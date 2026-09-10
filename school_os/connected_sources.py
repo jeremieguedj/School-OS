@@ -37,7 +37,11 @@ class ConnectedSourcesError(ValueError):
     """Raised when source bytes or finite extractor evidence is incomplete."""
 
 
-_IMAGE_MIME = {"image/png": b"\x89PNG\r\n\x1a\n", "image/jpeg": b"\xff\xd8\xff"}
+_IMAGE_MIME = {
+    "image/png": b"\x89PNG\r\n\x1a\n",
+    "image/jpeg": b"\xff\xd8\xff",
+    "image/gif": (b"GIF87a", b"GIF89a"),
+}
 _REDIRECT_STATUSES = {301, 302, 303, 307, 308}
 _GMAIL_ATTACHMENT_KEYS = {
     "attachment_id", "content", "content_truncated", "extraction_file_uri",

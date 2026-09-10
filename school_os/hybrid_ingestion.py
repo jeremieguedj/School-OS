@@ -237,6 +237,9 @@ def stage_connected_ingestion(
     )
     callbacks = CodexSemanticCallbacks(semantic)
 
+    def resource_identity(item: DirectResourceRead) -> str:
+        return "direct-resource-" + sha256_bytes(item.data)
+
     def worker_factory(store: LocalIngestionStore) -> ConnectedIngestionWorker:
         def schema(name: str) -> dict[str, Any]:
             path = installed_root / "schemas" / name
@@ -256,7 +259,7 @@ def stage_connected_ingestion(
             extraction_schema=schema("extraction-result.schema.json"),
             interpreter=callbacks.interpret, auditor=callbacks.audit,
             supported_attachment_mime_types=(
-                "text/plain", "application/pdf", "image/png", "image/jpeg",
+                "text/plain", "application/pdf", "image/png", "image/jpeg", "image/gif",
             ),
             attachment_extractors={
                 "application/pdf": lambda item: source_bytes.extract_pdf(
@@ -270,8 +273,29 @@ def stage_connected_ingestion(
                     source_id=item.identity, data=item.data or b"",
                     mime_type=item.mime_type,
                 ),
+                "image/gif": lambda item: source_bytes.extract_image(
+                    source_id=item.identity, data=item.data or b"",
+                    mime_type=item.mime_type,
+                ),
             },
             resource_fetcher=fetch_resource,
+            resource_extractors={
+                "application/pdf": lambda item: source_bytes.extract_pdf(
+                    source_id=resource_identity(item), data=item.data,
+                ),
+                "image/png": lambda item: source_bytes.extract_image(
+                    source_id=resource_identity(item), data=item.data,
+                    mime_type=item.mime_type,
+                ),
+                "image/jpeg": lambda item: source_bytes.extract_image(
+                    source_id=resource_identity(item), data=item.data,
+                    mime_type=item.mime_type,
+                ),
+                "image/gif": lambda item: source_bytes.extract_image(
+                    source_id=resource_identity(item), data=item.data,
+                    mime_type=item.mime_type,
+                ),
+            },
             max_attachment_bytes=resolved.policies["execution"]["max_bytes_per_unit"],
             max_resource_bytes=resolved.policies["execution"]["max_bytes_per_unit"],
         )
