@@ -187,6 +187,38 @@ class ImportRunnerTests(unittest.TestCase):
         self.assertEqual(__import__("hashlib").sha256(encoded_html).hexdigest(), encoded_resources[0].html_part_sha256)
         self.assertEqual(__import__("hashlib").sha256(html).hexdigest(), encoded_resources[0].html_decoded_sha256)
 
+        css_html = (
+            b'<style>.plain { color: black } .font { src: url("https://assets.example/font.woff2") } '
+            b'.hero { background-image: url("https://assets.example/hero.png") }</style>'
+            b'<div style="background: url(\'https://assets.example/second.png\')">x</div>'
+        )
+        css_part = {
+            **html_part,
+            "data": css_html,
+            "raw_part_sha256": __import__("hashlib").sha256(css_html).hexdigest(),
+            "raw_part_byte_length": len(css_html),
+            "raw_part_locator": {"kind": "raw_part_bytes", "byte_start": 0, "byte_end": len(css_html)},
+            "provider_unicode": css_html.decode("utf-8"),
+        }
+        css_resources = discover_direct_html_resources("message-001", css_part)
+        self.assertEqual(["style", "style"], [item.attribute for item in css_resources])
+        self.assertEqual(2, len(css_resources))
+        for invalid_css in (
+            b'<style>@import "https://assets.example/theme.css";</style>',
+            b'<div style="background: url(http://assets.example/hero.png)">x</div>',
+            b'<div style="background: url(\'https://assets.example/hero.png\")">x</div>',
+        ):
+            invalid_part = {
+                **html_part,
+                "data": invalid_css,
+                "raw_part_sha256": __import__("hashlib").sha256(invalid_css).hexdigest(),
+                "raw_part_byte_length": len(invalid_css),
+                "raw_part_locator": {"kind": "raw_part_bytes", "byte_start": 0, "byte_end": len(invalid_css)},
+                "provider_unicode": invalid_css.decode("utf-8"),
+            }
+            with self.assertRaisesRegex(ImportError, "unrecognized resource-bearing"):
+                discover_direct_html_resources("message-001", invalid_part)
+
         payloads = {
             "https://assets.example/notice.png": DirectResourceRead(
                 "https://assets.example/notice.png", ("https://assets.example/notice.png",),

@@ -6,6 +6,7 @@ import base64
 import binascii
 import codecs
 import quopri
+import re
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from html.parser import HTMLParser
@@ -135,19 +136,48 @@ class DirectResourceOutcome:
 class _DirectResourceParser(HTMLParser):
     """Extract only direct image/PDF URL attributes; never render HTML text."""
 
+    _CSS_URL = re.compile(r"url\s*\(\s*(.*?)\s*\)", re.IGNORECASE | re.DOTALL)
+    _FONT_SUFFIXES = (".woff", ".woff2", ".ttf", ".otf")
+
     def __init__(self) -> None:
         super().__init__(convert_charrefs=False)
         self.references: list[tuple[str, str, str]] = []
         self.unrecognized_resource_bearers: list[str] = []
+        self._style_depth = 0
+
+    def _consume_css(self, css: str, attribute: str) -> None:
+        lowered = css.lower()
+        if "@import" in lowered:
+            self.unrecognized_resource_bearers.append("css-import")
+        matches = list(self._CSS_URL.finditer(css))
+        if "url(" in lowered and not matches:
+            self.unrecognized_resource_bearers.append("css-url")
+        for match in matches:
+            value = match.group(1).strip()
+            if len(value) >= 2 and value[0] in {"'", '"'} and value[-1] == value[0]:
+                value = value[1:-1].strip()
+            elif "'" in value or '"' in value:
+                self.unrecognized_resource_bearers.append("css-url")
+                continue
+            parsed = urlparse(value)
+            if not _direct_https_url(value):
+                self.unrecognized_resource_bearers.append("css-url")
+                continue
+            if parsed.path.lower().endswith(self._FONT_SUFFIXES):
+                continue
+            self.references.append(("html_embedded", attribute, value))
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         values = {key.lower(): value for key, value in attrs}
         lowered = tag.lower()
-        if "srcset" in values or (
-            isinstance(values.get("style"), str) and "url(" in values["style"].lower()
-        ):
+        if "srcset" in values:
             self.unrecognized_resource_bearers.append(lowered)
-        if lowered in {"picture", "source", "svg", "style", "link"}:
+        inline_style = values.get("style")
+        if isinstance(inline_style, str):
+            self._consume_css(inline_style, "style")
+        if lowered == "style":
+            self._style_depth += 1
+        if lowered in {"picture", "source", "svg", "link"}:
             self.unrecognized_resource_bearers.append(lowered)
         if lowered == "img" and isinstance(values.get("src"), str):
             self.references.append(("html_embedded", "src", values["src"]))
@@ -161,6 +191,14 @@ class _DirectResourceParser(HTMLParser):
             return
         if lowered in {"object", "embed", "iframe"} and isinstance(candidate, str):
             self.unrecognized_resource_bearers.append(lowered)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag.lower() == "style" and self._style_depth:
+            self._style_depth -= 1
+
+    def handle_data(self, data: str) -> None:
+        if self._style_depth:
+            self._consume_css(data, "style")
 
 
 @dataclass(frozen=True)

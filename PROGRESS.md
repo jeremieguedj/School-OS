@@ -3121,3 +3121,30 @@ requirements, then read this log from top to bottom.
   scheduler effect was created. Next: publish this fix, rebuild the exact
   package, use a new empty root and isolated Sheet, then repeat install,
   bind, cold recovery, and the live bounded ingestion through validation.
+
+## 2026-09-10 — recovery MVP bounded CSS resource inventory
+
+- Published and remotely verified the canonical Gmail base64url-padding fix at
+  exact commit `7a145f3e9a26c3f2725076cc9ae83c9d5b62a4f8`. A new isolated five-object
+  installation and post-install Sheet binding reached generation 2, and a cold
+  recovery again proved the package, settings, current pointer, and state from
+  Drive before execution.
+- The live ingestion then read the complete bounded Gmail selection and stopped
+  before any source-bundle or state mutation because one HTML alternative used
+  CSS resource references. Private inspection isolated seven direct HTTPS CSS
+  URLs: four presentation-only web fonts and three image assets. It found no
+  CSS imports, non-HTTPS or relative URLs, data or CID URLs, `srcset`, picture,
+  source, SVG, linked stylesheets, objects, embeds, or iframes.
+- Extended the existing direct image/PDF inventory parser at its current seam:
+  direct HTTPS CSS image references now enter the same bounded resource-fetch
+  path, recognized web-font suffixes remain presentation-only, and imports,
+  non-HTTPS URLs, and malformed quoted URLs continue to fail closed. This does
+  not add CSS execution, rendering, crawling, base-URL resolution, or a new
+  custody/reference model.
+- The complete frozen Python 3.12.14 interpreter gate passes 361 tests plus schema
+  and template validation, including the tracked-file privacy scan. The stopped
+  instance is retained only as private evidence and has no canonical ingestion
+  result or downstream task, delivery, audio, Todoist, or scheduler effect.
+- Next: publish this fix, build and verify its exact immutable package, use a new
+  empty authorized root and isolated Sheet, then repeat installation, binding,
+  cold recovery, and execute the live ingestion through canonical validation.
