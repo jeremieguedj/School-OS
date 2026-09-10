@@ -268,6 +268,18 @@ all image MIME attachments and HTML-embedded image resources are inventoried as
 implementation is preserved for a later selective source policy. This frozen
 policy change requires another exact package and a new empty root; it does not
 change storage, canonical references, task semantics, or provider architecture.
+Live qualification of that package proved the image policy before encountering
+a separate direct PDF. Exact-byte private diagnosis established that the PDF
+was complete, valid, unencrypted, one page, within every byte/page/geometry/
+pixel bound, and free of unsupported embedded-file features. The only failing
+property was the local page renderer exceeding the shared 10-second timeout;
+the same page rendered and reached the extraction callback in about nine
+seconds when given a wider bound. The compatible repair keeps the 10-second
+HTTPS deadline and adds a distinct bounded 30-second per-page PDF-render
+deadline. This is an implementation defect correction within the existing PDF
+custody path, not a storage, source-policy, provider, or architecture change.
+A rebuilt exact package and another new empty root are required before Phase 1
+live evidence can be accepted.
 Use the Phase 0 `window_start_ms` and
 `window_end_ms` 14-day `[start,end)` bounds, recorded only in private evidence.
 Use a new

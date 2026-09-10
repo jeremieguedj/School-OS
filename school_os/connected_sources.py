@@ -425,6 +425,7 @@ class SourceBounds:
     max_bytes: int = 1_048_576
     max_redirects: int = 3
     timeout_ms: int = 10_000
+    pdf_render_timeout_ms: int = 30_000
     max_image_pixels: int = 16_000_000
     max_image_dimension: int = 8_000
     max_image_text_bytes: int = 256_000
@@ -441,7 +442,8 @@ class ConnectedSourceAdapters:
 
     def __init__(self, *, peer: JsonlPeer, run_directory: Path, bounds: SourceBounds = SourceBounds()) -> None:
         positive_bounds = (
-            bounds.max_bytes, bounds.timeout_ms, bounds.max_image_pixels,
+            bounds.max_bytes, bounds.timeout_ms, bounds.pdf_render_timeout_ms,
+            bounds.max_image_pixels,
             bounds.max_image_dimension, bounds.max_image_text_bytes, bounds.max_pdf_pages,
             bounds.max_pdf_page_points, bounds.max_pdf_rendered_bytes,
             bounds.max_pdf_rendered_pixels, bounds.max_pdf_text_bytes, bounds.pdf_render_dpi,
@@ -452,6 +454,7 @@ class ConnectedSourceAdapters:
             or bounds.max_bytes > _HOST_MAX_BYTES
             or not 0 <= bounds.max_redirects <= _HOST_MAX_REDIRECTS
             or bounds.timeout_ms > _HOST_MAX_TIMEOUT_MS
+            or bounds.pdf_render_timeout_ms > _HOST_MAX_TIMEOUT_MS
         ):
             raise ConnectedSourcesError("source bounds are invalid")
         self.gmail = CodexGmailPort(peer)
@@ -668,7 +671,7 @@ class ConnectedSourceAdapters:
                             "-r", str(self.bounds.pdf_render_dpi), "-scale-to", str(scale),
                             "-cropbox", "-png", "-singlefile", str(pdf_path), str(prefix),
                         ],
-                        check=True, timeout=max(1, self.bounds.timeout_ms / 1000),
+                        check=True, timeout=max(1, self.bounds.pdf_render_timeout_ms / 1000),
                         capture_output=True,
                         preexec_fn=lambda: _limit_render_file(min(
                             self.bounds.max_bytes,

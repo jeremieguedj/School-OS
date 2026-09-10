@@ -381,6 +381,28 @@ class ConnectedSourcesTests(unittest.TestCase):
         self.assertLessEqual(scale, 100)
         self.assertLessEqual(scale * (scale // 2), 5_000)
 
+    def test_pdf_render_has_a_separate_bounded_timeout_from_https_fetch(self) -> None:
+        bounds = SourceBounds(timeout_ms=1_000, pdf_render_timeout_ms=30_000)
+        adapter = ConnectedSourceAdapters(peer=self.peer, run_directory=self.run, bounds=bounds)
+        observed_timeouts: list[float] = []
+
+        def fake_run(command: list[str], **kwargs: object) -> None:
+            observed_timeouts.append(float(kwargs["timeout"]))
+            Path(command[-1] + ".png").write_bytes(PNG)
+
+        with patch("school_os.connected_sources._pdf_reader", return_value=FakeReader([FakePage()])), patch(
+            "school_os.connected_sources.subprocess.run", side_effect=fake_run,
+        ):
+            adapter.extract_pdf(source_id="pdf", data=PDF)
+        self.assertEqual([30.0], observed_timeouts)
+
+        with self.assertRaisesRegex(ConnectedSourcesError, "bounds are invalid"):
+            ConnectedSourceAdapters(
+                peer=self.peer,
+                run_directory=self.run,
+                bounds=SourceBounds(pdf_render_timeout_ms=60_001),
+            )
+
     def test_pdf_rejects_oversized_page_box_before_renderer(self) -> None:
         with patch("school_os.connected_sources._pdf_reader", return_value=FakeReader([FakePage(20_000, 72)])), patch(
             "school_os.connected_sources.subprocess.run",

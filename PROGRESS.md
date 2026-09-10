@@ -3363,3 +3363,31 @@ requirements, then read this log from top to bottom.
 - Next: publish the exact runtime, rebuild its package, create a new empty root
   and Sheet, then repeat install, binding, cold recovery, live ingestion, and
   canonical validation.
+
+## 2026-09-10 — recovery MVP PDF render timeout isolated
+
+- Published the all-image-exclusion runtime at exact commit
+  `bbfebcd5c2dc3a26dcef49e27a969aa766bb0c3c`. Its immutable package passed
+  five-file installation, post-install Sheet binding, cold Drive recovery, and
+  installed-package validation in a new isolated instance.
+- Live ingestion independently interpreted and audited five conversations. The
+  active image policy was observed end to end: discovered image attachments and
+  HTML-embedded images received visible `excluded_by_policy` outcomes before
+  fetch or extraction. No source bundle or successor state was published.
+- A later direct PDF fetched with exact complete-byte evidence but failed before
+  the image-extraction callback. Private structural diagnosis isolated the one
+  failing property: the local `pdftoppm` subprocess exceeded the existing
+  10-second timeout. The document passed MIME/signature, completeness, byte,
+  encryption, page-count, feature-inventory, page-box, and aggregate-pixel
+  checks. With a wider diagnostic bound, the same page rendered and reached the
+  callback in about nine seconds.
+- Implemented a compatible bounded correction: HTTPS fetch retains its
+  10-second deadline while PDF rendering receives a separate 30-second
+  per-page deadline, capped at 60 seconds by adapter validation. Focused source,
+  import, and hybrid-ingestion validation passes 28 tests. No Drive state,
+  task, delivery, audio, Todoist, or scheduler effect occurred; the superseded
+  worker was stopped while waiting for the already-fetched response.
+- Next: run the complete validation gate, commit and publish the repair, rebuild
+  the exact immutable package, create a new empty root and Sheet, repeat install,
+  binding, cold recovery, and complete live ingestion through canonical Drive
+  publication and independent validation.

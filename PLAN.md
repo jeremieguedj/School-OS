@@ -56,6 +56,12 @@ explicit user-authorized temporary policy marks all image MIME attachments and
 HTML-embedded image resources `excluded_by_policy` before fetch or extraction;
 text and PDFs remain active. The image pipeline is preserved for a later policy
 that can distinguish meaningful images from decorative headers and footers.
+Live qualification isolated an independent bounded-PDF defect: a valid one-page
+document passed every existing admission bound but its local renderer exceeded
+the shared 10-second timeout. The active compatible repair retains the network
+deadline and gives local PDF page rendering its own 30-second bound; it requires
+a rebuilt package and new empty test root, without changing architecture or
+the temporary image policy.
 Every discovered direct resource must still be audited, excluded with evidence,
 or block the affected import; no arbitrary link following, crawler,
 HTML-to-text conversion, or raw-MIME canonical store is authorized.
