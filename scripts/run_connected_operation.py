@@ -13,7 +13,23 @@ sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from school_os.bundles import BundleError, read_bundle
+from school_os.contracts import sha256_bytes
 from school_os.package import PackageError, verify_extracted_tree
+
+
+def _private_runtime_bytes(path_value: object, *, document_path: Path, label: str) -> bytes:
+    if not isinstance(path_value, str):
+        raise ValueError(f"installed {label} path is invalid")
+    path = Path(path_value)
+    try:
+        if path.parent.resolve(strict=True) != document_path.parent.resolve(strict=True):
+            raise ValueError(f"installed {label} path escapes its private run directory")
+        if path.is_symlink() or not path.is_file():
+            raise ValueError(f"installed {label} file is unavailable")
+        return path.read_bytes()
+    except OSError as exc:
+        raise ValueError(f"cannot read installed {label}: {exc}") from exc
 
 
 def _runtime_document(path: Path) -> dict:
@@ -21,9 +37,45 @@ def _runtime_document(path: Path) -> dict:
         value = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise ValueError(f"cannot read installed instance document: {exc}") from exc
-    if not isinstance(value, dict) or set(value) != {"schema_version", "root_reference", "manifest", "manifest_reference", "admission_reference"} or value.get("schema_version") != 1:
+    if not isinstance(value, dict):
         raise ValueError("installed instance document has an unsupported shape")
-    return value
+    if value.get("schema_version") == 1:
+        if set(value) != {"schema_version", "root_reference", "manifest", "manifest_reference", "admission_reference"}:
+            raise ValueError("installed instance document has an unsupported shape")
+        return value
+    required = {
+        "bootstrap", "bootstrap_reference", "current", "current_reference", "layout",
+        "root_reference", "schema_version", "settings_path", "settings_sha256",
+        "state_path", "state_sha256",
+    }
+    if value.get("schema_version") != 2 or value.get("layout") != "hybrid-bundle-v1" or set(value) != required:
+        raise ValueError("installed instance document has an unsupported shape")
+    settings = _private_runtime_bytes(value["settings_path"], document_path=path, label="settings")
+    state_bytes = _private_runtime_bytes(value["state_path"], document_path=path, label="state bundle")
+    if sha256_bytes(settings) != value.get("settings_sha256") or sha256_bytes(state_bytes) != value.get("state_sha256"):
+        raise ValueError("installed hybrid runtime bytes disagree with their hashes")
+    try:
+        state = read_bundle(state_bytes, expected_kind="state")
+    except BundleError as exc:
+        raise ValueError(f"installed hybrid state bundle is invalid: {exc}") from exc
+    current = value["current"]
+    bootstrap = value["bootstrap"]
+    if (
+        not isinstance(current, dict) or not isinstance(bootstrap, dict)
+        or bootstrap.get("root_reference") != value["root_reference"]
+        or bootstrap.get("settings_sha256") != value["settings_sha256"]
+        or current.get("state", {}).get("bundle_sha256") != value["state_sha256"]
+    ):
+        raise ValueError("installed hybrid runtime bindings disagree")
+    return {
+        "bootstrap": bootstrap,
+        "bootstrap_reference": value["bootstrap_reference"],
+        "current": current,
+        "current_reference": value["current_reference"],
+        "settings": settings,
+        "state_bundle": state_bytes,
+        "state": state,
+    }
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -65,7 +117,7 @@ def main(argv: list[str] | None = None) -> int:
         from school_os.codex_bridge import CodexDrivePort, CodexGmailPort, CodexSemanticPort, CodexSheetsPort, JsonlPeer
         from school_os.connected_daily import ConnectedDailyRuntime
         document = _runtime_document(args.instance_document)
-        if document["root_reference"] != document["manifest"].get("instance_root_reference"):
+        if "manifest" in document and document["root_reference"] != document["manifest"].get("instance_root_reference"):
             raise ValueError("installed instance document root disagrees with its manifest")
         peer = JsonlPeer(args.run_directory)
         result = ConnectedDailyRuntime(

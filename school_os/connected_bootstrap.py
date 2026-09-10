@@ -17,8 +17,11 @@ from pathlib import Path
 from typing import Any, Callable
 from urllib.parse import urlsplit
 
-from .contracts import canonical_json_bytes
-from .install import InstallationError, extract_recovered_package, recover_create_only_generation
+from .contracts import canonical_json_bytes, sha256_bytes
+from .install import (
+    InstallationError, extract_hybrid_package, extract_recovered_package,
+    recover_create_only_generation, recover_hybrid_generation,
+)
 from .references import ObjectReference, ReferenceError, ReferenceStorage, resolve_reference
 from .connected_storage import ConnectedStorageError
 
@@ -65,9 +68,9 @@ class BootstrapDocument:
         if (
             bootstrap.kind != "file"
             or bootstrap.permitted_ancestor_id != root.object_id
-            or bootstrap.mime_type != "text/markdown"
+            or bootstrap.mime_type not in {"text/markdown", "application/json"}
         ):
-            raise BootstrapError("bootstrap_reference must be the exact Markdown file directly under root_reference")
+            raise BootstrapError("bootstrap_reference must be an admitted bootstrap file directly under root_reference")
         return cls(dict(value["root_reference"]), dict(value["bootstrap_reference"]), url)
 
 
@@ -99,9 +102,9 @@ def recover_installed_entrypoint(
 ) -> RecoveredEntrypoint:
     """Read the bootstrap by exact ID, recover it, and extract one new package.
 
-    ``recover_create_only_generation`` repeats the exact reference/hash checks
-    for the complete immutable generation.  The preliminary read makes a
-    malformed root/bootstrap relationship fail before archive extraction.
+    The layout-specific recovery repeats exact reference/hash checks for the
+    complete admitted generation.  The preliminary read makes a malformed
+    root/bootstrap relationship fail before archive extraction.
     """
     if _IDENTIFIER.fullmatch(operation_id) is None:
         raise BootstrapError("operation_id is not a safe stable identifier")
@@ -116,16 +119,27 @@ def recover_installed_entrypoint(
             raise BootstrapError("root Drive metadata does not match the admitted versioned folder")
         bootstrap = ObjectReference.from_mapping(document.bootstrap_reference)
         resolved = resolve_reference(
-            storage, bootstrap, expected_kind="file", required_mime_type="text/markdown",
+            storage, bootstrap, expected_kind="file", required_mime_type=bootstrap.mime_type,
             instance_root_id=document.root_reference["object_id"],
         )
         if resolved.parent_id != document.root_reference["object_id"] or resolved.data is None:
             raise BootstrapError("bootstrap readback is not directly contained or lacks exact bytes")
-        recovery = recover_create_only_generation(
-            storage, root_reference=document.root_reference, bootstrap_reference=document.bootstrap_reference,
-        )
+        if bootstrap.mime_type == "application/json":
+            recovery = recover_hybrid_generation(
+                storage, root_reference=document.root_reference,
+                bootstrap_reference=document.bootstrap_reference,
+            )
+        else:
+            recovery = recover_create_only_generation(
+                storage, root_reference=document.root_reference,
+                bootstrap_reference=document.bootstrap_reference,
+            )
         destination = run_directory / f"installed-{operation_id}"
-        root = extract_recovered_package(recovery, destination)
+        root = (
+            extract_hybrid_package(recovery, destination)
+            if bootstrap.mime_type == "application/json"
+            else extract_recovered_package(recovery, destination)
+        )
     except (InstallationError, ReferenceError, ConnectedStorageError, OSError) as exc:
         raise BootstrapError(f"admitted package recovery failed: {exc}") from exc
     entrypoint = root / "scripts" / "run_connected_operation.py"
@@ -177,6 +191,48 @@ def installed_command(
             "admission_reference": dict(recovery["admission_reference"]),
         }
         runtime_path = resolved_run / f"instance-runtime-{operation_id}-{attempt_id}.json"
+        descriptor = os.open(runtime_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        try:
+            with os.fdopen(descriptor, "wb", closefd=False) as handle:
+                handle.write(canonical_json_bytes(document)); handle.flush(); os.fsync(handle.fileno())
+        finally:
+            os.close(descriptor)
+        arguments.extend(["--instance-document", str(runtime_path)])
+    elif (
+        isinstance(recovery, Mapping)
+        and isinstance(recovery.get("bootstrap"), Mapping)
+        and isinstance(recovery.get("current"), Mapping)
+    ):
+        settings = recovery.get("settings")
+        state_bundle = recovery.get("state_bundle")
+        if not isinstance(settings, bytes) or not isinstance(state_bundle, bytes):
+            raise BootstrapError("hybrid recovery lacks exact runtime state/settings bytes")
+        prefix = f"instance-runtime-{operation_id}-{attempt_id}"
+        settings_path = resolved_run / f"{prefix}.settings.yaml"
+        state_path = resolved_run / f"{prefix}.state.bundle"
+        for path, data in ((settings_path, settings), (state_path, state_bundle)):
+            descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            try:
+                with os.fdopen(descriptor, "wb", closefd=False) as handle:
+                    handle.write(data); handle.flush(); os.fsync(handle.fileno())
+            finally:
+                os.close(descriptor)
+        bootstrap = recovery["bootstrap"]
+        current = recovery["current"]
+        document = {
+            "bootstrap": dict(bootstrap),
+            "bootstrap_reference": dict(recovery["bootstrap_reference"]),
+            "current": dict(current),
+            "current_reference": dict(recovery["current_reference"]),
+            "layout": "hybrid-bundle-v1",
+            "root_reference": dict(bootstrap["root_reference"]),
+            "schema_version": 2,
+            "settings_path": str(settings_path),
+            "settings_sha256": sha256_bytes(settings),
+            "state_path": str(state_path),
+            "state_sha256": sha256_bytes(state_bundle),
+        }
+        runtime_path = resolved_run / f"{prefix}.json"
         descriptor = os.open(runtime_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
         try:
             with os.fdopen(descriptor, "wb", closefd=False) as handle:

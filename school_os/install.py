@@ -401,6 +401,7 @@ def recover_hybrid_generation(
         "current_reference": _hybrid_reference(current_object, root.object_id),
         "package_archive": package_bytes,
         "settings": settings_bytes,
+        "state_bundle": state_bytes,
         "state": verified_state,
     }
 

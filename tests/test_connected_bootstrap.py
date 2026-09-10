@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import importlib.util
 import shutil
 import subprocess
 import sys
@@ -17,7 +18,10 @@ sys.path.insert(0, str(ROOT))
 from school_os.codex_bridge import CAPTURED_HOST_CAPABILITIES, HOST_BINDINGS, BridgeError, HostBindingDispatcher, JsonlPeer, create_run_directory
 from school_os.connected_bootstrap import BootstrapDocument, BootstrapError, RecoveredEntrypoint, installed_command, recover_installed_entrypoint
 from school_os.connected_storage import CodexDriveReferenceStorage, ConnectedStorageError
+from school_os.bundles import BundleEntry, build_bundle
+from school_os.contracts import canonical_json_bytes, sha256_bytes
 from school_os.package import INVENTORY_NAME, inventory_bytes, verify_extracted_tree
+from school_os.references import StoredObject
 
 
 class FakeDrive:
@@ -124,13 +128,20 @@ class ConnectedBootstrapTests(unittest.TestCase):
         with self.assertRaisesRegex(ConnectedStorageError, "continuation"):
             CodexDriveReferenceStorage(drive).list_scoped("root")
 
-    def test_bootstrap_document_is_exact_root_and_markdown_admission(self) -> None:
+    def test_bootstrap_document_is_exact_root_and_admitted_bootstrap_mime(self) -> None:
         valid = {
             "root_reference": {"object_id": "root", "kind": "folder", "permitted_ancestor_id": "root", "mime_type": "application/vnd.google-apps.folder", "version": "root-v1"},
             "bootstrap_reference": {"object_id": "bootstrap", "kind": "file", "permitted_ancestor_id": "root", "mime_type": "text/markdown", "version": "v1"},
             "bootstrap_url": "https://example.invalid/bootstrap",
         }
         self.assertEqual("bootstrap", BootstrapDocument.from_mapping(valid).bootstrap_reference["object_id"])
+        hybrid = {
+            **valid,
+            "bootstrap_reference": {
+                **valid["bootstrap_reference"], "mime_type": "application/json",
+            },
+        }
+        self.assertEqual("application/json", BootstrapDocument.from_mapping(hybrid).bootstrap_reference["mime_type"])
         invalid = {**valid, "extra": True}
         with self.assertRaisesRegex(BootstrapError, "exactly"):
             BootstrapDocument.from_mapping(invalid)
@@ -143,6 +154,51 @@ class ConnectedBootstrapTests(unittest.TestCase):
         invalid = {**valid, "root_reference": {**valid["root_reference"], "mime_type": "text/plain"}}
         with self.assertRaisesRegex(BootstrapError, "Drive folder"):
             BootstrapDocument.from_mapping(invalid)
+
+    def test_hybrid_bootstrap_dispatches_to_five_object_recovery_and_extraction(self) -> None:
+        root_reference = {
+            "object_id": "root", "kind": "folder", "permitted_ancestor_id": "root",
+            "mime_type": "application/vnd.google-apps.folder", "version": "root-v1",
+        }
+        bootstrap_reference = {
+            "object_id": "bootstrap", "kind": "file", "permitted_ancestor_id": "root",
+            "mime_type": "application/json", "version": "bootstrap-v1",
+        }
+        document = BootstrapDocument.from_mapping({
+            "root_reference": root_reference,
+            "bootstrap_reference": bootstrap_reference,
+            "bootstrap_url": "https://example.invalid/bootstrap",
+        })
+
+        class Storage:
+            def read(self, object_id):
+                if object_id == "root":
+                    return StoredObject("root", "folder", None, (), "application/vnd.google-apps.folder", "root-v1", "root")
+                return StoredObject("bootstrap", "file", "root", ("root",), "application/json", "bootstrap-v1", "BOOTSTRAP.json", b"{}")
+
+        recovery = {"bootstrap": {"system_version": "test"}}
+        with tempfile.TemporaryDirectory() as temporary:
+            run = Path(temporary)
+
+            def extract(observed, destination):
+                self.assertIs(observed, recovery)
+                (destination / "scripts").mkdir(parents=True)
+                (destination / "scripts" / "run_connected_operation.py").write_text("", encoding="utf-8")
+                return destination
+
+            with (
+                mock.patch("school_os.connected_bootstrap.recover_hybrid_generation", return_value=recovery) as recover,
+                mock.patch("school_os.connected_bootstrap.extract_hybrid_package", side_effect=extract) as extract_mock,
+                mock.patch("school_os.connected_bootstrap.recover_create_only_generation") as old_recover,
+            ):
+                result = recover_installed_entrypoint(Storage(), document, run_directory=run, operation_id="op-1")
+            recover.assert_called_once_with(
+                mock.ANY, root_reference=root_reference,
+                bootstrap_reference=bootstrap_reference,
+            )
+            self.assertEqual(1, extract_mock.call_count)
+            old_recover.assert_not_called()
+            self.assertEqual(run / "installed-op-1", result.root)
 
     def test_dispatcher_has_exact_contracts_and_no_arbitrary_tool(self) -> None:
         dispatcher = HostBindingDispatcher()
@@ -410,6 +466,68 @@ class ConnectedBootstrapTests(unittest.TestCase):
                     run_directory=run, instance_reference="instance-1",
                     preview_only=True,
                 )
+
+    def test_hybrid_handoff_reuses_verified_bytes_in_private_hash_bound_capsule(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            run = Path(temporary)
+            entrypoint = run / "run_connected_operation.py"
+            entrypoint.write_text("", encoding="utf-8")
+            settings = b"schema_version: 1\n"
+            state_bundle = build_bundle(
+                bundle_kind="state", identity="state-000001", instance_id="instance-1",
+                package_sha256="a" * 64, settings_sha256=sha256_bytes(settings),
+                configuration_fingerprint="c" * 64,
+                entries={
+                    "state/operation-state.json": BundleEntry(
+                        canonical_json_bytes({"schema_version": 1, "status": "idle"}),
+                        "operation_state", "application/json",
+                    ),
+                },
+            )
+            state_reference = {
+                "bundle_reference": {
+                    "object_id": "state", "kind": "file", "permitted_ancestor_id": "root",
+                    "mime_type": "application/vnd.school-os.bundle", "version": "state-v1",
+                },
+                "bundle_sha256": sha256_bytes(state_bundle), "identity": "state-000001",
+            }
+            recovery = {
+                "bootstrap": {
+                    "root_reference": {
+                        "object_id": "root", "kind": "folder", "permitted_ancestor_id": "root",
+                        "mime_type": "application/vnd.google-apps.folder", "version": "root-v1",
+                    },
+                    "settings_sha256": sha256_bytes(settings),
+                },
+                "bootstrap_reference": {"object_id": "bootstrap"},
+                "current": {"state": state_reference},
+                "current_reference": {"object_id": "current", "version": "current-v1"},
+                "settings": settings,
+                "state_bundle": state_bundle,
+            }
+            recovered = RecoveredEntrypoint(run, entrypoint, recovery)
+            _, command, _ = installed_command(
+                recovered, operation="daily-run", entrypoint="manual",
+                operation_id="op-1", attempt_id="attempt-1",
+                run_directory=run, instance_reference="instance-1",
+            )
+            document_path = Path(command[command.index("--instance-document") + 1])
+            document = json.loads(document_path.read_text(encoding="utf-8"))
+            self.assertEqual("hybrid-bundle-v1", document["layout"])
+            self.assertEqual(settings, Path(document["settings_path"]).read_bytes())
+            self.assertEqual(state_bundle, Path(document["state_path"]).read_bytes())
+            self.assertEqual(0o600, document_path.stat().st_mode & 0o777)
+            self.assertEqual(0o600, Path(document["state_path"]).stat().st_mode & 0o777)
+            spec = importlib.util.spec_from_file_location(
+                "installed_runtime_test", ROOT / "scripts" / "run_connected_operation.py",
+            )
+            self.assertIsNotNone(spec)
+            self.assertIsNotNone(spec.loader)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            hydrated = module._runtime_document(document_path)
+            self.assertEqual(state_bundle, hydrated["state_bundle"])
+            self.assertIn("state/operation-state.json", hydrated["state"].entries)
 
 
 if __name__ == "__main__":

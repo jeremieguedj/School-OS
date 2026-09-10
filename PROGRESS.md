@@ -2904,3 +2904,24 @@ requirements, then read this log from top to bottom.
   checkpoint, implement the hybrid bootstrap/runtime document and bundle-backed
   connected resolver, then atomically select the new setup/bootstrap route and
   add post-admission Sheet binding.
+
+## 2026-09-09 — recovery MVP hybrid bootstrap handoff
+
+- Published and remotely verified the staged-versus-durable working-state
+  checkpoint at exact commit `5ac833529605ecaa7e036c585ddec165c5984cf4`.
+- The installed-package bootstrap now dispatches by the admitted bootstrap MIME:
+  the archived Markdown layout retains its old verifier, while the JSON layout
+  runs the five-object hybrid recovery and package extraction path.
+- The hybrid handoff reuses the already-verified settings and state-bundle bytes
+  through mode-0600 private files bound by SHA-256 in the child runtime
+  document. The installed child re-verifies those hashes and the full bundle
+  before composition, avoiding another provider download without treating the
+  private handoff files as durable state.
+- Focused bootstrap/bundle coverage passes 37 tests, including layout dispatch,
+  exact private-file permissions, hash binding, and state rehydration. The setup
+  CLI and connected daily resolver are still deliberately on the archived
+  layout, so no live package is admitted yet. No provider call or external
+  effect occurred.
+- Next: publish this bootstrap checkpoint, implement the bundle-backed connected
+  resolver and post-admission Sheet binding, then switch the setup/bootstrap
+  route atomically and run the complete frozen-interpreter gate.
