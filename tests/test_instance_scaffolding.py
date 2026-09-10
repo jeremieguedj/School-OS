@@ -42,6 +42,7 @@ from school_os.references import StoredObject  # noqa: E402
 from school_os.connected_setup import (  # noqa: E402
     CodexDriveCreateOnlyStorage,
     SETUP_FILE_ROLES,
+    compose_hybrid_connected_inputs,
     install_connected_instance,
 )
 from school_os.connected_sheets import GoogleSheetsScope  # noqa: E402
@@ -519,6 +520,20 @@ class InstanceScaffoldingTests(unittest.TestCase):
         self.assertTrue(set(MANAGED_PATHS) <= created_names)
         self.assertIn("source-catalog", created_names)
         self.assertIn("operation-checkpoints", created_names)
+
+    def test_hybrid_setup_collapses_seed_objects_into_settings_and_state(self) -> None:
+        package, archive, settings, entries, fingerprint = compose_hybrid_connected_inputs(
+            self.answers, self.make_connected_observed(),
+        )
+        self.assertEqual(self.archive.read_bytes(), archive)
+        self.assertEqual(sha256_bytes(archive), package["archive_sha256"])
+        self.assertIn(b'instance_id: "synthetic-alpha13"', settings)
+        self.assertIn("state/operation-state.json", entries)
+        self.assertIn("state/task-provider-selector.json", entries)
+        self.assertNotIn("source_scope", entries)
+        selector = json.loads(entries["state/task-provider-selector.json"].data)
+        self.assertEqual("unbound", selector["status"])
+        self.assertEqual(64, len(fingerprint))
 
     def test_connected_create_adopts_exact_id_when_receipt_omits_url(self) -> None:
         drive = ConnectedSetupDrive()

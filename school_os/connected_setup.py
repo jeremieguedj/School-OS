@@ -11,6 +11,7 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
+from .bundles import BundleEntry
 from .connected_sheets import CodexSheetsTaskPort, GoogleSheetsScope
 from .connected_storage import (
     CodexDriveReferenceStorage, ConnectedStorageError, DriveReference, StoredArtifact,
@@ -21,6 +22,7 @@ from .install import (
     DAILY_REFERENCE_KINDS, FILE_MAP_PATH, INTEGRATION_REFERENCE_KINDS,
     HYBRID_PACKAGE_PATH, OPERATION_STATE_PATH, PACKAGE_ARCHIVE_PATH, InstallationError,
     compose_create_only_candidate_payloads,
+    hybrid_package_evidence,
     managed_mime_type,
     initial_operation_state_bytes, install_create_only_generation,
 )
@@ -37,6 +39,19 @@ DRIVE_GZIP_MIME_TYPES = frozenset({
     "application/gzip", "application/x-gzip", "application/octet-stream",
 })
 GZIP_SIGNATURE = b"\x1f\x8b\x08"
+
+_HYBRID_STATE_PATHS = {
+    "source_checkpoint": "state/source-checkpoint.json",
+    "source_catalog_index": "data/source-catalog-index.json",
+    "canonical_action_register": "data/canonical-tasks.json",
+    "guidelines": "data/guidelines.json",
+    "rolling_updates": "data/rolling-updates.json",
+    "brief_template": "state/brief-template.json",
+    "delivery_state": "state/delivery-state.json",
+    "final_run_checkpoint": "state/final-run-checkpoint.json",
+    "runtime_profile": "state/capability-profiles/initial.json",
+    "task_sync_state": "state/task-providers/google-sheets.json",
+}
 
 
 def _admitted_drive_mime_types(name: str, data: bytes, requested: str) -> frozenset[str]:
@@ -318,6 +333,123 @@ def initialize_selected_sheet(sheets: Any, scope: GoogleSheetsScope) -> None:
     snapshot = CodexSheetsTaskPort(sheets, scope).read_complete(scope.adapter_scope)
     if snapshot.rows and any(any(value not in {None, ""} for value in row.cells.values()) for row in snapshot.rows):
         raise InstallationError("Sheet data rows changed during header initialization")
+
+
+def compose_hybrid_connected_inputs(
+    answers: Mapping[str, Any], observed_payloads: Mapping[str, Mapping[str, Any]],
+) -> tuple[dict[str, Any], bytes, bytes, dict[str, BundleEntry], str]:
+    """Collapse validated legacy setup inputs into settings plus logical state."""
+    if set(observed_payloads) != SETUP_FILE_ROLES:
+        raise InstallationError("hybrid setup payload roles disagree")
+    normalized: dict[str, dict[str, Any]] = {}
+    for role in sorted(SETUP_FILE_ROLES):
+        value = observed_payloads[role]
+        if (
+            not isinstance(value, Mapping) or set(value) != {"name", "data", "mime_type"}
+            or not isinstance(value.get("data"), bytes)
+            or value.get("mime_type") != "application/json"
+        ):
+            raise InstallationError(f"hybrid setup payload {role} is malformed")
+        normalized[role] = dict(value)
+    package_root_value = answers.get("package_root")
+    if not isinstance(package_root_value, str) or not package_root_value:
+        raise InstallationError("hybrid setup lacks the verified package root")
+    package_root = Path(package_root_value)
+    from .connected_daily import validate_connected_seed_payloads
+    validate_connected_seed_payloads(normalized, package_root)
+    package, package_bytes = hybrid_package_evidence(dict(answers))
+
+    def decoded(role: str) -> dict[str, Any]:
+        try:
+            value = json.loads(normalized[role]["data"].decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise InstallationError(f"hybrid setup payload {role} is not UTF-8 JSON") from exc
+        if not isinstance(value, dict) or canonical_json_bytes(value) != normalized[role]["data"]:
+            raise InstallationError(f"hybrid setup payload {role} is not canonical JSON")
+        return value
+
+    instance = {
+        "data_schema_version": 2,
+        "instance_format_version": 2,
+        "instance_id": answers["instance_id"],
+        "release_channel": answers["release_channel"],
+        "system_version": package["version"],
+    }
+    settings = {
+        "daily_values": {
+            "presentation": answers["daily_values"]["presentation"],
+            "timezone": answers["household"]["timezone"],
+        },
+        "delivery_configuration": decoded("delivery_configuration"),
+        "household": {"schema_version": 1, **dict(answers["household"])},
+        "initial_task_provider": "google_sheets",
+        "instance": instance,
+        "integrations": {"schema_version": 1, **dict(answers["integrations"])},
+        "policies": {"schema_version": 1, **dict(answers["policies"])},
+        "schema_version": 1,
+        "source_scope": decoded("source_scope"),
+    }
+    settings_bytes = dump_mapping_yaml(settings)
+    settings_schema = json.loads(
+        (package_root / "schemas" / "installation-settings.schema.json").read_text(encoding="utf-8")
+    )
+    from .contracts import validate
+    errors = validate(settings, settings_schema)
+    if errors:
+        raise InstallationError("hybrid installation settings are invalid: " + "; ".join(errors))
+
+    entries = {
+        path: BundleEntry(
+            normalized[role]["data"], role, "application/json",
+            {
+                "canonical_action_register": "canonical-tasks.schema.json",
+                "task_sync_state": "provider-state.schema.json",
+                "runtime_profile": "capability-profile.schema.json",
+            }.get(role),
+        )
+        for role, path in _HYBRID_STATE_PATHS.items()
+    }
+    operation_state = initial_operation_state_bytes(package_root)
+    entries["state/operation-state.json"] = BundleEntry(
+        operation_state, "operation_state", "application/json",
+        "operation-state.schema.json",
+    )
+    selector = canonical_json_bytes({
+        "bindings": {}, "schema_version": 1,
+        "selected_provider": "google_sheets", "status": "unbound",
+    })
+    entries["state/task-provider-selector.json"] = BundleEntry(
+        selector, "task_provider_selector", "application/json",
+    )
+    profile_bytes = normalized["runtime_profile"]["data"]
+    entries["state/runtime-profile-selection.json"] = BundleEntry(
+        canonical_json_bytes({
+            "profiles": {"initial": {
+                "entry_path": _HYBRID_STATE_PATHS["runtime_profile"],
+                "sha256": sha256_bytes(profile_bytes),
+            }},
+            "schema_version": 1,
+        }),
+        "runtime_profile_selection", "application/json",
+    )
+    entries["state/file-map.json"] = BundleEntry(
+        canonical_json_bytes({
+            "files": {
+                role: path for role, path in sorted(_HYBRID_STATE_PATHS.items())
+            } | {
+                "active_task_provider": "state/task-provider-selector.json",
+                "operation_state": "state/operation-state.json",
+                "runtime_profile_selection": "state/runtime-profile-selection.json",
+            },
+            "mapping_status": "configured", "schema_version": 2,
+        }),
+        "file_map", "application/json",
+    )
+    fingerprint = sha256_bytes(canonical_json_bytes({
+        "package_sha256": package["archive_sha256"],
+        "settings_sha256": sha256_bytes(settings_bytes),
+    }))
+    return package, package_bytes, settings_bytes, entries, fingerprint
 
 
 def install_connected_instance(

@@ -2813,3 +2813,26 @@ requirements, then read this log from top to bottom.
 - Next: publish this successor checkpoint, then compose human-readable settings
   and initial logical bundle members in the connected setup route. Projection
   initialization/binding remains deliberately after five-object admission.
+
+## 2026-09-09 — recovery MVP connected setup composition
+
+- Published and remotely verified immutable successor publication at exact
+  commit `6349a8c118c245663284d7b258d2b377c48c2575`.
+- Added the readable installation-settings contract and a connected composition
+  seam that validates the existing private setup payloads, moves frozen
+  instance/household/integration/policy/daily/source/delivery settings into one
+  deterministic YAML document, and maps mutable logical records into the
+  initial state bundle without provider writes.
+- The initial task selector is explicitly `unbound` with Sheets selected; task
+  projection initialization and binding therefore cannot precede canonical
+  installation admission. The logical file map contains bundle entry paths,
+  not fabricated Drive IDs. Package/settings hashes produce the deterministic
+  configuration fingerprint.
+- Focused composition coverage and the complete frozen-interpreter gate pass
+  347 tests plus schema/template checks. This seam is not yet selected by the
+  setup CLI or connected bootstrap, so the old connected installer remains the
+  active executable route until the next atomic wiring unit is complete. No
+  provider call or external effect occurred.
+- Next: publish this composition checkpoint, then atomically route connected
+  setup and bootstrap through five-object install/recovery and add the separate
+  post-admission Sheet initialization/binding operation.

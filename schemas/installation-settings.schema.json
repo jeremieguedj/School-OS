@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/installation-settings.schema.json",
+  "title": "School-OS readable immutable installation settings",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "instance", "household", "integrations", "policies", "daily_values", "source_scope", "delivery_configuration", "initial_task_provider"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "instance": {"type": "object"},
+    "household": {"type": "object"},
+    "integrations": {"type": "object"},
+    "policies": {"type": "object"},
+    "daily_values": {"type": "object"},
+    "source_scope": {"type": "object"},
+    "delivery_configuration": {"type": "object"},
+    "initial_task_provider": {"type": "string", "minLength": 1}
+  }
+}

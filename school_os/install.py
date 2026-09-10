@@ -642,6 +642,12 @@ def _package_evidence(answers: dict[str, Any]) -> tuple[Path, dict[str, Any]]:
     }
 
 
+def hybrid_package_evidence(answers: dict[str, Any]) -> tuple[dict[str, Any], bytes]:
+    """Return verified package identity and archive bytes for hybrid setup."""
+    _root, package = _package_evidence(answers)
+    return package, Path(answers["package_archive"]).read_bytes()
+
+
 def initial_operation_state_bytes(package_root: Path) -> bytes:
     """Return the final, schema-valid idle state before its provider ID exists."""
     operation_state = {
