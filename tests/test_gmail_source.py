@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from school_os.gmail_source import GmailMimeNormalizer, GmailSourceError
+from school_os.gmail_source import GmailMimeNormalizer, GmailSourceError, decode_raw_rfc2822
 from school_os.importer import admit_exact_plaintext_representation, discover_direct_html_resources
 
 
@@ -48,6 +48,17 @@ def raw(value: bytes, *, identifier: str = "message-1", thread: str = "thread-1"
 class GmailMimeNormalizerTests(unittest.TestCase):
     def setUp(self) -> None:
         self.normalizer = GmailMimeNormalizer("America/Los_Angeles")
+
+    def test_raw_rfc2822_accepts_only_canonical_urlsafe_padding(self) -> None:
+        source = b"f"
+        padded = base64.urlsafe_b64encode(source).decode("ascii")
+        self.assertTrue(padded.endswith("="))
+        self.assertEqual(source, decode_raw_rfc2822(padded))
+        self.assertEqual(source, decode_raw_rfc2822(padded.rstrip("=")))
+        for invalid in ("not+url", "Zg===", "Zg=Z", "Zg=\n"):
+            with self.subTest(invalid=invalid):
+                with self.assertRaisesRegex(GmailSourceError, "base64url"):
+                    decode_raw_rfc2822(invalid)
 
     def test_normalizes_complete_multipart_plain_html_and_attachment_with_exact_custody(self) -> None:
         plain_transport = b"Y2Fmw6k="

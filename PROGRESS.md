@@ -3092,3 +3092,32 @@ requirements, then read this log from top to bottom.
   validate the exact package, create a new empty authorized acceptance root and
   isolated Sheet, install/bind/cold-recover it, then execute and validate the
   live bounded ingestion from the installed package.
+
+## 2026-09-10 — recovery MVP live Gmail raw-encoding compatibility
+
+- Published and remotely verified the exact Drive SDK URL compatibility at
+  commit `9b303fe21afc5ca24dece73c9f8f5c99bb3143e0`, built and independently
+  validated its package, and installed the five-object layout into a new empty
+  authorized test root. Post-admission Sheet initialization/binding reached
+  verified generation 2, and cold recovery reconstructed package, settings,
+  pointer, and state bytes exactly from Drive.
+- The first installed live ingestion read the bounded Gmail discovery set and
+  stopped before any Drive/state mutation when one raw RFC2822 field failed the
+  decoder's unpadded-only check. A bounded read-only diagnostic isolated the
+  property: the connector returns the URL-safe alphabet with canonical `=`
+  padding, no standard-base64 `+`/`/` characters, and no whitespace. Exact bytes
+  therefore remain recoverable; rate limiting was not involved.
+- Corrected the narrow inconsistency by admitting zero to two canonical
+  URL-safe padding characters for raw RFC2822, matching the existing strict
+  Gmail body decoder. Standard base64, whitespace, misplaced/excess padding,
+  and undecodable forms remain rejected. This is an adapter compatibility fix,
+  not a storage or source-custody architecture change.
+- Focused coverage proves padded and unpadded values decode to identical exact
+  bytes while malformed alternatives fail closed. The complete frozen Python
+  3.12.14 gate passes 361 tests plus schema/template validation, and the
+  tracked-file privacy scan passes.
+- The stopped generation-2 instance is retained only as private evidence; no
+  source bundle, canonical ingestion state, task, email, audio, Todoist, or
+  scheduler effect was created. Next: publish this fix, rebuild the exact
+  package, use a new empty root and isolated Sheet, then repeat install,
+  bind, cold recovery, and the live bounded ingestion through validation.

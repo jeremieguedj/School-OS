@@ -69,10 +69,14 @@ def _string(value: Mapping[str, Any], key: str, label: str) -> str:
 
 def decode_raw_rfc2822(value: Any) -> bytes:
     """Decode one exact Gmail ``raw`` field for canonical source custody."""
-    if not isinstance(value, str) or not value or _BASE64URL.fullmatch(value) is None:
+    if not isinstance(value, str) or not value or _BASE64URL_BODY.fullmatch(value) is None:
         raise GmailSourceError("Gmail raw RFC2822 payload is not strict base64url")
+    unpadded = value.rstrip("=")
+    padding = len(value) - len(unpadded)
+    if len(unpadded) % 4 == 1 or (padding and len(value) % 4):
+        raise GmailSourceError("Gmail raw RFC2822 payload has invalid base64url padding")
     try:
-        return base64.b64decode(value + "=" * (-len(value) % 4), altchars=b"-_", validate=True)
+        return base64.b64decode(unpadded + "=" * (-len(unpadded) % 4), altchars=b"-_", validate=True)
     except (binascii.Error, ValueError) as exc:
         raise GmailSourceError("Gmail raw RFC2822 payload is not decodable") from exc
 
