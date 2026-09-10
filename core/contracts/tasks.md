@@ -38,6 +38,11 @@ evidence in canonical projection state. Normal reconciliation may therefore
 submit only newly verified relationship Facts; it does not have to resend the
 opening Fact or every prior support/correction/completion/reopen Fact.
 
+All editable task tools implement the provider-neutral
+[agent-managed task projection contract](task-adapter.md). The user's instance
+agent owns provider-native reads, writes, layout and readback. School-OS owns
+the normalized comparison, canonical changes and durable action authorization.
+
 ## Required semantics
 
 - A finite, unresolved source request becomes a task.

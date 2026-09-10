@@ -33,6 +33,16 @@ class BuildError(PackageError):
     """Raised when a ref cannot be packaged safely and deterministically."""
 
 
+# Historical provider executables remain in Git as regression/reference
+# evidence. Installed releases expose only the agent-managed semantic task
+# interface; provider-native code belongs to the user's instance agent.
+ARCHIVED_RUNTIME_PATHS = frozenset({
+    "school_os/sheets.py",
+    "school_os/connected_sheets.py",
+    "scripts/setup_connected_instance.py",
+})
+
+
 def _git(repo: Path, *args: str, input_data: bytes | None = None) -> bytes:
     result = subprocess.run(
         ["git", "-C", str(repo), *args],
@@ -81,6 +91,8 @@ def read_ref_payload(repo: Path, ref: str) -> tuple[str, dict[str, tuple[bytes, 
         except (UnicodeDecodeError, ValueError) as exc:
             raise BuildError("release paths and tree metadata must be UTF-8/ASCII") from exc
         path = _safe_payload_path(path_text)
+        if path.as_posix() in ARCHIVED_RUNTIME_PATHS:
+            continue
         if _is_output_artifact(path):
             continue
         if object_type != "blob" or mode not in {"100644", "100755"}:

@@ -295,20 +295,25 @@ pointer failure exposes none of the candidate peers as durable.
 
 ## Projection binding and task switching
 
-After five-file admission, create or bind the selected isolated task projection,
-verify its exact scope and empty/expected contents, and publish its binding in a
-new state generation. Installation remains valid if projection binding fails;
-task execution remains blocked and no selector is activated.
+After five-file admission, the user's agent creates or binds the selected
+isolated task projection, verifies its exact scope and complete normalized
+empty/expected contents, and submits the binding defined by
+`TASK-ADAPTER-SPEC.md` for publication in a new state generation. School-OS
+does not choose a Sheet layout or perform provider-native setup. Installation
+remains valid if projection binding fails; task execution remains blocked and
+no selector is activated.
 
-The initial selector is canonical JSON with `schema_version: 1`, status
-`unbound`, selected provider `google_sheets`, and an empty `bindings` object.
-After the isolated Sheet headers and empty managed range read back exactly, the
-next generation changes status to `bound` and adds one `google_sheets` binding
-containing status `active`, its exact spreadsheet/sheet/range scope, and the
-logical provider-state member path. The binding stores no invented Drive ID for
-that provider-state member. This publication uses the admitted single-writer
-evidence and is the only activation step; an orphan successor bundle or failed
-pointer replacement leaves the unbound generation authoritative.
+The initial selector is canonical JSON with `schema_version: 2`, status
+`unbound`, the configured initial provider key, and an empty `bindings` object.
+After the agent's complete normalized projection readback passes, the next
+generation changes status to `bound` and adds one binding containing status
+`active`, the task-adapter contract version, provider/adapter/binding IDs, the
+scope hash, a hash-bound private adapter-configuration reference, and the
+logical provider-state member path. Core treats the configuration as opaque and
+stores no invented Drive ID for a bundled member. This publication uses the
+admitted single-writer evidence and is the only activation step; an orphan
+successor bundle or failed pointer replacement leaves the unbound generation
+authoritative.
 
 Every task synchronization first imports complete scoped changes, new tasks,
 comments, completion, reopen, and parent edits from the selected projection into

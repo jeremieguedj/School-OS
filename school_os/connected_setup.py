@@ -12,13 +12,13 @@ from pathlib import Path
 from typing import Any
 
 from .bundles import BundleEntry
-from .connected_sheets import CodexSheetsTaskPort, GoogleSheetsScope
 from .connected_storage import (
     BundleWorkingState, CodexDriveReferenceStorage, ConnectedStorageError,
     DriveReference, StoredArtifact,
 )
 from .connected_profiles import initial_profile_registry
 from .contracts import canonical_json_bytes, dump_mapping_yaml, load_mapping_yaml, sha256_bytes
+from .agent_tasks import initialize_provider_state, validate_snapshot
 from .install import (
     DAILY_REFERENCE_KINDS, FILE_MAP_PATH, INTEGRATION_REFERENCE_KINDS,
     HYBRID_PACKAGE_PATH, OPERATION_STATE_PATH, PACKAGE_ARCHIVE_PATH, InstallationError,
@@ -30,7 +30,6 @@ from .install import (
     initial_operation_state_bytes, install_create_only_generation,
 )
 from .references import ObjectReference, ReferenceError, StoredObject
-from .sheets import SheetColumns
 
 
 FOLDER_MIME = "application/vnd.google-apps.folder"
@@ -53,7 +52,7 @@ _HYBRID_STATE_PATHS = {
     "delivery_state": "state/delivery-state.json",
     "final_run_checkpoint": "state/final-run-checkpoint.json",
     "runtime_profile": "state/capability-profiles/initial.json",
-    "task_sync_state": "state/task-providers/google-sheets.json",
+    "task_sync_state": "state/task-providers/selected.json",
 }
 
 
@@ -258,6 +257,7 @@ class CodexDriveCreateOnlyStorage(CodexDriveReferenceStorage):
 
 
 def _headers() -> tuple[str, ...]:
+    from .sheets import SheetColumns
     columns = SheetColumns()
     return (
         columns.managed_by, columns.canonical_task_id, columns.task_origin,
@@ -290,6 +290,8 @@ def _prove_empty_grid(result: Any, scope: GoogleSheetsScope) -> None:
 
 
 def initialize_selected_sheet(sheets: Any, scope: GoogleSheetsScope) -> None:
+    from .connected_sheets import CodexSheetsTaskPort
+    from .sheets import SheetColumns
     expected_headers = _headers()
     if scope.last_column - scope.first_column + 1 != len(expected_headers):
         raise InstallationError("selected Sheet scope width does not match the fixed task headers")
@@ -378,6 +380,9 @@ def compose_hybrid_connected_inputs(
         "release_channel": answers["release_channel"],
         "system_version": package["version"],
     }
+    initial_task_provider = answers.get("initial_task_provider", "google_sheets")
+    if not isinstance(initial_task_provider, str) or not initial_task_provider:
+        raise InstallationError("hybrid setup lacks an initial task provider key")
     settings = {
         "daily_values": {
             "presentation": answers["daily_values"]["presentation"],
@@ -385,7 +390,7 @@ def compose_hybrid_connected_inputs(
         },
         "delivery_configuration": decoded("delivery_configuration"),
         "household": {"schema_version": 1, **dict(answers["household"])},
-        "initial_task_provider": "google_sheets",
+        "initial_task_provider": initial_task_provider,
         "instance": instance,
         "integrations": {"schema_version": 1, **dict(answers["integrations"])},
         "policies": {"schema_version": 1, **dict(answers["policies"])},
@@ -412,14 +417,23 @@ def compose_hybrid_connected_inputs(
         )
         for role, path in _HYBRID_STATE_PATHS.items()
     }
+    entries[_HYBRID_STATE_PATHS["task_sync_state"]] = BundleEntry(
+        canonical_json_bytes({
+            "provider_id": "unbound", "adapter_id": "unbound",
+            "provider_revision": None, "bindings": [], "cursor": None,
+            "cursor_evidence": {}, "verified_readback": {},
+        }),
+        "task_sync_state", "application/json", "provider-state.schema.json",
+    )
     operation_state = initial_operation_state_bytes(package_root)
     entries["state/operation-state.json"] = BundleEntry(
         operation_state, "operation_state", "application/json",
         "operation-state.schema.json",
     )
     selector = canonical_json_bytes({
-        "bindings": {}, "schema_version": 1,
-        "selected_provider": "google_sheets", "status": "unbound",
+        "bindings": {}, "schema_version": 2,
+        "selected_provider": initial_task_provider, "status": "unbound",
+        "switch": None,
     })
     entries["state/task-provider-selector.json"] = BundleEntry(
         selector, "task_provider_selector", "application/json",
@@ -521,7 +535,8 @@ def bind_hybrid_selected_sheet(
     root_reference: dict[str, Any], bootstrap_reference: dict[str, Any],
     sheet_scope: GoogleSheetsScope, serialization: Mapping[str, Any],
 ) -> dict[str, Any]:
-    """Initialize Sheets after admission, then publish its canonical binding."""
+    """Archived fixed-layout reference; active hybrid binding is agent-managed."""
+    from .connected_sheets import CodexSheetsTaskPort
     recovery = recover_hybrid_generation(
         storage, root_reference=root_reference,
         bootstrap_reference=bootstrap_reference,
@@ -572,6 +587,112 @@ def bind_hybrid_selected_sheet(
         "selected_provider": "google_sheets",
         "selector_reference": durable.as_mapping(),
         "sheet_scope_sha256": sha256_bytes(canonical_json_bytes(scope)),
+    }
+
+
+def bind_hybrid_task_projection(
+    *, storage: CodexDriveCreateOnlyStorage,
+    root_reference: dict[str, Any], bootstrap_reference: dict[str, Any],
+    binding: Mapping[str, Any], snapshot: Mapping[str, Any],
+    adapter_configuration: bytes, serialization: Mapping[str, Any],
+    package_root: Path,
+) -> dict[str, Any]:
+    """Bind an agent-prepared projection without interpreting provider details."""
+    required = {
+        "provider_key", "provider_id", "adapter_id", "binding_id",
+        "scope_sha256",
+    }
+    if set(binding) != required or any(
+        not isinstance(binding.get(key), str) or not binding[key]
+        for key in required
+    ):
+        raise InstallationError("agent task binding is malformed")
+    if len(binding["scope_sha256"]) != 64:
+        raise InstallationError("agent task binding scope hash is malformed")
+    binding_id = binding["binding_id"]
+    if "/" in binding_id or "\\" in binding_id or binding_id in {".", ".."}:
+        raise InstallationError("agent task binding identity is not path-safe")
+    if not isinstance(adapter_configuration, bytes) or not adapter_configuration:
+        raise InstallationError("agent adapter configuration bytes are required")
+    recovery = recover_hybrid_generation(
+        storage, root_reference=root_reference,
+        bootstrap_reference=bootstrap_reference,
+    )
+    working = BundleWorkingState.from_recovery(recovery)
+    selector_path = "state/task-provider-selector.json"
+    try:
+        selector = json.loads(working.read(selector_path).decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError, ConnectedStorageError) as exc:
+        raise InstallationError(f"hybrid task-provider selector is unreadable: {exc}") from exc
+    expected = {
+        "bindings": {}, "schema_version": 2,
+        "selected_provider": binding["provider_key"], "status": "unbound",
+        "switch": None,
+    }
+    if selector != expected:
+        raise InstallationError("hybrid initial task-provider selector is not exactly unbound")
+    snapshot_schema = json.loads(
+        (package_root / "schemas" / "task-adapter-snapshot.schema.json").read_text(encoding="utf-8")
+    )
+    provider_state_schema = json.loads(
+        (package_root / "schemas" / "provider-state.schema.json").read_text(encoding="utf-8")
+    )
+    try:
+        normalized = validate_snapshot(snapshot, snapshot_schema)
+        for field in ("provider_id", "adapter_id", "binding_id", "scope_sha256"):
+            if normalized[field] != binding[field]:
+                raise InstallationError(f"initial task snapshot {field} disagrees with binding")
+        if normalized["tasks"] or normalized["unbound_candidates"]:
+            raise InstallationError("fresh task projection must be empty before binding")
+        state = initialize_provider_state(
+            provider_id=binding["provider_id"], adapter_id=binding["adapter_id"],
+            binding_id=binding["binding_id"], scope_sha256=binding["scope_sha256"],
+        )
+        from .contracts import validate
+        errors = validate(state, provider_state_schema)
+        if errors:
+            raise InstallationError("initial provider state is invalid: " + "; ".join(errors))
+    except ValueError as exc:
+        if isinstance(exc, InstallationError):
+            raise
+        raise InstallationError(f"initial agent task snapshot is invalid: {exc}") from exc
+    configuration_path = f"state/task-adapters/{binding_id}.json"
+    configuration_sha256 = sha256_bytes(adapter_configuration)
+    selected = {
+        "adapter_configuration_path": configuration_path,
+        "adapter_configuration_sha256": configuration_sha256,
+        "adapter_contract_version": "agent-task-v1",
+        "adapter_id": binding["adapter_id"],
+        "binding_id": binding["binding_id"],
+        "provider_id": binding["provider_id"],
+        "provider_state_path": _HYBRID_STATE_PATHS["task_sync_state"],
+        "scope_sha256": binding["scope_sha256"],
+        "status": "active",
+    }
+    bound_selector = {
+        "bindings": {binding["provider_key"]: selected},
+        "schema_version": 2, "selected_provider": binding["provider_key"],
+        "status": "bound", "switch": None,
+    }
+    committed = (
+        working
+        .stage(
+            configuration_path, adapter_configuration,
+            role="task_adapter_configuration", media_type="application/json",
+        )
+        .stage(
+            _HYBRID_STATE_PATHS["task_sync_state"], canonical_json_bytes(state),
+        )
+        .stage(selector_path, canonical_json_bytes(bound_selector))
+        .publish(storage, serialization)
+    )
+    return {
+        "configuration_fingerprint": committed.recovery["current"]["configuration_fingerprint"],
+        "current_reference": committed.recovery["current_reference"],
+        "projection_status": "bound", "selected_provider": binding["provider_key"],
+        "selector_reference": committed.durable_reference(selector_path).as_mapping(),
+        "scope_sha256": binding["scope_sha256"],
+        "adapter_configuration_sha256": configuration_sha256,
     }
 
 

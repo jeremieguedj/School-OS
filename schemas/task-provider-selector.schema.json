@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/task-provider-selector.schema.json",
+  "title": "Selected agent-managed task projection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "selected_provider", "status", "bindings", "switch"],
+  "properties": {
+    "schema_version": {"const": 2},
+    "selected_provider": {"type": "string", "minLength": 1},
+    "status": {"enum": ["unbound", "bound", "switching"]},
+    "bindings": {"type": "object"},
+    "switch": {"type": ["object", "null"]}
+  }
+}

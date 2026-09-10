@@ -27,6 +27,11 @@ class ReleaseBuilderTests(unittest.TestCase):
         subprocess.run(["git", "-C", str(self.repo), "config", "user.email", "synthetic@example.invalid"], check=True)
         (self.repo / "release.yaml").write_text("system_version: 1.2.3-alpha.1\nstatus: unreleased\n", encoding="utf-8")
         (self.repo / "README.md").write_text("# Synthetic package\n", encoding="utf-8")
+        (self.repo / "school_os").mkdir()
+        (self.repo / "school_os" / "sheets.py").write_text("archived = True\n", encoding="utf-8")
+        (self.repo / "school_os" / "connected_sheets.py").write_text("archived = True\n", encoding="utf-8")
+        (self.repo / "scripts").mkdir()
+        (self.repo / "scripts" / "setup_connected_instance.py").write_text("archived = True\n", encoding="utf-8")
         nested = self.repo / "core" / "operations"
         nested.mkdir(parents=True)
         (nested / "run.md").write_text("Synthetic operation.\n", encoding="utf-8")
@@ -67,6 +72,18 @@ class ReleaseBuilderTests(unittest.TestCase):
         inventory = files.pop(INVENTORY_NAME).decode("utf-8").splitlines()
         expected = [f"{hashlib.sha256(data).hexdigest()}  {path}" for path, data in sorted(files.items())]
         self.assertEqual(expected, inventory)
+
+    def test_archived_fixed_sheet_executables_are_not_in_release(self) -> None:
+        archive, _sums, _ = self.build("agent-task-interface")
+        with tarfile.open(archive, "r:gz") as package:
+            names = {
+                PurePosixPath(*PurePosixPath(member.name).parts[1:]).as_posix()
+                for member in package.getmembers() if member.isfile()
+            }
+        self.assertNotIn("school_os/sheets.py", names)
+        self.assertNotIn("school_os/connected_sheets.py", names)
+        self.assertNotIn("scripts/setup_connected_instance.py", names)
+        self.assertIn("core/operations/run.md", names)
 
     def test_sha256sums_covers_archive_and_full_verifier_passes(self) -> None:
         archive, sums, _ = self.build("checksum")

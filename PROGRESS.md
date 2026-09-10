@@ -3709,3 +3709,57 @@ requirements, then read this log from top to bottom.
   commit and push this repair, rebuild the exact package, create a new empty
   root and isolated Sheet, repeat the four-day ingestion, and continue through
   the unsent preview gate before binding Todoist/audio.
+
+## 2026-09-10 — agent-managed two-way task adapter architecture approved
+
+- The user clarified that School-OS must not own Google Sheet layout or native
+  maintenance logic. Google Sheets and Todoist remain fully two-way editable
+  projections, but the user's instance agent performs complete provider reads,
+  native guarded operations, pagination and exact readback through one finite
+  normalized interface.
+- One bounded GPT-6 Astra xhigh consultation reviewed the current implementation
+  at `c375916`. It confirmed that the existing reconciler mixes canonical
+  decisions with provider writes, hard-codes Sheet scope in hybrid setup, and
+  lacks durable pre-dispatch intent boundaries for ordinary claims, patches and
+  reopen operations. It recommended a complete normalized snapshot, one
+  committed high-level action, and verified normalized result protocol.
+- Recorded the detailed approved boundary and implementation sequence in
+  `docs/plans/mvp-recovery/TASK-ADAPTER-SPEC.md`; linked it from the recovery and
+  root plans; and aligned the Drive-storage projection-binding section. The
+  five-file layout, Drive authority, source/task semantics, images-disabled
+  policy and final live acceptance matrix are unchanged.
+- Next: implement the finite schemas and pure task state machine, replace active
+  hybrid Sheet routing with an agent binding, add the tracked hybrid preview
+  continuation, validate and publish the exact package, then execute a new
+  private four-day image-excluded live ingestion through `PREVIEW_READY`.
+
+## 2026-09-10 — agent-managed task interface and tracked hybrid preview implemented
+
+- Added strict normalized snapshot, high-level action and result schemas plus
+  `school_os.agent_tasks`. Reconciliation now has a provider-free path that
+  imports supported parent changes, durably records `needs_review` conflicts,
+  emits only finite semantic actions, marks one action unknown before dispatch,
+  and advances a binding/cursor only after normalized postconditions pass.
+- Replaced the hybrid initial Sheet-specific state/selector with an unbound
+  version-2 selector and generic selected provider state. The new post-install
+  binding accepts an agent-prepared complete empty snapshot and hash-bound
+  opaque adapter configuration; core performs no Sheet setup or layout parsing.
+  Hybrid resolution verifies that configuration and exposes only the selected
+  semantic binding.
+- Added tracked installed entrypoints for agent task binding and the four-step
+  preview continuation: plan, authorize, confirm and finish. The finish path
+  rereads exact source-bundle custody, renders/stores HTML and text in an output
+  bundle, leaves delivery unreserved/unsent, and advances the eligible source
+  cursor only in the terminal `PREVIEW_READY` generation.
+- Fixed-layout Sheet modules and the legacy connected setup script remain in
+  Git as historical tests/reference but are excluded from release payloads.
+  Active hybrid imports no longer require them. The Google Sheets and Todoist
+  documents now describe user-agent procedures over the shared semantic
+  contract rather than native core workers.
+- Focused adapter, installation and release-builder validation passes 37 tests;
+  the complete unit suite passes 382 tests. No provider call or mutation was
+  made in this implementation unit.
+- Next: run the complete committed validation/privacy/package gate, publish the
+  exact checkpoint, build and validate its immutable package, then create a new
+  private root and agent-owned isolated Sheet for the authorized four-day live
+  ingestion and preview exchange.

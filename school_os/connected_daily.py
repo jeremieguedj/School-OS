@@ -18,7 +18,6 @@ from .connected_ingestion import (
     DiscoveryResult, IngestionArtifacts, IngestionResult,
 )
 from .connected_profiles import readmit_capability_profile, select_capability_profile
-from .connected_sheets import CodexSheetsTaskPort, GoogleSheetsScope
 from .connected_sources import ConnectedSourceAdapters
 from .connected_storage import (
     ArtifactStore, BundleLogicalArtifact, BundleTransactionStore,
@@ -38,7 +37,6 @@ from .operations import (
     RecoveryChain, checkpoint_pointer, discover_recovery_chain, resume_from_chain,
     validate_checkpoint, validate_operation_state, validate_transition,
 )
-from .sheets import GoogleSheetsTaskAdapter
 from .tasks import build_derived_knowledge
 
 
@@ -208,7 +206,7 @@ class _ResolvedInstance:
     profile_artifact: StoredArtifact
     source_scope: dict[str, Any]
     delivery: dict[str, Any]
-    sheet_scope: GoogleSheetsScope
+    sheet_scope: Any
     household: dict[str, Any]
     policies: dict[str, Any]
     daily_values: dict[str, Any]
@@ -227,7 +225,7 @@ class HybridResolvedInstance:
     profile_artifact: BundleLogicalArtifact
     source_scope: dict[str, Any]
     delivery: dict[str, Any]
-    sheet_scope: GoogleSheetsScope
+    task_binding: dict[str, Any]
     household: dict[str, Any]
     policies: dict[str, Any]
     daily_values: dict[str, Any]
@@ -296,33 +294,26 @@ def resolve_hybrid_instance(
         raise ConnectedDailyError("hybrid capability profile execution surface disagrees")
 
     selector = _json(state.read(file_map["active_task_provider"]).data, "task provider selector")
-    if (
-        set(selector) != {"bindings", "schema_version", "selected_provider", "status"}
-        or selector.get("schema_version") != 1 or selector.get("status") != "bound"
-        or selector.get("selected_provider") != "google_sheets"
-        or not isinstance(selector.get("bindings"), Mapping)
-    ):
+    _validated(selector, package_root, "task-provider-selector.schema.json", "task provider selector")
+    if selector.get("status") != "bound" or not isinstance(selector.get("bindings"), Mapping):
         raise ConnectedDailyError("hybrid task provider is not bound for execution")
-    binding = selector["bindings"].get("google_sheets")
+    selected_provider = selector["selected_provider"]
+    binding = selector["bindings"].get(selected_provider)
     if (
         not isinstance(binding, Mapping)
-        or set(binding) != {"provider_state_path", "scope", "status"}
+        or set(binding) != {
+            "adapter_configuration_path", "adapter_configuration_sha256",
+            "adapter_contract_version", "adapter_id", "binding_id",
+            "provider_id", "provider_state_path", "scope_sha256", "status",
+        }
         or binding.get("status") != "active"
+        or binding.get("adapter_contract_version") != "agent-task-v1"
         or binding.get("provider_state_path") != file_map.get("task_sync_state")
-        or not isinstance(binding.get("scope"), Mapping)
     ):
-        raise ConnectedDailyError("hybrid selected Sheets binding is malformed")
-    scope = dict(binding["scope"])
-    expected_scope = {
-        "spreadsheet_id", "spreadsheet_url", "sheet_id", "sheet_title",
-        "first_row", "last_row", "first_column", "last_column",
-    }
-    if set(scope) != expected_scope:
-        raise ConnectedDailyError("hybrid selected Sheets scope has unsupported fields")
-    try:
-        sheet_scope = GoogleSheetsScope(**scope)
-    except (TypeError, ValueError) as exc:
-        raise ConnectedDailyError(f"hybrid selected Sheets scope is invalid: {exc}") from exc
+        raise ConnectedDailyError("hybrid selected agent task binding is malformed")
+    configuration = state.read(binding["adapter_configuration_path"])
+    if sha256_bytes(configuration.data) != binding["adapter_configuration_sha256"]:
+        raise ConnectedDailyError("hybrid task adapter configuration hash disagrees")
 
     instance = dict(settings["instance"])
     household = dict(settings["household"])
@@ -353,7 +344,7 @@ def resolve_hybrid_instance(
         raise ConnectedDailyError("hybrid current pointer lacks its configuration fingerprint")
     return HybridResolvedInstance(
         state, file_map, profile, profile_artifact, source_scope, delivery,
-        sheet_scope, household, policies, daily_values, instance,
+        dict(binding), household, policies, daily_values, instance,
         brief_template, fingerprint,
     )
 
@@ -450,6 +441,7 @@ class _Resolver:
         source_scope = _scope(_json(store.read(source_reference).data, "source scope"))
         selector = _json(store.read(references["active_task_provider"]).data, "task provider selector")
         _require_keys(selector, {"schema_version", "spreadsheet_id", "spreadsheet_url", "sheet_id", "sheet_title", "first_row", "last_row", "first_column", "last_column"}, "task provider selector")
+        from .connected_sheets import GoogleSheetsScope
         sheet_scope = GoogleSheetsScope(**{key: value for key, value in selector.items() if key != "schema_version"})
         brief_template = _json(store.read(references["brief_template"]).data, "brief template")
         _validated(profile, self.package_root, "capability-profile.schema.json", "runtime profile")
@@ -1001,6 +993,8 @@ class ConnectedDailyRuntime:
             view = context.get("view")
             if reconciled is None or view is None:
                 raise ConnectedDailyError("task sync lacks its exact reconcile handoff")
+            from .connected_sheets import CodexSheetsTaskPort
+            from .sheets import GoogleSheetsTaskAdapter
             native = CodexSheetsTaskPort(self.sheets, instance.sheet_scope)
             provider = GoogleSheetsTaskAdapter(instance.sheet_scope.adapter_scope, native, comments=native).begin_sync()
             result = task_worker.task_sync(

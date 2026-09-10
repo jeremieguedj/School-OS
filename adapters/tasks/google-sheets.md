@@ -1,9 +1,9 @@
 # Google Sheets task-provider adapter
 
-Status: selected alpha.13 reference adapter. A private instance selects one
-spreadsheet, one visible sheet, a bounded task-table range, and the matching
-runtime bridge. This adapter contains no private Drive IDs, sheet titles,
-recipients, or credentials.
+Status: agent-operated reference procedure. A private instance agent may select
+or create any suitable spreadsheet layout and maintain its provider-specific
+configuration privately. School-OS neither requires the table below nor
+performs native Sheet calls; the table is only a familiar default mapping.
 
 ## Representation
 
@@ -47,44 +47,37 @@ source facts, and null source dates before the claim. The claim preserves
 parent Action/Group/status/planned-date/progress/comment values and unrelated
 cells. It does not infer or journal a canonical task.
 
-## Runtime packet boundary
+## Agent task boundary
 
-`school_os.sheets` is provider-neutral deterministic mapping code. The selected
-runtime performs authentication and native Google calls, then injects one
-`GoogleSheetsRowsPort` implementation:
+The instance agent implements `core/contracts/task-adapter.md` and owns all
+Sheet-specific behavior. It must:
 
-1. Convert a bounded native CellData/range response into
-   `normalized_snapshot(scope, rows, complete=True)`. Each row includes its
-   current opaque `row_id` locator and header-to-string cell map. It is not a
-   stable identity. A paginated, truncated, or otherwise incomplete range uses
-   `complete=False` and blocks mutation.
-2. Create `GoogleSheetsTaskAdapter(...).begin_sync()` once per reconciliation
-   and pass that sync session to the generic task reconciler. The session takes
-   one complete snapshot and builds an in-memory canonical-ID index from it;
-   verified exact-row reads update that index. A later reconciliation creates a
-   new session. Its `NativeSheetMutation` candidates use
-   `userEnteredValue.stringValue` for every value, including text beginning
-   with `=`. This keeps formula-looking action/progress/comment text literal.
-3. For every patch or claim, re-resolve the current row locator immediately
+1. Read its entire configured task projection, including completed tasks and
+   all mapped parent fields, and normalize it without exposing headers, ranges,
+   formulas or row numbers as canonical fields. A paginated, truncated or
+   otherwise incomplete read blocks mutation.
+2. Resolve every managed item by canonical ID. Row locators are opaque,
+   unstable guard material and never identity. Unbound parent candidates carry
+   opaque candidate IDs and guard evidence.
+3. For every high-level action, re-resolve the current row immediately
    before `batchUpdate` and compare the mutation's `guard_cells(columns)`:
    `Managed By`, `Canonical Task ID`, and the cached prior value of every cell
    the mutation will overwrite (plus every admission-packet cell for a claim).
    A mismatch blocks the write. Translate only changed header keys to observed
    numeric Sheet column indexes, then issue the smallest native request. Append
    returns the new locator; patch or claim returns the guarded target locator.
-4. Read the exact target row with native CellData after every create, patch,
-   comment effect, or core-authorized state update. Feed that normalized row to
-   `read_exact`. A missing or mismatched readback blocks binding/cursor
-   advancement.
+4. Keep formula-looking text literal, preserve unrelated cells and formatting,
+   and change only fields authorized by the committed semantic action.
+5. Read the exact target row after every mutation and return its normalized
+   observation plus private receipt evidence. A missing or mismatched readback
+   blocks binding/cursor advancement.
 
-The adapter's persisted provider object ID is a canonical-ID binding of the
-form `sheets:canonical:<task-id>`, not a row number. A sync resolves that ID
-from its complete scoped snapshot. Since Google Sheets exposes no immutable row
-ID or atomic row-identity precondition here, the runtime must enforce the
-configured admitted single-writer scope and re-check the identity guard before
-each write. Concurrent sorting/insertion uncertainty blocks the operation. The
-exact readback provides a second retargeting check; it is not claimed as an
-atomic precondition.
+The adapter chooses its private provider-object representation, but it must be
+stable enough to re-resolve the same canonical ID from a complete scoped
+snapshot. Since Google Sheets may lack immutable row identity or atomic row
+preconditions, the agent enforces the admitted single-writer scope and checks
+its private row guard before each write. Sorting/insertion uncertainty blocks.
+Readback is verification, not a claimed atomic precondition.
 
 ## Pull, patch, and verification rules
 

@@ -6,13 +6,18 @@ Synchronize the canonical private task register with exactly one explicitly sele
 
 ## Procedure
 
-1. Resolve the active task-provider selector from private integration configuration. Read the selected generic task adapter and only the provider configuration, canonical task register, group configuration, and sync state declared by that adapter.
+1. Resolve the active task-provider selector from private integration
+   configuration. Ask the user's instance agent to execute the selected adapter
+   procedure and return one complete normalized snapshot under
+   `task-adapter.md`. School-OS does not interpret the provider's layout or call
+   native task-tool operations.
 2. Validate the required task table/schema, provider binding, group mapping, workflow mapping, and binding uniqueness.
-3. Pull the complete provider snapshot before pushing canonical changes. The
-   executable reconciliation resolves only immutable canonical IDs, records a
-   durable create intent with the exact managed projection and hash before a
-   create, writes only system-owned fields, and reads the exact provider object
-   back before advancing a binding or cursor.
+3. Pull the complete normalized provider snapshot before planning canonical
+   projection changes. The executable reconciliation resolves only immutable
+   canonical IDs and first commits imported parent changes plus the exact next
+   provider-neutral action. Only then may the user agent translate that action
+   into native operations. It returns exact normalized readback before core
+   advances a binding or cursor.
    The snapshot includes current completion/status and every mapped parent field
    in scope. Comparison with the durable prior snapshot establishes the observed
    current transition only; do not invent or claim intermediate activity that

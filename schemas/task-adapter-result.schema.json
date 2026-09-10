@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/task-adapter-result.schema.json",
+  "title": "Normalized task-adapter action result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "contract_version", "effect_id", "provider_id", "adapter_id", "binding_id", "scope_sha256", "outcome", "readback", "guard_evidence", "postcondition_evidence", "evidence"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "contract_version": {"const": "agent-task-v1"},
+    "effect_id": {"type": "string", "minLength": 1},
+    "provider_id": {"type": "string", "minLength": 1},
+    "adapter_id": {"type": "string", "minLength": 1},
+    "binding_id": {"type": "string", "minLength": 1},
+    "scope_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "outcome": {"enum": ["confirmed", "definitely_not_applied", "unknown"]},
+    "readback": {"type": ["object", "null"]},
+    "guard_evidence": {"type": "object"},
+    "postcondition_evidence": {"type": "object"},
+    "evidence": {"type": "object"}
+  }
+}

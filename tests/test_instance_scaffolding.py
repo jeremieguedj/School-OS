@@ -43,7 +43,7 @@ from school_os.install import (  # noqa: E402
 )
 from school_os.references import StoredObject  # noqa: E402
 from school_os.connected_setup import (  # noqa: E402
-    bind_hybrid_selected_sheet,
+    bind_hybrid_task_projection,
     CodexDriveCreateOnlyStorage,
     FOLDER_MIME,
     SETUP_FILE_ROLES,
@@ -542,6 +542,8 @@ class InstanceScaffoldingTests(unittest.TestCase):
         self.assertNotIn("source_scope", entries)
         selector = json.loads(entries["state/task-provider-selector.json"].data)
         self.assertEqual("unbound", selector["status"])
+        self.assertEqual(2, selector["schema_version"])
+        self.assertIsNone(selector["switch"])
         self.assertEqual(64, len(fingerprint))
 
     def test_hybrid_connected_install_writes_only_five_files_before_projection(self) -> None:
@@ -574,7 +576,7 @@ class InstanceScaffoldingTests(unittest.TestCase):
         self.assertEqual("unbound", result["projection_status"])
         self.assertEqual("application/json", result["bootstrap_document"]["bootstrap_reference"]["mime_type"])
 
-    def test_hybrid_sheet_binding_is_post_admission_generation_two(self) -> None:
+    def test_hybrid_agent_projection_binding_is_post_admission_generation_two(self) -> None:
         drive = ConnectedSetupDrive()
         storage = CodexDriveCreateOnlyStorage(
             drive, scratch_directory=self.base / "hybrid-bind-scratch",
@@ -592,15 +594,27 @@ class InstanceScaffoldingTests(unittest.TestCase):
                 "dependency_fingerprint": "d" * 64,
             },
         )
-        scope = GoogleSheetsScope(
-            "sheet-1", "https://sheets.example.invalid/sheet-1", 7, "Tasks",
-            1, 20, 1, 13,
-        )
-        sheets = ConnectedSetupSheets(scope)
-        result = bind_hybrid_selected_sheet(
-            storage=storage, sheets=sheets, root_reference=root,
+        binding = {
+            "provider_key": "google_sheets", "provider_id": "sheet-1",
+            "adapter_id": "user-agent-sheet-v1", "binding_id": "binding-1",
+            "scope_sha256": "e" * 64,
+        }
+        snapshot = {
+            "schema_version": 1, "contract_version": "agent-task-v1",
+            "request_id": "bind-read-1", "provider_id": "sheet-1",
+            "adapter_id": "user-agent-sheet-v1", "binding_id": "binding-1",
+            "scope_sha256": "e" * 64, "capture_id": "capture-1",
+            "captured_at": "2026-09-09T00:00:00Z", "complete": True,
+            "collections": [{"name": "tasks", "complete": True, "next_page_token": None, "item_count": 0}],
+            "tasks": [], "unbound_candidates": [], "proposed_cursor": None,
+            "evidence": {"private_receipt_sha256": "f" * 64},
+        }
+        result = bind_hybrid_task_projection(
+            storage=storage, root_reference=root,
             bootstrap_reference=installed["bootstrap_document"]["bootstrap_reference"],
-            sheet_scope=scope,
+            binding=binding, snapshot=snapshot,
+            adapter_configuration=canonical_json_bytes({"private_layout": "agent-owned"}),
+            package_root=self.package_root,
             serialization={
                 "mode": "attended_single_writer",
                 "evidence": {
@@ -612,7 +626,6 @@ class InstanceScaffoldingTests(unittest.TestCase):
             },
         )
         self.assertEqual("bound", result["projection_status"])
-        self.assertEqual(13, len(sheets.headers or []))
         recovered = recover_hybrid_generation(
             storage, root_reference=root,
             bootstrap_reference=installed["bootstrap_document"]["bootstrap_reference"],
@@ -621,12 +634,12 @@ class InstanceScaffoldingTests(unittest.TestCase):
         selector = json.loads(recovered["state"].entries["state/task-provider-selector.json"])
         self.assertEqual("google_sheets", selector["selected_provider"])
         self.assertEqual("active", selector["bindings"]["google_sheets"]["status"])
-        self.assertEqual("sheet-1", selector["bindings"]["google_sheets"]["scope"]["spreadsheet_id"])
+        self.assertEqual("sheet-1", selector["bindings"]["google_sheets"]["provider_id"])
         resolved = resolve_hybrid_instance(
             package_root=self.package_root, recovery=recovered,
             entrypoint="manual",
         )
-        self.assertEqual("sheet-1", resolved.sheet_scope.spreadsheet_id)
+        self.assertEqual("sheet-1", resolved.task_binding["provider_id"])
         self.assertEqual("manual", resolved.profile["execution_surface"])
         self.assertEqual(
             "data/canonical-tasks.json", resolved.file_map["canonical_action_register"],
@@ -740,7 +753,7 @@ class InstanceScaffoldingTests(unittest.TestCase):
             canonical_index["records"][0]["source_members"]["body"]["bundle_sha256"],
         )
 
-    def test_hybrid_sheet_binding_failure_leaves_unbound_generation_active(self) -> None:
+    def test_hybrid_agent_binding_failure_leaves_unbound_generation_active(self) -> None:
         drive = ConnectedSetupDrive()
         storage = CodexDriveCreateOnlyStorage(
             drive, scratch_directory=self.base / "hybrid-bind-failure-scratch",
@@ -758,21 +771,31 @@ class InstanceScaffoldingTests(unittest.TestCase):
                 "dependency_fingerprint": "d" * 64,
             },
         )
-        scope = GoogleSheetsScope(
-            "sheet-1", "https://sheets.example.invalid/sheet-1", 7, "Tasks",
-            1, 20, 1, 13,
-        )
-        sheets = ConnectedSetupSheets(scope)
-
         def fail_update(*_args, **_kwargs):
             raise OSError("simulated lost pointer response")
 
         drive.update = fail_update
         with self.assertRaisesRegex(InstallationError, "pointer update outcome is unknown"):
-            bind_hybrid_selected_sheet(
-                storage=storage, sheets=sheets, root_reference=root,
+            bind_hybrid_task_projection(
+                storage=storage, root_reference=root,
                 bootstrap_reference=installed["bootstrap_document"]["bootstrap_reference"],
-                sheet_scope=scope,
+                binding={
+                    "provider_key": "google_sheets", "provider_id": "sheet-1",
+                    "adapter_id": "user-agent-sheet-v1", "binding_id": "binding-1",
+                    "scope_sha256": "e" * 64,
+                },
+                snapshot={
+                    "schema_version": 1, "contract_version": "agent-task-v1",
+                    "request_id": "bind-read-1", "provider_id": "sheet-1",
+                    "adapter_id": "user-agent-sheet-v1", "binding_id": "binding-1",
+                    "scope_sha256": "e" * 64, "capture_id": "capture-1",
+                    "captured_at": "2026-09-09T00:00:00Z", "complete": True,
+                    "collections": [{"name": "tasks", "complete": True, "next_page_token": None, "item_count": 0}],
+                    "tasks": [], "unbound_candidates": [], "proposed_cursor": None,
+                    "evidence": {"private_receipt_sha256": "f" * 64},
+                },
+                adapter_configuration=canonical_json_bytes({"private_layout": "agent-owned"}),
+                package_root=self.package_root,
                 serialization={
                     "mode": "attended_single_writer",
                     "evidence": {
@@ -790,7 +813,6 @@ class InstanceScaffoldingTests(unittest.TestCase):
         self.assertEqual(1, recovered["current"]["generation"])
         selector = json.loads(recovered["state"].entries["state/task-provider-selector.json"])
         self.assertEqual("unbound", selector["status"])
-        self.assertEqual(13, len(sheets.headers or []))
 
     def test_connected_create_adopts_exact_id_when_receipt_omits_url(self) -> None:
         drive = ConnectedSetupDrive()

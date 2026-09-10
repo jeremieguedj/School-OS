@@ -29,6 +29,15 @@ state generations. Task projections bind after canonical installation. This is
 a fresh-install contract change only; it does not add migration or weaken the
 recovery MVP acceptance cases.
 
+The user-approved [agent-managed task projection specification](docs/plans/mvp-recovery/TASK-ADAPTER-SPEC.md)
+is the current task-integration authority. School-OS owns the canonical action
+register, stable identities, two-way base/local/remote reconciliation, durable
+effect authorization and provider selection. The user's instance agent owns
+all Google Sheets, Todoist and other task-tool layout/native operations and
+returns complete normalized snapshots and verified readbacks. The existing
+fixed-layout Sheet implementation is reference evidence, not active generic
+routing.
+
 The current four-day compatibility run has now passed exact source ingestion on
 the installed `263b152` package: eight complete conversations and their audited
 Facts are canonical in Drive generation 3, image fetches remained disabled, and

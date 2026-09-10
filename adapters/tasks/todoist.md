@@ -1,6 +1,10 @@
 # Todoist task-provider adapter
 
-Status: reference adapter template. The active project, sections, labels, account, and task bindings belong in a private instance.
+Status: agent-operated reference procedure. The active project, sections,
+labels, account and native task operations belong to the user's private
+instance agent. School-OS exchanges only the normalized snapshots, committed
+semantic actions and verified results defined by
+`core/contracts/task-adapter.md`; it does not ship a Todoist connector worker.
 
 ## Representation
 

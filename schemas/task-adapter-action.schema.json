@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/task-adapter-action.schema.json",
+  "title": "Committed provider-neutral task action",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "contract_version", "effect_id", "kind", "task_id", "provider_id", "adapter_id", "binding_id", "scope_sha256", "canonical_sha256", "provider_base_sha256", "expected", "desired", "allowed_changes", "postconditions", "outcome", "dispatch_attempt", "verification"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "contract_version": {"const": "agent-task-v1"},
+    "effect_id": {"type": "string", "minLength": 1},
+    "kind": {"enum": ["create_task", "claim_task", "update_task_fields", "set_task_resolution", "write_system_comment"]},
+    "task_id": {"type": "string", "minLength": 1},
+    "provider_id": {"type": "string", "minLength": 1},
+    "adapter_id": {"type": "string", "minLength": 1},
+    "binding_id": {"type": "string", "minLength": 1},
+    "scope_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "canonical_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "provider_base_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "expected": {"type": ["object", "null"]},
+    "desired": {"type": "object"},
+    "allowed_changes": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "postconditions": {"type": "object"},
+    "outcome": {"enum": ["pending", "unknown", "definitely_not_applied"]},
+    "dispatch_attempt": {"type": "integer", "minimum": 0},
+    "verification": {"type": "object"}
+  }
+}

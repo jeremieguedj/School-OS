@@ -13,6 +13,11 @@
   [`DRIVE-STORAGE-SPEC.md`](DRIVE-STORAGE-SPEC.md). It supersedes the active
   per-logical-file installation layout while preserving the recovery plan's
   domain semantics and live acceptance matrix.
+- Approved task-projection contract:
+  [`TASK-ADAPTER-SPEC.md`](TASK-ADAPTER-SPEC.md). It replaces fixed provider
+  layouts and native calls in active core routing with a two-way normalized
+  snapshot/action/readback interface operated by the user's agent. Drive,
+  stable identities and reconciliation decisions remain canonical.
 
 ## Outcome and fixed endpoint
 
@@ -50,8 +55,10 @@ instance, and an explicit pass/block result for every case below.
 
 Google Drive is always canonical for installation, source custody, knowledge,
 Facts, operation state, and tasks. Google Sheets and Todoist are editable
-projections. A task-tool read happens before the canonical reconciliation and
-before any outbound projection refresh. Drive adopts supported parent additions,
+projections operated through the agent-managed interface in
+`TASK-ADAPTER-SPEC.md`; no provider layout or native operation is core logic.
+A complete task-tool read happens before canonical reconciliation and before
+any outbound projection refresh. Drive adopts supported parent additions,
 title and planned-date edits, comments, completion, and reopen events using stable
 canonical/provider identities. Source due dates do not become provider reminder
 dates. Project sections or grouping labels remain distinct from workflow state.
@@ -150,9 +157,9 @@ recipes rather than duplicating them in a new framework.
 |---|---|
 | Candidate `school_os/connected_bootstrap.py`, `connected_setup.py`, `connected_profiles.py`; `scripts/setup_connected_instance.py`, `run_connected_operation.py`, `readmit_connected_profile.py` | Reconcile onto `main`; recover only admitted package/bootstrap/profile bytes; fresh create-only setup; finite operation routing; exact readback and profile selection. |
 | `school_os.connected_ingestion.ConnectedIngestionWorker`, candidate `school_os/connected_sources.py`, `scripts/run_source_host.py` | Bind the frozen `[start,end)` search, full/raw Gmail reads, complete bodies, attachment bytes, bounded PDF resources, the temporary pre-fetch all-image exclusion, persisted Facts/audit, and continuation. Retain the inactive image pipeline and existing custody/semantic validators. |
-| `school_os.connected_tasks.ConnectedTaskWorker` and `school_os.connected_sheets.CodexSheetsTaskPort` | Preserve `reconcile` as the Drive-canonical readmission step and `task_sync` as the exact provider handoff; keep last-sync conflict handling, guarded literal writes, lifecycle/history, and brief task view. |
-| **Proposed** `school_os/connected_todoist.py` plus the existing generic task port/contract | Sanitize the supplied private procedure into a finite connected adapter: complete scoped active/completed/activity/comment reads, stable provider ID and canonical marker checks, parent-change import, bounded guarded effects, exact readback, and provider state. |
-| Candidate `school_os.connected_daily.ConnectedDailyRuntime` | Replace the current hard-coded Sheets construction with one selector-dispatched task port. Ordinary runs read/write only the selected provider. Carry exact `reconcile` output into selected `task_sync`; retain all-current Facts/tasks for brief building and cursor-last commit. |
+| `school_os.connected_tasks.ConnectedTaskWorker`, proposed `school_os.agent_tasks` and `school_os.hybrid_tasks` | Preserve `reconcile` as the Drive-canonical readmission step; make provider comparison pure; commit parent imports and each high-level action before the user's agent performs it; validate normalized readback before advancing a binding/base. |
+| `adapters/tasks/google-sheets.md`, `adapters/tasks/todoist.md` and the agent task interface | Make both providers agent-operated procedures over the same complete normalized snapshot/action/readback contract. Reuse the private Todoist procedure; do not create a native Todoist worker or require a fixed Sheet layout. |
+| Candidate `school_os.connected_daily.ConnectedDailyRuntime` and proposed tracked `school_os.hybrid_preview` | Remove hard-coded Sheet construction from active hybrid routing. Carry the exact reconcile output through the selected agent adapter, retain all-current Facts/tasks for brief building, store the unsent output bundle, and commit the cursor last. |
 | **Proposed** thin guided-switch command in `scripts/` backed by a small function beside connected task selection | Final old-provider pull and Drive persist; stage/read back target projection; atomically activate selector only after target proof; retain dormant mappings for switchback; leave old selected if preparation fails. |
 | `school_os.brief`, `school_os.delivery`, candidate connected daily delivery phase, `automation/audio-brief/elevenlabs_audio_brief.py` | Implement render/validate -> reserve -> persist current reconciliation delta -> one-call MP3 generate/verify -> one multipart send -> exact Sent readback -> commit. Record empty/unavailable/failed audio separately; keep email success independent while requiring one live MP3 for MVP. |
 | `school_os.references`, `school_os.operations`, `school_os.daily`, `scripts/run_operation.py` | Route fresh manual, scheduled, task-sync, and guided-switch operations from installed references; recover phase outputs/effect receipts from Drive after process/local-state loss; reject substituted package/config/profile bytes. |
