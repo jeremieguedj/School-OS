@@ -2836,3 +2836,22 @@ requirements, then read this log from top to bottom.
 - Next: publish this composition checkpoint, then atomically route connected
   setup and bootstrap through five-object install/recovery and add the separate
   post-admission Sheet initialization/binding operation.
+
+## 2026-09-09 — recovery MVP provider-connected five-object install seam
+
+- Published and remotely verified the connected composition checkpoint at exact
+  commit `ed9de538b0014dd8f22200c4b53afadb4046f67d`.
+- Added a provider-connected hybrid installer that verifies the exact root and
+  complete empty listing, delegates to the five-object admission core, and
+  returns only the stable bootstrap/current/configuration evidence with
+  projection status `unbound`. It accepts no Sheet surface and therefore cannot
+  initialize or bind a projection before canonical installation.
+- The connected fake-provider test proves exactly five direct root children by
+  name and a JSON bootstrap. The complete frozen-interpreter gate passes 348
+  tests plus schema/template checks. The existing setup CLI still selects the
+  archived per-file function; changing that selection waits for hybrid package
+  extraction and bundle-backed runtime resolution so no half-wired live route
+  is exposed.
+- No provider call or external effect occurred. Next: publish this seam, add
+  hybrid recovered-package extraction, then implement the bundle-backed runtime
+  resolver and switch setup/bootstrap dispatch together.

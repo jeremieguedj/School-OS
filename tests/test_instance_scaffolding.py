@@ -41,8 +41,10 @@ from school_os.install import (  # noqa: E402
 from school_os.references import StoredObject  # noqa: E402
 from school_os.connected_setup import (  # noqa: E402
     CodexDriveCreateOnlyStorage,
+    FOLDER_MIME,
     SETUP_FILE_ROLES,
     compose_hybrid_connected_inputs,
+    install_hybrid_connected_instance,
     install_connected_instance,
 )
 from school_os.connected_sheets import GoogleSheetsScope  # noqa: E402
@@ -534,6 +536,36 @@ class InstanceScaffoldingTests(unittest.TestCase):
         selector = json.loads(entries["state/task-provider-selector.json"].data)
         self.assertEqual("unbound", selector["status"])
         self.assertEqual(64, len(fingerprint))
+
+    def test_hybrid_connected_install_writes_only_five_files_before_projection(self) -> None:
+        drive = ConnectedSetupDrive()
+        storage = CodexDriveCreateOnlyStorage(
+            drive, scratch_directory=self.base / "hybrid-scratch",
+        )
+        root = {
+            "object_id": "instance-root", "kind": "folder",
+            "permitted_ancestor_id": "instance-root", "mime_type": FOLDER_MIME,
+            "version": "1",
+        }
+        result = install_hybrid_connected_instance(
+            storage=storage, root_reference=root, answers=self.answers,
+            observed_payloads=self.make_connected_observed(),
+            runtime={
+                "implementation": "CPython", "python_version": "3.12.14",
+                "dependency_fingerprint": "d" * 64,
+            },
+        )
+        children = [
+            item for item in drive.objects.values()
+            if item["parent_ids"] == ["instance-root"]
+        ]
+        self.assertEqual(5, len(children))
+        self.assertEqual({
+            "BOOTSTRAP.json", "CURRENT.json", "package.tar.gz",
+            "settings.yaml", "state-000001.bundle",
+        }, {item["title"] for item in children})
+        self.assertEqual("unbound", result["projection_status"])
+        self.assertEqual("application/json", result["bootstrap_document"]["bootstrap_reference"]["mime_type"])
 
     def test_connected_create_adopts_exact_id_when_receipt_omits_url(self) -> None:
         drive = ConnectedSetupDrive()

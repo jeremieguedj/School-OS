@@ -23,6 +23,7 @@ from .install import (
     HYBRID_PACKAGE_PATH, OPERATION_STATE_PATH, PACKAGE_ARCHIVE_PATH, InstallationError,
     compose_create_only_candidate_payloads,
     hybrid_package_evidence,
+    install_hybrid_generation,
     managed_mime_type,
     initial_operation_state_bytes, install_create_only_generation,
 )
@@ -450,6 +451,56 @@ def compose_hybrid_connected_inputs(
         "settings_sha256": sha256_bytes(settings_bytes),
     }))
     return package, package_bytes, settings_bytes, entries, fingerprint
+
+
+def install_hybrid_connected_instance(
+    *, storage: CodexDriveCreateOnlyStorage, root_reference: dict[str, Any],
+    answers: dict[str, Any], observed_payloads: Mapping[str, Mapping[str, Any]],
+    runtime: Mapping[str, str],
+) -> dict[str, Any]:
+    """Prove one empty root and install only the five canonical physical files."""
+    try:
+        admitted_root = ObjectReference.from_mapping(root_reference)
+    except ReferenceError as exc:
+        raise InstallationError(f"hybrid setup requires an exact instance root reference: {exc}") from exc
+    root_id = admitted_root.object_id
+    if (
+        admitted_root.kind != "folder" or admitted_root.permitted_ancestor_id != root_id
+        or admitted_root.mime_type != FOLDER_MIME or not admitted_root.version
+    ):
+        raise InstallationError("hybrid setup requires a versioned self-contained Drive folder root")
+    root = storage.read(root_id)
+    if (
+        root is None or root.kind != "folder" or root.mime_type != FOLDER_MIME
+        or root.version != admitted_root.version
+    ):
+        raise InstallationError("hybrid setup root metadata differs from its admitted reference")
+    if list(storage.list_scoped(root_id)):
+        raise InstallationError("hybrid installation root is not initially empty")
+    package, package_bytes, settings_bytes, entries, fingerprint = compose_hybrid_connected_inputs(
+        answers, observed_payloads,
+    )
+    recovery = install_hybrid_generation(
+        storage, root_reference=root_reference, package=package,
+        package_bytes=package_bytes, settings_bytes=settings_bytes,
+        instance_id=answers["instance_id"], state_entries=entries,
+        configuration_fingerprint=fingerprint, runtime=runtime,
+    )
+    bootstrap_reference = recovery["bootstrap_reference"]
+    bootstrap_id = bootstrap_reference["object_id"]
+    bootstrap_url = storage.expected_urls.get(bootstrap_id)
+    if not isinstance(bootstrap_url, str) or not bootstrap_url:
+        raise InstallationError("hybrid bootstrap lacks its exact provider URL")
+    return {
+        "bootstrap_document": {
+            "bootstrap_reference": bootstrap_reference,
+            "bootstrap_url": bootstrap_url,
+            "root_reference": root_reference,
+        },
+        "configuration_fingerprint": fingerprint,
+        "current_reference": recovery["current_reference"],
+        "projection_status": "unbound",
+    }
 
 
 def install_connected_instance(
