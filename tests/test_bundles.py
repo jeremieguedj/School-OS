@@ -7,7 +7,8 @@ import unittest
 from dataclasses import replace
 
 from school_os.bundles import (
-    BundleEntry, BundleError, MANIFEST_PATH, build_bundle, read_bundle,
+    BundleEntry, BundleError, BundleMemberReference, MANIFEST_PATH, build_bundle,
+    member_reference, read_bundle, resolve_member,
 )
 from school_os.contracts import canonical_json_bytes, sha256_bytes, validate
 from school_os.install import (
@@ -105,6 +106,25 @@ class BundleTests(unittest.TestCase):
             predecessor={"identity": "state-000001", "sha256": "d" * 64},
         ))
         self.assertEqual("state-000001", value.manifest["predecessor"]["identity"])
+
+    def test_member_reference_keeps_physical_and_logical_identity_separate(self):
+        bundle = read_bundle(self.build())
+        physical = {
+            "object_id": "bundle-object", "kind": "file",
+            "permitted_ancestor_id": "root", "mime_type": "application/x-tar",
+            "version": "version-1",
+        }
+        reference = member_reference(physical, bundle, "data/guidelines.json")
+        self.assertEqual("bundle-object", reference.bundle_reference["object_id"])
+        self.assertEqual(
+            self.entries()["data/guidelines.json"].data,
+            resolve_member(reference, bundle),
+        )
+        mapping = reference.as_mapping()
+        self.assertEqual(reference, BundleMemberReference.from_mapping(mapping))
+        changed = read_bundle(self.build(identity="state-other"))
+        with self.assertRaisesRegex(BundleError, "different physical bytes"):
+            resolve_member(reference, changed)
 
 
 class HybridStorage:

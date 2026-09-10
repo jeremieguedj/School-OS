@@ -50,6 +50,56 @@ class VerifiedBundle:
     sha256: str
 
 
+@dataclass(frozen=True)
+class BundleMemberReference:
+    """Exact physical bundle plus one declared logical member identity."""
+
+    bundle_reference: Mapping[str, Any]
+    bundle_sha256: str
+    entry_path: str
+    entry_sha256: str
+    byte_length: int
+
+    @classmethod
+    def from_mapping(cls, value: Mapping[str, Any]) -> "BundleMemberReference":
+        if not isinstance(value, Mapping) or set(value) != {
+            "bundle_reference", "bundle_sha256", "entry_path", "entry_sha256",
+            "byte_length",
+        }:
+            raise BundleError("bundle member reference has an unsupported shape")
+        physical = value.get("bundle_reference")
+        if not isinstance(physical, Mapping) or set(physical) - {
+            "object_id", "kind", "permitted_ancestor_id", "mime_type", "version",
+        }:
+            raise BundleError("bundle member physical reference is malformed")
+        if (
+            physical.get("kind") != "file"
+            or not all(isinstance(physical.get(key), str) and physical[key] for key in (
+                "object_id", "permitted_ancestor_id", "mime_type", "version",
+            ))
+        ):
+            raise BundleError("bundle member physical reference is incomplete")
+        length = value.get("byte_length")
+        if isinstance(length, bool) or not isinstance(length, int) or length < 0:
+            raise BundleError("bundle member reference has an invalid byte length")
+        return cls(
+            MappingProxyType(dict(physical)),
+            _required_hash(value.get("bundle_sha256"), "bundle member bundle hash"),
+            _safe_path(value.get("entry_path")),
+            _required_hash(value.get("entry_sha256"), "bundle member entry hash"),
+            length,
+        )
+
+    def as_mapping(self) -> dict[str, Any]:
+        return {
+            "bundle_reference": dict(self.bundle_reference),
+            "bundle_sha256": self.bundle_sha256,
+            "byte_length": self.byte_length,
+            "entry_path": self.entry_path,
+            "entry_sha256": self.entry_sha256,
+        }
+
+
 def _safe_path(value: str) -> str:
     if not isinstance(value, str) or not value or len(value) > MAX_PATH_CODEPOINTS:
         raise BundleError("bundle member path is empty or exceeds its bound")
@@ -272,3 +322,32 @@ def read_bundle(data: bytes, *, expected_kind: str | None = None) -> VerifiedBun
     return VerifiedBundle(
         MappingProxyType(manifest), MappingProxyType(output), sha256_bytes(data),
     )
+
+
+def member_reference(
+    bundle_reference: Mapping[str, Any], bundle: VerifiedBundle, entry_path: str,
+) -> BundleMemberReference:
+    """Create a member reference only from one already-verified bundle."""
+    path = _safe_path(entry_path)
+    data = bundle.entries.get(path)
+    if data is None:
+        raise BundleError("bundle does not contain the requested member")
+    return BundleMemberReference.from_mapping({
+        "bundle_reference": dict(bundle_reference),
+        "bundle_sha256": bundle.sha256,
+        "byte_length": len(data),
+        "entry_path": path,
+        "entry_sha256": sha256_bytes(data),
+    })
+
+
+def resolve_member(reference: BundleMemberReference, bundle: VerifiedBundle) -> bytes:
+    """Resolve exact member bytes without inventing a member-level provider ID."""
+    if bundle.sha256 != reference.bundle_sha256:
+        raise BundleError("bundle member reference names different physical bytes")
+    data = bundle.entries.get(reference.entry_path)
+    if data is None:
+        raise BundleError("bundle member is absent")
+    if len(data) != reference.byte_length or sha256_bytes(data) != reference.entry_sha256:
+        raise BundleError("bundle member bytes disagree with their exact reference")
+    return data

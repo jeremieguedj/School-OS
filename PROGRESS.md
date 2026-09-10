@@ -2870,3 +2870,20 @@ requirements, then read this log from top to bottom.
 - No provider call or external effect occurred. Next: publish this extraction
   checkpoint, add hybrid bootstrap recovery/dispatch and bundle-member runtime
   resolution, then switch the setup and bootstrap scripts atomically.
+
+## 2026-09-09 — recovery MVP exact bundle-member references
+
+- Published and remotely verified hybrid package extraction at exact commit
+  `03f7bc64dc20a23a3fb29d782df9566adbf82dd6`.
+- Added the typed bundle-member reference and resolver. A reference contains the
+  real physical bundle object/version plus bundle hash, logical entry path,
+  entry hash, and length; it exposes no member-level provider ID. Resolution
+  requires the exact already-verified bundle bytes and exact member evidence.
+- Focused coverage proves physical/logical identity separation, checked-in
+  schema round-trip, exact bytes, and rejection when the same member is offered
+  from different physical bundle bytes. The complete frozen-interpreter gate
+  passes 350 tests plus schema/template checks.
+- No provider call or external effect occurred. Next: publish this reference
+  checkpoint, implement a bundle-backed working-state/store boundary, then
+  route connected bootstrap/daily workers without preserving any assumption
+  that logical members are separate Drive objects.
