@@ -3209,3 +3209,36 @@ requirements, then read this log from top to bottom.
 - Next: publish this fix, rebuild the exact package, create a new empty isolated
   instance, and repeat the live ingestion through every source unit and final
   canonical validation.
+
+## 2026-09-10 — recovery MVP declared-versus-verified resource MIME
+
+- Published and remotely verified the exact 8-bit transport repair at commit
+  `96d80472ba4796ae8147ad0f43347bd677d59805`. Its immutable package passed
+  installed validation, five-object installation into a new empty isolated root,
+  post-install Sheet binding at generation 2, and cold Drive recovery.
+- The live run completed full original-detail resource extraction, semantic
+  interpretation, and independent audit for its first conversation. The next
+  conversation proved the 8-bit repair, then stopped before source publication
+  on one direct asset whose server-declared MIME was GIF while its exact byte
+  signature and decoder format were PNG. Private original-detail inspection
+  confirmed the asset contains visible source content, so exclusion would not
+  satisfy complete inventory.
+- Implemented the existing adapter seam's narrow custody correction: direct
+  resource evidence now retains both the provider-declared MIME and the
+  byte-verified MIME, while extractor selection and catalog MIME use only the
+  verified signature. Unsupported signatures, incomplete reads, missing
+  extractors, and failed complete-unit checks remain blocking dispositions.
+  Storage layout, canonical references, source scope, and provider architecture
+  are unchanged.
+- Focused import, custody, connected-ingestion, and hybrid tests pass (34 tests),
+  including a declared-GIF/verified-PNG round trip through catalog and semantic
+  provenance. The stopped isolated root has no source bundle, state advance,
+  task, delivery, audio, Todoist, or scheduler effect.
+- The complete frozen Python 3.12.14 gate passes 364 tests plus schema/template
+  validation; the direct tracked-file privacy scan and `git diff --check` also
+  pass. The current continuation has no wall-clock checkpoint and must stop for
+  consultation only if further progress requires an architecture change.
+- Next: run the complete repository/privacy gate, commit and push this compatible
+  repair, rebuild the exact immutable package, create another new empty root and
+  Sheet, then repeat install, bind, cold recovery, live ingestion, and canonical
+  validation.

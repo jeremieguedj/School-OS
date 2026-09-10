@@ -5,7 +5,9 @@ Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 ## Next-release planning
 
-Implementation is active under timed user-authorized execution intervals. The active recovery route is the
+Implementation is active under an explicit user-authorized continuation with no
+wall-clock checkpoint; work proceeds through validated live ingestion unless a
+required architecture change needs user consultation. The active recovery route is the
 [recovery MVP plan and implementation specification](docs/plans/mvp-recovery/PLAN.md),
 with a copyable [new-session Sol High handoff](docs/plans/mvp-recovery/SOL-HANDOFF.md).
 It supersedes the alpha.13 completion sequence as the operational plan while

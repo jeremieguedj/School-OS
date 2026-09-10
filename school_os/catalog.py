@@ -92,7 +92,7 @@ def _outcome_mapping(
             "source_message_id": source_message_id,
             "origin": resource.origin,
             "outcome": value.outcome,
-            "mime_type": value.fetch_evidence.get("mime_type") if value.fetch_evidence else None,
+            "mime_type": value.fetch_evidence.get("verified_mime_type") if value.fetch_evidence else None,
             "html_part_id": resource.html_part_id,
             "html_part_sha256": resource.html_part_sha256,
             "html_decoded_sha256": resource.html_decoded_sha256,
@@ -279,7 +279,7 @@ def _validate_resource_fetch_evidence(value: Mapping[str, Any]) -> None:
         return
     expected_keys = {
         "status_code", "complete", "eof", "bytes_read",
-        "declared_content_length", "mime_type",
+        "declared_content_length", "declared_mime_type", "verified_mime_type",
     }
     if not isinstance(evidence, Mapping) or set(evidence) != expected_keys:
         raise CatalogError("resource lacks typed complete fetch evidence")
@@ -291,7 +291,9 @@ def _validate_resource_fetch_evidence(value: Mapping[str, Any]) -> None:
         or evidence.get("eof") is not True
         or not isinstance(byte_count, int) or byte_count < 1
         or declared is not None and declared != byte_count
-        or evidence.get("mime_type") != value.get("mime_type")
+        or not isinstance(evidence.get("declared_mime_type"), str)
+        or not evidence["declared_mime_type"]
+        or evidence.get("verified_mime_type") != value.get("mime_type")
         or value["original_bytes_observed"] is not True
     ):
         raise CatalogError("resource fetch evidence disagrees with its custody")

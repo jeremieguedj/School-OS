@@ -456,23 +456,24 @@ def process_direct_html_resources(
                 disposition_reason="direct resource fetch lacks complete bounded read evidence",
             ))
             continue
+        verified_mime_type = _expected_resource_mime(read.data)
         fetch_evidence = {
             "status_code": read.status_code,
             "complete": True,
             "eof": True,
             "bytes_read": read.bytes_read,
             "declared_content_length": read.declared_content_length,
-            "mime_type": read.mime_type,
+            "declared_mime_type": read.mime_type,
+            "verified_mime_type": verified_mime_type,
         }
-        expected_mime = _expected_resource_mime(read.data)
-        if expected_mime is None or read.mime_type != expected_mime:
+        if verified_mime_type is None:
             outcomes.append(DirectResourceOutcome(
                 resource, "manual_review", sha256_bytes(read.data), None, None, None,
                 final_url=read.url, redirect_chain=chain, fetch_evidence=fetch_evidence,
-                disposition_reason="resource signature and declared MIME do not agree",
+                disposition_reason="resource bytes have no supported verified MIME signature",
             ))
             continue
-        extractor = extractors.get(read.mime_type)
+        extractor = extractors.get(verified_mime_type)
         if extractor is None:
             outcomes.append(DirectResourceOutcome(
                 resource, "manual_review", sha256_bytes(read.data), None, None, None,
@@ -480,9 +481,14 @@ def process_direct_html_resources(
                 disposition_reason="no selected extractor supports the verified MIME type",
             ))
             continue
+        verified_read = DirectResourceRead(
+            read.url, read.redirect_chain, read.data, verified_mime_type,
+            read.status_code, read.complete, read.eof, read.bytes_read,
+            read.declared_content_length,
+        )
         try:
-            extracted = extractor(read)
-            extracted_bytes, locator = _validated_extraction(extracted, read.mime_type)
+            extracted = extractor(verified_read)
+            extracted_bytes, locator = _validated_extraction(extracted, verified_mime_type)
         except (UnicodeError, ValueError, OSError):
             outcomes.append(DirectResourceOutcome(
                 resource, "manual_review", sha256_bytes(read.data), None, None, None,

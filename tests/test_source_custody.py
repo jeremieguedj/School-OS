@@ -58,7 +58,7 @@ class SourceCustodyIntegrationTests(unittest.TestCase):
         image = b"\x89PNG\r\n\x1a\nimage"
         resource_outcomes = process_direct_html_resources(
             resources,
-            fetch_resource=lambda url: DirectResourceRead(url, (url,), image, "image/png", 200, True, True, len(image), len(image)),
+            fetch_resource=lambda url: DirectResourceRead(url, (url,), image, "image/gif", 200, True, True, len(image), len(image)),
             extractors={"image/png": lambda _read: AttachmentExtraction("Image notice", {"kind": "extracted_text_span", "byte_start": 0, "byte_end": 12}, ("image:1",), 1)},
             max_bytes=1024, max_redirects=0,
         )
@@ -82,6 +82,8 @@ class SourceCustodyIntegrationTests(unittest.TestCase):
         self.assertEqual(resources[0].resource_id, packet.segments[2]["source_provenance"]["resource_id"])
         self.assertEqual(hashlib.sha256(html).hexdigest(), packet.segments[2]["source_provenance"]["html_part_sha256"])
         self.assertEqual(hashlib.sha256(html).hexdigest(), packet.segments[2]["source_provenance"]["html_decoded_sha256"])
+        self.assertEqual("image/gif", packet.segments[2]["source_provenance"]["fetch_evidence"]["declared_mime_type"])
+        self.assertEqual("image/png", packet.segments[2]["source_provenance"]["fetch_evidence"]["verified_mime_type"])
 
         def interpreter(value: dict) -> dict:
             candidates = []

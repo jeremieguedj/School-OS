@@ -276,6 +276,21 @@ class ImportRunnerTests(unittest.TestCase):
             max_redirects=0,
         )
         self.assertEqual("extracted", gif_outcome[0].outcome)
+        mislabeled_png = process_direct_html_resources(
+            resources[:1],
+            fetch_resource=lambda _url: DirectResourceRead(
+                "https://assets.example/notice.png",
+                ("https://assets.example/notice.png",),
+                b"\x89PNG\r\n\x1a\nsource", "image/gif",
+                200, True, True, 14, 14,
+            ),
+            extractors={"image/png": extract_image},
+            max_bytes=64,
+            max_redirects=0,
+        )
+        self.assertEqual("extracted", mislabeled_png[0].outcome)
+        self.assertEqual("image/gif", mislabeled_png[0].fetch_evidence["declared_mime_type"])
+        self.assertEqual("image/png", mislabeled_png[0].fetch_evidence["verified_mime_type"])
         with self.assertRaisesRegex(ImportError, "coverage"):
             require_message_source_coverage(b"", blocked)
         with self.assertRaisesRegex(ImportError, "attachment coverage"):
