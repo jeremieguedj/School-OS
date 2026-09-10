@@ -3763,3 +3763,28 @@ requirements, then read this log from top to bottom.
   exact checkpoint, build and validate its immutable package, then create a new
   private root and agent-owned isolated Sheet for the authorized four-day live
   ingestion and preview exchange.
+
+## 2026-09-10 — exact agent-task package published; live install paused at settings consent
+
+- Complete validation passed 383 tests plus schema, template, package and
+  privacy checks. Commit `970d9b2e4a7a8cabbf23af31eb79d73c1ea9930d` is
+  remotely verified, and its immutable alpha.13 archive and extracted tree
+  both pass installed-package validation.
+- The execution agent created and verified a new isolated native Sheet with a
+  deliberately agent-owned layout. School-OS has no column, range or native
+  Sheet logic for that surface; the pending binding will contain only the
+  normalized adapter contract plus an opaque private configuration hash.
+- A first local install attempt used the host's Python 3.9 and stopped before a
+  write because that interpreter lacks `datetime.UTC`. The qualified bundled
+  CPython 3.12.14 then began the exact five-file install. Package creation was
+  confirmed, but the connector safety layer rejected the settings-file upload
+  because it contains private test parameters. The connector exposed no HTTP
+  status because this was a local consent rejection, not a Google response.
+- The affected Drive root is permanently failed-path evidence and will not be
+  reused. Two same-run roots accidentally created while reconciling a flat
+  connector receipt were kept empty and quarantined; one may be selected only
+  as a fresh empty root after the settings-write consent boundary is resolved.
+  No ingestion, task projection write, email, audio, Todoist or scheduler
+  effect occurred. Next: obtain explicit authorization for the private
+  settings payload at the isolated canonical Drive destination, then resume on
+  a verified-empty root with the same exact package and qualified interpreter.
