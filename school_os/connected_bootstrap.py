@@ -15,7 +15,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable
-from urllib.parse import urlsplit
+from urllib.parse import parse_qsl, urlsplit
 
 from .contracts import canonical_json_bytes, sha256_bytes
 from .install import (
@@ -31,6 +31,17 @@ class BootstrapError(ValueError):
 
 
 _IDENTIFIER = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
+_GOOGLE_DRIVE_HOSTS = frozenset({"drive.google.com", "docs.google.com"})
+
+
+def _admitted_bootstrap_url_query(parsed: Any) -> bool:
+    """Admit only Google's exact Drive SDK decoration on canonical Drive URLs."""
+    if not parsed.query:
+        return True
+    return (
+        parsed.netloc in _GOOGLE_DRIVE_HOSTS
+        and parse_qsl(parsed.query, keep_blank_values=True) == [("usp", "drivesdk")]
+    )
 
 
 @dataclass(frozen=True)
@@ -51,7 +62,8 @@ class BootstrapDocument:
         parsed = urlsplit(url) if isinstance(url, str) and url and not any(char.isspace() for char in url) else None
         if (
             parsed is None or parsed.scheme != "https" or not parsed.netloc or not parsed.hostname
-            or parsed.username is not None or parsed.password is not None or parsed.query or parsed.fragment
+            or parsed.username is not None or parsed.password is not None
+            or not _admitted_bootstrap_url_query(parsed) or parsed.fragment
             or not parsed.path.startswith("/") or url != parsed.geturl()
         ):
             raise BootstrapError("bootstrap_url must be a canonical nonempty HTTPS URL")

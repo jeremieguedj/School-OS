@@ -3066,3 +3066,29 @@ requirements, then read this log from top to bottom.
   and remotely verify this path, build and independently validate the exact
   package, create a new empty authorized acceptance root and isolated Sheet,
   install/bind/recover it, then run and validate the live bounded ingestion.
+
+## 2026-09-10 — recovery MVP cold-recovery URL compatibility
+
+- Published and remotely verified the installed hybrid ingestion path at exact
+  commit `0effd93ab48b650fd66284993a3fbc14e6db204a`; the complete frozen-
+  interpreter gate passed 360 tests plus schema/template validation.
+- Built and installed that exact package into a new empty authorized test root,
+  then initialized and bound a new isolated Sheet as post-admission generation
+  2. The first cold-recovery check stopped before any provider request because
+  the Drive connector returned its normal `usp=drivesdk` URL decoration while
+  `BootstrapDocument` still rejected every query string.
+- Retired that test root as required after a runtime-code correction. The
+  correction admits only the single exact Google Drive SDK decoration on a
+  canonical Drive/Docs URL; non-Google hosts, different values, extra
+  parameters, duplicate parameters, fragments, and non-HTTPS URLs remain
+  rejected. This aligns the bootstrap-document boundary with the already-
+  admitted exact-object readback rule and does not change the approved storage
+  architecture.
+- Focused regression coverage and the complete frozen Python 3.12.14 gate pass:
+  360 tests plus schema/template validation; the tracked-file privacy scan also
+  passes. No live source read, ingestion, task write, email, audio, Todoist, or
+  scheduler effect occurred in the retired instance.
+- Next: publish this compatibility checkpoint, rebuild and independently
+  validate the exact package, create a new empty authorized acceptance root and
+  isolated Sheet, install/bind/cold-recover it, then execute and validate the
+  live bounded ingestion from the installed package.

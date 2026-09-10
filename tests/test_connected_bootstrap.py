@@ -142,6 +142,11 @@ class ConnectedBootstrapTests(unittest.TestCase):
             },
         }
         self.assertEqual("application/json", BootstrapDocument.from_mapping(hybrid).bootstrap_reference["mime_type"])
+        decorated = {
+            **valid,
+            "bootstrap_url": "https://" + "drive.google.com/file/d/bootstrap/view?usp=drivesdk",
+        }
+        self.assertEqual(decorated["bootstrap_url"], BootstrapDocument.from_mapping(decorated).bootstrap_url)
         invalid = {**valid, "extra": True}
         with self.assertRaisesRegex(BootstrapError, "exactly"):
             BootstrapDocument.from_mapping(invalid)
@@ -151,6 +156,15 @@ class ConnectedBootstrapTests(unittest.TestCase):
         invalid = {**valid, "bootstrap_url": "http://example.invalid/bootstrap"}
         with self.assertRaisesRegex(BootstrapError, "HTTPS"):
             BootstrapDocument.from_mapping(invalid)
+        for invalid_url in (
+            "https://example.invalid/bootstrap?usp=drivesdk",
+            "https://" + "drive.google.com/file/d/bootstrap/view?usp=sharing",
+            "https://" + "drive.google.com/file/d/bootstrap/view?usp=drivesdk&extra=true",
+            "https://" + "drive.google.com/file/d/bootstrap/view?usp=drivesdk&usp=drivesdk",
+        ):
+            with self.subTest(invalid_url=invalid_url):
+                with self.assertRaisesRegex(BootstrapError, "HTTPS"):
+                    BootstrapDocument.from_mapping({**valid, "bootstrap_url": invalid_url})
         invalid = {**valid, "root_reference": {**valid["root_reference"], "mime_type": "text/plain"}}
         with self.assertRaisesRegex(BootstrapError, "Drive folder"):
             BootstrapDocument.from_mapping(invalid)
