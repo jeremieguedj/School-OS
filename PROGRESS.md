@@ -3312,3 +3312,32 @@ requirements, then read this log from top to bottom.
   GitHub push, push and verify the remote exact commit, then create the new
   empty root and Sheet and execute install, bind, cold recovery, ingestion, and
   canonical validation from the already-verified package.
+
+## 2026-09-10 — recovery MVP image-exclusion decision boundary
+
+- After explicit authorization, pushed the pending commits and verified the
+  remote recovery branch at exact commit
+  `17f164bff12b82521f0eb222e44c534c27a0155d`. The executable package remains
+  exact runtime commit `b5a8d461353d0931cc7235ca4227948a779d6035`.
+- Created a new isolated root and native one-tab Sheet. The five-file install
+  passed with 30 connector calls; post-install Sheet binding passed with 24;
+  cold recovery passed with 13 and the installed entrypoint verified. The
+  counts remain distinct from unavailable underlying provider operations and
+  hidden retries.
+- The final installed package began live Gmail ingestion. Complete discovery
+  used two searches, 36 message reads, and one complete-thread read before the
+  first direct resource. Several exact image resources were fetched and staged
+  locally with original-detail extraction, but no source bundle or successor
+  state was published.
+- The user then requested that images be excluded for this run. The approved
+  connected runtime has no per-run image-exclusion selector: images are part of
+  the frozen source-custody scenario and are required to remain inventoried,
+  byte-verified, and extracted. Adding such a selector or silently converting
+  all image outcomes to policy exclusions would change the frozen source-policy
+  and configuration contract. Per the instruction not to make architecture
+  changes, stopped the local worker safely before Drive publication.
+- The root remains at generation 2 with no canonical ingestion, task, delivery,
+  audio, Todoist, or scheduler effect. Next requires a user decision: continue
+  the approved architecture and process its bounded images, or explicitly
+  authorize a revised source-policy/configuration contract, rebuilt package,
+  and new empty root for an image-excluded scenario.
