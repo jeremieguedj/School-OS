@@ -20,7 +20,7 @@ from .connected_ingestion import (
     CodexGmailSourceAdapter, CodexSemanticCallbacks, ConnectedIngestionError,
     ConnectedIngestionWorker, IngestionResult,
 )
-from .connected_sources import ConnectedSourceAdapters
+from .connected_sources import ConnectedSourceAdapters, SourceBounds
 from .connected_storage import (
     BundleTransactionStore, DriveReference, StoredArtifact,
 )
@@ -225,8 +225,10 @@ def stage_connected_ingestion(
 ) -> StagedIngestion:
     """Compose the existing live Gmail/semantic adapters over local staging."""
     normalizer = GmailMimeNormalizer(resolved.household["timezone"])
+    maximum = resolved.policies["execution"]["max_bytes_per_unit"]
     source_bytes = ConnectedSourceAdapters(
         peer=gmail.peer, run_directory=run_directory,
+        bounds=SourceBounds(max_bytes=maximum),
     )
     source = CodexGmailSourceAdapter(
         gmail, max_thread_messages=resolved.source_scope["max_thread_messages"],
@@ -309,7 +311,6 @@ def stage_connected_ingestion(
             max_resource_bytes=resolved.policies["execution"]["max_bytes_per_unit"],
         )
 
-    maximum = resolved.policies["execution"]["max_bytes_per_unit"]
     return stage_ingestion(
         worker_factory=worker_factory, scope=resolved.source_scope,
         max_records=resolved.policies["execution"]["max_records_per_unit"],

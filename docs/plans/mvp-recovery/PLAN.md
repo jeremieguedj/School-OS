@@ -280,6 +280,20 @@ deadline. This is an implementation defect correction within the existing PDF
 custody path, not a storage, source-policy, provider, or architecture change.
 A rebuilt exact package and another new empty root are required before Phase 1
 live evidence can be accepted.
+That rebuilt package passed the PDF-render gate and independently audited the
+first eight conversations, then stopped before the ninth conversation's
+semantic step because a supported MIME PDF attachment exceeded the configured
+per-unit byte bound. The provider advertised a complete downloadable original;
+the declared size is below the already-qualified finite source-host and bridge
+ceilings, and the approved source-bundle limit can preserve it. Diagnosis found
+that connected composition used the configured bound for admission while the
+exact-byte adapter retained an unrelated smaller default. The compatible repair
+constructs the byte adapter with the same configured finite bound. For the next
+fresh scenario, freeze a private configured value no larger than the existing
+qualified host ceiling and large enough for the observed attachment. This
+changes package/configuration bytes and therefore requires a new empty root; it
+does not change source meaning, storage layout, provider contracts, or
+architecture.
 Use the Phase 0 `window_start_ms` and
 `window_end_ms` 14-day `[start,end)` bounds, recorded only in private evidence.
 Use a new

@@ -15,6 +15,7 @@ sys.path.insert(0, str(ROOT))
 from school_os.adapters import Page
 from school_os.bundles import BundleEntry, build_bundle, read_bundle
 from school_os.connected_ingestion import ConnectedIngestionWorker
+from school_os.connected_sources import ConnectedSourceAdapters
 from school_os.hybrid_ingestion import (
     LocalIngestionStore, SourceByteCapture, publish_ingestion_result,
     stage_connected_ingestion, stage_ingestion,
@@ -96,7 +97,16 @@ class HybridIngestionTests(unittest.TestCase):
             ))
             return "staged"
 
-        with patch("school_os.hybrid_ingestion.stage_ingestion", side_effect=inspect_worker):
+        observed_byte_bounds: list[int] = []
+
+        def adapter_factory(**kwargs: Any) -> ConnectedSourceAdapters:
+            observed_byte_bounds.append(kwargs["bounds"].max_bytes)
+            return ConnectedSourceAdapters(**kwargs)
+
+        with patch(
+            "school_os.hybrid_ingestion.ConnectedSourceAdapters",
+            side_effect=adapter_factory,
+        ), patch("school_os.hybrid_ingestion.stage_ingestion", side_effect=inspect_worker):
             result = stage_connected_ingestion(
                 installed_root=ROOT,
                 resolved=resolved,
@@ -106,6 +116,7 @@ class HybridIngestionTests(unittest.TestCase):
                 capture=SourceByteCapture(),
             )
         self.assertEqual("staged", result)
+        self.assertEqual([65_536], observed_byte_bounds)
 
     def worker(self, store: LocalIngestionStore) -> ConnectedIngestionWorker:
         schemas = {

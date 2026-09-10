@@ -3391,3 +3391,33 @@ requirements, then read this log from top to bottom.
   the exact immutable package, create a new empty root and Sheet, repeat install,
   binding, cold recovery, and complete live ingestion through canonical Drive
   publication and independent validation.
+
+## 2026-09-10 — recovery MVP configured attachment bound mismatch isolated
+
+- Published and remotely verified the PDF-render repair at exact commit
+  `65e13061f6ed5c3dd3cb05f66a3a32e57ccd7300`; its package passed checksum and
+  installed validation. One incorrectly ordered setup attempt placed the Sheet
+  inside the root before installation and was abandoned without installation
+  writes. No product change was made for that operator error.
+- A new correctly ordered root passed the five-file install with 30 connector
+  calls. A newly created post-install Sheet then bound as generation 2 with 24
+  calls. Cold recovery used 13 calls, and the recovered package validated.
+- Live ingestion reproduced the first five independent semantic audits, fetched
+  and fully rendered the previously blocked direct PDF, and independently
+  audited that sixth conversation. Two more conversations also passed complete
+  independent semantic audits, including one explicit no-Fact disposition.
+  The run then stopped before the ninth semantic step because a supported MIME
+  PDF attachment exceeded the configured per-unit byte bound. No source bundle
+  or successor state was published.
+- Focused evidence established that the attachment is below the already-
+  qualified finite source-host and JSONL response ceilings and below the source-
+  bundle capacity. The connected worker applied the configured byte limit to
+  attachment admission, but `ConnectedSourceAdapters` independently retained a
+  smaller default for exact-byte fetches. Updated composition to pass the same
+  configured finite bound to both layers; focused source/import/hybrid tests
+  pass 28 tests.
+- Next: run the complete validation gate, commit and publish the compatible
+  repair, rebuild the package, freeze a private per-unit value within the
+  existing qualified ceiling that admits the observed PDF, create a new empty
+  root, and repeat install/bind/recovery/live ingestion through canonical Drive
+  publication and validation.
