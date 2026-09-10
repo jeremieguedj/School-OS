@@ -18,6 +18,7 @@ import tarfile
 from pathlib import Path
 from typing import Any, Mapping, Protocol
 
+from .bundles import BundleEntry, BundleError, build_bundle, read_bundle
 from .contracts import ContractError, canonical_json_bytes, dump_mapping_yaml, load_mapping, load_mapping_yaml, sha256_bytes, validate
 from .package import PackageError, verify_extracted_tree, verify_release_archive
 from .references import ObjectReference, ReferenceError, ReferenceStorage, StoredObject, discover_unique, resolve_reference
@@ -34,6 +35,16 @@ FILE_MAP_PATH = "state/file-map.yaml"
 OPERATION_STATE_PATH = "state/operation-state.json"
 PACKAGE_ARCHIVE_PATH = "system/package/release.archive"
 PACKAGE_CHECKSUMS_PATH = "system/package/SHA256SUMS"
+HYBRID_BOOTSTRAP_PATH = "BOOTSTRAP.json"
+HYBRID_PACKAGE_PATH = "package.tar.gz"
+HYBRID_SETTINGS_PATH = "settings.yaml"
+HYBRID_CURRENT_PATH = "CURRENT.json"
+INITIAL_STATE_PATH = "state-000001.bundle"
+STATE_BUNDLE_MIME = "application/x-tar"
+JSON_MIME = "application/json"
+_PACKAGE_MIME_TYPES = frozenset({
+    "application/gzip", "application/x-gzip", "application/octet-stream",
+})
 MANAGED_PATHS = (
     "instance.yaml",
     "config/household.yaml",
@@ -77,6 +88,306 @@ class CreateOnlyStorage(ReferenceStorage, Protocol):
     """Storage surface for installation generations that may never replace bytes."""
 
     def create_file(self, parent_id: str, name: str, data: bytes, mime_type: str) -> StoredObject: ...
+
+
+def _hybrid_reference(object_: StoredObject, root_id: str, *, include_version: bool = True) -> dict[str, Any]:
+    """Return an exact direct-child reference from one verified write/read receipt."""
+    if (
+        object_.kind != "file" or object_.parent_id != root_id
+        or tuple(object_.ancestor_ids) != (root_id,) or object_.data is None
+        or not object_.object_id or not object_.mime_type
+    ):
+        raise InstallationError("hybrid installation object is not a complete direct-root file")
+    reference: dict[str, Any] = {
+        "object_id": object_.object_id,
+        "kind": "file",
+        "permitted_ancestor_id": root_id,
+        "mime_type": object_.mime_type,
+    }
+    if include_version:
+        if not object_.version:
+            raise InstallationError("hybrid installation object lacks version evidence")
+        reference["version"] = object_.version
+    return reference
+
+
+def _hybrid_create_or_adopt(
+    storage: CreateOnlyStorage, *, parent_id: str, name: str, data: bytes,
+    mime_type: str, admitted_mime_types: frozenset[str] | None = None,
+) -> StoredObject:
+    """Create once and validate its complete receipt without a duplicate read."""
+    allowed = admitted_mime_types or frozenset({mime_type})
+    try:
+        object_ = storage.create_file(parent_id, name, data, mime_type)
+    except OSError as exc:
+        try:
+            object_ = discover_unique(
+                storage, parent_id=parent_id, name=name, kind="file",
+            )
+        except ReferenceError as discover_exc:
+            raise InstallationError(f"create outcome is unknown for {name}: {discover_exc}") from exc
+    _hybrid_reference(object_, parent_id)
+    if object_.name != name or object_.mime_type not in allowed or object_.data != data:
+        raise InstallationError(f"hybrid installation create readback differs for {name}")
+    return object_
+
+
+def _bundle_state_reference(object_: StoredObject, root_id: str, data: bytes, identity: str) -> dict[str, Any]:
+    return {
+        "bundle_reference": _hybrid_reference(object_, root_id),
+        "bundle_sha256": sha256_bytes(data),
+        "identity": identity,
+    }
+
+
+def _hybrid_read(
+    storage: ReferenceStorage, value: Any, *, root_id: str, name: str,
+    admitted_mime_types: frozenset[str], require_version: bool = True,
+) -> StoredObject:
+    try:
+        reference = ObjectReference.from_mapping(_require_mapping(value, f"{name} reference"))
+    except ReferenceError as exc:
+        raise InstallationError(f"invalid {name} reference: {exc}") from exc
+    if reference.kind != "file" or reference.permitted_ancestor_id != root_id:
+        raise InstallationError(f"{name} reference is outside the instance root")
+    object_ = storage.read(reference.object_id)
+    if (
+        object_ is None or object_.kind != "file" or object_.parent_id != root_id
+        or tuple(object_.ancestor_ids) != (root_id,) or object_.name != name
+        or object_.mime_type not in admitted_mime_types or object_.data is None
+        or (require_version and object_.version != reference.version)
+    ):
+        raise InstallationError(f"{name} exact readback disagrees with its reference")
+    return object_
+
+
+def _validate_hybrid_package(package: Mapping[str, Any], package_bytes: bytes) -> dict[str, Any]:
+    required = {"version", "source_identity", "archive_sha256", "inventory_sha256"}
+    if not isinstance(package, Mapping) or set(package) != required:
+        raise InstallationError("hybrid package evidence has an unsupported shape")
+    source = package.get("source_identity")
+    if (
+        not isinstance(package.get("version"), str) or not package["version"]
+        or not isinstance(source, Mapping) or set(source) != {"repository", "commit"}
+        or not isinstance(source.get("repository"), str) or not source["repository"]
+        or re.fullmatch(r"[0-9a-f]{40}", source.get("commit", "")) is None
+        or re.fullmatch(r"[0-9a-f]{64}", package.get("inventory_sha256", "")) is None
+        or package.get("archive_sha256") != sha256_bytes(package_bytes)
+    ):
+        raise InstallationError("hybrid package identity or hash is invalid")
+    return {
+        "version": package["version"],
+        "source_identity": dict(source),
+        "archive_sha256": package["archive_sha256"],
+        "inventory_sha256": package["inventory_sha256"],
+    }
+
+
+def _verify_hybrid_package_bytes(package: Mapping[str, Any], package_bytes: bytes) -> None:
+    """Verify package structure/inventory from bytes without a sixth Drive file."""
+    with tempfile.TemporaryDirectory(prefix="school-os-hybrid-package-") as temporary:
+        base = Path(temporary)
+        archive_path = base / HYBRID_PACKAGE_PATH
+        sums_path = base / "SHA256SUMS"
+        archive_path.write_bytes(package_bytes)
+        sums_path.write_text(
+            f"{package['archive_sha256']}  {HYBRID_PACKAGE_PATH}\n", encoding="utf-8",
+        )
+        errors = verify_release_archive(archive_path, sums_path, package["version"])
+        if errors:
+            raise InstallationError("hybrid package verification failed: " + "; ".join(errors))
+        try:
+            with tarfile.open(archive_path, "r:gz") as archive:
+                member = archive.getmember(
+                    f"School-OS-{package['version']}/RELEASE-INVENTORY.sha256"
+                )
+                stream = archive.extractfile(member)
+                inventory = stream.read() if stream is not None else b""
+        except (KeyError, OSError, tarfile.TarError) as exc:
+            raise InstallationError(f"hybrid package inventory is unavailable: {exc}") from exc
+        if sha256_bytes(inventory) != package["inventory_sha256"]:
+            raise InstallationError("hybrid package inventory hash disagrees")
+
+
+def install_hybrid_generation(
+    storage: CreateOnlyStorage, *, root_reference: dict[str, Any],
+    package: Mapping[str, Any], package_bytes: bytes, settings_bytes: bytes,
+    instance_id: str, state_entries: Mapping[str, BundleEntry],
+    configuration_fingerprint: str, runtime: Mapping[str, str],
+) -> dict[str, Any]:
+    """Create the five-file fresh installation and recover it from Drive once."""
+    try:
+        root = ObjectReference.from_mapping(root_reference)
+    except ReferenceError as exc:
+        raise InstallationError(f"invalid hybrid instance root: {exc}") from exc
+    if root.kind != "folder" or root.permitted_ancestor_id != root.object_id or not root.version:
+        raise InstallationError("hybrid instance root must be one exact versioned self-contained folder")
+    if not isinstance(package_bytes, bytes) or not isinstance(settings_bytes, bytes) or not settings_bytes:
+        raise InstallationError("hybrid package and settings require exact nonempty bytes")
+    package_value = _validate_hybrid_package(package, package_bytes)
+    _verify_hybrid_package_bytes(package_value, package_bytes)
+    if not isinstance(instance_id, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", instance_id):
+        raise InstallationError("hybrid installation lacks a safe instance ID")
+    if re.fullmatch(r"[0-9a-f]{64}", configuration_fingerprint) is None:
+        raise InstallationError("hybrid configuration fingerprint is invalid")
+    if not isinstance(runtime, Mapping) or set(runtime) != {"implementation", "python_version", "dependency_fingerprint"}:
+        raise InstallationError("hybrid runtime evidence has an unsupported shape")
+    if (
+        not all(isinstance(runtime.get(key), str) and runtime[key] for key in ("implementation", "python_version"))
+        or re.fullmatch(r"[0-9a-f]{64}", runtime.get("dependency_fingerprint", "")) is None
+    ):
+        raise InstallationError("hybrid runtime evidence is incomplete")
+    settings_sha256 = sha256_bytes(settings_bytes)
+    try:
+        state_bytes = build_bundle(
+            bundle_kind="state", identity="state-000001",
+            instance_id=instance_id,
+            package_sha256=package_value["archive_sha256"],
+            settings_sha256=settings_sha256,
+            configuration_fingerprint=configuration_fingerprint,
+            entries=state_entries,
+        )
+    except BundleError as exc:
+        raise InstallationError(f"initial state bundle is invalid: {exc}") from exc
+
+    package_object = _hybrid_create_or_adopt(
+        storage, parent_id=root.object_id, name=HYBRID_PACKAGE_PATH,
+        data=package_bytes, mime_type="application/octet-stream",
+        admitted_mime_types=_PACKAGE_MIME_TYPES,
+    )
+    settings_object = _hybrid_create_or_adopt(
+        storage, parent_id=root.object_id, name=HYBRID_SETTINGS_PATH,
+        data=settings_bytes, mime_type="application/octet-stream",
+    )
+    state_object = _hybrid_create_or_adopt(
+        storage, parent_id=root.object_id, name=INITIAL_STATE_PATH,
+        data=state_bytes, mime_type=STATE_BUNDLE_MIME,
+    )
+    state_reference = _bundle_state_reference(
+        state_object, root.object_id, state_bytes, "state-000001",
+    )
+    current = {
+        "configuration_fingerprint": configuration_fingerprint,
+        "generation": 1,
+        "package_sha256": package_value["archive_sha256"],
+        "previous": None,
+        "schema_version": 1,
+        "serialization": None,
+        "settings_sha256": settings_sha256,
+        "state": state_reference,
+    }
+    current_bytes = canonical_json_bytes(current)
+    current_object = _hybrid_create_or_adopt(
+        storage, parent_id=root.object_id, name=HYBRID_CURRENT_PATH,
+        data=current_bytes, mime_type=JSON_MIME,
+    )
+    bootstrap = {
+        "current_reference": _hybrid_reference(current_object, root.object_id, include_version=False),
+        "instance_id": instance_id,
+        "package_inventory_sha256": package_value["inventory_sha256"],
+        "package_reference": _hybrid_reference(package_object, root.object_id),
+        "package_sha256": package_value["archive_sha256"],
+        "root_reference": root_reference,
+        "runtime": dict(runtime),
+        "schema_version": 1,
+        "settings_reference": _hybrid_reference(settings_object, root.object_id),
+        "settings_sha256": settings_sha256,
+        "source_identity": package_value["source_identity"],
+        "state_reference": _hybrid_reference(state_object, root.object_id),
+        "system_version": package_value["version"],
+    }
+    _validated(bootstrap, Path(__file__).resolve().parents[1], "bootstrap-descriptor.schema.json", "bootstrap descriptor")
+    bootstrap_object = _hybrid_create_or_adopt(
+        storage, parent_id=root.object_id, name=HYBRID_BOOTSTRAP_PATH,
+        data=canonical_json_bytes(bootstrap), mime_type=JSON_MIME,
+    )
+    return recover_hybrid_generation(
+        storage, root_reference=root_reference,
+        bootstrap_reference=_hybrid_reference(bootstrap_object, root.object_id),
+    )
+
+
+def recover_hybrid_generation(
+    storage: ReferenceStorage, *, root_reference: dict[str, Any],
+    bootstrap_reference: dict[str, Any],
+) -> dict[str, Any]:
+    """Recover exactly one admitted five-file generation with one read per object."""
+    try:
+        root = ObjectReference.from_mapping(root_reference)
+    except ReferenceError as exc:
+        raise InstallationError(f"invalid hybrid instance root: {exc}") from exc
+    if root.kind != "folder" or root.permitted_ancestor_id != root.object_id:
+        raise InstallationError("hybrid instance root must be a self-contained folder")
+    bootstrap_object = _hybrid_read(
+        storage, bootstrap_reference, root_id=root.object_id,
+        name=HYBRID_BOOTSTRAP_PATH, admitted_mime_types=frozenset({JSON_MIME}),
+    )
+    bootstrap = _canonical_json_object(bootstrap_object.data or b"", "hybrid bootstrap")
+    _validated(bootstrap, Path(__file__).resolve().parents[1], "bootstrap-descriptor.schema.json", "bootstrap descriptor")
+    if bootstrap.get("root_reference") != root_reference:
+        raise InstallationError("hybrid bootstrap names a different instance root")
+    package_object = _hybrid_read(
+        storage, bootstrap["package_reference"], root_id=root.object_id,
+        name=HYBRID_PACKAGE_PATH, admitted_mime_types=_PACKAGE_MIME_TYPES,
+    )
+    settings_object = _hybrid_read(
+        storage, bootstrap["settings_reference"], root_id=root.object_id,
+        name=HYBRID_SETTINGS_PATH, admitted_mime_types=frozenset({"application/octet-stream"}),
+    )
+    current_object = _hybrid_read(
+        storage, bootstrap["current_reference"], root_id=root.object_id,
+        name=HYBRID_CURRENT_PATH, admitted_mime_types=frozenset({JSON_MIME}),
+        require_version=False,
+    )
+    current = _canonical_json_object(current_object.data or b"", "current state pointer")
+    _validated(current, Path(__file__).resolve().parents[1], "current-state.schema.json", "current state pointer")
+    state = _require_mapping(current.get("state"), "current state bundle reference")
+    _required_keys(state, {"bundle_reference", "bundle_sha256", "identity"}, "current state bundle reference")
+    if state.get("bundle_reference") != bootstrap.get("state_reference") or current.get("generation") != 1:
+        raise InstallationError("initial current pointer disagrees with bootstrap state")
+    state_object = _hybrid_read(
+        storage, state["bundle_reference"], root_id=root.object_id,
+        name=INITIAL_STATE_PATH, admitted_mime_types=frozenset({STATE_BUNDLE_MIME}),
+    )
+    package_bytes = package_object.data or b""
+    settings_bytes = settings_object.data or b""
+    state_bytes = state_object.data or b""
+    if (
+        sha256_bytes(package_bytes) != bootstrap.get("package_sha256")
+        or sha256_bytes(settings_bytes) != bootstrap.get("settings_sha256")
+        or sha256_bytes(state_bytes) != state.get("bundle_sha256")
+        or current.get("package_sha256") != bootstrap.get("package_sha256")
+        or current.get("settings_sha256") != bootstrap.get("settings_sha256")
+    ):
+        raise InstallationError("hybrid installation physical bytes disagree with admitted hashes")
+    _verify_hybrid_package_bytes({
+        "version": bootstrap["system_version"],
+        "archive_sha256": bootstrap["package_sha256"],
+        "inventory_sha256": bootstrap["package_inventory_sha256"],
+    }, package_bytes)
+    try:
+        verified_state = read_bundle(state_bytes, expected_kind="state")
+    except BundleError as exc:
+        raise InstallationError(f"current state bundle is invalid: {exc}") from exc
+    manifest = verified_state.manifest
+    if (
+        manifest.get("identity") != state.get("identity")
+        or manifest.get("instance_id") != bootstrap.get("instance_id")
+        or manifest.get("package_sha256") != bootstrap.get("package_sha256")
+        or manifest.get("settings_sha256") != bootstrap.get("settings_sha256")
+        or manifest.get("configuration_fingerprint") != current.get("configuration_fingerprint")
+        or manifest.get("predecessor") is not None
+    ):
+        raise InstallationError("current state bundle bindings disagree with bootstrap/current")
+    return {
+        "bootstrap": bootstrap,
+        "bootstrap_reference": dict(bootstrap_reference),
+        "current": current,
+        "current_reference": _hybrid_reference(current_object, root.object_id),
+        "package_archive": package_bytes,
+        "settings": settings_bytes,
+        "state": verified_state,
+    }
 
 
 def _pinned_archive_name(checksums: bytes, archive_sha256: str) -> str:

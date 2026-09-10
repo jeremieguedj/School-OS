@@ -2760,3 +2760,29 @@ requirements, then read this log from top to bottom.
 - No provider call or external effect occurred. Next: publish this bounded codec
   checkpoint, then implement the five-object installer/current/bootstrap
   composition and fresh-process recovery against the new contracts.
+
+## 2026-09-09 — recovery MVP five-object installer core
+
+- Published and remotely verified the deterministic bundle checkpoint at exact
+  commit `836f6416004292f82f82d7022d747f77857403f0`.
+- Added the provider-neutral five-object create/recover boundary in
+  `school_os.install`. It verifies the release archive and internal inventory
+  without a sixth checksum object; creates package, settings, initial state,
+  current pointer, and bootstrap in that order; retains the finite gzip MIME
+  equivalence; and performs no duplicate read after a create surface has already
+  returned complete verified bytes.
+- Bootstrap binds the mutable `CURRENT.json` by stable exact ID/parent/MIME but
+  deliberately not a stale provider version. Recovery obtains the pointer's
+  current version and exact canonical bytes, then verifies package/settings/
+  state hashes, state manifest bindings, initial predecessor absence, and every
+  bundle entry. Immutable package/settings/state references remain versioned.
+- Focused coverage proves exactly five objects, one recovery read per physical
+  file, adoption after one lost create response without duplication, state-byte
+  tamper rejection, and recovery after only the current-pointer version changes.
+  Existing installer tests remain green. The complete frozen-interpreter gate
+  passes 343 tests plus schema/template checks.
+- This is not yet the active connected setup/bootstrap route, and successor
+  state publication is not yet implemented. No provider call or external effect
+  occurred. Next: publish this core checkpoint, compose the real settings and
+  initial logical entries in connected setup, separate projection binding, and
+  route connected bootstrap recovery through these five objects.

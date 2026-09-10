@@ -1,12 +1,21 @@
 import io
+import gzip
 import json
 import tarfile
 import unittest
+from dataclasses import replace
 
 from school_os.bundles import (
     BundleEntry, BundleError, MANIFEST_PATH, build_bundle, read_bundle,
 )
 from school_os.contracts import canonical_json_bytes, sha256_bytes, validate
+from school_os.install import (
+    HYBRID_BOOTSTRAP_PATH, HYBRID_CURRENT_PATH, HYBRID_PACKAGE_PATH,
+    HYBRID_SETTINGS_PATH, INITIAL_STATE_PATH, InstallationError,
+    install_hybrid_generation, recover_hybrid_generation,
+)
+from school_os.package import inventory_bytes
+from school_os.references import StoredObject
 from pathlib import Path
 
 
@@ -94,6 +103,124 @@ class BundleTests(unittest.TestCase):
             predecessor={"identity": "state-000001", "sha256": "d" * 64},
         ))
         self.assertEqual("state-000001", value.manifest["predecessor"]["identity"])
+
+
+class HybridStorage:
+    def __init__(self, lose_name=None):
+        self.objects = {}
+        self.creates = []
+        self.reads = []
+        self.lose_name = lose_name
+
+    def create_file(self, parent_id, name, data, mime_type):
+        self.creates.append(name)
+        value = StoredObject(
+            f"object-{len(self.objects) + 1}", "file", parent_id, (parent_id,),
+            mime_type, f"version-{len(self.objects) + 1}", name, data,
+        )
+        self.objects[value.object_id] = value
+        if name == self.lose_name:
+            self.lose_name = None
+            raise OSError("synthetic lost response")
+        return value
+
+    def read(self, object_id):
+        self.reads.append(object_id)
+        return self.objects.get(object_id)
+
+    def list_scoped(self, parent_id):
+        return [item for item in self.objects.values() if item.parent_id == parent_id]
+
+
+def package_fixture():
+    version = "1.2.3-alpha.1"
+    payload = {"release.yaml": f"system_version: {version}\n".encode()}
+    inventory = inventory_bytes(payload)
+    buffer = io.BytesIO()
+    with gzip.GzipFile(fileobj=buffer, mode="wb", mtime=0, filename="") as compressed:
+        with tarfile.open(fileobj=compressed, mode="w", format=tarfile.USTAR_FORMAT) as archive:
+            for path, data in sorted({**payload, "RELEASE-INVENTORY.sha256": inventory}.items()):
+                info = tarfile.TarInfo(f"School-OS-{version}/{path}")
+                info.size = len(data); info.mode = 0o644
+                archive.addfile(info, io.BytesIO(data))
+    data = buffer.getvalue()
+    return data, {
+        "version": version,
+        "source_identity": {"repository": "example/repository", "commit": "1" * 40},
+        "archive_sha256": sha256_bytes(data),
+        "inventory_sha256": sha256_bytes(inventory),
+    }
+
+
+class HybridInstallTests(unittest.TestCase):
+    root = {
+        "object_id": "root", "kind": "folder", "permitted_ancestor_id": "root",
+        "mime_type": "application/vnd.google-apps.folder", "version": "root-v1",
+    }
+    runtime = {
+        "implementation": "CPython", "python_version": "3.12.14",
+        "dependency_fingerprint": "d" * 64,
+    }
+
+    def state_entries(self):
+        return {
+            "state/operation-state.json": BundleEntry(
+                canonical_json_bytes({"schema_version": 1, "status": "idle"}),
+                "operation_state", "application/json", "operation-state.schema.json",
+            ),
+        }
+
+    def install(self, storage):
+        archive, package = package_fixture()
+        return install_hybrid_generation(
+            storage, root_reference=self.root, package=package,
+            package_bytes=archive, settings_bytes=b'schema_version: 1\n',
+            instance_id="instance-test", state_entries=self.state_entries(),
+            configuration_fingerprint="c" * 64,
+            runtime=self.runtime,
+        )
+
+    def test_install_creates_exactly_five_files_then_recovers_each_once(self):
+        storage = HybridStorage()
+        recovery = self.install(storage)
+        self.assertEqual([
+            HYBRID_PACKAGE_PATH, HYBRID_SETTINGS_PATH, INITIAL_STATE_PATH,
+            HYBRID_CURRENT_PATH, HYBRID_BOOTSTRAP_PATH,
+        ], storage.creates)
+        self.assertEqual(5, len(storage.objects))
+        self.assertEqual(5, len(storage.reads))
+        self.assertEqual("instance-test", recovery["bootstrap"]["instance_id"])
+        self.assertNotIn("version", recovery["bootstrap"]["current_reference"])
+        self.assertEqual("version-4", recovery["current_reference"]["version"])
+        self.assertIn("state/operation-state.json", recovery["state"].entries)
+
+    def test_lost_create_response_adopts_one_exact_object_without_duplicate(self):
+        storage = HybridStorage(lose_name=INITIAL_STATE_PATH)
+        self.install(storage)
+        self.assertEqual(5, len(storage.objects))
+        self.assertEqual(1, storage.creates.count(INITIAL_STATE_PATH))
+
+    def test_recovery_rejects_tampered_state_bytes(self):
+        storage = HybridStorage()
+        recovery = self.install(storage)
+        state_id = recovery["current"]["state"]["bundle_reference"]["object_id"]
+        storage.objects[state_id] = replace(storage.objects[state_id], data=b"tampered")
+        with self.assertRaisesRegex(InstallationError, "physical bytes"):
+            recover_hybrid_generation(
+                storage, root_reference=self.root,
+                bootstrap_reference=recovery["bootstrap_reference"],
+            )
+
+    def test_current_identity_survives_pointer_version_change(self):
+        storage = HybridStorage()
+        recovery = self.install(storage)
+        current_id = recovery["bootstrap"]["current_reference"]["object_id"]
+        storage.objects[current_id] = replace(storage.objects[current_id], version="version-new")
+        reread = recover_hybrid_generation(
+            storage, root_reference=self.root,
+            bootstrap_reference=recovery["bootstrap_reference"],
+        )
+        self.assertEqual("version-new", reread["current_reference"]["version"])
 
 
 if __name__ == "__main__":
