@@ -434,6 +434,33 @@ def _validate_result(kind: str, result: Any, args: Mapping[str, Any] | None = No
     return normalized
 
 
+_GMAIL_ATTACHMENT_RESULT_KEYS = frozenset({
+    "attachment_id", "content", "content_truncated", "extraction_file_uri",
+    "file_uri", "filename", "images", "message_id", "mime_type", "size_bytes",
+})
+
+
+def _normalize_gmail_attachment_envelope(result: Mapping[str, Any]) -> dict[str, Any]:
+    """Remove only the connector's observed exact redundant structured wrapper."""
+    outer = dict(result)
+    if "structuredContent" not in outer:
+        return outer
+    nested = outer.pop("structuredContent")
+    if (
+        not isinstance(nested, Mapping)
+        or set(outer) - _GMAIL_ATTACHMENT_RESULT_KEYS
+    ):
+        raise BridgeError("Gmail attachment redundant envelope is malformed")
+    candidate = nested.get("result", nested)
+    if (
+        not isinstance(candidate, Mapping)
+        or set(candidate) - _GMAIL_ATTACHMENT_RESULT_KEYS
+        or dict(candidate) != outer
+    ):
+        raise BridgeError("Gmail attachment redundant envelope conflicts with declared fields")
+    return outer
+
+
 class HostBindingDispatcher:
     """Dispatch an already-validated request to exactly one reviewed binding."""
 
@@ -526,6 +553,8 @@ class HostBindingDispatcher:
             native_args["image_uris"] = str(snapshot)
         try:
             result = self._native_tool_result(invoke(HOST_BINDINGS[kind].tool_name, native_args))
+            if kind == "gmail.read_attachment":
+                result = _normalize_gmail_attachment_envelope(result)
             return _validate_result(kind, result, args)
         finally:
             for snapshot in snapshots:

@@ -69,6 +69,15 @@ value and kept a smaller hard-coded default. The active compatible repair uses
 one configured finite byte limit for admission and fetching. The private test
 scenario must freeze a sufficient value within the existing host ceiling, and
 the resulting package/configuration requires a new empty root.
+That rebuilt package passed five-file installation, post-install Sheet binding,
+cold recovery, and the configured byte-admission gate. The next exact live
+failure is an attachment connector-envelope mismatch: the connector supplies
+the declared flat attachment fields plus a redundant nested
+`structuredContent` copy. The active compatible repair removes that wrapper
+only when the inner and outer declared fields agree exactly; conflicts and
+other surplus fields remain blocking. This is bridge normalization within the
+existing Gmail attachment contract, not an architecture change, and requires a
+rebuilt package and new empty root before live evidence continues.
 Every discovered direct resource must still be audited, excluded with evidence,
 or block the affected import; no arbitrary link following, crawler,
 HTML-to-text conversion, or raw-MIME canonical store is authorized.

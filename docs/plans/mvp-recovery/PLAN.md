@@ -294,6 +294,15 @@ qualified host ceiling and large enough for the observed attachment. This
 changes package/configuration bytes and therefore requires a new empty root; it
 does not change source meaning, storage layout, provider contracts, or
 architecture.
+The rebuilt package then passed the five-file install, generation-2 Sheet
+binding, and cold recovery, and the attachment reached the connector. Two
+independent live attempts reproduced one exact response-shape mismatch: the
+declared flat attachment fields also include a redundant nested
+`structuredContent` copy. The active compatible bridge repair strips that
+wrapper only when the inner and outer declared fields agree exactly;
+conflicting, malformed, or otherwise surplus fields remain blocking. Focused
+and complete validation pass. Because executable package bytes changed, another
+new empty root is required before live acceptance can resume.
 Use the Phase 0 `window_start_ms` and
 `window_end_ms` 14-day `[start,end)` bounds, recorded only in private evidence.
 Use a new

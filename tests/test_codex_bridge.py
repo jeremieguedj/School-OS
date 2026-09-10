@@ -12,7 +12,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from school_os.codex_bridge import BridgeError, JsonlPeer, create_run_directory, normalize_tool_result  # noqa: E402
+from school_os.codex_bridge import (  # noqa: E402
+    BridgeError, HostBindingDispatcher, JsonlPeer, create_run_directory,
+    normalize_tool_result,
+)
 from school_os.contracts import canonical_json_bytes, sha256_bytes  # noqa: E402
 
 
@@ -190,6 +193,66 @@ class CodexBridgeTests(unittest.TestCase):
         }))
         with self.assertRaisesRegex(BridgeError, "lacks structuredContent"):
             normalize_tool_result({"content": [{"type": "text", "text": '{"id":"unsafe"}'}]})
+
+    def test_attachment_dispatch_accepts_only_an_exact_redundant_structured_envelope(self) -> None:
+        attachment = {
+            "attachment_id": "attachment-1",
+            "content": [],
+            "content_truncated": False,
+            "extraction_file_uri": None,
+            "file_uri": {
+                "download_url": "https://files.example/attachment-1",
+                "file_id": "file-1",
+                "file_name": "notice.pdf",
+                "mime_type": "application/pdf",
+            },
+            "filename": "notice.pdf",
+            "images": [],
+            "message_id": "message-1",
+            "mime_type": "application/pdf",
+            "size_bytes": 42,
+        }
+        dispatcher = HostBindingDispatcher()
+        args = {"message_id": "message-1", "attachment_id": "attachment-1"}
+        observed = {**attachment, "structuredContent": dict(attachment)}
+        self.assertEqual(
+            attachment,
+            dispatcher.dispatch(
+                "gmail.read_attachment", args,
+                lambda _tool, _args: {"content": [], "structuredContent": observed},
+            ),
+        )
+        nested = {**attachment, "structuredContent": {"result": dict(attachment)}}
+        self.assertEqual(
+            attachment,
+            dispatcher.dispatch(
+                "gmail.read_attachment", args,
+                lambda _tool, _args: {"content": [], "structuredContent": nested},
+            ),
+        )
+        conflicting = dict(attachment)
+        conflicting["filename"] = "other.pdf"
+        with self.assertRaisesRegex(BridgeError, "conflicts"):
+            dispatcher.dispatch(
+                "gmail.read_attachment", args,
+                lambda _tool, _args: {
+                    "content": [],
+                    "structuredContent": {
+                        **attachment, "structuredContent": conflicting,
+                    },
+                },
+            )
+        with self.assertRaisesRegex(BridgeError, "malformed"):
+            dispatcher.dispatch(
+                "gmail.read_attachment", args,
+                lambda _tool, _args: {
+                    "content": [],
+                    "structuredContent": {
+                        **attachment, "unexpected": True,
+                        "structuredContent": dict(attachment),
+                    },
+                },
+            )
 
     def test_semantic_response_rejects_nonfinite_json(self) -> None:
         path = self.run_dir / "nan.response.json"

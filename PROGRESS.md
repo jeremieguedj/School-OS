@@ -3421,3 +3421,36 @@ requirements, then read this log from top to bottom.
   existing qualified ceiling that admits the observed PDF, create a new empty
   root, and repeat install/bind/recovery/live ingestion through canonical Drive
   publication and validation.
+
+## 2026-09-10 — recovery MVP fresh package admitted; attachment envelope mismatch isolated
+
+- The configured source-bound composition repair passed the complete frozen
+  CPython 3.12 validation gate: 367 tests plus schema, template, package, and
+  privacy validation. Published and remotely verified exact commit
+  `70ffaafa7dd1cda53b0d83581e44c0e9e1ed188f`; its immutable archive passed
+  checksum, archive, extracted-tree, and installed-package validation.
+- A new isolated root passed exact-parent and empty-root proof. The five-file
+  hybrid installation completed with 30 connector calls and an exact
+  five-object readback. A fresh post-install Sheet bound atomically as
+  generation 2 with 24 calls. Cold Drive recovery used 13 calls and its
+  recovered package validated.
+- Live source discovery repeated the bounded inventory. Standalone and embedded
+  email images remained excluded before fetch. The direct PDF passed complete
+  byte fetch and page-render transcription, and the prior eight semantic
+  expectations were reused only through exact packet-bound helpers.
+- The formerly byte-blocked supported Gmail PDF attachment reached the
+  attachment connector. The run then stopped before attachment-byte download or
+  canonical publication because the connector's flat structured attachment
+  object also carried one undeclared nested `structuredContent` property.
+  A second read-only diagnostic replay reproduced the same surplus property on
+  both attachment responses. No source bundle, successor state, task, delivery,
+  audio, Todoist, or scheduler effect occurred.
+- Implemented a narrow connector-envelope normalization, not an architecture
+  change. It removes the observed redundant wrapper only when its declared
+  inner and outer attachment fields agree exactly; conflicting, malformed, and
+  otherwise surplus fields remain blocking. Focused bridge/source/ingestion
+  validation passed 28 tests. The complete frozen CPython 3.12 gate passed 368
+  tests plus schema, template, package, and privacy validation.
+- Next: publish the exact repair, rebuild and verify its immutable package, use
+  another new empty root as required, and resume the same live ingestion
+  journey.
