@@ -17,6 +17,7 @@ from school_os.install import (
     extract_hybrid_package, install_hybrid_generation, publish_hybrid_state,
     recover_hybrid_generation,
 )
+from school_os.connected_storage import BundleWorkingState, ConnectedStorageError
 from school_os.package import inventory_bytes
 from school_os.references import StoredObject
 from pathlib import Path
@@ -324,6 +325,22 @@ class HybridInstallTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             with self.assertRaisesRegex(InstallationError, "hash disagrees"):
                 extract_hybrid_package(tampered, Path(temporary) / "installed")
+
+    def test_staged_member_has_no_durable_reference_until_publication(self):
+        storage = HybridStorage()
+        recovery = self.install(storage)
+        working = BundleWorkingState.from_recovery(recovery)
+        before = working.durable_reference("state/operation-state.json")
+        staged = working.stage(
+            "state/operation-state.json",
+            canonical_json_bytes({"schema_version": 1, "status": "running"}),
+        )
+        with self.assertRaisesRegex(ConnectedStorageError, "not durable"):
+            staged.durable_reference("state/operation-state.json")
+        committed = staged.publish(storage, self.serialization)
+        after = committed.durable_reference("state/operation-state.json")
+        self.assertNotEqual(before.bundle_sha256, after.bundle_sha256)
+        self.assertEqual(2, committed.recovery["current"]["generation"])
 
 
 if __name__ == "__main__":

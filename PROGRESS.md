@@ -2887,3 +2887,20 @@ requirements, then read this log from top to bottom.
   checkpoint, implement a bundle-backed working-state/store boundary, then
   route connected bootstrap/daily workers without preserving any assumption
   that logical members are separate Drive objects.
+
+## 2026-09-09 — recovery MVP staged-versus-durable working state
+
+- Published and remotely verified exact bundle-member references at exact
+  commit `123aaf57a43c748d486401b1025865c3ee64c59e`.
+- Added `BundleWorkingState`, which reconstructs logical entry metadata from one
+  verified current bundle, supports disposable staged changes, refuses durable
+  references for staged bytes, and clears the staged set only after immutable
+  successor creation and exact `CURRENT.json` publication succeeds.
+- Focused coverage proves the pre-publication reference refusal, changed bundle
+  and member hashes after publication, and generation advancement. The complete
+  frozen-interpreter gate passes 351 tests plus schema/template checks.
+- This working state is not yet wired into connected ingestion/task/delivery
+  workers. No provider call or external effect occurred. Next: publish this
+  checkpoint, implement the hybrid bootstrap/runtime document and bundle-backed
+  connected resolver, then atomically select the new setup/bootstrap route and
+  add post-admission Sheet binding.

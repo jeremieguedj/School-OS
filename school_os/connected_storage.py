@@ -12,6 +12,10 @@ from pathlib import Path
 from typing import Any, Protocol
 from urllib.parse import parse_qsl, urlsplit
 
+from .bundles import (
+    BundleEntry, BundleError, BundleMemberReference, VerifiedBundle,
+    member_reference,
+)
 from .references import ReferenceStorage, StoredObject
 
 
@@ -47,6 +51,92 @@ class ArtifactStore(Protocol):
     def read_named(self, parent: DriveReference, name: str) -> StoredArtifact | None: ...
     def write_immutable(self, parent: DriveReference, name: str, data: bytes, mime_type: str) -> StoredArtifact: ...
     def replace(self, reference: DriveReference, data: bytes, mime_type: str) -> StoredArtifact: ...
+
+
+class BundleWorkingState:
+    """One current immutable bundle plus explicit disposable staged changes."""
+
+    def __init__(
+        self, recovery: Mapping[str, Any], entries: Mapping[str, BundleEntry],
+        *, dirty: frozenset[str] = frozenset(),
+    ) -> None:
+        state = recovery.get("state")
+        current = recovery.get("current")
+        if not isinstance(state, VerifiedBundle) or not isinstance(current, Mapping):
+            raise ConnectedStorageError("bundle working state requires verified recovery")
+        if set(entries) != set(state.entries) and not dirty:
+            raise ConnectedStorageError("committed working entries disagree with the recovered bundle")
+        self.recovery = dict(recovery)
+        self.entries = dict(entries)
+        self.dirty = frozenset(dirty)
+
+    @classmethod
+    def from_recovery(cls, recovery: Mapping[str, Any]) -> "BundleWorkingState":
+        state = recovery.get("state")
+        if not isinstance(state, VerifiedBundle):
+            raise ConnectedStorageError("recovery lacks one verified state bundle")
+        descriptors = state.manifest.get("entries")
+        if not isinstance(descriptors, list):
+            raise ConnectedStorageError("state bundle lacks its member inventory")
+        entries: dict[str, BundleEntry] = {}
+        for descriptor in descriptors:
+            if not isinstance(descriptor, Mapping):
+                raise ConnectedStorageError("state bundle member descriptor is malformed")
+            path = descriptor.get("path")
+            data = state.entries.get(path) if isinstance(path, str) else None
+            if not isinstance(data, bytes):
+                raise ConnectedStorageError("state bundle member bytes are unavailable")
+            entries[path] = BundleEntry(
+                data, descriptor["role"], descriptor["media_type"],
+                descriptor.get("schema_id"),
+            )
+        return cls(recovery, entries)
+
+    def read(self, path: str) -> bytes:
+        entry = self.entries.get(path)
+        if entry is None:
+            raise ConnectedStorageError("logical state member is absent")
+        return entry.data
+
+    def stage(
+        self, path: str, data: bytes, *, role: str | None = None,
+        media_type: str | None = None, schema_id: str | None = None,
+    ) -> "BundleWorkingState":
+        existing = self.entries.get(path)
+        if existing is None and (role is None or media_type is None):
+            raise ConnectedStorageError("new logical state member requires role and media type")
+        if not isinstance(data, bytes):
+            raise ConnectedStorageError("staged logical state requires exact bytes")
+        updated = dict(self.entries)
+        updated[path] = BundleEntry(
+            data, role or existing.role, media_type or existing.media_type,
+            schema_id if schema_id is not None else (existing.schema_id if existing else None),
+        )
+        return BundleWorkingState(
+            self.recovery, updated, dirty=self.dirty | {path},
+        )
+
+    def durable_reference(self, path: str) -> BundleMemberReference:
+        if path in self.dirty:
+            raise ConnectedStorageError("staged logical bytes are not durable")
+        current = self.recovery["current"]
+        try:
+            return member_reference(
+                current["state"]["bundle_reference"], self.recovery["state"], path,
+            )
+        except (BundleError, KeyError, TypeError) as exc:
+            raise ConnectedStorageError(f"cannot resolve durable bundle member: {exc}") from exc
+
+    def publish(self, storage: Any, serialization: Mapping[str, Any]) -> "BundleWorkingState":
+        if not self.dirty:
+            return self
+        from .install import publish_hybrid_state
+
+        recovery = publish_hybrid_state(
+            storage, recovery=self.recovery, state_entries=self.entries,
+            serialization=serialization,
+        )
+        return BundleWorkingState.from_recovery(recovery)
 
 
 def _size(value: Any, label: str) -> int:
