@@ -3242,3 +3242,22 @@ requirements, then read this log from top to bottom.
   repair, rebuild the exact immutable package, create another new empty root and
   Sheet, then repeat install, bind, cold recovery, live ingestion, and canonical
   validation.
+
+## 2026-09-10 — recovery MVP installed recovery-directory invariant
+
+- Published and remotely verified the declared-versus-verified MIME repair at
+  exact commit `35c302eeba071fb0723a9e29156ed6b3f3cf6ab8`. Its immutable
+  package passed five-file installation and post-install Sheet binding in a new
+  isolated root. Cold recovery completed with 7 exact metadata reads and 6
+  exact content reads and no scoped search.
+- The recovered package then stopped locally before ingestion because bootstrap
+  extraction verified the required `School-OS-<version>` directory and renamed
+  it to `installed-<operation>`, while every installed entrypoint correctly
+  requires the release-directory identity. No source bundle, state advance,
+  task, delivery, audio, Todoist, or scheduler effect occurred.
+- Corrected only the bootstrap destination name and updated its regression
+  assertion. The approved five-file layout, Drive references, hashes,
+  publication ordering, source rules, and provider architecture are unchanged.
+- Next: complete validation, publish the compatible repair, rebuild the exact
+  immutable package, create a new empty isolated instance, and repeat install,
+  bind, cold recovery, live ingestion, and canonical validation.

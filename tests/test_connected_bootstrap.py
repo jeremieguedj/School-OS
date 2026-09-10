@@ -212,7 +212,7 @@ class ConnectedBootstrapTests(unittest.TestCase):
             )
             self.assertEqual(1, extract_mock.call_count)
             old_recover.assert_not_called()
-            self.assertEqual(run / "installed-op-1", result.root)
+            self.assertEqual(run / "School-OS-test", result.root)
 
     def test_dispatcher_has_exact_contracts_and_no_arbitrary_tool(self) -> None:
         dispatcher = HostBindingDispatcher()

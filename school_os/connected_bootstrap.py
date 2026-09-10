@@ -141,12 +141,14 @@ def recover_installed_entrypoint(
                 storage, root_reference=document.root_reference,
                 bootstrap_reference=document.bootstrap_reference,
             )
+            version = recovery["bootstrap"]["system_version"]
         else:
             recovery = recover_create_only_generation(
                 storage, root_reference=document.root_reference,
                 bootstrap_reference=document.bootstrap_reference,
             )
-        destination = run_directory / f"installed-{operation_id}"
+            version = recovery["manifest"]["package"]["version"]
+        destination = run_directory / f"School-OS-{version}"
         root = (
             extract_hybrid_package(recovery, destination)
             if bootstrap.mime_type == "application/json"
