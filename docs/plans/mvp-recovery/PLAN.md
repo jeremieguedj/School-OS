@@ -342,6 +342,14 @@ content. This change is confined to Gmail normalization, source catalog/schema,
 semantic packet/audit, and connected ingestion/publication validation. It adds
 no Drive object, provider framework, migration, HTML conversion, calendar
 semantics, or storage-layout change. Fresh installs only remain in scope.
+The exact `263b152` package has now passed a new five-file installation,
+generation-2 Sheet binding, cold recovery, and the complete privately frozen
+four-day source batch. Drive generation 3 contains eight audited catalog
+records, eight exact raw messages, and 19 source-linked Facts; image fetches
+remained at zero. A second cold recovery revalidated the committed state and
+source bundle. The checkpoint truthfully remains at `reconcile`, with the
+eligible source cursor unchanged; task projection and unsent brief rendering
+remain required before the Phase 1 gate can close.
 For the later final recovery acceptance, use the Phase 0 `window_start_ms` and
 `window_end_ms` 14-day `[start,end)` bounds, recorded only in private evidence.
 Use a new

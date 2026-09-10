@@ -3650,3 +3650,37 @@ requirements, then read this log from top to bottom.
   gate, commit/push the checkpoint fix, build that exact package, create a new
   empty root and isolated Sheet, and repeat the four-day journey through final
   canonical Drive readback.
+
+## 2026-09-10 — exact four-day source ingestion and fresh recovery pass
+
+- Committed and remotely verified the hybrid-checkpoint compatibility repair at
+  exact commit `263b152decb36f0a58537a5bb663e3b46e2c2a4e`. The complete repository
+  gate passed 376 tests plus schema, template, release-package, and privacy
+  validation. The exact immutable package passed installed-tree validation.
+- Created a new isolated empty root and a new isolated one-tab Sheet. The exact
+  five-file installation completed in 30 connector calls. Only after admission,
+  the Sheet moved under the root and its generation-2 binding completed in 24
+  calls. Cold recovery of that bound installation completed in 13 reads.
+- The fixed four-day ingestion completed and committed Drive generation 3. Its
+  eight discovered conversations match eight complete thread reads and sixteen
+  full/raw message reads. Independent semantic review accepted all eight
+  records and produced 19 source-linked Facts, including one action Fact. The
+  exact source bundle preserves eight raw messages; attachment and direct-
+  resource byte counts are zero, and no image/attachment read was issued under
+  the temporary image exclusion. Ingestion used 25 Gmail calls and 13 Drive
+  calls, including the source-bundle write/readback, successor state write/
+  readback, and guarded `CURRENT.json` update/readback.
+- A separate post-commit cold recovery selected generation 3 in 13 reads.
+  Offline validation resolved every catalog, interpretation, audit, Facts, and
+  raw-message member reference against the exact source bundle; the Fact index
+  exactly covers the canonical Facts; and operation-state points to the exact
+  committed checkpoint. Private receipts live under
+  `private/mvp-recovery/artifacts/live-263b152-4d/`.
+- This is a passed source-ingestion compatibility gate, not the complete Phase 1
+  preview. The checkpoint deliberately remains `running` with `reconcile` as
+  remaining work; the eligible source cursor has not advanced, the one action
+  Fact has not yet become a canonical task/Sheet row, and no unsent brief has
+  been rendered. No email, audio, Todoist, scheduler, or production effect was
+  attempted. Next: implement or invoke the existing hybrid task-reconciliation,
+  Sheets-projection, render, and cursor-last continuation without changing the
+  approved architecture.

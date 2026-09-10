@@ -29,6 +29,13 @@ state generations. Task projections bind after canonical installation. This is
 a fresh-install contract change only; it does not add migration or weaken the
 recovery MVP acceptance cases.
 
+The current four-day compatibility run has now passed exact source ingestion on
+the installed `263b152` package: eight complete conversations and their audited
+Facts are canonical in Drive generation 3, image fetches remained disabled, and
+a separate cold recovery revalidated that generation. Phase 1 remains active at
+the explicit `reconcile` continuation boundary; canonical task projection,
+unsent brief rendering, and cursor-last completion are not yet claimed.
+
 The private execution values and unsanitized reference adapter receipts live
 only in
 gitignored `private/mvp-recovery/TEST-PARAMETERS.md` and
