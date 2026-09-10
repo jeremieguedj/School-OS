@@ -100,16 +100,19 @@ A bundle member reference has exactly:
 ```
 
 An archive member never receives or pretends to have its own Drive ID. Internal
-links between members use stable logical entry paths. The resolver combines
-those paths with the already-verified current bundle context and returns the
-full member reference above. References from a later state bundle to a source
-or output bundle include that already-known physical bundle reference and
-member evidence directly.
+links between members use a carrier-relative reference containing exactly
+`entry_path`, `entry_sha256`, `byte_length`, and `media_type`. It is not durable
+on its own and can resolve only against the already-verified enclosing bundle.
+The resolver combines that verified carrier with its `CURRENT.json` state
+reference to produce the full durable member reference above. References from a
+later state bundle to a source or output bundle include that already-known
+physical bundle reference and member evidence directly.
 
 This two-level rule prevents circular hashes: a bundle does not contain its own
-object ID or whole-bundle hash. Those are supplied by `CURRENT.json` after the
-immutable upload has been verified. No local path or staged receipt is a
-reference.
+object ID or whole-bundle hash, and a checkpoint within it uses only exact peer
+evidence for members in that same carrier. Physical identity and the whole-
+bundle hash are supplied by `CURRENT.json` after the immutable upload has been
+verified. No local path or staged receipt is a durable reference.
 
 ## Deterministic bundle format and safe reads
 

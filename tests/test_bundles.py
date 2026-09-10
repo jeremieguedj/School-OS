@@ -7,8 +7,9 @@ import unittest
 from dataclasses import replace
 
 from school_os.bundles import (
-    BundleEntry, BundleError, BundleMemberReference, MANIFEST_PATH, build_bundle,
-    member_reference, read_bundle, resolve_member,
+    BundleEntry, BundleError, BundleMemberReference, BundlePeerReference,
+    MANIFEST_PATH, build_bundle, member_reference, peer_reference, read_bundle,
+    resolve_member, resolve_peer,
 )
 from school_os.contracts import canonical_json_bytes, sha256_bytes, validate
 from school_os.install import (
@@ -126,6 +127,30 @@ class BundleTests(unittest.TestCase):
         changed = read_bundle(self.build(identity="state-other"))
         with self.assertRaisesRegex(BundleError, "different physical bytes"):
             resolve_member(reference, changed)
+
+    def test_peer_reference_is_exact_but_requires_verified_carrier(self):
+        bundle = read_bundle(self.build())
+        reference = peer_reference(bundle, "data/guidelines.json")
+        self.assertNotIn("object_id", reference.as_mapping())
+        self.assertNotIn("bundle_sha256", reference.as_mapping())
+        self.assertEqual(reference, BundlePeerReference.from_mapping(reference.as_mapping()))
+        self.assertEqual(
+            self.entries()["data/guidelines.json"].data,
+            resolve_peer(reference, bundle),
+        )
+        schema = json.loads(
+            (Path(__file__).resolve().parents[1] / "schemas" / "bundle-peer-reference.schema.json").read_text()
+        )
+        self.assertEqual([], validate(reference.as_mapping(), schema))
+        changed = read_bundle(self.build(entries={
+            **self.entries(),
+            "data/guidelines.json": BundleEntry(
+                b'{"guidelines":["changed"],"schema_version":1}\n',
+                "guidelines", "application/json",
+            ),
+        }))
+        with self.assertRaisesRegex(BundleError, "disagrees"):
+            resolve_peer(reference, changed)
 
 
 class HybridStorage:

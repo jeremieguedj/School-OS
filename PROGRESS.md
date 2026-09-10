@@ -2943,3 +2943,21 @@ requirements, then read this log from top to bottom.
 - Next: publish this binding checkpoint, add a bundle-native logical artifact/
   checkpoint model without same-bundle self-references, then route the connected
   resolver and setup CLI through the hybrid path as one validated unit.
+
+## 2026-09-09 — recovery MVP carrier-relative peer references
+
+- Published and remotely verified post-admission Sheets binding at exact commit
+  `e6cadb8ca9863ea32464ee286fcc236985ac2d3b`; 62 focused setup, bundle, and
+  bootstrap tests passed.
+- Added a typed carrier-relative peer reference containing exact logical path,
+  SHA-256, byte length, and media type, plus checked-in schema and resolver.
+  It deliberately contains no provider identity or whole-bundle hash and is
+  unusable without the verified enclosing bundle; this permits checkpoints to
+  name peer artifacts without a self-hash cycle.
+- Focused coverage proves schema round-trip, exact resolution, absence of fake
+  physical identity, and rejection against a changed verified carrier. The
+  approved storage specification now records this exact two-level reference
+  rule. No provider call or external effect occurred.
+- Next: publish this reference checkpoint, implement the bundle transaction/
+  phase-publication store using peer references, then adapt the connected
+  resolver and setup CLI without exposing a half-wired live route.

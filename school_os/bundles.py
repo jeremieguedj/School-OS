@@ -100,6 +100,40 @@ class BundleMemberReference:
         }
 
 
+@dataclass(frozen=True)
+class BundlePeerReference:
+    """Carrier-relative member evidence safe to store inside the same bundle."""
+
+    entry_path: str
+    entry_sha256: str
+    byte_length: int
+    media_type: str
+
+    @classmethod
+    def from_mapping(cls, value: Mapping[str, Any]) -> "BundlePeerReference":
+        if not isinstance(value, Mapping) or set(value) != {
+            "entry_path", "entry_sha256", "byte_length", "media_type",
+        }:
+            raise BundleError("bundle peer reference has an unsupported shape")
+        length = value.get("byte_length")
+        if isinstance(length, bool) or not isinstance(length, int) or length < 0:
+            raise BundleError("bundle peer reference has an invalid byte length")
+        return cls(
+            _safe_path(value.get("entry_path")),
+            _required_hash(value.get("entry_sha256"), "bundle peer member hash"),
+            length,
+            _required_text(value.get("media_type"), "bundle peer media type"),
+        )
+
+    def as_mapping(self) -> dict[str, Any]:
+        return {
+            "byte_length": self.byte_length,
+            "entry_path": self.entry_path,
+            "entry_sha256": self.entry_sha256,
+            "media_type": self.media_type,
+        }
+
+
 def _safe_path(value: str) -> str:
     if not isinstance(value, str) or not value or len(value) > MAX_PATH_CODEPOINTS:
         raise BundleError("bundle member path is empty or exceeds its bound")
@@ -350,4 +384,48 @@ def resolve_member(reference: BundleMemberReference, bundle: VerifiedBundle) -> 
         raise BundleError("bundle member is absent")
     if len(data) != reference.byte_length or sha256_bytes(data) != reference.entry_sha256:
         raise BundleError("bundle member bytes disagree with their exact reference")
+    return data
+
+
+def peer_reference(bundle: VerifiedBundle, entry_path: str) -> BundlePeerReference:
+    """Create a non-durable peer reference using the verified carrier inventory."""
+    path = _safe_path(entry_path)
+    descriptors = bundle.manifest.get("entries")
+    descriptor = next(
+        (
+            item for item in descriptors or []
+            if isinstance(item, Mapping) and item.get("path") == path
+        ),
+        None,
+    )
+    data = bundle.entries.get(path)
+    if descriptor is None or data is None:
+        raise BundleError("bundle does not contain the requested peer member")
+    return BundlePeerReference.from_mapping({
+        "byte_length": len(data),
+        "entry_path": path,
+        "entry_sha256": sha256_bytes(data),
+        "media_type": descriptor.get("media_type"),
+    })
+
+
+def resolve_peer(reference: BundlePeerReference, bundle: VerifiedBundle) -> bytes:
+    """Resolve a peer only with its verified enclosing bundle as the carrier."""
+    data = bundle.entries.get(reference.entry_path)
+    if data is None:
+        raise BundleError("bundle peer member is absent")
+    descriptor = next(
+        (
+            item for item in bundle.manifest.get("entries", [])
+            if isinstance(item, Mapping) and item.get("path") == reference.entry_path
+        ),
+        None,
+    )
+    if (
+        descriptor is None
+        or descriptor.get("media_type") != reference.media_type
+        or len(data) != reference.byte_length
+        or sha256_bytes(data) != reference.entry_sha256
+    ):
+        raise BundleError("bundle peer member disagrees with its carrier-relative reference")
     return data

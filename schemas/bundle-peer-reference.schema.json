@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://school-os.example/schemas/bundle-peer-reference.schema.json",
+  "title": "School-OS carrier-relative bundle peer reference",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["entry_path", "entry_sha256", "byte_length", "media_type"],
+  "properties": {
+    "entry_path": {"type": "string", "minLength": 1, "maxLength": 256},
+    "entry_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "byte_length": {"type": "integer", "minimum": 0},
+    "media_type": {"type": "string", "minLength": 1}
+  }
+}
