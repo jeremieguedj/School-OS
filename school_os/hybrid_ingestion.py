@@ -37,6 +37,9 @@ class HybridIngestionError(ValueError):
 
 
 _STAGE_MIME = "application/vnd.google-apps.folder"
+_MVP_IMAGE_EXCLUSION_REASON = (
+    "image ingestion is temporarily disabled for MVP qualification"
+)
 
 
 class LocalIngestionStore:
@@ -261,6 +264,9 @@ def stage_connected_ingestion(
             supported_attachment_mime_types=(
                 "text/plain", "application/pdf", "image/png", "image/jpeg", "image/gif",
             ),
+            excluded_attachment_mime_types={
+                "image/*": _MVP_IMAGE_EXCLUSION_REASON,
+            },
             attachment_extractors={
                 "application/pdf": lambda item: source_bytes.extract_pdf(
                     source_id=item.identity, data=item.data or b"",
@@ -279,6 +285,9 @@ def stage_connected_ingestion(
                 ),
             },
             resource_fetcher=fetch_resource,
+            excluded_resource_origins={
+                "html_embedded": _MVP_IMAGE_EXCLUSION_REASON,
+            },
             resource_extractors={
                 "application/pdf": lambda item: source_bytes.extract_pdf(
                     source_id=resource_identity(item), data=item.data,

@@ -3341,3 +3341,25 @@ requirements, then read this log from top to bottom.
   the approved architecture and process its bounded images, or explicitly
   authorize a revised source-policy/configuration contract, rebuilt package,
   and new empty root for an image-excluded scenario.
+
+## 2026-09-10 — recovery MVP temporary all-image exclusion authorized
+
+- The user selected the revised source-policy option for current MVP
+  qualification: completely exclude images now, preserve the implemented image
+  pipeline, and defer a selective policy for meaningful images versus
+  decorative headers and footers until after the MVP is proven.
+- Implemented the exclusion at the connected composition boundary. All MIME
+  attachments matching `image/*` and all resources inventoried as
+  `html_embedded` receive the existing canonical `excluded_by_policy` outcome
+  before any image download or extraction. Their source identity and inventory
+  provenance remain visible; no image bytes, semantic segment, or Fact is
+  produced. Text and PDF behavior is unchanged, and the image readers,
+  validation, MIME/signature, and extractor bindings remain in the package.
+- Added focused zero-fetch/zero-extraction coverage for MIME images and embedded
+  images plus composer assertions proving the policy is active while image
+  extractors remain bound. Focused validation passed 36 tests. The full frozen
+  CPython 3.12.14 gate passed 366 tests plus schema/template validation and the
+  tracked-file privacy scan.
+- Next: publish the exact runtime, rebuild its package, create a new empty root
+  and Sheet, then repeat install, binding, cold recovery, live ingestion, and
+  canonical validation.

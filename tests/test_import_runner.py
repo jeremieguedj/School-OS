@@ -56,6 +56,75 @@ class ImportRunnerTests(unittest.TestCase):
         self.assertIsNone(outcomes[1].text)
         self.assertIsNone(outcomes[2].text)
 
+    def test_policy_excluded_image_attachment_is_never_read(self) -> None:
+        outcome, = process_attachments(
+            ({
+                "attachment_id": "image-attachment",
+                "source_message_id": "message-1",
+                "content_id": "banner-image",
+                "mime_type": "image/webp",
+                "byte_size": 4096,
+            },),
+            read_attachment=lambda _identity: self.fail(
+                "policy-excluded image must not be fetched"
+            ),
+            supported_mime_types=(),
+            excluded_mime_types={
+                "image/*": "image ingestion is temporarily disabled",
+            },
+            max_bytes=8192,
+        )
+        self.assertEqual("excluded_by_policy", outcome.outcome)
+        self.assertEqual("image/webp", outcome.mime_type)
+        self.assertEqual("message-1", outcome.source_message_id)
+        self.assertEqual("banner-image", outcome.content_id)
+        self.assertIsNone(outcome.original_content_sha256)
+        self.assertIsNone(outcome.extracted_text_sha256)
+        self.assertIsNone(outcome.text)
+        self.assertIsNone(outcome.read_evidence)
+        require_complete_message_coverage(b"complete body", (outcome,), ())
+
+    def test_policy_excluded_embedded_image_is_never_fetched(self) -> None:
+        html = b'<img src="https://assets.example/banner.png">'
+        resources = discover_direct_html_resources(
+            "message-1",
+            {
+                "part_id": "html-1", "role": "body",
+                "selected_plaintext": False, "complete": True,
+                "mime_type": "text/html", "charset": "utf-8",
+                "content_transfer_encoding": "identity",
+                "data": html,
+                "raw_part_sha256": __import__("hashlib").sha256(html).hexdigest(),
+                "raw_part_byte_length": len(html),
+                "raw_part_locator": {
+                    "kind": "raw_part_bytes", "byte_start": 0,
+                    "byte_end": len(html),
+                },
+                "provider_unicode": html.decode("utf-8"),
+            },
+        )
+        self.assertEqual(1, len(resources))
+        outcome, = process_direct_html_resources(
+            resources,
+            fetch_resource=lambda _url: self.fail(
+                "policy-excluded embedded image must not be fetched"
+            ),
+            extractors={"image/png": lambda _read: self.fail(
+                "policy-excluded embedded image must not be extracted"
+            )},
+            excluded_resources={
+                resources[0].resource_id:
+                    "image ingestion is temporarily disabled",
+            },
+            max_bytes=8192,
+            max_redirects=0,
+        )
+        self.assertEqual("html_embedded", outcome.resource.origin)
+        self.assertEqual("excluded_by_policy", outcome.outcome)
+        self.assertIsNone(outcome.original_content_sha256)
+        self.assertIsNone(outcome.text)
+        require_complete_message_coverage(b"complete body", (), (outcome,))
+
     def test_selected_plaintext_admission_decodes_strictly_and_round_trips_catalogue(self) -> None:
         def part(data: bytes, *, part_id: str = "body", encoding: str = "identity", charset: str = "utf-8") -> dict:
             return {

@@ -720,12 +720,21 @@ def process_attachments(
     attachments: Sequence[Mapping[str, Any]], *, read_attachment: Callable[[str], ReadResult | AttachmentRead],
     supported_mime_types: Sequence[str], max_bytes: int,
     extractors: Mapping[str, Callable[[ReadResult], AttachmentExtraction]] | None = None,
+    excluded_mime_types: Mapping[str, str] | None = None,
 ) -> tuple[AttachmentOutcome, ...]:
     """Process separately inventoried attachments with verifiable provenance."""
     if max_bytes < 1:
         raise ImportError("attachment byte limit must be positive")
     supported = set(supported_mime_types)
     selected_extractors = dict(extractors or {})
+    exclusions = dict(excluded_mime_types or {})
+    if any(
+        not isinstance(mime_type, str) or not mime_type
+        or ("*" in mime_type and not mime_type.endswith("/*"))
+        or not isinstance(reason, str) or not reason.strip()
+        for mime_type, reason in exclusions.items()
+    ):
+        raise ImportError("attachment MIME exclusion policy is malformed")
     outcomes: list[AttachmentOutcome] = []
     seen: set[str] = set()
     for attachment in attachments:
@@ -748,6 +757,20 @@ def process_attachments(
             ))
             continue
         seen.add(attachment_id)
+        exclusion_reason = exclusions.get(mime_type) if isinstance(mime_type, str) else None
+        if exclusion_reason is None and isinstance(mime_type, str):
+            exclusion_reason = next((
+                reason for media_range, reason in exclusions.items()
+                if media_range.endswith("/*")
+                and mime_type.startswith(media_range[:-1])
+            ), None)
+        if exclusion_reason is not None:
+            outcomes.append(AttachmentOutcome(
+                attachment_id, "excluded_by_policy", mime_type,
+                None, None, None, None, source_message_id=source_message_id,
+                content_id=content_id, disposition_reason=exclusion_reason,
+            ))
+            continue
         if not isinstance(mime_type, str) or mime_type not in supported:
             outcomes.append(AttachmentOutcome(
                 attachment_id, "unsupported", mime_type if isinstance(mime_type, str) else None,

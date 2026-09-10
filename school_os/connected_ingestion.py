@@ -436,8 +436,10 @@ def _require_string(value: Mapping[str, Any], key: str, label: str) -> str:
 def _conversation_messages(
     source: SourcePort, conversation: Mapping[str, Any], *, max_attachment_bytes: int,
     supported_attachment_mime_types: Sequence[str], attachment_extractors: Mapping[str, Callable[[ReadResult], AttachmentExtraction]],
+    excluded_attachment_mime_types: Mapping[str, str],
     resource_fetcher: Callable[[str], Any] | None,
     resource_extractors: Mapping[str, Callable[[Any], AttachmentExtraction]],
+    excluded_resource_origins: Mapping[str, str],
     max_resource_bytes: int, max_resource_redirects: int,
     readback: Mapping[str, Any] | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, str]]:
@@ -485,6 +487,7 @@ def _conversation_messages(
             supported_mime_types=tuple(supported_attachment_mime_types),
             max_bytes=max_attachment_bytes,
             extractors=attachment_extractors,
+            excluded_mime_types=excluded_attachment_mime_types,
         )
         resource_outcomes: tuple[DirectResourceOutcome, ...] = ()
         html_parts = member.get("html_parts", [])
@@ -497,10 +500,16 @@ def _conversation_messages(
             if resources and resource_fetcher is None:
                 raise ConnectedIngestionError("direct HTML resource retrieval is not bound on this runtime")
             if resources:
+                exclusions = {
+                    resource.resource_id: excluded_resource_origins[resource.origin]
+                    for resource in resources
+                    if resource.origin in excluded_resource_origins
+                }
                 resource_outcomes += process_direct_html_resources(
                     resources, fetch_resource=resource_fetcher,
                     extractors=resource_extractors, max_bytes=max_resource_bytes,
                     max_redirects=max_resource_redirects,
+                    excluded_resources=exclusions,
                 )
         try:
             require_complete_message_coverage(admission.plaintext, attachment_outcomes, resource_outcomes)
@@ -783,8 +792,10 @@ class ConnectedIngestionWorker:
         extraction_schema: Mapping[str, Any], interpreter: Interpreter, auditor: Auditor,
         supported_attachment_mime_types: Sequence[str] = ("text/plain",),
         attachment_extractors: Mapping[str, Callable[[ReadResult], AttachmentExtraction]] = {},
+        excluded_attachment_mime_types: Mapping[str, str] = {},
         resource_fetcher: Callable[[str], Any] | None = None,
         resource_extractors: Mapping[str, Callable[[Any], AttachmentExtraction]] = {},
+        excluded_resource_origins: Mapping[str, str] = {},
         max_attachment_bytes: int = 1_048_576, max_resource_bytes: int = 1_048_576,
         max_resource_redirects: int = 3,
     ) -> None:
@@ -794,8 +805,11 @@ class ConnectedIngestionWorker:
         self.catalog_schema, self.fact_schema, self.extraction_schema = dict(catalog_schema), dict(fact_schema), dict(extraction_schema)
         self.interpreter, self.auditor = interpreter, auditor
         self.supported_attachment_mime_types = tuple(supported_attachment_mime_types)
-        self.attachment_extractors, self.resource_fetcher = dict(attachment_extractors), resource_fetcher
+        self.attachment_extractors = dict(attachment_extractors)
+        self.excluded_attachment_mime_types = dict(excluded_attachment_mime_types)
+        self.resource_fetcher = resource_fetcher
         self.resource_extractors = dict(resource_extractors)
+        self.excluded_resource_origins = dict(excluded_resource_origins)
         self.max_attachment_bytes, self.max_resource_bytes, self.max_resource_redirects = max_attachment_bytes, max_resource_bytes, max_resource_redirects
 
     def _validated_bundle(
@@ -1152,8 +1166,12 @@ class ConnectedIngestionWorker:
             messages, source_bodies = _conversation_messages(
                 self.source, listed, max_attachment_bytes=self.max_attachment_bytes,
                 supported_attachment_mime_types=self.supported_attachment_mime_types,
-                attachment_extractors=self.attachment_extractors, resource_fetcher=self.resource_fetcher,
-                resource_extractors=self.resource_extractors, max_resource_bytes=self.max_resource_bytes,
+                attachment_extractors=self.attachment_extractors,
+                excluded_attachment_mime_types=self.excluded_attachment_mime_types,
+                resource_fetcher=self.resource_fetcher,
+                resource_extractors=self.resource_extractors,
+                excluded_resource_origins=self.excluded_resource_origins,
+                max_resource_bytes=self.max_resource_bytes,
                 max_resource_redirects=self.max_resource_redirects,
                 readback=prefetched.get(conversation_id),
             )

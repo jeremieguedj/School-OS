@@ -80,6 +80,20 @@ class HybridIngestionTests(unittest.TestCase):
                 set(worker.resource_extractors),
             )
             self.assertIn("image/gif", worker.supported_attachment_mime_types)
+            self.assertEqual(
+                {"image/*"},
+                set(worker.excluded_attachment_mime_types),
+            )
+            self.assertEqual(
+                {"html_embedded"}, set(worker.excluded_resource_origins),
+            )
+            self.assertTrue(all(
+                "temporarily disabled" in reason
+                for reason in (
+                    *worker.excluded_attachment_mime_types.values(),
+                    *worker.excluded_resource_origins.values(),
+                )
+            ))
             return "staged"
 
         with patch("school_os.hybrid_ingestion.stage_ingestion", side_effect=inspect_worker):

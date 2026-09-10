@@ -50,13 +50,15 @@ direct resources separate; ambiguous, incomplete, HTML-derived, or lossy
 content still blocks. Observed binding and source acceptance remain M4-003/M4-009
 work. No raw-MIME canonical architecture is selected.
 
-Direct image/PDF resources referenced by complete HTML alternatives are also
-in-scope source material for the authorized test path. They are separately
-inventoried and fetched only from exact source-linked URLs under bounded
-redirect, byte, MIME/signature, and provenance checks; no arbitrary link
-following, crawler, HTML-to-text conversion, or raw-MIME canonical store is
-authorized. Every discovered direct resource must be audited, excluded with
-evidence, or block the affected import.
+Direct image/PDF resources referenced by complete HTML alternatives remain
+separately inventoried source material. For the current MVP qualification, an
+explicit user-authorized temporary policy marks all image MIME attachments and
+HTML-embedded image resources `excluded_by_policy` before fetch or extraction;
+text and PDFs remain active. The image pipeline is preserved for a later policy
+that can distinguish meaningful images from decorative headers and footers.
+Every discovered direct resource must still be audited, excluded with evidence,
+or block the affected import; no arbitrary link following, crawler,
+HTML-to-text conversion, or raw-MIME canonical store is authorized.
 
 The authorized completion target is a new empty private Drive test instance.
 The existing alpha.11 instance may supply source-domain/configuration evidence

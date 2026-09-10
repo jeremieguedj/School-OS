@@ -24,7 +24,8 @@ journey on the authorized test surfaces:
 2. freeze a new inclusive-start/exclusive-end 14-day source window at execution
    start and ingest every message in the private companion's two-domain scope;
 3. preserve complete email bodies, supported attachments, and bounded directly
-   referenced image/PDF assets with provenance;
+   referenced PDF assets with provenance; inventory every image but terminate it
+   as `excluded_by_policy` without fetching, interpreting, or creating Facts;
 4. create source-linked, queryable Facts and canonical Drive tasks;
 5. import parent changes and new/completed/reopened tasks from the one selected
    task tool into Drive before refreshing any task projection;
@@ -68,6 +69,16 @@ uses the existing daily eligibility recipe, including the approved Parent-added
 tasks exception. It must not dump every preserved Fact merely to demonstrate
 coverage. Facts and knowledge remain source-linked and queryable independently of
 brief eligibility.
+
+For the current MVP qualification only, the user has explicitly selected a
+temporary all-image exclusion policy. MIME attachments matching `image/*` and
+direct resources discovered as `html_embedded` remain visible in the canonical
+source inventory as `excluded_by_policy`, with their source identity and
+provenance, but are not downloaded, sent to image extraction, added to semantic
+packets, or converted into Facts. Text and PDF processing are unchanged. The
+existing image fetch, verification, MIME/signature, and extraction code remains
+available but inactive. A later include/exclude policy for meaningful images
+versus decorative headers and footers is deferred until after the MVP is proven.
 
 Only fresh installation is in scope. Defer upgrades, migration of old private
 instances, broad runtime/adapter matrices, generalized workflow engines,
@@ -138,7 +149,7 @@ recipes rather than duplicating them in a new framework.
 | File or seam | Exact MVP deliverable |
 |---|---|
 | Candidate `school_os/connected_bootstrap.py`, `connected_setup.py`, `connected_profiles.py`; `scripts/setup_connected_instance.py`, `run_connected_operation.py`, `readmit_connected_profile.py` | Reconcile onto `main`; recover only admitted package/bootstrap/profile bytes; fresh create-only setup; finite operation routing; exact readback and profile selection. |
-| `school_os.connected_ingestion.ConnectedIngestionWorker`, candidate `school_os/connected_sources.py`, `scripts/run_source_host.py` | Bind the frozen `[start,end)` search, full/raw Gmail reads, complete bodies, attachment bytes, bounded direct resources, image/PDF extraction, persisted Facts/audit, and continuation. Retain existing custody/semantic validators. |
+| `school_os.connected_ingestion.ConnectedIngestionWorker`, candidate `school_os/connected_sources.py`, `scripts/run_source_host.py` | Bind the frozen `[start,end)` search, full/raw Gmail reads, complete bodies, attachment bytes, bounded PDF resources, the temporary pre-fetch all-image exclusion, persisted Facts/audit, and continuation. Retain the inactive image pipeline and existing custody/semantic validators. |
 | `school_os.connected_tasks.ConnectedTaskWorker` and `school_os.connected_sheets.CodexSheetsTaskPort` | Preserve `reconcile` as the Drive-canonical readmission step and `task_sync` as the exact provider handoff; keep last-sync conflict handling, guarded literal writes, lifecycle/history, and brief task view. |
 | **Proposed** `school_os/connected_todoist.py` plus the existing generic task port/contract | Sanitize the supplied private procedure into a finite connected adapter: complete scoped active/completed/activity/comment reads, stable provider ID and canonical marker checks, parent-change import, bounded guarded effects, exact readback, and provider state. |
 | Candidate `school_os.connected_daily.ConnectedDailyRuntime` | Replace the current hard-coded Sheets construction with one selector-dispatched task port. Ordinary runs read/write only the selected provider. Carry exact `reconcile` output into selected `task_sync`; retain all-current Facts/tasks for brief building and cursor-last commit. |
@@ -251,6 +262,12 @@ does not change the frozen bounds, source scope, storage layout, canonical
 references, or provider architecture. Contradictory, malformed, or incomplete
 responses remain blocking. A rebuilt package and new empty root are required
 before Phase 1 live evidence can be accepted.
+The user subsequently authorized a temporary current-MVP source-policy change:
+all image MIME attachments and HTML-embedded image resources are inventoried as
+`excluded_by_policy` before provider fetch or extraction. The image processing
+implementation is preserved for a later selective source policy. This frozen
+policy change requires another exact package and a new empty root; it does not
+change storage, canonical references, task semantics, or provider architecture.
 Use the Phase 0 `window_start_ms` and
 `window_end_ms` 14-day `[start,end)` bounds, recorded only in private evidence.
 Use a new
