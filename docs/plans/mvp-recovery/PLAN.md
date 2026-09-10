@@ -318,7 +318,13 @@ shape, retains fail-closed disagreement and unknown-surplus checks, and records
 the complete raw connector outcome privately on later errors while showing the
 running agent a sanitized machine diagnosis and evidence path. This changes
 executable bytes, so live qualification resumes from a new empty root.
-Use the Phase 0 `window_start_ms` and
+The user authorized that immediate requalification as a four-local-calendar-day
+inclusive ingestion window (today plus the preceding three days, with an
+exclusive start-of-tomorrow end) in the private configured timezone. Freeze the
+exact bounds only in private evidence and keep the temporary all-image exclusion.
+This is a bounded live compatibility gate; it does not replace the recovery
+MVP's final 14-day acceptance case.
+For the later final recovery acceptance, use the Phase 0 `window_start_ms` and
 `window_end_ms` 14-day `[start,end)` bounds, recorded only in private evidence.
 Use a new
 empty folder under the authorized School OS Tests parent and an empty isolated

@@ -3520,3 +3520,21 @@ requirements, then read this log from top to bottom.
   implementing or validating these repairs. Next: commit and publish the exact
   code/docs checkpoint, rebuild its immutable package, and use a new empty root
   for the next live end-to-end ingestion run.
+
+## 2026-09-10 — connector evidence discipline made durable for future developers
+
+- Added a clearly developer-only section to `AGENTS.md` requiring complete raw
+  private connector capture before runtime fixes, evidence-based failure-stage
+  classification, full response-topology inspection, privacy-safe synthetic
+  fixtures, exact private-receipt replay before another package/root, and
+  automatic raw-error preservation. It explicitly forbids inferring rate limits
+  from generic failures or blindly retrying unknown write outcomes.
+- The user authorized the next live ingestion as an interim four-local-calendar-
+  day inclusive window ending at the exclusive start of tomorrow in the private
+  configured timezone. Exact bounds remain private; standalone and embedded
+  images remain excluded. This compatibility run does not replace the final
+  14-day recovery acceptance case.
+- Next: validate and publish this documentation-only continuity checkpoint,
+  freeze the exact four-day bounds privately, build the exact package, create a
+  new empty root and isolated Sheet, install/bind/recover, then run live
+  ingestion through canonical Drive publication and independent validation.
