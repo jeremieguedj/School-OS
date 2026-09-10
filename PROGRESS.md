@@ -3454,3 +3454,20 @@ requirements, then read this log from top to bottom.
 - Next: publish the exact repair, rebuild and verify its immutable package, use
   another new empty root as required, and resume the same live ingestion
   journey.
+- Published and remotely verified that repair at exact commit
+  `98121f1ccc3d4be15f6ef7b9e9e397f51db72917`. Its rebuilt immutable package
+  passed checksum and installed validation. A new isolated root then passed the
+  30-call five-file installation, exact-object readback, 24-call post-install
+  Sheet binding, 13-call cold Drive recovery, and recovered-package validation.
+- The exact package's live ingestion repeated bounded discovery, exact message
+  reads, image pre-fetch exclusions, and the direct-PDF render. The first Gmail
+  attachment read did not reproduce the prior surplus-field rejection; the
+  connector instead returned a tool-level error with no usable attachment
+  result, which the bridge classified as unknown and blocked. No source bundle,
+  successor state, task, delivery, audio, Todoist, or scheduler effect occurred;
+  the root remains at generation 2.
+- Next: on one bounded diagnostic attachment read, preserve only the private
+  raw connector failure and a public-safe status/reason/stage classification.
+  Do not infer throttling from the generic error. If the read succeeds, rerun
+  the same installed ingestion; if it exposes a reproducible runtime contract
+  defect, fix it within the approved architecture and rebuild from a new root.

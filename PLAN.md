@@ -78,6 +78,13 @@ only when the inner and outer declared fields agree exactly; conflicts and
 other surplus fields remain blocking. This is bridge normalization within the
 existing Gmail attachment contract, not an architecture change, and requires a
 rebuilt package and new empty root before live evidence continues.
+The rebuilt package and root passed install, Sheet binding, and cold recovery.
+Its live run reached the attachment path without reproducing the surplus-field
+rejection, but the first attachment connector call itself returned a generic
+tool error with no usable result. The root remains at generation 2. Before any
+retry, preserve a private sanitized connector-error envelope so the failure can
+be classified as provider rejection, throttling, timeout, or transport error
+instead of assuming a cause.
 Every discovered direct resource must still be audited, excluded with evidence,
 or block the affected import; no arbitrary link following, crawler,
 HTML-to-text conversion, or raw-MIME canonical store is authorized.

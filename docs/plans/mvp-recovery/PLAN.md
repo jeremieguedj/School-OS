@@ -303,6 +303,13 @@ wrapper only when the inner and outer declared fields agree exactly;
 conflicting, malformed, or otherwise surplus fields remain blocking. Focused
 and complete validation pass. Because executable package bytes changed, another
 new empty root is required before live acceptance can resume.
+That exact rebuilt package subsequently passed a new five-file install,
+generation-2 Sheet binding, cold recovery, and installed validation. Its live
+run did not reproduce the surplus-field rejection; instead, the first Gmail
+attachment call returned a connector-level tool error without a usable
+attachment result. No canonical publication occurred. Preserve sanitized
+private failure details on the next bounded read before deciding whether any
+runtime repair is needed; rate limiting remains unproven.
 Use the Phase 0 `window_start_ms` and
 `window_end_ms` 14-day `[start,end)` bounds, recorded only in private evidence.
 Use a new
