@@ -3471,3 +3471,27 @@ requirements, then read this log from top to bottom.
   Do not infer throttling from the generic error. If the read succeeds, rerun
   the same installed ingestion; if it exposes a reproducible runtime contract
   defect, fix it within the approved architecture and rebuild from a new root.
+
+## 2026-09-10 — recovery MVP attachment diagnostic identified a concrete envelope mismatch
+
+- Reconstructed the exact first eligible non-image attachment target from the
+  frozen source scope using read-only paginated discovery, then performed one
+  bounded diagnostic attachment read. The connector call succeeded: it returned
+  a nonempty PDF file reference and exposed no HTTP status, Google error reason,
+  retry delay, timeout classification, or other failure field. The preceding
+  generic failure therefore remains transient and unclassified; this evidence
+  does not establish rate limiting.
+- The successful raw response did expose a reproducible contract mismatch. Its
+  declared attachment fields were accompanied by a nested connector payload
+  that repeats those fields and adds three connector-private transport fields.
+  The current exact-redundancy normalizer intentionally rejects that surplus,
+  so the installed package would still stop before attachment-byte download or
+  canonical publication. Raw identifiers and the complete connector envelope
+  remain mode-0600 under the ignored private recovery evidence tree.
+- No Drive, Sheets, task, delivery, audio, Todoist, or scheduler mutation was
+  performed. Next: implement a finite Gmail attachment projection that accepts
+  the documented declared fields only when the nested and outer declared values
+  agree, ignores only the three now-observed connector-private transport fields,
+  and continues to reject conflicts or any other surplus. Prove it with focused
+  static tests and the complete validation gate before building a new immutable
+  package and using a new empty live root.
