@@ -2961,3 +2961,26 @@ requirements, then read this log from top to bottom.
 - Next: publish this reference checkpoint, implement the bundle transaction/
   phase-publication store using peer references, then adapt the connected
   resolver and setup CLI without exposing a half-wired live route.
+
+## 2026-09-09 — recovery MVP bundle transaction and configuration resolver
+
+- Published and remotely verified carrier-relative peer references at exact
+  commit `a8675551007b94ac0682d615319757b7d8ec2070`; 63 focused tests passed.
+- Added an immutable bundle transaction store. It reads exact logical members,
+  stages replacements/additions with carrier-relative evidence, exposes no
+  durable reference for dirty bytes, and advances to a durable store only after
+  immutable successor creation plus exact pointer publication.
+- Added the provider-free hybrid configuration resolver. It consumes the
+  already-verified settings/current/state handoff, validates every file-map
+  member, resolves the entrypoint-specific capability profile by path/hash,
+  requires an active bound Sheets selector, and reconstructs the exact isolated
+  Sheet scope without another Drive call.
+- Focused integration exposed two pre-live issues and fixed them: the profile
+  registry now has exact `manual`/`scheduled` slots, and the owned YAML codec
+  preserves empty lists/mappings as `[]`/`{}` instead of changing them to empty
+  mappings. The installation-settings schema now fixes the hybrid instance
+  shape. Tests prove a phase artifact and its peer checkpoint can publish in one
+  generation and then resolve from the verified carrier.
+- No provider call or external effect occurred. Next: run the complete gate and
+  publish this checkpoint, then implement the hybrid operation/checkpoint
+  publisher and adapt one thin preview phase chain before selecting the CLI.

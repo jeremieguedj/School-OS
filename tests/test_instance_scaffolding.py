@@ -52,6 +52,7 @@ from school_os.connected_setup import (  # noqa: E402
 from school_os.connected_sheets import GoogleSheetsScope  # noqa: E402
 from school_os.connected_daily import (  # noqa: E402
     ConnectedDailyRuntime, REQUIRED_CAPABILITIES, readmit_connected_profile,
+    resolve_hybrid_instance,
 )
 from school_os.daily import PHASES  # noqa: E402
 
@@ -617,6 +618,15 @@ class InstanceScaffoldingTests(unittest.TestCase):
         self.assertEqual("google_sheets", selector["selected_provider"])
         self.assertEqual("active", selector["bindings"]["google_sheets"]["status"])
         self.assertEqual("sheet-1", selector["bindings"]["google_sheets"]["scope"]["spreadsheet_id"])
+        resolved = resolve_hybrid_instance(
+            package_root=self.package_root, recovery=recovered,
+            entrypoint="manual",
+        )
+        self.assertEqual("sheet-1", resolved.sheet_scope.spreadsheet_id)
+        self.assertEqual("manual", resolved.profile["execution_surface"])
+        self.assertEqual(
+            "data/canonical-tasks.json", resolved.file_map["canonical_action_register"],
+        )
 
     def test_hybrid_sheet_binding_failure_leaves_unbound_generation_active(self) -> None:
         drive = ConnectedSetupDrive()

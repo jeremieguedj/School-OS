@@ -13,9 +13,10 @@ from typing import Any, Protocol
 from urllib.parse import parse_qsl, urlsplit
 
 from .bundles import (
-    BundleEntry, BundleError, BundleMemberReference, VerifiedBundle,
-    member_reference,
+    BundleEntry, BundleError, BundleMemberReference, BundlePeerReference,
+    VerifiedBundle, member_reference,
 )
+from .contracts import sha256_bytes
 from .references import ReferenceStorage, StoredObject
 
 
@@ -137,6 +138,59 @@ class BundleWorkingState:
             serialization=serialization,
         )
         return BundleWorkingState.from_recovery(recovery)
+
+
+@dataclass(frozen=True)
+class BundleLogicalArtifact:
+    """Exact logical bytes and their carrier-relative, non-provider identity."""
+
+    reference: BundlePeerReference
+    data: bytes
+    durable: bool
+
+
+class BundleTransactionStore:
+    """Immutable phase staging that becomes durable only after pointer advance."""
+
+    def __init__(self, working: BundleWorkingState) -> None:
+        if not isinstance(working, BundleWorkingState):
+            raise ConnectedStorageError("bundle transaction requires a working state")
+        self.working = working
+
+    @classmethod
+    def from_recovery(cls, recovery: Mapping[str, Any]) -> "BundleTransactionStore":
+        return cls(BundleWorkingState.from_recovery(recovery))
+
+    def read(self, path: str) -> BundleLogicalArtifact:
+        try:
+            entry = self.working.entries[path]
+        except KeyError as exc:
+            raise ConnectedStorageError("logical state member is absent") from exc
+        reference = BundlePeerReference.from_mapping({
+            "byte_length": len(entry.data),
+            "entry_path": path,
+            "entry_sha256": sha256_bytes(entry.data),
+            "media_type": entry.media_type,
+        })
+        return BundleLogicalArtifact(
+            reference, entry.data, path not in self.working.dirty,
+        )
+
+    def stage(
+        self, path: str, data: bytes, *, role: str | None = None,
+        media_type: str | None = None, schema_id: str | None = None,
+    ) -> "BundleTransactionStore":
+        return BundleTransactionStore(self.working.stage(
+            path, data, role=role, media_type=media_type, schema_id=schema_id,
+        ))
+
+    def durable_reference(self, path: str) -> BundleMemberReference:
+        return self.working.durable_reference(path)
+
+    def publish(
+        self, storage: Any, serialization: Mapping[str, Any],
+    ) -> "BundleTransactionStore":
+        return BundleTransactionStore(self.working.publish(storage, serialization))
 
 
 def _size(value: Any, label: str) -> int:

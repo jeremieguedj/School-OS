@@ -18,7 +18,9 @@ from school_os.install import (
     extract_hybrid_package, install_hybrid_generation, publish_hybrid_state,
     recover_hybrid_generation,
 )
-from school_os.connected_storage import BundleWorkingState, ConnectedStorageError
+from school_os.connected_storage import (
+    BundleTransactionStore, BundleWorkingState, ConnectedStorageError,
+)
 from school_os.package import inventory_bytes
 from school_os.references import StoredObject
 from pathlib import Path
@@ -366,6 +368,43 @@ class HybridInstallTests(unittest.TestCase):
         after = committed.durable_reference("state/operation-state.json")
         self.assertNotEqual(before.bundle_sha256, after.bundle_sha256)
         self.assertEqual(2, committed.recovery["current"]["generation"])
+
+    def test_transaction_publishes_phase_artifact_and_peer_checkpoint_together(self):
+        storage = HybridStorage()
+        transaction = BundleTransactionStore.from_recovery(self.install(storage))
+        phase_path = "state/runs/op-1-brief.json"
+        phase_data = canonical_json_bytes({"schema_version": 1, "outcome": "verified"})
+        transaction = transaction.stage(
+            phase_path, phase_data, role="phase_artifact",
+            media_type="application/json",
+        )
+        staged = transaction.read(phase_path)
+        self.assertFalse(staged.durable)
+        checkpoint_path = "state/operation-checkpoints/op-1-0001.json"
+        checkpoint_data = canonical_json_bytes({
+            "artifact": staged.reference.as_mapping(),
+            "schema_version": 1,
+        })
+        transaction = transaction.stage(
+            checkpoint_path, checkpoint_data, role="operation_checkpoint",
+            media_type="application/json",
+        )
+        with self.assertRaisesRegex(ConnectedStorageError, "not durable"):
+            transaction.durable_reference(phase_path)
+        committed = transaction.publish(storage, self.serialization)
+        self.assertTrue(committed.read(phase_path).durable)
+        self.assertEqual(phase_data, resolve_peer(
+            staged.reference, committed.working.recovery["state"],
+        ))
+        self.assertEqual(
+            phase_data,
+            committed.working.recovery["state"].entries[phase_path],
+        )
+        self.assertEqual(
+            checkpoint_data,
+            committed.working.recovery["state"].entries[checkpoint_path],
+        )
+        self.assertEqual(2, committed.working.recovery["current"]["generation"])
 
 
 if __name__ == "__main__":

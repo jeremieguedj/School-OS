@@ -21,7 +21,8 @@ from .connected_profiles import readmit_capability_profile, select_capability_pr
 from .connected_sheets import CodexSheetsTaskPort, GoogleSheetsScope
 from .connected_sources import ConnectedSourceAdapters
 from .connected_storage import (
-    ArtifactStore, CodexDriveArtifactStore, CodexDriveReferenceStorage,
+    ArtifactStore, BundleLogicalArtifact, BundleTransactionStore,
+    CodexDriveArtifactStore, CodexDriveReferenceStorage, ConnectedStorageError,
     DriveReference, StoredArtifact,
 )
 from .connected_tasks import (
@@ -214,6 +215,147 @@ class _ResolvedInstance:
     instance: dict[str, Any]
     brief_template: dict[str, Any]
     configuration_fingerprint: str
+
+
+@dataclass
+class HybridResolvedInstance:
+    """Verified configuration and logical state for the bundled runtime."""
+
+    state: BundleTransactionStore
+    file_map: dict[str, str]
+    profile: dict[str, Any]
+    profile_artifact: BundleLogicalArtifact
+    source_scope: dict[str, Any]
+    delivery: dict[str, Any]
+    sheet_scope: GoogleSheetsScope
+    household: dict[str, Any]
+    policies: dict[str, Any]
+    daily_values: dict[str, Any]
+    instance: dict[str, Any]
+    brief_template: dict[str, Any]
+    configuration_fingerprint: str
+
+
+def resolve_hybrid_instance(
+    *, package_root: Path, recovery: Mapping[str, Any], entrypoint: str,
+    delivery_variant: str | None = None,
+) -> HybridResolvedInstance:
+    """Resolve bundled settings/state without another provider read."""
+    if entrypoint not in {"manual", "scheduled"}:
+        raise ConnectedDailyError("hybrid runtime entrypoint is unsupported")
+    settings_bytes = recovery.get("settings")
+    current = recovery.get("current")
+    if not isinstance(settings_bytes, bytes) or not isinstance(current, Mapping):
+        raise ConnectedDailyError("hybrid runtime lacks verified settings/current state")
+    try:
+        settings = load_mapping_yaml(settings_bytes.decode("utf-8"))
+    except (UnicodeDecodeError, ValueError) as exc:
+        raise ConnectedDailyError(f"hybrid installation settings are invalid: {exc}") from exc
+    _validated(settings, package_root, "installation-settings.schema.json", "installation settings")
+    state = BundleTransactionStore.from_recovery(recovery)
+    file_map_value = _json(state.read("state/file-map.json").data, "hybrid file map")
+    if (
+        file_map_value.get("schema_version") != 2
+        or file_map_value.get("mapping_status") != "configured"
+        or not isinstance(file_map_value.get("files"), Mapping)
+        or any(not isinstance(role, str) or not isinstance(path, str) for role, path in file_map_value["files"].items())
+    ):
+        raise ConnectedDailyError("hybrid file map is not fully configured")
+    file_map = dict(file_map_value["files"])
+    for role, path in file_map.items():
+        try:
+            state.read(path)
+        except ConnectedStorageError as exc:
+            raise ConnectedDailyError(f"hybrid file map member is unavailable for {role}") from exc
+
+    profile_selection = _json(
+        state.read(file_map["runtime_profile_selection"]).data,
+        "hybrid capability-profile selection",
+    )
+    if (
+        set(profile_selection) != {"schema_version", "profiles"}
+        or profile_selection.get("schema_version") != 1
+        or not isinstance(profile_selection.get("profiles"), Mapping)
+        or set(profile_selection["profiles"]) != {"manual", "scheduled"}
+    ):
+        raise ConnectedDailyError("hybrid capability-profile selection has an unsupported shape")
+    profile_pointer = profile_selection["profiles"].get(entrypoint)
+    if (
+        not isinstance(profile_pointer, Mapping)
+        or set(profile_pointer) != {"entry_path", "sha256"}
+        or not isinstance(profile_pointer.get("entry_path"), str)
+        or not isinstance(profile_pointer.get("sha256"), str)
+    ):
+        raise ConnectedDailyError(f"no admitted hybrid capability profile is selected for {entrypoint}")
+    profile_artifact = state.read(profile_pointer["entry_path"])
+    if sha256_bytes(profile_artifact.data) != profile_pointer["sha256"]:
+        raise ConnectedDailyError("hybrid capability profile bytes disagree with selection")
+    profile = _json(profile_artifact.data, f"{entrypoint} capability profile")
+    _validated(profile, package_root, "capability-profile.schema.json", "runtime profile")
+    if profile.get("execution_surface") != entrypoint:
+        raise ConnectedDailyError("hybrid capability profile execution surface disagrees")
+
+    selector = _json(state.read(file_map["active_task_provider"]).data, "task provider selector")
+    if (
+        set(selector) != {"bindings", "schema_version", "selected_provider", "status"}
+        or selector.get("schema_version") != 1 or selector.get("status") != "bound"
+        or selector.get("selected_provider") != "google_sheets"
+        or not isinstance(selector.get("bindings"), Mapping)
+    ):
+        raise ConnectedDailyError("hybrid task provider is not bound for execution")
+    binding = selector["bindings"].get("google_sheets")
+    if (
+        not isinstance(binding, Mapping)
+        or set(binding) != {"provider_state_path", "scope", "status"}
+        or binding.get("status") != "active"
+        or binding.get("provider_state_path") != file_map.get("task_sync_state")
+        or not isinstance(binding.get("scope"), Mapping)
+    ):
+        raise ConnectedDailyError("hybrid selected Sheets binding is malformed")
+    scope = dict(binding["scope"])
+    expected_scope = {
+        "spreadsheet_id", "spreadsheet_url", "sheet_id", "sheet_title",
+        "first_row", "last_row", "first_column", "last_column",
+    }
+    if set(scope) != expected_scope:
+        raise ConnectedDailyError("hybrid selected Sheets scope has unsupported fields")
+    try:
+        sheet_scope = GoogleSheetsScope(**scope)
+    except (TypeError, ValueError) as exc:
+        raise ConnectedDailyError(f"hybrid selected Sheets scope is invalid: {exc}") from exc
+
+    instance = dict(settings["instance"])
+    household = dict(settings["household"])
+    policies = dict(settings["policies"])
+    daily_values = dict(settings["daily_values"])
+    source_scope = _scope(settings["source_scope"])
+    delivery = _selected_delivery(
+        _delivery_configuration(settings["delivery_configuration"]),
+        entrypoint, delivery_variant,
+    )
+    if (
+        set(instance) != {
+            "data_schema_version", "instance_format_version", "instance_id",
+            "release_channel", "system_version",
+        }
+        or instance.get("data_schema_version") != 2
+        or instance.get("instance_format_version") != 2
+        or any(not isinstance(instance.get(key), str) or not instance[key] for key in (
+            "instance_id", "release_channel", "system_version",
+        ))
+    ):
+        raise ConnectedDailyError("hybrid instance settings have an unsupported shape")
+    _validated(household, package_root, "household.schema.json", "household")
+    _validated(policies, package_root, "policies.schema.json", "policies")
+    brief_template = _json(state.read(file_map["brief_template"]).data, "brief template")
+    fingerprint = current.get("configuration_fingerprint")
+    if not isinstance(fingerprint, str) or len(fingerprint) != 64:
+        raise ConnectedDailyError("hybrid current pointer lacks its configuration fingerprint")
+    return HybridResolvedInstance(
+        state, file_map, profile, profile_artifact, source_scope, delivery,
+        sheet_scope, household, policies, daily_values, instance,
+        brief_template, fingerprint,
+    )
 
 
 class _Resolver:

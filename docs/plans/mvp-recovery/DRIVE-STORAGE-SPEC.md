@@ -66,6 +66,14 @@ does not yet have a dedicated schema remains a canonical JSON object with an
 explicit `schema_version`; this storage change does not redefine its domain
 semantics.
 
+The runtime-profile selection has exactly `manual` and `scheduled` keys. Each
+is either null or a logical entry path plus SHA-256 for a profile whose declared
+execution surface matches that key. Fresh setup selects only the surface
+actually observed; the other remains null until separately readmitted. The
+readable settings YAML encodes empty lists and mappings explicitly as `[]` and
+`{}` so recipient lists and other empty configured collections cannot change
+type during deterministic round-trip.
+
 An immutable source bundle contains the exact catalog record bytes, selected
 message bodies, supported attachment/direct-resource bytes when observed, the
 extracted text and provenance locators, and a source-bundle manifest. A state

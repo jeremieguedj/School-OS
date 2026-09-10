@@ -425,12 +425,23 @@ def compose_hybrid_connected_inputs(
         selector, "task_provider_selector", "application/json",
     )
     profile_bytes = normalized["runtime_profile"]["data"]
+    try:
+        profile = json.loads(profile_bytes.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise InstallationError("hybrid runtime profile is not UTF-8 JSON") from exc
+    if not isinstance(profile, dict):
+        raise InstallationError("hybrid runtime profile must be a JSON object")
+    surface = profile.get("execution_surface")
+    if surface not in {"manual", "scheduled"}:
+        raise InstallationError("hybrid runtime profile lacks a supported execution surface")
+    profiles: dict[str, Any] = {"manual": None, "scheduled": None}
+    profiles[surface] = {
+        "entry_path": _HYBRID_STATE_PATHS["runtime_profile"],
+        "sha256": sha256_bytes(profile_bytes),
+    }
     entries["state/runtime-profile-selection.json"] = BundleEntry(
         canonical_json_bytes({
-            "profiles": {"initial": {
-                "entry_path": _HYBRID_STATE_PATHS["runtime_profile"],
-                "sha256": sha256_bytes(profile_bytes),
-            }},
+            "profiles": profiles,
             "schema_version": 1,
         }),
         "runtime_profile_selection", "application/json",

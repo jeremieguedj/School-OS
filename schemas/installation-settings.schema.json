@@ -7,11 +7,30 @@
   "required": ["schema_version", "instance", "household", "integrations", "policies", "daily_values", "source_scope", "delivery_configuration", "initial_task_provider"],
   "properties": {
     "schema_version": {"const": 1},
-    "instance": {"type": "object"},
+    "instance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["data_schema_version", "instance_format_version", "instance_id", "release_channel", "system_version"],
+      "properties": {
+        "data_schema_version": {"const": 2},
+        "instance_format_version": {"const": 2},
+        "instance_id": {"type": "string", "minLength": 1},
+        "release_channel": {"type": "string", "minLength": 1},
+        "system_version": {"type": "string", "minLength": 1}
+      }
+    },
     "household": {"type": "object"},
     "integrations": {"type": "object"},
     "policies": {"type": "object"},
-    "daily_values": {"type": "object"},
+    "daily_values": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["presentation", "timezone"],
+      "properties": {
+        "presentation": {"type": "object"},
+        "timezone": {"type": "string", "minLength": 1}
+      }
+    },
     "source_scope": {"type": "object"},
     "delivery_configuration": {"type": "object"},
     "initial_task_provider": {"type": "string", "minLength": 1}

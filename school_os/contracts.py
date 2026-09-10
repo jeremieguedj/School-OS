@@ -46,6 +46,10 @@ def _parse_scalar(value: str, line_number: int) -> Any:
             return json.loads(value) if value.startswith('"') else value[1:-1]
         except (json.JSONDecodeError, IndexError) as exc:
             raise ContractError(f"line {line_number}: invalid quoted scalar") from exc
+    if value == "[]":
+        return []
+    if value == "{}":
+        return {}
     if value.startswith(("[", "{", "&", "*", "!", "|", ">")):
         raise ContractError(f"line {line_number}: unsupported YAML construct")
     return value
@@ -184,6 +188,12 @@ def dump_mapping_yaml(value: dict[str, Any]) -> bytes:
                 if not isinstance(key, str) or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_-]*", key):
                     raise ContractError("YAML mapping keys must use the owned identifier subset")
                 nested = item[key]
+                if nested == []:
+                    lines.append(f"{prefix}{key}: []")
+                    continue
+                if nested == {}:
+                    lines.append(f"{prefix}{key}: {{}}")
+                    continue
                 if isinstance(nested, (dict, list)):
                     lines.append(f"{prefix}{key}:")
                     lines.extend(encode(nested, indent + 2))
@@ -193,6 +203,12 @@ def dump_mapping_yaml(value: dict[str, Any]) -> bytes:
         if isinstance(item, list):
             lines = []
             for nested in item:
+                if nested == []:
+                    lines.append(f"{prefix}- []")
+                    continue
+                if nested == {}:
+                    lines.append(f"{prefix}- {{}}")
+                    continue
                 if isinstance(nested, (dict, list)):
                     lines.append(f"{prefix}-")
                     lines.extend(encode(nested, indent + 2))
