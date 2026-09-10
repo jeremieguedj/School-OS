@@ -3180,3 +3180,32 @@ requirements, then read this log from top to bottom.
 - Next: publish this compatible fix, rebuild the exact immutable package, create
   a new empty root and isolated Sheet, and repeat install, bind, cold recovery,
   live ingestion, and canonical result validation.
+
+## 2026-09-10 — recovery MVP exact 8-bit MIME transport preservation
+
+- Published and remotely verified the direct-resource extractor binding at
+  exact commit `bab04fa34e6e997229b0309af63c5b816fc69941`. A new immutable
+  package and isolated instance again passed install, generation-2 Sheet
+  binding, cold Drive recovery, and installed-package verification.
+- The live run successfully gave all ten direct PNG/GIF resources complete
+  original-detail visual extraction. It then completed bounded interpretation
+  and independent audit of the first source conversation, with 14 exact source-
+  linked announcement Facts and byte-complete `no_fact` coverage for the
+  remaining body and presentation content.
+- The next source conversation stopped before publication because one raw MIME
+  leaf used non-ASCII `8bit` transport and the raw parser attempted only ASCII
+  surrogate recovery. A local byte-level reproduction proved Python's parsed
+  `decode=True` result preserves the exact original bytes, including CRLF, for
+  the already-supported identity/8bit/binary transport modes.
+- Updated only that exact-byte recovery branch. Base64, quoted-printable, and
+  7bit continue through their stricter existing paths; unsupported or lossy
+  cases still block. Added regression coverage for exact UTF-8 8bit transport.
+  This is an adapter correction and does not change source, custody, storage,
+  or provider architecture.
+- Focused source tests pass, and the complete frozen Python 3.12.14 gate passes
+  364 tests plus schema/template validation and the tracked privacy scan. The
+  stopped instance retained no source bundle, state advance, task, delivery,
+  audio, Todoist, or scheduler effect.
+- Next: publish this fix, rebuild the exact package, create a new empty isolated
+  instance, and repeat the live ingestion through every source unit and final
+  canonical validation.

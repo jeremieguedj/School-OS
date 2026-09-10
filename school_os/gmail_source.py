@@ -188,7 +188,12 @@ def _raw_nodes(raw: bytes) -> dict[str, _RawNode]:
         try:
             encoded = payload.encode("ascii", errors="surrogateescape")
         except UnicodeEncodeError as exc:
-            raise GmailSourceError("Gmail raw MIME leaf cannot preserve transport bytes") from exc
+            if evidence.transfer_encoding not in {"identity", "8bit", "binary"}:
+                raise GmailSourceError("Gmail raw MIME leaf cannot preserve transport bytes") from exc
+            recovered = message.get_payload(decode=True)
+            if not isinstance(recovered, bytes):
+                raise GmailSourceError("Gmail raw MIME leaf cannot preserve transport bytes") from exc
+            encoded = recovered
         nodes[path] = _RawNode(path, evidence.mime_type, False, evidence, encoded)
 
     walk(root, "")

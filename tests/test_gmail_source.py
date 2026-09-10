@@ -121,6 +121,23 @@ class GmailMimeNormalizerTests(unittest.TestCase):
         self.assertEqual(1777968000000, result["gmail_internal_date_ms"])
         self.assertEqual(transport, result["parts"][0]["data"])
 
+    def test_eight_bit_transport_recovers_exact_non_ascii_leaf_bytes(self) -> None:
+        transport = "Line one\r\ncafé\r\n".encode("utf-8")
+        source = (
+            b"Content-Type: text/plain; charset=utf-8\r\n"
+            b"Content-Transfer-Encoding: 8bit\r\n\r\n" + transport
+        )
+        payload = leaf(
+            "root", "text/plain", transport.decode("utf-8"), len(transport),
+            transfer="8bit",
+        )
+        result = self.normalizer.normalize(full(payload), raw(source))
+        self.assertEqual(transport, result["parts"][0]["data"])
+        self.assertEqual(
+            hashlib.sha256(transport).hexdigest(),
+            result["parts"][0]["raw_part_sha256"],
+        )
+
     def test_rejects_id_thread_raw_base64_ambiguous_plaintext_and_provider_mismatch(self) -> None:
         source = b"Content-Type: text/plain; charset=utf-8\r\nContent-Transfer-Encoding: base64\r\n\r\naGVsbG8="
         payload = leaf("root", "text/plain", "hello", 5)
