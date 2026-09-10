@@ -3025,3 +3025,22 @@ requirements, then read this log from top to bottom.
   a verified source bundle, then compose discovery/catalog through that path.
   The active CLI remains unchanged until the complete unsent preview chain is
   wired and validated.
+
+## 2026-09-09 — recovery MVP source-bundle canonical adoption proof
+
+- Published and remotely verified immutable content-bundle publication at exact
+  commit `00609535404e920f588bb835082c7c3988d67a7c`; 20 focused bundle and
+  hybrid-lifecycle tests passed.
+- Extended the focused hybrid lifecycle through source adoption: it publishes
+  exact source bytes in an immutable source bundle, constructs the full
+  physical/member reference, stages that reference in the catalog index, and
+  atomically publishes the catalog index plus operation checkpoint/state as
+  generation 4. The test proves the source bundle remains noncanonical before
+  that state advance and the canonical index names its exact bundle hash after.
+- No provider call or external effect occurred. The mandatory communication
+  checkpoint stopped further implementation before connected discovery/catalog
+  adapters were routed through this primitive.
+- Next: adapt connected discovery/catalog output construction to source-bundle
+  entries and the atomic adoption boundary, then continue reconcile/task/render
+  staging. Keep the setup CLI archived until the entire unsent preview route is
+  coherent and validated.

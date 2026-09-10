@@ -20,6 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from school_os.contracts import canonical_json_bytes, sha256_bytes  # noqa: E402
+from school_os.bundles import BundleEntry, member_reference  # noqa: E402
 from school_os.package import inventory_bytes  # noqa: E402
 from school_os.install import (  # noqa: E402
     DAILY_REFERENCE_KINDS,
@@ -33,6 +34,7 @@ from school_os.install import (  # noqa: E402
     extract_recovered_package,
     initial_operation_state_bytes,
     install_create_only_generation,
+    publish_hybrid_content_bundle,
     recover_hybrid_generation,
     recover_create_only_generation,
     scaffold_instance,
@@ -673,6 +675,69 @@ class InstanceScaffoldingTests(unittest.TestCase):
         self.assertEqual(
             committed.checkpoint_reference.bundle_sha256,
             committed.operation_state_reference.bundle_sha256,
+        )
+        source = publish_hybrid_content_bundle(
+            storage, recovery=committed.transaction.working.recovery,
+            bundle_kind="source", identity="source-batch-000001",
+            entries={
+                "sources/thread-1/body.txt": BundleEntry(
+                    b"complete source body", "source_body", "text/plain",
+                ),
+            },
+        )
+        source_body = member_reference(
+            source["bundle_reference"], source["bundle"],
+            "sources/thread-1/body.txt",
+        )
+        index = canonical_json_bytes({
+            "records": [{
+                "fact_ids": [], "record_id": "thread-1",
+                "record_sha256": sha256_bytes(b"complete source body"),
+                "source_members": {"body": source_body.as_mapping()},
+            }],
+            "schema_version": 2,
+        })
+        catalog_transaction = committed.transaction.stage(
+            "data/source-catalog-index.json", index,
+        )
+        catalog_peer = catalog_transaction.read("data/source-catalog-index.json").reference
+        catalog_checkpoint = {
+            **checkpoint,
+            "checkpoint_id": "op-1-checkpoint-0001", "phase": "catalog",
+            "completed_phases": ["preflight", "discover", "catalog"],
+            "predecessor": checkpoint_pointer(checkpoint), "sequence": 1,
+            "verification": {
+                "phase_output": {
+                    "catalog_index": catalog_peer.as_mapping(),
+                    "phase_complete": True, "verified": True,
+                },
+            },
+        }
+        catalog_state = {
+            **operation_state, "checkpoint": checkpoint_pointer(catalog_checkpoint),
+        }
+        adopted = HybridCheckpointPublisher(
+            catalog_transaction,
+            state_schema=json.loads((self.package_root / "schemas" / "operation-state.schema.json").read_text()),
+            checkpoint_schema=json.loads((self.package_root / "schemas" / "operation-checkpoint.schema.json").read_text()),
+        ).commit(
+            storage=storage, checkpoint=catalog_checkpoint,
+            operation_state=catalog_state,
+            serialization={
+                "mode": "attended_single_writer",
+                "evidence": {
+                    "actor_id": "setup-test", "attempt_id": "attempt-1",
+                    "scheduler_inactive": True,
+                    "competing_mutators_excluded": True,
+                    "observed_at": "2026-09-09T00:00:02Z",
+                },
+            },
+        )
+        self.assertEqual(4, adopted.transaction.working.recovery["current"]["generation"])
+        canonical_index = json.loads(adopted.transaction.read("data/source-catalog-index.json").data)
+        self.assertEqual(
+            source["bundle_sha256"],
+            canonical_index["records"][0]["source_members"]["body"]["bundle_sha256"],
         )
 
     def test_hybrid_sheet_binding_failure_leaves_unbound_generation_active(self) -> None:
