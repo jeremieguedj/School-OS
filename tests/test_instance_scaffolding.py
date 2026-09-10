@@ -33,6 +33,7 @@ from school_os.install import (  # noqa: E402
     extract_recovered_package,
     initial_operation_state_bytes,
     install_create_only_generation,
+    recover_hybrid_generation,
     recover_create_only_generation,
     scaffold_instance,
     validate_candidate,
@@ -40,6 +41,7 @@ from school_os.install import (  # noqa: E402
 )
 from school_os.references import StoredObject  # noqa: E402
 from school_os.connected_setup import (  # noqa: E402
+    bind_hybrid_selected_sheet,
     CodexDriveCreateOnlyStorage,
     FOLDER_MIME,
     SETUP_FILE_ROLES,
@@ -566,6 +568,107 @@ class InstanceScaffoldingTests(unittest.TestCase):
         }, {item["title"] for item in children})
         self.assertEqual("unbound", result["projection_status"])
         self.assertEqual("application/json", result["bootstrap_document"]["bootstrap_reference"]["mime_type"])
+
+    def test_hybrid_sheet_binding_is_post_admission_generation_two(self) -> None:
+        drive = ConnectedSetupDrive()
+        storage = CodexDriveCreateOnlyStorage(
+            drive, scratch_directory=self.base / "hybrid-bind-scratch",
+        )
+        root = {
+            "object_id": "instance-root", "kind": "folder",
+            "permitted_ancestor_id": "instance-root", "mime_type": FOLDER_MIME,
+            "version": "1",
+        }
+        installed = install_hybrid_connected_instance(
+            storage=storage, root_reference=root, answers=self.answers,
+            observed_payloads=self.make_connected_observed(),
+            runtime={
+                "implementation": "CPython", "python_version": "3.12.14",
+                "dependency_fingerprint": "d" * 64,
+            },
+        )
+        scope = GoogleSheetsScope(
+            "sheet-1", "https://sheets.example.invalid/sheet-1", 7, "Tasks",
+            1, 20, 1, 13,
+        )
+        sheets = ConnectedSetupSheets(scope)
+        result = bind_hybrid_selected_sheet(
+            storage=storage, sheets=sheets, root_reference=root,
+            bootstrap_reference=installed["bootstrap_document"]["bootstrap_reference"],
+            sheet_scope=scope,
+            serialization={
+                "mode": "attended_single_writer",
+                "evidence": {
+                    "actor_id": "setup-test", "attempt_id": "bind-1",
+                    "scheduler_inactive": True,
+                    "competing_mutators_excluded": True,
+                    "observed_at": "2026-09-09T00:00:00Z",
+                },
+            },
+        )
+        self.assertEqual("bound", result["projection_status"])
+        self.assertEqual(13, len(sheets.headers or []))
+        recovered = recover_hybrid_generation(
+            storage, root_reference=root,
+            bootstrap_reference=installed["bootstrap_document"]["bootstrap_reference"],
+        )
+        self.assertEqual(2, recovered["current"]["generation"])
+        selector = json.loads(recovered["state"].entries["state/task-provider-selector.json"])
+        self.assertEqual("google_sheets", selector["selected_provider"])
+        self.assertEqual("active", selector["bindings"]["google_sheets"]["status"])
+        self.assertEqual("sheet-1", selector["bindings"]["google_sheets"]["scope"]["spreadsheet_id"])
+
+    def test_hybrid_sheet_binding_failure_leaves_unbound_generation_active(self) -> None:
+        drive = ConnectedSetupDrive()
+        storage = CodexDriveCreateOnlyStorage(
+            drive, scratch_directory=self.base / "hybrid-bind-failure-scratch",
+        )
+        root = {
+            "object_id": "instance-root", "kind": "folder",
+            "permitted_ancestor_id": "instance-root", "mime_type": FOLDER_MIME,
+            "version": "1",
+        }
+        installed = install_hybrid_connected_instance(
+            storage=storage, root_reference=root, answers=self.answers,
+            observed_payloads=self.make_connected_observed(),
+            runtime={
+                "implementation": "CPython", "python_version": "3.12.14",
+                "dependency_fingerprint": "d" * 64,
+            },
+        )
+        scope = GoogleSheetsScope(
+            "sheet-1", "https://sheets.example.invalid/sheet-1", 7, "Tasks",
+            1, 20, 1, 13,
+        )
+        sheets = ConnectedSetupSheets(scope)
+
+        def fail_update(*_args, **_kwargs):
+            raise OSError("simulated lost pointer response")
+
+        drive.update = fail_update
+        with self.assertRaisesRegex(InstallationError, "pointer update outcome is unknown"):
+            bind_hybrid_selected_sheet(
+                storage=storage, sheets=sheets, root_reference=root,
+                bootstrap_reference=installed["bootstrap_document"]["bootstrap_reference"],
+                sheet_scope=scope,
+                serialization={
+                    "mode": "attended_single_writer",
+                    "evidence": {
+                        "actor_id": "setup-test", "attempt_id": "bind-1",
+                        "scheduler_inactive": True,
+                        "competing_mutators_excluded": True,
+                        "observed_at": "2026-09-09T00:00:00Z",
+                    },
+                },
+            )
+        recovered = recover_hybrid_generation(
+            storage, root_reference=root,
+            bootstrap_reference=installed["bootstrap_document"]["bootstrap_reference"],
+        )
+        self.assertEqual(1, recovered["current"]["generation"])
+        selector = json.loads(recovered["state"].entries["state/task-provider-selector.json"])
+        self.assertEqual("unbound", selector["status"])
+        self.assertEqual(13, len(sheets.headers or []))
 
     def test_connected_create_adopts_exact_id_when_receipt_omits_url(self) -> None:
         drive = ConnectedSetupDrive()

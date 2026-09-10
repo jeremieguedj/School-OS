@@ -14,7 +14,8 @@ from typing import Any
 from .bundles import BundleEntry
 from .connected_sheets import CodexSheetsTaskPort, GoogleSheetsScope
 from .connected_storage import (
-    CodexDriveReferenceStorage, ConnectedStorageError, DriveReference, StoredArtifact,
+    BundleWorkingState, CodexDriveReferenceStorage, ConnectedStorageError,
+    DriveReference, StoredArtifact,
 )
 from .connected_profiles import initial_profile_registry
 from .contracts import canonical_json_bytes, dump_mapping_yaml, load_mapping_yaml, sha256_bytes
@@ -24,6 +25,7 @@ from .install import (
     compose_create_only_candidate_payloads,
     hybrid_package_evidence,
     install_hybrid_generation,
+    recover_hybrid_generation,
     managed_mime_type,
     initial_operation_state_bytes, install_create_only_generation,
 )
@@ -500,6 +502,65 @@ def install_hybrid_connected_instance(
         "configuration_fingerprint": fingerprint,
         "current_reference": recovery["current_reference"],
         "projection_status": "unbound",
+    }
+
+
+def bind_hybrid_selected_sheet(
+    *, storage: CodexDriveCreateOnlyStorage, sheets: Any,
+    root_reference: dict[str, Any], bootstrap_reference: dict[str, Any],
+    sheet_scope: GoogleSheetsScope, serialization: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Initialize Sheets after admission, then publish its canonical binding."""
+    recovery = recover_hybrid_generation(
+        storage, root_reference=root_reference,
+        bootstrap_reference=bootstrap_reference,
+    )
+    working = BundleWorkingState.from_recovery(recovery)
+    selector_path = "state/task-provider-selector.json"
+    try:
+        selector = json.loads(working.read(selector_path).decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError, ConnectedStorageError) as exc:
+        raise InstallationError(f"hybrid task-provider selector is unreadable: {exc}") from exc
+    if selector != {
+        "bindings": {}, "schema_version": 1,
+        "selected_provider": "google_sheets", "status": "unbound",
+    }:
+        raise InstallationError("hybrid initial task-provider selector is not exactly unbound")
+
+    initialize_selected_sheet(sheets, sheet_scope)
+    scope = {
+        "first_column": sheet_scope.first_column,
+        "first_row": sheet_scope.first_row,
+        "last_column": sheet_scope.last_column,
+        "last_row": sheet_scope.last_row,
+        "sheet_id": sheet_scope.sheet_id,
+        "sheet_title": sheet_scope.sheet_title,
+        "spreadsheet_id": sheet_scope.spreadsheet_id,
+        "spreadsheet_url": sheet_scope.spreadsheet_url,
+    }
+    bound_selector = {
+        "bindings": {
+            "google_sheets": {
+                "provider_state_path": _HYBRID_STATE_PATHS["task_sync_state"],
+                "scope": scope,
+                "status": "active",
+            },
+        },
+        "schema_version": 1,
+        "selected_provider": "google_sheets",
+        "status": "bound",
+    }
+    committed = working.stage(
+        selector_path, canonical_json_bytes(bound_selector),
+    ).publish(storage, serialization)
+    durable = committed.durable_reference(selector_path)
+    return {
+        "configuration_fingerprint": committed.recovery["current"]["configuration_fingerprint"],
+        "current_reference": committed.recovery["current_reference"],
+        "projection_status": "bound",
+        "selected_provider": "google_sheets",
+        "selector_reference": durable.as_mapping(),
+        "sheet_scope_sha256": sha256_bytes(canonical_json_bytes(scope)),
     }
 
 

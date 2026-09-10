@@ -2925,3 +2925,21 @@ requirements, then read this log from top to bottom.
 - Next: publish this bootstrap checkpoint, implement the bundle-backed connected
   resolver and post-admission Sheet binding, then switch the setup/bootstrap
   route atomically and run the complete frozen-interpreter gate.
+
+## 2026-09-09 — recovery MVP post-admission Sheets binding
+
+- Published and remotely verified the hybrid bootstrap handoff at exact commit
+  `6a38639904a2b438f957f7ddc176e46239768567`; its complete gate passed 353
+  tests plus schema/template validation.
+- Added the separate post-admission Sheets binding transition. It re-recovers
+  the admitted five-object generation, requires the exact initial unbound
+  selector, initializes and verifies the isolated Sheet scope, stages a binding
+  with the logical provider-state member path, then advances `CURRENT.json`.
+- Focused coverage proves the successful binding is generation 2 and that a
+  failed pointer publication leaves generation 1 and its unbound selector
+  authoritative even though the already-initialized isolated Sheet remains.
+  The exact selector representation is now recorded in the approved storage
+  specification. No provider call or external effect occurred.
+- Next: publish this binding checkpoint, add a bundle-native logical artifact/
+  checkpoint model without same-bundle self-references, then route the connected
+  resolver and setup CLI through the hybrid path as one validated unit.
