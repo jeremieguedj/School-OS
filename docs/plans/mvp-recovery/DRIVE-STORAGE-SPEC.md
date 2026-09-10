@@ -82,6 +82,20 @@ and compact audit artifacts may likewise use immutable output bundles when
 needed by the existing delivery/checkpoint contract. Historical bundles are
 fetched only when an operation needs their contents.
 
+The connected Gmail worker executes against an invocation-scoped
+`LocalIngestionStore`. Its `school-os-local-stage:` references are
+deliberately non-provider staging identities and are forbidden from bundle or
+state output. The live adapter additionally captures the exact decoded Gmail
+`raw` RFC2822 bytes, complete supported attachment originals, and complete
+bounded direct-resource bytes. A complete batch publishes those bytes together
+with discovery, catalog, interpretation, independent audit, Facts, and custody
+indexes in one source bundle. The successor state stores a schema-version-2
+catalog index with full `BundleMemberReference` values for every record
+artifact and captured source member, plus queryable canonical Facts/indexes.
+The eligible import cursor remains unchanged at this catalog-only boundary; the
+worker's proposed cursor stays checkpoint evidence until the later thin-preview
+commit makes it eligible.
+
 ## References
 
 Physical object references retain exact Drive `object_id`, kind, direct

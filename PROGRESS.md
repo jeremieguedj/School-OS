@@ -3044,3 +3044,25 @@ requirements, then read this log from top to bottom.
   entries and the atomic adoption boundary, then continue reconcile/task/render
   staging. Keep the setup CLI archived until the entire unsent preview route is
   coherent and validated.
+
+## 2026-09-09 — recovery MVP installed hybrid ingestion path
+
+- Added the approved bundle-native connected-ingestion seam without changing
+  source interpretation or storage architecture. The established Gmail,
+  catalog, semantic-audit, and Fact worker now runs over an explicitly
+  disposable local staging store while the adapter captures exact raw RFC2822
+  messages, supported attachment originals, and bounded direct-resource bytes.
+- A complete bounded batch publishes one verified immutable source bundle,
+  constructs a schema-version-2 canonical index containing only full physical
+  bundle/member references, stages queryable Facts and Fact indexes, and
+  atomically advances operation checkpoint/state with `CURRENT.json`. The
+  catalog-only boundary does not advance the eligible source cursor and leaves
+  reconcile as explicit remaining work.
+- Added the installed `scripts/run_hybrid_ingestion.py` command and focused
+  coverage proving that local staging identities cannot leak into canonical
+  source references. The complete frozen-interpreter gate passes 360 tests plus
+  schema/template validation.
+- No provider call or external effect occurred in this work unit. Next: commit
+  and remotely verify this path, build and independently validate the exact
+  package, create a new empty authorized acceptance root and isolated Sheet,
+  install/bind/recover it, then run and validate the live bounded ingestion.

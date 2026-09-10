@@ -67,13 +67,18 @@ def _string(value: Mapping[str, Any], key: str, label: str) -> str:
     return result
 
 
-def _base64url(value: Any) -> bytes:
+def decode_raw_rfc2822(value: Any) -> bytes:
+    """Decode one exact Gmail ``raw`` field for canonical source custody."""
     if not isinstance(value, str) or not value or _BASE64URL.fullmatch(value) is None:
         raise GmailSourceError("Gmail raw RFC2822 payload is not strict base64url")
     try:
         return base64.b64decode(value + "=" * (-len(value) % 4), altchars=b"-_", validate=True)
     except (binascii.Error, ValueError) as exc:
         raise GmailSourceError("Gmail raw RFC2822 payload is not decodable") from exc
+
+
+# Kept as a private alias for the MIME reconciler's established call site.
+_base64url = decode_raw_rfc2822
 
 
 def _base64url_body(value: Any) -> bytes:

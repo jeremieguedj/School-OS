@@ -49,6 +49,7 @@ from .semantic import (
     semantic_packet_from_verified_record,
     validate_independent_audit,
 )
+from .gmail_source import decode_raw_rfc2822
 from .tasks import canonical_task_id
 
 
@@ -97,6 +98,8 @@ class CodexGmailSourceAdapter:
         self, gmail: Any, *, max_thread_messages: int,
         normalize_message: Callable[[Mapping[str, Any], Mapping[str, Any]], Mapping[str, Any]],
         normalize_attachment: Callable[[str, str, Mapping[str, Any]], ReadResult | AttachmentRead],
+        capture_raw_message: Callable[[str, str, bytes], None] | None = None,
+        capture_attachment: Callable[[str, str, ReadResult | AttachmentRead], None] | None = None,
     ) -> None:
         if max_thread_messages < 1:
             raise ConnectedIngestionError("Gmail full-thread bound must be positive")
@@ -104,6 +107,8 @@ class CodexGmailSourceAdapter:
         self.max_thread_messages = max_thread_messages
         self.normalize_message = normalize_message
         self.normalize_attachment = normalize_attachment
+        self.capture_raw_message = capture_raw_message
+        self.capture_attachment = capture_attachment
         self._discovery_by_thread: dict[str, set[str]] = {}
 
     @staticmethod
@@ -205,6 +210,10 @@ class CodexGmailSourceAdapter:
             raw_message_id, raw_thread_id = self._full_identity(raw, "raw-body")
             if raw_message_id != message_id or raw_thread_id != conversation_id:
                 raise ConnectedIngestionError("Gmail raw-body message/thread identity disagrees with full-thread member")
+            raw_bytes = (
+                decode_raw_rfc2822(raw.get("raw"))
+                if self.capture_raw_message is not None else None
+            )
             item = self.normalize_message(full, raw)
             if (
                 not isinstance(item, Mapping)
@@ -212,6 +221,9 @@ class CodexGmailSourceAdapter:
                 or item.get("thread_id") != conversation_id
             ):
                 raise ConnectedIngestionError("Gmail MIME normalizer changed the exact message/thread identity")
+            if self.capture_raw_message is not None:
+                assert raw_bytes is not None
+                self.capture_raw_message(message_id, conversation_id, raw_bytes)
             normalized.append(dict(item))
             member_ids.add(message_id)
         if not self._discovery_by_thread.get(conversation_id, set()) <= member_ids:
@@ -225,6 +237,8 @@ class CodexGmailSourceAdapter:
         result = self.normalize_attachment(message_id, attachment_id, raw)
         if not isinstance(result, (ReadResult, AttachmentRead)) or result.identity != attachment_id:
             raise ConnectedIngestionError("Gmail attachment normalizer changed the exact attachment identity")
+        if self.capture_attachment is not None:
+            self.capture_attachment(message_id, attachment_id, result)
         return result
 
 

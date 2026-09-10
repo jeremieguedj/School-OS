@@ -1,7 +1,7 @@
 # School-OS recovery MVP plan and implementation specification
 
 - Status: recovery implementation in progress; Phase 0 reconciliation is
-  complete and Phase 1 fresh-install qualification is active
+  complete and Phase 1 hybrid live-ingestion qualification is active
 - Written: 2026-09-09
 - Release identity: record the early candidate in Phase 0 and freeze the final
   identity in Phase 2; do not assume that `main`,
