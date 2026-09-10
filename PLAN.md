@@ -36,6 +36,15 @@ a separate cold recovery revalidated that generation. Phase 1 remains active at
 the explicit `reconcile` continuation boundary; canonical task projection,
 unsent brief rendering, and cursor-last completion are not yet claimed.
 
+The first live Sheet continuation exposed one exact adapter defect after the
+provider accepted the task row: a missing native blank `Source Due` cell was
+returned as null while the canonical projection uses an empty string. The
+pre-dispatch checkpoint correctly left the effect unknown and recovery refused
+the apparent conflict. The generic adapter normalization and a provider-shaped
+regression are now implemented and validated; this changes runtime code, so the
+failed root remains evidence only and the next execution must use a rebuilt
+package and a new empty root.
+
 The private execution values and unsanitized reference adapter receipts live
 only in
 gitignored `private/mvp-recovery/TEST-PARAMETERS.md` and

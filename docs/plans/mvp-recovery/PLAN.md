@@ -350,6 +350,15 @@ remained at zero. A second cold recovery revalidated the committed state and
 source bundle. The checkpoint truthfully remains at `reconcile`, with the
 eligible source cursor unchanged; task projection and unsent brief rendering
 remain required before the Phase 1 gate can close.
+The first continuation attempt then proved the Sheet task write occurred but
+found a contract-equivalent empty-value mismatch during exact readback: Google
+Sheets omitted the blank `Source Due` CellData (normalized as null) while the
+managed projection represents an unset source deadline as the empty string.
+The durable unknown-effect checkpoint and recovery conflict guard worked as
+designed and did not create a duplicate. The adapter now normalizes only that
+optional empty field and includes a provider-shaped regression. Because
+executable code changed, the attempted root is evidence only; rebuild the
+package and start another new empty root.
 For the later final recovery acceptance, use the Phase 0 `window_start_ms` and
 `window_end_ms` 14-day `[start,end)` bounds, recorded only in private evidence.
 Use a new

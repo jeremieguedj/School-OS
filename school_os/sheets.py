@@ -711,7 +711,12 @@ class GoogleSheetsTaskSync:
             "workflow_state": values["workflow_state"],
             "source_link": source_link or "",
             "status": self._optional_text(cells.get(self.columns.status)),
-            "source_due": self._optional_text(cells.get(self.columns.source_due)),
+            # Google Sheets omits empty trailing CellData and the connected
+            # grid normalizer represents that absence as ``None``.  The
+            # canonical managed projection uses the exact empty string for an
+            # unset source deadline, so normalize the provider's empty-cell
+            # spelling at this boundary before create/readback comparison.
+            "source_due": self._optional_text(cells.get(self.columns.source_due)) or "",
             "parent_planned_due": self._optional_text(cells.get(self.columns.parent_planned_due)),
             "parent_progress": self._optional_text(cells.get(self.columns.parent_progress)),
             "completion_comment": self._optional_text(cells.get(self.columns.completion_comment)),

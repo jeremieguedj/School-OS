@@ -44,3 +44,9 @@ When a live connector response exposes a possible runtime defect:
    cool-off policy must not be justified as rate-limit handling until rate-limit
    evidence exists, and an unknown write outcome must be reconciled rather than
    blindly retried.
+8. Test provider-equivalent empty values, not only populated fixtures. Native
+   tables and connector grids may spell the same empty cell as an omitted field,
+   `null`, or an empty string. Normalize only contract-equivalent empty forms at
+   the adapter boundary, then test immediate create/readback and the
+   lost-response recovery pass against the observed connector shape. A fixture
+   that echoes the write request verbatim cannot prove provider readback.

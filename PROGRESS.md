@@ -3684,3 +3684,28 @@ requirements, then read this log from top to bottom.
   attempted. Next: implement or invoke the existing hybrid task-reconciliation,
   Sheets-projection, render, and cursor-last continuation without changing the
   approved architecture.
+
+## 2026-09-10 — Live Sheet empty-value mismatch isolated and repaired
+
+- Continued the ignored four-day hybrid root from Drive generation 3 through
+  source-canonical reconciliation. Static reconstruction revalidated all 19
+  Facts and deterministically produced one canonical task, five guidelines, and
+  13 rolling updates before any provider write.
+- The task reconciler durably published the create intent and its pre-dispatch
+  unknown marker. Sheets accepted exactly one guarded row create. Immediate
+  verification then failed because the connector omitted the blank trailing
+  `Source Due` CellData, which the grid adapter represented as null, while the
+  canonical managed projection represents the same unset optional value as an
+  empty string. Recovery found the created canonical ID and correctly refused
+  to adopt the apparent field conflict; it did not create a duplicate.
+- Fixed `GoogleSheetsTaskSync._provider_task` to normalize only an absent/null
+  optional source deadline to the canonical empty string. Added a regression
+  using a provider-shaped row with the blank cell absent. The focused Sheet
+  suite passes 21 tests; complete `scripts/validate.py` passes 377 tests plus
+  schema/template/package/privacy validation.
+- The affected live root remains private failed-path evidence with an unresolved
+  task-create outcome and must not be resumed for acceptance. No email, audio,
+  Todoist, or scheduler effect occurred. Because runtime code changed, next:
+  commit and push this repair, rebuild the exact package, create a new empty
+  root and isolated Sheet, repeat the four-day ingestion, and continue through
+  the unsent preview gate before binding Todoist/audio.

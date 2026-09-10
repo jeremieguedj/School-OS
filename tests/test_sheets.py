@@ -256,6 +256,13 @@ class GoogleSheetsTaskAdapterTests(unittest.TestCase):
         )
         self.assertEqual("2026-09-12", adapter.list_tasks()[0]["source_due"])
 
+    def test_missing_blank_source_due_cell_normalizes_to_managed_empty_string(self) -> None:
+        row = self.managed_row()
+        row["cells"].pop("Source Due")
+        adapter, _ = self.adapter([row])
+
+        self.assertEqual("", adapter.list_tasks()[0]["source_due"])
+
     def test_parent_state_supports_clearable_progress_and_completion_fields(self) -> None:
         row = self.managed_row()
         row["cells"].update({"Status": "completed", "Completion Comment": "Signed", "Parent Progress": "done"})
