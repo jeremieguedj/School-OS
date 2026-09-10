@@ -2984,3 +2984,24 @@ requirements, then read this log from top to bottom.
 - No provider call or external effect occurred. Next: run the complete gate and
   publish this checkpoint, then implement the hybrid operation/checkpoint
   publisher and adapt one thin preview phase chain before selecting the CLI.
+
+## 2026-09-09 — recovery MVP atomic hybrid operation boundary
+
+- Published and remotely verified the bundle transaction/configuration resolver
+  at exact commit `b257b7a1a0eaf3db15ef48450943bd7523d7e81e`; the complete frozen-
+  interpreter gate passed 358 tests plus schema/template validation.
+- Added a hybrid checkpoint publisher that validates the existing operation
+  transition first, stages an immutable checkpoint and replacement operation
+  state in one bundle transaction, publishes one successor generation, verifies
+  both exact peer bytes from the new carrier, and only then returns their full
+  durable member references.
+- Focused end-to-end storage coverage now proves five-object install generation
+  1, verified post-admission Sheets binding generation 2, provider-free hybrid
+  configuration resolution, and atomic preflight admission generation 3. The
+  checkpoint and state durable references share the exact verified bundle hash;
+  the checkpoint peer contains no provider identity. No provider call or
+  external effect occurred.
+- Next: validate and publish this boundary, then adapt hybrid discovery/catalog
+  persistence to source bundles and use this publisher at the first complete
+  phase boundary. The active CLI remains on the archived route until the thin
+  preview path is coherent.

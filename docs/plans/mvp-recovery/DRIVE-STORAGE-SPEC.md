@@ -261,6 +261,15 @@ still follows render/validate, reserve, persist reconciliation delta, one audio
 attempt, send, exact Sent readback, and commit. Bundling changes physical
 persistence, not that order.
 
+At an operation boundary, the phase artifacts, immutable operation checkpoint,
+and replacement operation-state record are staged in one transaction. The
+checkpoint and operation state may name same-carrier peers only by their exact
+path/hash/length/media evidence. The existing checkpoint and state-transition
+validators run before bundle construction. One successor bundle and pointer
+advance commits the entire boundary; only afterward does the runtime expose
+full durable references formed from the verified carrier. A validation or
+pointer failure exposes none of the candidate peers as durable.
+
 ## Projection binding and task switching
 
 After five-file admission, create or bind the selected isolated task projection,

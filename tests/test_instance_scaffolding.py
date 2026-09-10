@@ -55,6 +55,8 @@ from school_os.connected_daily import (  # noqa: E402
     resolve_hybrid_instance,
 )
 from school_os.daily import PHASES  # noqa: E402
+from school_os.hybrid_operations import HybridCheckpointPublisher  # noqa: E402
+from school_os.operations import checkpoint_pointer  # noqa: E402
 
 
 TEST_ARCHIVE = b"synthetic admitted release archive"
@@ -626,6 +628,51 @@ class InstanceScaffoldingTests(unittest.TestCase):
         self.assertEqual("manual", resolved.profile["execution_surface"])
         self.assertEqual(
             "data/canonical-tasks.json", resolved.file_map["canonical_action_register"],
+        )
+        checkpoint = {
+            "schema_version": 1, "checkpoint_id": "op-1-checkpoint-0000",
+            "operation_id": "op-1", "attempt_id": "attempt-1",
+            "pinned_release": {
+                "version": resolved.instance["system_version"],
+                "source_commit": "a" * 40,
+            },
+            "scope": {"entrypoint": "manual"},
+            "configuration_fingerprint": resolved.configuration_fingerprint,
+            "phase": "preflight", "completed_phases": ["preflight"],
+            "completed_units": [], "remaining_work": {}, "artifacts": [],
+            "effects": [], "verification": {"phase_output": {"verified": True}},
+            "blocker": None, "predecessor": None, "sequence": 0,
+        }
+        operation_state = {
+            "schema_version": 1, "status": "running",
+            "current_operation": {"operation_id": "op-1", "attempt_id": "attempt-1"},
+            "serialization": {
+                "mode": "attended_single_writer",
+                "evidence": {"entrypoint": "manual"},
+            },
+            "checkpoint": checkpoint_pointer(checkpoint), "last_terminal": None,
+        }
+        committed = HybridCheckpointPublisher(
+            resolved.state,
+            state_schema=json.loads((self.package_root / "schemas" / "operation-state.schema.json").read_text()),
+            checkpoint_schema=json.loads((self.package_root / "schemas" / "operation-checkpoint.schema.json").read_text()),
+        ).commit(
+            storage=storage, checkpoint=checkpoint, operation_state=operation_state,
+            serialization={
+                "mode": "attended_single_writer",
+                "evidence": {
+                    "actor_id": "setup-test", "attempt_id": "attempt-1",
+                    "scheduler_inactive": True,
+                    "competing_mutators_excluded": True,
+                    "observed_at": "2026-09-09T00:00:01Z",
+                },
+            },
+        )
+        self.assertEqual(3, committed.transaction.working.recovery["current"]["generation"])
+        self.assertNotIn("object_id", committed.checkpoint_peer.as_mapping())
+        self.assertEqual(
+            committed.checkpoint_reference.bundle_sha256,
+            committed.operation_state_reference.bundle_sha256,
         )
 
     def test_hybrid_sheet_binding_failure_leaves_unbound_generation_active(self) -> None:
