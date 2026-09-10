@@ -9,6 +9,10 @@
 - Private companion: `private/mvp-recovery/TEST-PARAMETERS.md` and
   `private/mvp-recovery/ADAPTER-SOURCES.md` in the working checkout; both are
   gitignored and must never be copied into tracked files or logs
+- Approved Drive storage contract:
+  [`DRIVE-STORAGE-SPEC.md`](DRIVE-STORAGE-SPEC.md). It supersedes the active
+  per-logical-file installation layout while preserving the recovery plan's
+  domain semantics and live acceptance matrix.
 
 ## Outcome and fixed endpoint
 
@@ -242,13 +246,15 @@ before the authorized creation that returns it. Todoist and schedule objects are
 created and recorded in their later phases. A failed or ambiguous reconciliation
 blocks the affected path.
 
-### Phase 1 — early live integration
+### Phase 1 — storage simplification and early live integration
 
-**Status: in progress; the first repaired package was installed and admitted,
-but pre-source inspection found that the stable bootstrap did not forward the
-already-implemented manual-only unsent-preview flag. The narrow handoff repair
-is under test; because it changes executable bytes, the next attempt requires a
-rebuilt package and another new empty root.**
+**Status: in progress.** The preview handoff repair is complete at `a654f048`.
+The subsequent live replacement attempt exposed structurally excessive Drive
+calls and generic connector failures before source work. The approved
+[`DRIVE-STORAGE-SPEC.md`](DRIVE-STORAGE-SPEC.md) now replaces the per-file
+installation with five initial physical files and binds the task projection
+after admission. This executable/contract change requires a rebuilt package and
+new empty root before the early preview resumes.
 The mandatory one-hour status checkpoint applies even if this phase has not
 started or finished. Use the Phase 0 `window_start_ms` and
 `window_end_ms` 14-day `[start,end)` bounds, recorded only in private evidence.

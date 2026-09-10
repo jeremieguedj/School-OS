@@ -19,6 +19,14 @@ No runtime implementation, provider mutation, release, goal, or production
 change was performed while writing this route; read-only private grounding was
 used for the specification.
 
+The user-approved [Drive storage simplification specification](docs/plans/mvp-recovery/DRIVE-STORAGE-SPEC.md)
+is the current installation/storage authority. It replaces the active
+per-logical-file layout with an immutable package, immutable settings,
+immutable bootstrap, one mutable current-state pointer, and immutable bundled
+state generations. Task projections bind after canonical installation. This is
+a fresh-install contract change only; it does not add migration or weaken the
+recovery MVP acceptance cases.
+
 The private execution values and unsanitized reference adapter receipts live
 only in
 gitignored `private/mvp-recovery/TEST-PARAMETERS.md` and

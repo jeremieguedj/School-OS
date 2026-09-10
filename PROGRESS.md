@@ -2711,3 +2711,30 @@ requirements, then read this log from top to bottom.
   from runtime evidence without modification. Next: pass full validation,
   checkpoint and push the repair, rebuild the immutable package, and install it
   only into another new empty root and isolated Sheet before the preview.
+
+## 2026-09-09 — recovery MVP Drive storage architecture approval
+
+- Published and remotely verified the preview handoff repair at exact commit
+  `a654f04832a403881569a526b81edc72a48a0466`; the frozen interpreter passed all
+  333 repository tests and produced a reproducible installed-valid package.
+- Later fresh-install attempts demonstrated that the per-logical-file topology
+  causes many sequential Drive operations before source work. One attempt
+  stopped on a generic unknown folder-create failure with no reconciled folder;
+  another was interrupted during read-only metadata after more than 70 bridge
+  operations. No source, task, delivery, Todoist, audio, email, or scheduler
+  effect occurred. Exact private receipts remain gitignored.
+- The user approved the bounded hybrid architecture after one GPT-6 Astra
+  consultation: five initial physical files (`BOOTSTRAP.json`, package,
+  readable settings, `CURRENT.json`, and one immutable state bundle), immutable
+  successor generations with previous-state preservation, bundle-member
+  references, post-install projection binding, full readbacks where equivalent
+  provider checksum receipts are unavailable, and privacy-safe diagnostics.
+  The single mutable ZIP alternative was rejected.
+- Added `docs/plans/mvp-recovery/DRIVE-STORAGE-SPEC.md` as the focused authority
+  for encoding, topology, admission/publication ordering, interrupted-effect
+  recovery, current connector fallbacks, call accounting, implementation order,
+  and focused/live proof. Updated both active plans to link this contract.
+- No provider call or tracked runtime change occurred in this work unit. Next:
+  validate and publish this documentation checkpoint, then implement the
+  deterministic bundle codec and focused contracts before refactoring the
+  installer/bootstrap path.
