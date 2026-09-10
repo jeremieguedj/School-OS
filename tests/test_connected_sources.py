@@ -21,6 +21,7 @@ from school_os.connected_sources import (
 )
 from school_os.codex_bridge import HostBindingDispatcher
 from school_os.contracts import canonical_json_bytes, sha256_bytes
+from school_os.importer import DirectResourcePolicyExclusion
 from scripts.run_source_host import complete_image as complete_host_image
 from scripts.run_source_host import prepare as prepare_host_request
 
@@ -186,6 +187,23 @@ class ConnectedSourcesTests(unittest.TestCase):
         self.assertEqual(PNG, resource.data)
         self.assertEqual((url,), resource.redirect_chain)
 
+        self.peer.fetch = {
+            "outcome": "excluded_by_policy",
+            "reason": "declared content length exceeds selected byte bound",
+            "requested_url": url, "final_url": url, "redirect_chain": [url],
+            "status_code": 200, "mime_type": "image/png",
+            "content_encoding": "identity", "declared_content_length": 100,
+            "observed_bytes_at_least": 0, "selected_max_bytes": 10,
+        }
+        bounded = ConnectedSourceAdapters(
+            peer=self.peer, run_directory=self.run,
+            bounds=SourceBounds(max_bytes=10),
+        )
+        with self.assertRaises(DirectResourcePolicyExclusion) as raised:
+            bounded.fetch_https(url)
+        self.assertEqual(100, raised.exception.fetch_evidence["declared_content_length"])
+        self.assertEqual((url,), raised.exception.redirect_chain)
+
     def test_image_request_revalidates_bytes_and_returns_one_complete_unit(self) -> None:
         extracted = self.adapter.extract_image(source_id="attachment-a1", data=PNG, mime_type="image/png")
         self.assertEqual("Visible school notice", extracted.text)
@@ -237,8 +255,29 @@ class ConnectedSourcesTests(unittest.TestCase):
             resolver=resolver,
             connection_factory=lambda *_args: FakeConnection(FakeResponse(200, [("Content-Type", "image/png")], PNG + b"x")),
         )
-        with self.assertRaisesRegex(ConnectedSourcesError, "byte bound"):
-            overflow({"url": "https://assets.example/file", "max_bytes": len(PNG), "max_redirects": 0, "timeout_ms": 1000})
+        streamed_exclusion = overflow({
+            "url": "https://assets.example/file", "max_bytes": len(PNG),
+            "max_redirects": 0, "timeout_ms": 1000,
+        })
+        self.assertEqual("excluded_by_policy", streamed_exclusion["outcome"])
+        self.assertEqual(len(PNG) + 1, streamed_exclusion["observed_bytes_at_least"])
+
+        declared_response = FakeResponse(
+            200,
+            [("Content-Type", "image/png"), ("Content-Length", str(len(PNG) + 1))],
+            PNG + b"x",
+        )
+        declared_overflow = BoundedHttpsFetcher(
+            resolver=resolver,
+            connection_factory=lambda *_args: FakeConnection(declared_response),
+        )
+        excluded = declared_overflow({
+            "url": "https://assets.example/file", "max_bytes": len(PNG),
+            "max_redirects": 0, "timeout_ms": 1000,
+        })
+        self.assertEqual("excluded_by_policy", excluded["outcome"])
+        self.assertEqual(len(PNG) + 1, excluded["declared_content_length"])
+        self.assertEqual(0, declared_response.offset)
 
         private = BoundedHttpsFetcher(
             resolver=lambda *_args, **_kwargs: [(2, 1, 6, "", ("127.0.0.1", 443))],

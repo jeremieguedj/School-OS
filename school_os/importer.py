@@ -21,6 +21,20 @@ class ImportError(ValueError):
     """Raised when a complete import scope cannot safely continue."""
 
 
+class DirectResourcePolicyExclusion(Exception):
+    """A direct resource was proven outside the selected finite fetch policy."""
+
+    def __init__(
+        self, reason: str, *, final_url: str,
+        redirect_chain: Sequence[str], fetch_evidence: Mapping[str, Any],
+    ) -> None:
+        super().__init__(reason)
+        self.reason = reason
+        self.final_url = final_url
+        self.redirect_chain = tuple(redirect_chain)
+        self.fetch_evidence = dict(fetch_evidence)
+
+
 @dataclass(frozen=True)
 class Enumeration:
     """Complete scope evidence, including every page and duplicate disposition."""
@@ -423,6 +437,21 @@ def process_direct_html_resources(
             continue
         try:
             read = fetch_resource(resource.url)
+        except DirectResourcePolicyExclusion as exc:
+            chain = exc.redirect_chain
+            if (
+                not exc.reason.strip() or not chain or chain[0] != resource.url
+                or chain[-1] != exc.final_url or len(chain) - 1 > max_redirects
+                or len(set(chain)) != len(chain)
+                or any(not _direct_https_url(url) for url in chain)
+            ):
+                raise ImportError("direct-resource policy exclusion lacks exact provenance")
+            outcomes.append(DirectResourceOutcome(
+                resource, "excluded_by_policy", None, None, None, None,
+                final_url=exc.final_url, redirect_chain=chain,
+                disposition_reason=exc.reason,
+            ))
+            continue
         except OSError:
             outcomes.append(DirectResourceOutcome(
                 resource, "inaccessible", None, None, None, None,

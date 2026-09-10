@@ -12,7 +12,7 @@ sys.path.insert(0, str(ROOT))
 
 from school_os.catalog import CatalogError, build_catalog_message, parse_v2_record, serialize_v2_record, stable_content_id, verified_catalog_contents, verify_persisted_record
 from school_os.contracts import canonical_json_bytes
-from school_os.importer import AttachmentExtraction, AttachmentRead, DirectResourceRead, ImportError, admit_exact_plaintext_representation, discover_direct_html_resources, process_attachments, process_direct_html_resources, require_complete_message_coverage
+from school_os.importer import AttachmentExtraction, AttachmentRead, DirectResourcePolicyExclusion, DirectResourceRead, ImportError, admit_exact_plaintext_representation, discover_direct_html_resources, process_attachments, process_direct_html_resources, require_complete_message_coverage
 from school_os.semantic import interpret_packet, semantic_packet_from_verified_record, validate_independent_audit
 
 
@@ -171,6 +171,44 @@ class SourceCustodyIntegrationTests(unittest.TestCase):
             max_bytes=1024, max_redirects=0,
         )
         self.assertEqual("manual_review", incomplete_fetch[0].outcome)
+
+        policy_excluded = process_direct_html_resources(
+            resources,
+            fetch_resource=lambda url: (_ for _ in ()).throw(
+                DirectResourcePolicyExclusion(
+                    "declared content length exceeds selected byte bound",
+                    final_url=url, redirect_chain=(url,),
+                    fetch_evidence={
+                        "status_code": 200, "complete": False, "eof": False,
+                        "bytes_read": 0, "declared_content_length": 2048,
+                        "declared_mime_type": "application/pdf",
+                        "verified_mime_type": None, "selected_max_bytes": 1024,
+                    },
+                )
+            ),
+            extractors={}, max_bytes=1024, max_redirects=0,
+        )
+        self.assertEqual("excluded_by_policy", policy_excluded[0].outcome)
+        self.assertEqual((resources[0].url,), policy_excluded[0].redirect_chain)
+        require_complete_message_coverage(b"body", (), policy_excluded)
+        admission = admit_exact_plaintext_representation(
+            (self.mime_part("plain-1", "text/plain", b"body", selected=True),),
+            mime_tree_complete=True,
+        )
+        message = build_catalog_message(
+            message_id="message-1", received_at="2026-09-08T08:00:00Z",
+            received_date="2026-09-08", admission=admission,
+            resource_outcomes=policy_excluded,
+        )
+        record = serialize_v2_record({
+            "schema_version": 2, "adapter_id": "synthetic-mail",
+            "conversation_id": "conversation-1", "scope": {"fixed": True},
+            "pagination": {"completed": True}, "messages": [message],
+        }, self.schema)
+        self.assertEqual(
+            "excluded_by_policy",
+            parse_v2_record(record).header["messages"][0]["resources"][0]["outcome"],
+        )
 
         missing_page = process_attachments(
             ({"attachment_id": "attachment-pdf", "source_message_id": "message-1", "mime_type": "application/pdf", "byte_size": 100},),

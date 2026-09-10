@@ -30,7 +30,10 @@ from urllib.parse import urljoin, urlparse
 
 from .codex_bridge import CodexGmailPort, CodexSourceHostPort, JsonlPeer
 from .contracts import sha256_bytes
-from .importer import AttachmentExtraction, AttachmentRead, DirectResourceRead
+from .importer import (
+    AttachmentExtraction, AttachmentRead, DirectResourcePolicyExclusion,
+    DirectResourceRead,
+)
 
 
 class ConnectedSourcesError(ValueError):
@@ -195,8 +198,19 @@ class BoundedHttpsFetcher:
                         declared = int(lengths[0], 10)
                     except ValueError as exc:
                         raise ConnectedSourcesError("HTTPS resource content length is malformed") from exc
-                    if declared < 0 or declared > maximum:
-                        raise ConnectedSourcesError("HTTPS resource exceeds the selected byte bound")
+                    if declared < 0:
+                        raise ConnectedSourcesError("HTTPS resource content length is malformed")
+                    if declared > maximum:
+                        return {
+                            "outcome": "excluded_by_policy",
+                            "reason": "declared content length exceeds selected byte bound",
+                            "requested_url": requested, "final_url": current,
+                            "redirect_chain": chain, "status_code": 200,
+                            "mime_type": mime_type, "content_encoding": "identity",
+                            "declared_content_length": declared,
+                            "observed_bytes_at_least": 0,
+                            "selected_max_bytes": maximum,
+                        }
                 chunks: list[bytes] = []
                 observed = 0
                 while True:
@@ -208,7 +222,18 @@ class BoundedHttpsFetcher:
                         break
                     observed += len(chunk)
                     if observed > maximum:
-                        raise ConnectedSourcesError("HTTPS resource exceeds the selected byte bound")
+                        if declared is not None:
+                            raise ConnectedSourcesError("HTTPS resource body exceeds its declared byte length")
+                        return {
+                            "outcome": "excluded_by_policy",
+                            "reason": "observed bytes exceed selected byte bound",
+                            "requested_url": requested, "final_url": current,
+                            "redirect_chain": chain, "status_code": 200,
+                            "mime_type": mime_type, "content_encoding": "identity",
+                            "declared_content_length": None,
+                            "observed_bytes_at_least": observed,
+                            "selected_max_bytes": maximum,
+                        }
                     chunks.append(chunk)
                 data = b"".join(chunks)
                 if declared is not None and declared != len(data):
@@ -502,6 +527,52 @@ class ConnectedSourceAdapters:
             url=requested, max_bytes=self.bounds.max_bytes,
             max_redirects=self.bounds.max_redirects, timeout_ms=self.bounds.timeout_ms,
         )
+        exclusion_keys = {
+            "outcome", "reason", "requested_url", "final_url", "redirect_chain",
+            "status_code", "mime_type", "content_encoding",
+            "declared_content_length", "observed_bytes_at_least",
+            "selected_max_bytes",
+        }
+        if isinstance(result, Mapping) and set(result) == exclusion_keys:
+            chain = result.get("redirect_chain")
+            declared = result.get("declared_content_length")
+            observed = result.get("observed_bytes_at_least")
+            declared_exclusion = (
+                result.get("reason") == "declared content length exceeds selected byte bound"
+                and type(declared) is int and declared > self.bounds.max_bytes
+                and observed == 0
+            )
+            observed_exclusion = (
+                result.get("reason") == "observed bytes exceed selected byte bound"
+                and declared is None and type(observed) is int
+                and observed == self.bounds.max_bytes + 1
+            )
+            if (
+                result.get("outcome") != "excluded_by_policy"
+                or not (declared_exclusion or observed_exclusion)
+                or result.get("requested_url") != requested
+                or not isinstance(chain, list) or not chain
+                or any(_https(item) != item for item in chain)
+                or chain[0] != requested or result.get("final_url") != chain[-1]
+                or len(chain) - 1 > self.bounds.max_redirects
+                or len(set(chain)) != len(chain)
+                or result.get("status_code") != 200
+                or not isinstance(result.get("mime_type"), str) or not result["mime_type"]
+                or result.get("content_encoding") != "identity"
+                or result.get("selected_max_bytes") != self.bounds.max_bytes
+            ):
+                raise ConnectedSourcesError("HTTPS host policy exclusion lacks exact bounded evidence")
+            raise DirectResourcePolicyExclusion(
+                result["reason"], final_url=result["final_url"],
+                redirect_chain=chain,
+                fetch_evidence={
+                    "status_code": 200, "complete": False, "eof": False,
+                    "bytes_read": observed, "declared_content_length": declared,
+                    "declared_mime_type": result["mime_type"],
+                    "verified_mime_type": None,
+                    "selected_max_bytes": self.bounds.max_bytes,
+                },
+            )
         required = {"requested_url", "final_url", "redirect_chain", "status_code", "mime_type", "content_encoding", "declared_content_length", "bytes_read", "eof", "complete", "b64_string"}
         if not isinstance(result, Mapping) or set(result) != required:
             raise ConnectedSourcesError("HTTPS host response has an unsupported shape")

@@ -238,15 +238,19 @@ calls and generic connector failures before source work. The approved
 installation with five initial physical files and binds the task projection
 after admission. This executable/contract change requires a rebuilt package and
 new empty root before the early preview resumes.
-The exact `35c302ee` package passed five-object installation, post-install Sheet
-binding, and cold Drive recovery. That recovery exposed an installed-runtime
-naming defect before ingestion: extraction verified the correct
-`School-OS-<version>` tree and then renamed it to an operation name, which the
-fixed installed verifier necessarily rejected. The active compatible repair
-keeps the already-verified release directory name. It changes neither the
-approved physical layout nor any reference, custody, provider, or state
-contract. A rebuilt package and new empty root are required before Phase 1 live
-evidence can be accepted.
+The exact `b8e69183` package passed five-object installation, post-install Sheet
+binding, cold Drive recovery, and installed-package verification. Its live
+ingestion then reached a direct HTTPS resource whose server-proven byte length
+exceeded the frozen per-resource bound. The source contract already admits the
+visible `excluded_by_policy` terminal outcome for an oversized bounded resource,
+but the connected adapter raised before producing that outcome. The active
+compatible repair carries a typed, provenance-bound policy exclusion through
+the existing importer and catalog path for both declared and observed overflow;
+it reads no body after a declared overflow and produces no inferred Fact. It
+does not change the frozen bounds, source scope, storage layout, canonical
+references, or provider architecture. Contradictory, malformed, or incomplete
+responses remain blocking. A rebuilt package and new empty root are required
+before Phase 1 live evidence can be accepted.
 Use the Phase 0 `window_start_ms` and
 `window_end_ms` 14-day `[start,end)` bounds, recorded only in private evidence.
 Use a new

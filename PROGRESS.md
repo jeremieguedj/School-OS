@@ -3261,3 +3261,32 @@ requirements, then read this log from top to bottom.
 - Next: complete validation, publish the compatible repair, rebuild the exact
   immutable package, create a new empty isolated instance, and repeat install,
   bind, cold recovery, live ingestion, and canonical validation.
+
+## 2026-09-10 — recovery MVP bounded direct-resource exclusion
+
+- Published and remotely verified the recovery-directory repair at exact commit
+  `b8e69183041b308578dba2ebd83dc49e4866fc70`. Its immutable package passed
+  five-file installation, post-install Sheet binding, cold Drive recovery, and
+  installed-package validation in a new isolated instance.
+- Live ingestion completed source interpretation and independent audit through
+  three conversations and was processing the fourth when one direct HTTPS
+  resource returned a provider-proven content length above the frozen per-item
+  byte bound. The run stopped locally before source-bundle or state publication;
+  no task, delivery, audio, Todoist, or scheduler effect occurred.
+- The accepted importer and source-custody contracts already define
+  `excluded_by_policy` as the finite terminal outcome for an oversized bounded
+  direct resource. Completed the missing connected-adapter path with a typed
+  exclusion carrying exact request/final URL and redirect provenance. Declared
+  overflow reads no response body; unknown-length overflow reads only through
+  the first byte beyond the bound. Neither path creates extracted text or a
+  Fact, while malformed, contradictory, incomplete, or unsupported responses
+  still fail closed.
+- Focused connected-source, source-custody, hybrid-ingestion, and connected-
+  ingestion tests pass. The complete frozen CPython 3.12.14 gate passes 364
+  tests plus schema/template validation, including catalog serialization of the
+  visible policy exclusion and the tracked-file privacy scan. No architecture,
+  source bound, storage, reference, provider, or state contract changed.
+- Next: commit and publish the compatible repair, rebuild its exact immutable
+  package, create a new empty acceptance root and isolated Sheet, repeat install,
+  binding, cold recovery, and execute live ingestion through canonical Drive
+  publication and independent validation.
