@@ -3619,3 +3619,34 @@ requirements, then read this log from top to bottom.
 - Next: commit and push this accepted implementation checkpoint, run the
   committed package/privacy gate, build the exact immutable package, and create
   a new empty live root and isolated Sheet for the four-day ingestion.
+
+## 2026-09-10 — four-day ingestion reaches verified source publication and isolates checkpoint schema defect
+
+- Published and remotely verified the MIME-accounting implementation at exact
+  commit `67c5de51055974502610b4c8e59ddaf374ea2190`; its immutable package passed
+  installed and privacy validation. One attempted root was correctly rejected
+  because the isolated Sheet had been moved into it before installation. That
+  root remains isolated test evidence and was not reused. A second empty root
+  completed the exact five-file installation in 30 connector calls, after which
+  the Sheet was moved, verified, and bound as the selected projection.
+- Cold recovery succeeded from Drive. The fixed four-day Gmail inventory found
+  eight complete conversations. All eight passed independent semantic review;
+  the formerly failing multipart message now preserves one substantive text
+  unit, one padding unit, and one policy-excluded inline image without fetching
+  the image. The source bundle was created and byte-read back successfully with
+  eight exact raw messages, eight catalog records, 19 Facts, no fetched image,
+  no attachment bytes, and no direct-resource bytes.
+- Canonical state publication then stopped before a successor state write. The
+  exact local failure is a checkpoint contract mismatch: hybrid ingestion emits
+  the approved typed physical source-bundle reference, while the legacy
+  operation-checkpoint schema admitted only an individually stored artifact's
+  three-string shape. Updated that schema to admit both exact legacy artifacts
+  and exact hybrid source/output bundle references, and added dependency-free
+  `oneOf` enforcement plus focused valid/missing-version regression coverage.
+  This implements the approved Drive-storage specification; it does not change
+  the physical layout or introduce another architecture.
+- The already-created source bundle is preserved as failed-run evidence and is
+  not retried or adopted by a changed package. Next: pass the complete repository
+  gate, commit/push the checkpoint fix, build that exact package, create a new
+  empty root and isolated Sheet, and repeat the four-day journey through final
+  canonical Drive readback.

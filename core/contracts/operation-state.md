@@ -39,3 +39,10 @@ Unknown effects must be reconciled from durable intent plus complete provider
 readback; they prevent completion and cancellation and are never blindly
 retried. The durable checkpoint stores compact identity, hash, outcome, and
 reference evidence rather than source or rendered-content bytes.
+
+Legacy individually stored artifacts retain their compact string reference.
+Under the admitted hybrid layout, a source or output bundle artifact instead
+records its bundle kind, stable bundle identity, exact physical Drive object
+reference, and whole-bundle SHA-256. The physical reference must include the
+file ID, sole permitted instance-root ancestor, MIME type, and provider version;
+omitting any of that evidence blocks the checkpoint before state publication.

@@ -237,6 +237,13 @@ def _type_matches(value: Any, expected: str) -> bool:
 def validate(value: Any, schema: dict[str, Any], path: str = "$") -> list[str]:
     """Validate the JSON-Schema subset used by School-OS contract files."""
     errors: list[str] = []
+    if "oneOf" in schema:
+        alternatives = schema["oneOf"]
+        if not isinstance(alternatives, list) or not alternatives:
+            return [f"{path}: oneOf must contain schema alternatives"]
+        matches = [item for item in alternatives if isinstance(item, dict) and not validate(value, item, path)]
+        if len(matches) != 1:
+            errors.append(f"{path}: must match exactly one oneOf alternative")
     declared_types = schema.get("type")
     if declared_types is not None:
         types = [declared_types] if isinstance(declared_types, str) else declared_types

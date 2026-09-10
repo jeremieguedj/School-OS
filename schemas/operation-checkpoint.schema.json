@@ -28,14 +28,40 @@
     "artifacts": {
       "type": "array",
       "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["artifact_id", "reference", "sha256"],
-        "properties": {
-          "artifact_id": {"type": "string", "minLength": 1},
-          "reference": {"type": "string", "minLength": 1},
-          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
-        }
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["artifact_id", "reference", "sha256"],
+            "properties": {
+              "artifact_id": {"type": "string", "minLength": 1},
+              "reference": {"type": "string", "minLength": 1},
+              "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "identity", "reference", "sha256"],
+            "properties": {
+              "kind": {"enum": ["source_bundle", "output_bundle"]},
+              "identity": {"type": "string", "minLength": 1},
+              "reference": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["object_id", "kind", "permitted_ancestor_id", "mime_type", "version"],
+                "properties": {
+                  "object_id": {"type": "string", "minLength": 1},
+                  "kind": {"const": "file"},
+                  "permitted_ancestor_id": {"type": "string", "minLength": 1},
+                  "mime_type": {"type": "string", "minLength": 1},
+                  "version": {"type": "string", "minLength": 1}
+                }
+              },
+              "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+            }
+          }
+        ]
       }
     },
     "effects": {

@@ -243,6 +243,9 @@ blocks the affected path.
 ### Phase 1 — storage simplification and early live integration
 
 **Status: in progress.** The preview handoff repair is complete at `a654f048`.
+The approved five-file hybrid Drive layout and MIME-accounting source boundary
+are implemented; the current four-day compatibility journey is exercising an
+exact installed package before the final 14-day acceptance root is frozen.
 The subsequent live replacement attempt exposed structurally excessive Drive
 calls and generic connector failures before source work. The approved
 [`DRIVE-STORAGE-SPEC.md`](DRIVE-STORAGE-SPEC.md) now replaces the per-file

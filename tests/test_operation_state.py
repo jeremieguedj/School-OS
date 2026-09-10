@@ -87,6 +87,39 @@ class OperationStateTests(unittest.TestCase):
     def test_template_is_an_empty_admission_pointer(self) -> None:
         validate_operation_state(self.idle, self.state_schema)
 
+    def test_hybrid_content_bundle_artifact_reference_is_admitted(self) -> None:
+        checkpoint = self.checkpoint()
+        checkpoint["artifacts"] = [{
+            "kind": "source_bundle",
+            "identity": "source-000001",
+            "reference": {
+                "object_id": "drive-source-1",
+                "kind": "file",
+                "permitted_ancestor_id": "drive-root-1",
+                "mime_type": "application/x-tar",
+                "version": "2026-09-10T00:00:00Z",
+            },
+            "sha256": "c" * 64,
+        }]
+        validate_transition(
+            self.idle,
+            self.active_state(checkpoint),
+            checkpoint,
+            state_schema=self.state_schema,
+            checkpoint_schema=self.checkpoint_schema,
+        )
+
+        invalid = copy.deepcopy(checkpoint)
+        invalid["artifacts"][0]["reference"].pop("version")
+        with self.assertRaises(OperationError):
+            validate_transition(
+                self.idle,
+                self.active_state(invalid),
+                invalid,
+                state_schema=self.state_schema,
+                checkpoint_schema=self.checkpoint_schema,
+            )
+
     def test_legal_running_continuation_and_complete_transitions_validate(self) -> None:
         first = self.checkpoint()
         running = self.active_state(first)
