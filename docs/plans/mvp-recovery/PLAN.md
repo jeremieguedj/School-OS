@@ -310,6 +310,14 @@ attachment call returned a connector-level tool error without a usable
 attachment result. No canonical publication occurred. Preserve sanitized
 private failure details on the next bounded read before deciding whether any
 runtime repair is needed; rate limiting remains unproven.
+A bounded diagnostic read succeeded without any provider error fields and
+identified the remaining exact mismatch: the nested copy can include three
+connector-only transport fields in addition to the matching declared fields.
+The compatible repair now validates and removes only that finite transport
+shape, retains fail-closed disagreement and unknown-surplus checks, and records
+the complete raw connector outcome privately on later errors while showing the
+running agent a sanitized machine diagnosis and evidence path. This changes
+executable bytes, so live qualification resumes from a new empty root.
 Use the Phase 0 `window_start_ms` and
 `window_end_ms` 14-day `[start,end)` bounds, recorded only in private evidence.
 Use a new

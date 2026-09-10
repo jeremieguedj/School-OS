@@ -69,9 +69,9 @@ child_stdin.flush()
 `invoke_fixed_native_tool(tool_name, native_args)` resolves `tool_name` only
 from `HOST_BINDINGS`; it never accepts a child-provided tool name. The dispatcher
 reads and hashes the mode-0600 request, revalidates its wrapper and args, creates
-and later removes owned snapshots, unwraps the one native
-`CallToolResult.structuredContent.result`, validates that provider result, and
-exclusive-writes the raw validated result in the peer response wrapper. The
+and later removes owned snapshots, normalizes the admitted native
+`CallToolResult` envelope, validates that provider result, and exclusive-writes
+the raw validated result in the peer response wrapper. The
 child `JsonlPeer.connector_call` consumes that raw result and never unwraps a
 second connector envelope. Tool exceptions cross only as `effect: unknown`.
 
@@ -81,12 +81,27 @@ exercise this exact child process/request file/dispatcher/native-result/response
 file path for Drive, Gmail attachment/send, Sheets, and comments. A host pump or
 sample that uses a different path is not a supported execution surface.
 
+The fixed native invoker must return the complete connector `CallToolResult`,
+including an `isError` result. If the runtime throws instead of returning that
+shape, it must let the exact exception reach `HostBindingDispatcher`; an
+out-of-process pump must serialize the exception's available name, message,
+status/code, and cause into a private error-shaped native result rather than
+printing or flattening it. After an invoked failure, the dispatcher leaves a
+mode-0600 `REQUEST_ID.connector-error.json` receipt in the run directory. The
+receipt contains the complete raw connector outcome or private invocation
+exception and no request arguments. The child surfaces only recomputed
+privacy-safe stage/status/reason/domain/retry/code fields plus the receipt path
+and hash; missing upstream fields remain unavailable. The ordinary JSONL error
+wrapper and its `effect: unknown` reconciliation rule do not change.
+
 The semantic kinds are separately dispatched to actual interpreter and
 independent-audit callbacks over the immutable packet boundary. Fixture or
 synthetic callbacks are labeled synthetic and cannot authorize provider writes.
 Connector structured content is inspected explicitly by the mandatory host
-dispatcher. Only `structuredContent.result` is accepted from native connector
-tools; text content blocks and metadata never establish semantic verification.
+dispatcher. Declared connector results are accepted from the observed flat or
+`structuredContent.result` shapes; Gmail attachment transport annotations are
+validated and removed at that boundary. Text content blocks and metadata never
+establish semantic verification.
 
 ## Selected connector limits
 

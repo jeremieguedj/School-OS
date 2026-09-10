@@ -85,6 +85,15 @@ tool error with no usable result. The root remains at generation 2. Before any
 retry, preserve a private sanitized connector-error envelope so the failure can
 be classified as provider rejection, throttling, timeout, or transport error
 instead of assuming a cause.
+A bounded diagnostic read later succeeded and exposed the exact remaining
+compatibility defect: the nested attachment copy can also contain three
+connector-only transport fields. The bridge now projects only the documented
+attachment fields, requires every duplicated declared value to agree, validates
+the finite transport shape, and rejects conflicts or any new surplus. Connector
+failures now retain the complete raw outcome in a mode-0600 private evidence
+file while surfacing only status/reason/stage and its evidence reference to the
+running agent. Focused and complete validation pass; a rebuilt package and new
+empty root remain required for the next live run.
 Every discovered direct resource must still be audited, excluded with evidence,
 or block the affected import; no arbitrary link following, crawler,
 HTML-to-text conversion, or raw-MIME canonical store is authorized.

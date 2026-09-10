@@ -3495,3 +3495,28 @@ requirements, then read this log from top to bottom.
   and continues to reject conflicts or any other surplus. Prove it with focused
   static tests and the complete validation gate before building a new immutable
   package and using a new empty live root.
+
+## 2026-09-10 — recovery MVP attachment projection and connector diagnostics repaired
+
+- Implemented the finite attachment projection against a synthetic equivalent
+  of the newly observed connector envelope. The bridge accepts only the ten
+  documented attachment fields, requires the nested and outer declared values
+  to agree exactly, validates the three connector-only transport fields and
+  their file-reference relationship, removes them before ingestion, and still
+  rejects incomplete, conflicting, malformed, or newly surplus metadata. The
+  exact ignored private live envelope now passes the repaired normalizer without
+  copying any private value into Git.
+- Preserved the JSONL protocol and unknown-effect safety rule. After any invoked
+  connector failure, the host now leaves a request-bound mode-0600 private
+  evidence receipt containing the complete raw connector result or invocation
+  exception, its hash, operation kind, and correlation token, but no request
+  arguments. The child recomputes and exposes only privacy-safe stage,
+  response-observed, HTTP status, reason, domain, retry delay, connector code,
+  evidence path, and receipt hash. Legacy generic error wrappers remain valid;
+  private provider text is verified not to appear in the surfaced exception.
+- Focused bridge/bootstrap/source/ingestion validation passes 51 tests. The
+  complete frozen CPython 3.12 gate passes 370 tests plus schema, template,
+  package, and privacy validation. No provider call or mutation was made while
+  implementing or validating these repairs. Next: commit and publish the exact
+  code/docs checkpoint, rebuild its immutable package, and use a new empty root
+  for the next live end-to-end ingestion run.

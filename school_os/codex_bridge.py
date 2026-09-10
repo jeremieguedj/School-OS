@@ -25,6 +25,24 @@ class BridgeError(ValueError):
     """Raised when a bridge request or response cannot be trusted."""
 
 
+class ConnectorToolError(BridgeError):
+    """A connector failure with safe diagnostics and exact private evidence."""
+
+    def __init__(
+        self, *, diagnostics: Mapping[str, Any], evidence_path: Path,
+        evidence_sha256: str,
+    ) -> None:
+        self.diagnostics = dict(diagnostics)
+        self.evidence_path = evidence_path
+        self.evidence_sha256 = evidence_sha256
+        summary = json.dumps(self.diagnostics, sort_keys=True, separators=(",", ":"))
+        super().__init__(
+            "host tool exception has unknown effects; "
+            f"diagnostics={summary}; exact private connector evidence="
+            f"{evidence_path} sha256={evidence_sha256}; reconcile by readback"
+        )
+
+
 PROTOCOL = 1
 MAX_REQUEST_BYTES = 2 * 1024 * 1024
 MAX_RESPONSE_BYTES = 16 * 1024 * 1024
@@ -438,10 +456,39 @@ _GMAIL_ATTACHMENT_RESULT_KEYS = frozenset({
     "attachment_id", "content", "content_truncated", "extraction_file_uri",
     "file_uri", "filename", "images", "message_id", "mime_type", "size_bytes",
 })
+_GMAIL_ATTACHMENT_TRANSPORT_KEYS = frozenset({
+    "__attachments__", "download_url", "file_id",
+})
+_GMAIL_ATTACHMENT_DISPLAY_FILE_KEYS = frozenset({
+    "display_files_from_actions_ext", "id", "mime_type", "name", "source",
+})
+
+
+def _validate_gmail_attachment_transport(
+    transport: Mapping[str, Any], declared: Mapping[str, Any],
+) -> None:
+    """Validate, but never forward, the connector's private display metadata."""
+    file_uri = declared.get("file_uri")
+    if not isinstance(file_uri, Mapping):
+        raise BridgeError("Gmail attachment transport metadata lacks declared file_uri")
+    if transport.get("download_url") != file_uri.get("download_url"):
+        raise BridgeError("Gmail attachment transport download_url conflicts with file_uri")
+    if transport.get("file_id") != file_uri.get("file_id"):
+        raise BridgeError("Gmail attachment transport file_id conflicts with file_uri")
+    attachments = transport.get("__attachments__")
+    if not isinstance(attachments, list) or not 1 <= len(attachments) <= 10:
+        raise BridgeError("Gmail attachment transport __attachments__ is malformed")
+    for item in attachments:
+        if not isinstance(item, Mapping) or set(item) != _GMAIL_ATTACHMENT_DISPLAY_FILE_KEYS:
+            raise BridgeError("Gmail attachment transport display file is malformed")
+        if not isinstance(item.get("display_files_from_actions_ext"), bool):
+            raise BridgeError("Gmail attachment transport display flag is malformed")
+        for key in ("id", "mime_type", "name", "source"):
+            _nonempty_string(item.get(key), f"Gmail attachment transport display file.{key}")
 
 
 def _normalize_gmail_attachment_envelope(result: Mapping[str, Any]) -> dict[str, Any]:
-    """Remove only the connector's observed exact redundant structured wrapper."""
+    """Project either observed connector envelope onto the declared contract."""
     outer = dict(result)
     if "structuredContent" not in outer:
         return outer
@@ -454,11 +501,223 @@ def _normalize_gmail_attachment_envelope(result: Mapping[str, Any]) -> dict[str,
     candidate = nested.get("result", nested)
     if (
         not isinstance(candidate, Mapping)
-        or set(candidate) - _GMAIL_ATTACHMENT_RESULT_KEYS
-        or dict(candidate) != outer
+        or set(candidate) - _GMAIL_ATTACHMENT_RESULT_KEYS - _GMAIL_ATTACHMENT_TRANSPORT_KEYS
     ):
         raise BridgeError("Gmail attachment redundant envelope conflicts with declared fields")
+    declared_candidate = {
+        key: value for key, value in candidate.items()
+        if key in _GMAIL_ATTACHMENT_RESULT_KEYS
+    }
+    if declared_candidate != outer:
+        raise BridgeError("Gmail attachment redundant envelope conflicts with declared fields")
+    transport = {
+        key: value for key, value in candidate.items()
+        if key in _GMAIL_ATTACHMENT_TRANSPORT_KEYS
+    }
+    if transport:
+        if set(transport) != _GMAIL_ATTACHMENT_TRANSPORT_KEYS:
+            raise BridgeError("Gmail attachment transport metadata is incomplete")
+        _validate_gmail_attachment_transport(transport, outer)
     return outer
+
+
+_CONNECTOR_DIAGNOSTIC_KEYS = frozenset({
+    "stage", "invocation_began", "provider_response_observed", "http_status",
+    "reason", "domain", "retry_after", "connector_code", "evidence_code",
+})
+_SAFE_ERROR_TOKEN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$")
+_STATUS_TEXT = re.compile(
+    r"\b(?:HTTP(?:\s+status)?|status(?:\s+code)?)\s*[:=]?\s*([45][0-9]{2})\b",
+    re.IGNORECASE,
+)
+_REASON_TEXT = re.compile(
+    r"\b(?:error[ _-]?reason|reason)\s*[:=]?\s*['\"]?([A-Za-z][A-Za-z0-9_.-]{0,127})",
+    re.IGNORECASE,
+)
+_RETRY_AFTER_TEXT = re.compile(
+    r"\bretry[-_ ]after\s*[:=]?\s*['\"]?([0-9]{1,8})",
+    re.IGNORECASE,
+)
+
+
+def _safe_error_token(value: Any) -> str | None:
+    if isinstance(value, bool) or not isinstance(value, (str, int)):
+        return None
+    token = str(value)
+    return token if _SAFE_ERROR_TOKEN.fullmatch(token) else None
+
+
+def _connector_error_diagnostics(
+    value: Any, *, stage: str, provider_response_observed: bool,
+) -> dict[str, Any]:
+    """Extract only privacy-safe machine fields from an untrusted connector error."""
+    diagnostics: dict[str, Any] = {
+        "stage": stage,
+        "invocation_began": True,
+        "provider_response_observed": provider_response_observed,
+        "http_status": None,
+        "reason": None,
+        "domain": None,
+        "retry_after": None,
+        "connector_code": None,
+        "evidence_code": {
+            "provider_response": "connector_error_result",
+            "response_normalization": "connector_result_rejected",
+            "transport": "connector_invocation_exception",
+        }[stage],
+    }
+    texts: list[str] = []
+    nodes: list[Any] = [value]
+    visited = 0
+    while nodes and visited < 10000:
+        node = nodes.pop()
+        visited += 1
+        if isinstance(node, Mapping):
+            for key, item in node.items():
+                lower = str(key).lower()
+                if lower in {"status", "status_code", "http_status"}:
+                    token = _safe_error_token(item)
+                    if token is not None and token.isdigit() and 400 <= int(token) <= 599:
+                        if diagnostics["http_status"] is None:
+                            diagnostics["http_status"] = int(token)
+                    elif token is not None and diagnostics["connector_code"] is None:
+                        diagnostics["connector_code"] = token
+                elif lower in {"reason", "error_reason"}:
+                    token = _safe_error_token(item)
+                    if token is not None and diagnostics["reason"] is None:
+                        diagnostics["reason"] = token
+                elif lower in {"domain", "error_domain"}:
+                    token = _safe_error_token(item)
+                    if token is not None and diagnostics["domain"] is None:
+                        diagnostics["domain"] = token
+                elif lower in {"retry_after", "retry-after"}:
+                    token = _safe_error_token(item)
+                    if token is not None and diagnostics["retry_after"] is None:
+                        diagnostics["retry_after"] = token
+                elif lower in {"code", "error_code"}:
+                    token = _safe_error_token(item)
+                    if token is not None and diagnostics["connector_code"] is None:
+                        diagnostics["connector_code"] = token
+                    if (
+                        token is not None and token.isdigit()
+                        and 400 <= int(token) <= 599
+                        and diagnostics["http_status"] is None
+                    ):
+                        diagnostics["http_status"] = int(token)
+                if lower == "text" and isinstance(item, str):
+                    texts.append(item[:4096])
+                nodes.append(item)
+        elif isinstance(node, list):
+            nodes.extend(node)
+    for text in texts:
+        if diagnostics["http_status"] is None and (match := _STATUS_TEXT.search(text)):
+            diagnostics["http_status"] = int(match.group(1))
+        if diagnostics["reason"] is None and (match := _REASON_TEXT.search(text)):
+            diagnostics["reason"] = match.group(1)
+        if diagnostics["retry_after"] is None and (match := _RETRY_AFTER_TEXT.search(text)):
+            diagnostics["retry_after"] = match.group(1)
+    return diagnostics
+
+
+def _connector_failure_evidence(
+    *, request_id: str, kind: str, stage: str, raw_result: Any,
+    provider_response_observed: bool, exception: Exception,
+) -> tuple[bytes, dict[str, Any]]:
+    """Build an exact private receipt plus its privacy-safe public diagnosis."""
+    diagnostics = _connector_error_diagnostics(
+        raw_result, stage=stage,
+        provider_response_observed=provider_response_observed,
+    )
+    raw_sha256: str | None = None
+    if raw_result is not None:
+        try:
+            raw_sha256 = sha256_bytes(canonical_json_bytes(raw_result))
+        except (TypeError, ValueError):
+            raw_result = {
+                "unserializable_type": type(raw_result).__name__,
+                "representation": repr(raw_result),
+            }
+            raw_sha256 = sha256_bytes(canonical_json_bytes(raw_result))
+    receipt = {
+        "schema_version": 1,
+        "request_id": request_id,
+        "kind": kind,
+        "diagnostics": diagnostics,
+        "raw_connector_result_sha256": raw_sha256,
+        "raw_connector_result": raw_result,
+        "private_exception": {
+            "type": type(exception).__name__,
+            "message": str(exception),
+        },
+    }
+    return canonical_json_bytes(receipt), diagnostics
+
+
+def _read_connector_failure_evidence(
+    path: Path, *, request_id: str, kind: str,
+) -> tuple[dict[str, Any], str]:
+    try:
+        status = path.lstat()
+        resolved = path.resolve(strict=True)
+    except OSError as exc:
+        raise BridgeError("connector failure evidence is unavailable") from exc
+    if (
+        stat.S_ISLNK(status.st_mode)
+        or not stat.S_ISREG(status.st_mode)
+        or stat.S_IMODE(status.st_mode) != 0o600
+    ):
+        raise BridgeError("connector failure evidence must be a mode-0600 regular file")
+    data = resolved.read_bytes()
+    if len(data) > MAX_RESPONSE_BYTES:
+        raise BridgeError("connector failure evidence exceeds the configured byte bound")
+    try:
+        receipt = json.loads(data)
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise BridgeError("connector failure evidence is not UTF-8 JSON") from exc
+    required = {
+        "schema_version", "request_id", "kind", "diagnostics",
+        "raw_connector_result_sha256", "raw_connector_result", "private_exception",
+    }
+    if (
+        not isinstance(receipt, Mapping)
+        or set(receipt) != required
+        or receipt.get("schema_version") != 1
+        or receipt.get("request_id") != request_id
+        or receipt.get("kind") != kind
+        or not isinstance(receipt.get("diagnostics"), Mapping)
+        or set(receipt["diagnostics"]) != _CONNECTOR_DIAGNOSTIC_KEYS
+    ):
+        raise BridgeError("connector failure evidence wrapper is invalid")
+    diagnostics = receipt["diagnostics"]
+    stage = diagnostics.get("stage")
+    response_observed = diagnostics.get("provider_response_observed")
+    if (
+        stage not in {"provider_response", "response_normalization", "transport"}
+        or not isinstance(diagnostics.get("invocation_began"), bool)
+        or diagnostics["invocation_began"] is not True
+        or not isinstance(response_observed, bool)
+        or not isinstance(receipt.get("private_exception"), Mapping)
+        or set(receipt["private_exception"]) != {"type", "message"}
+        or any(not isinstance(receipt["private_exception"].get(key), str) for key in ("type", "message"))
+    ):
+        raise BridgeError("connector failure evidence diagnostics are invalid")
+    raw_result = receipt["raw_connector_result"]
+    raw_sha256 = receipt["raw_connector_result_sha256"]
+    if raw_result is None:
+        if raw_sha256 is not None:
+            raise BridgeError("connector failure evidence raw hash is invalid")
+    elif (
+        not isinstance(raw_sha256, str)
+        or re.fullmatch(r"[0-9a-f]{64}", raw_sha256) is None
+        or sha256_bytes(canonical_json_bytes(raw_result)) != raw_sha256
+    ):
+        raise BridgeError("connector failure evidence raw hash disagrees")
+    expected_diagnostics = _connector_error_diagnostics(
+        raw_result, stage=stage, provider_response_observed=response_observed,
+    )
+    if dict(diagnostics) != expected_diagnostics:
+        raise BridgeError("connector failure evidence diagnostics disagree with raw result")
+    return expected_diagnostics, sha256_bytes(data)
 
 
 class HostBindingDispatcher:
@@ -604,20 +863,40 @@ class HostBindingDispatcher:
         ):
             raise BridgeError("host request wrapper disagrees with terminal control")
         native_attempted = False
+        provider_response_observed = False
+        native_result: Any = None
 
         def guarded_invoke(tool_name: str, native_args: Mapping[str, Any]) -> Any:
-            nonlocal native_attempted
+            nonlocal native_attempted, provider_response_observed, native_result
             native_attempted = True
-            return invoke(tool_name, native_args)
+            native_result = invoke(tool_name, native_args)
+            provider_response_observed = True
+            return native_result
 
         try:
             result = self.dispatch(kind, request["args"], guarded_invoke)
             response_value: dict[str, Any] = {
                 "protocol": PROTOCOL, "request_id": request_id, "result": result,
             }
-        except Exception:
+        except Exception as exc:
             if not native_attempted:
                 raise
+            if not provider_response_observed:
+                stage = "transport"
+            elif isinstance(native_result, Mapping) and native_result.get("isError") is True:
+                stage = "provider_response"
+            else:
+                stage = "response_normalization"
+            evidence_bytes, _diagnostics = _connector_failure_evidence(
+                request_id=request_id,
+                kind=kind,
+                stage=stage,
+                raw_result=native_result if provider_response_observed else None,
+                provider_response_observed=provider_response_observed,
+                exception=exc,
+            )
+            evidence_path = self.run_directory / f"{request_id}.connector-error.json"
+            _exclusive_write(evidence_path, evidence_bytes)
             # Once native dispatch is attempted, an exception cannot authorize
             # retry.  The child must reconcile the effect by provider readback.
             response_value = {
@@ -769,6 +1048,16 @@ class JsonlPeer:
             if "error" in response:
                 if response["error"] != {"class": "tool_exception", "effect": "unknown"}:
                     raise BridgeError("host error wrapper is invalid")
+                evidence_path = self.run_dir / f"{identifier}.connector-error.json"
+                if evidence_path.exists():
+                    diagnostics, evidence_sha256 = _read_connector_failure_evidence(
+                        evidence_path, request_id=identifier, kind=kind,
+                    )
+                    raise ConnectorToolError(
+                        diagnostics=diagnostics,
+                        evidence_path=evidence_path,
+                        evidence_sha256=evidence_sha256,
+                    )
                 raise BridgeError("host tool exception has unknown effects; reconcile by readback")
             return response["result"]
         finally:

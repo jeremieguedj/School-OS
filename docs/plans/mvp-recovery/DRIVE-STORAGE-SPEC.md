@@ -347,6 +347,19 @@ validity flags. It must omit raw IDs, URLs, request bodies, credentials, private
 values, provider messages, and unsanitized exception text. Rate limiting remains
 a hypothesis unless status/reason evidence supports it.
 
+For an invoked connector failure, the unchanged JSONL error wrapper remains
+`tool_exception` with effect `unknown`. Beside it, the host writes one
+request-bound `.connector-error.json` receipt in the admitted private run
+directory with mode 0600. That receipt contains the complete raw connector
+result (or the exact private invocation exception when no response was
+observed), its canonical hash, the request correlation token and operation kind,
+but never the request arguments. The child recomputes the privacy-safe
+diagnostics from the raw result before exposing them; it rejects a mismatched or
+tampered diagnosis. Normal logs contain only stage, response-observed status,
+available HTTP status/reason/domain/retry/code fields, and the private evidence
+path and hash. A missing upstream status remains explicitly unavailable rather
+than being inferred.
+
 ## Call accounting
 
 Measure separately: bridge calls by method, bytes uploaded/downloaded, scoped

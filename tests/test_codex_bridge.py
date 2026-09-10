@@ -13,8 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from school_os.codex_bridge import (  # noqa: E402
-    BridgeError, HostBindingDispatcher, JsonlPeer, create_run_directory,
-    normalize_tool_result,
+    BridgeError, ConnectorToolError, HostBindingDispatcher, JsonlPeer,
+    create_run_directory, normalize_tool_result,
 )
 from school_os.contracts import canonical_json_bytes, sha256_bytes  # noqa: E402
 
@@ -187,6 +187,94 @@ class CodexBridgeTests(unittest.TestCase):
         with self.assertRaisesRegex(BridgeError, "unknown effects"):
             JsonlPeer(self.run_dir, input_stream=io.StringIO(control), output_stream=io.StringIO()).call("drive.get_metadata", {"fileId": "x"}, request_id="error")
 
+    def test_connector_error_is_preserved_privately_and_safely_diagnosed(self) -> None:
+        request_id = "error-detail"
+        request = {
+            "args": {"fileId": "private-file-id"},
+            "kind": "drive.get_metadata",
+            "protocol": 1,
+            "request_id": request_id,
+        }
+        request_path = self.run_dir / f"{request_id}.request.json"
+        request_bytes = canonical_json_bytes(request)
+        request_path.write_bytes(request_bytes); os.chmod(request_path, 0o600)
+        raw_error = {
+            "isError": True,
+            "content": [{
+                "type": "text",
+                "text": "Google API failed: HTTP status 429 reason rateLimitExceeded retry-after 30 private-provider-detail",
+            }],
+            "structuredContent": {
+                "error": {"code": "RESOURCE_EXHAUSTED", "domain": "usageLimits"},
+            },
+        }
+        control_value = HostBindingDispatcher(self.run_dir).dispatch_request_file(
+            request_id=request_id,
+            kind="drive.get_metadata",
+            request_sha256=sha256_bytes(request_bytes),
+            request_path=request_path,
+            invoke=lambda _tool, _args: raw_error,
+        )
+        evidence_path = self.run_dir / f"{request_id}.connector-error.json"
+        self.assertEqual(0o600, evidence_path.stat().st_mode & 0o777)
+        evidence = json.loads(evidence_path.read_text())
+        self.assertEqual(raw_error, evidence["raw_connector_result"])
+        self.assertNotIn("args", evidence)
+        request_path.unlink()
+        control = json.dumps(control_value) + "\n"
+        peer = JsonlPeer(
+            self.run_dir, input_stream=io.StringIO(control), output_stream=io.StringIO(),
+        )
+        with self.assertRaises(ConnectorToolError) as caught:
+            peer.call("drive.get_metadata", {"fileId": "private-file-id"}, request_id=request_id)
+        error = caught.exception
+        self.assertEqual("provider_response", error.diagnostics["stage"])
+        self.assertEqual(429, error.diagnostics["http_status"])
+        self.assertEqual("rateLimitExceeded", error.diagnostics["reason"])
+        self.assertEqual("usageLimits", error.diagnostics["domain"])
+        self.assertEqual("30", error.diagnostics["retry_after"])
+        self.assertEqual("RESOURCE_EXHAUSTED", error.diagnostics["connector_code"])
+        self.assertIn(str(evidence_path), str(error))
+        self.assertNotIn("private-provider-detail", str(error))
+        self.assertTrue(evidence_path.exists())
+
+    def test_connector_invocation_exception_records_private_detail_without_logging_it(self) -> None:
+        request_id = "transport-error"
+        request = {
+            "args": {"fileId": "private-file-id"},
+            "kind": "drive.get_metadata",
+            "protocol": 1,
+            "request_id": request_id,
+        }
+        request_path = self.run_dir / f"{request_id}.request.json"
+        request_bytes = canonical_json_bytes(request)
+        request_path.write_bytes(request_bytes); os.chmod(request_path, 0o600)
+
+        def fail(_tool: str, _args: object) -> object:
+            raise RuntimeError("socket timeout for private-provider-detail")
+
+        control_value = HostBindingDispatcher(self.run_dir).dispatch_request_file(
+            request_id=request_id,
+            kind="drive.get_metadata",
+            request_sha256=sha256_bytes(request_bytes),
+            request_path=request_path,
+            invoke=fail,
+        )
+        evidence_path = self.run_dir / f"{request_id}.connector-error.json"
+        evidence = json.loads(evidence_path.read_text())
+        self.assertEqual("socket timeout for private-provider-detail", evidence["private_exception"]["message"])
+        request_path.unlink()
+        peer = JsonlPeer(
+            self.run_dir,
+            input_stream=io.StringIO(json.dumps(control_value) + "\n"),
+            output_stream=io.StringIO(),
+        )
+        with self.assertRaises(ConnectorToolError) as caught:
+            peer.call("drive.get_metadata", {"fileId": "private-file-id"}, request_id=request_id)
+        self.assertEqual("transport", caught.exception.diagnostics["stage"])
+        self.assertFalse(caught.exception.diagnostics["provider_response_observed"])
+        self.assertNotIn("private-provider-detail", str(caught.exception))
+
     def test_flat_structured_content_is_accepted_but_text_only_is_not(self) -> None:
         self.assertEqual({"id": "flat"}, normalize_tool_result({
             "structuredContent": {"id": "flat"}, "content": [], "_meta": {"trace": "ignored"},
@@ -230,6 +318,30 @@ class CodexBridgeTests(unittest.TestCase):
                 lambda _tool, _args: {"content": [], "structuredContent": nested},
             ),
         )
+        transport = {
+            **attachment,
+            "__attachments__": [{
+                "display_files_from_actions_ext": True,
+                "id": "display-file-1",
+                "mime_type": "application/octet-stream",
+                "name": "download",
+                "source": "connector",
+            }],
+            "download_url": attachment["file_uri"]["download_url"],
+            "file_id": attachment["file_uri"]["file_id"],
+        }
+        self.assertEqual(
+            attachment,
+            dispatcher.dispatch(
+                "gmail.read_attachment", args,
+                lambda _tool, _args: {
+                    "content": [],
+                    "structuredContent": {
+                        **attachment, "structuredContent": transport,
+                    },
+                },
+            ),
+        )
         conflicting = dict(attachment)
         conflicting["filename"] = "other.pdf"
         with self.assertRaisesRegex(BridgeError, "conflicts"):
@@ -239,6 +351,41 @@ class CodexBridgeTests(unittest.TestCase):
                     "content": [],
                     "structuredContent": {
                         **attachment, "structuredContent": conflicting,
+                    },
+                },
+            )
+        with self.assertRaisesRegex(BridgeError, "download_url conflicts"):
+            dispatcher.dispatch(
+                "gmail.read_attachment", args,
+                lambda _tool, _args: {
+                    "content": [],
+                    "structuredContent": {
+                        **attachment,
+                        "structuredContent": {**transport, "download_url": "https://files.example/other"},
+                    },
+                },
+            )
+        with self.assertRaisesRegex(BridgeError, "transport metadata is incomplete"):
+            dispatcher.dispatch(
+                "gmail.read_attachment", args,
+                lambda _tool, _args: {
+                    "content": [],
+                    "structuredContent": {
+                        **attachment,
+                        "structuredContent": {
+                            **attachment, "download_url": attachment["file_uri"]["download_url"],
+                        },
+                    },
+                },
+            )
+        with self.assertRaisesRegex(BridgeError, "conflicts"):
+            dispatcher.dispatch(
+                "gmail.read_attachment", args,
+                lambda _tool, _args: {
+                    "content": [],
+                    "structuredContent": {
+                        **attachment,
+                        "structuredContent": {**transport, "unrecognized": True},
                     },
                 },
             )
