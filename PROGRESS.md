@@ -3538,3 +3538,84 @@ requirements, then read this log from top to bottom.
   freeze the exact four-day bounds privately, build the exact package, create a
   new empty root and isolated Sheet, install/bind/recover, then run live
   ingestion through canonical Drive publication and independent validation.
+
+## 2026-09-10 — four-day live run isolated whitespace-only MIME alternative
+
+- Published and remotely verified the developer-continuity checkpoint at exact
+  commit `657546a65bae309ac20e33516fb9c1b2a04f8aa3`. Its immutable package passed
+  checksum and installed-tree validation. A new exact-parent empty root passed
+  the five-file installation in 30 connector calls; a new isolated Sheet bound
+  as generation 2 in 24 calls; cold recovery used 13 calls and the recovered
+  package validated.
+- The four-day Gmail inventory began with images excluded before fetch. The
+  first two conversations passed independent semantic interpretation and audit.
+  The third conversation stopped before canonical publication because a
+  `multipart/mixed` message exposed one substantive plaintext body and a second
+  two-byte whitespace-only plaintext leaf around an inline image. The adapter
+  preserved both leaves but counted both as body candidates and blocked as
+  ambiguous. No source bundle or successor state was published.
+- A bounded read-only diagnostic replay preserved the exact successful
+  connector response privately and proved that both full and raw views agree on
+  the three-leaf topology and that the second plaintext leaf decodes to only
+  whitespace. Implemented a narrow MIME repair: retain every exact leaf and its
+  custody evidence, select the sole substantive plaintext body when all other
+  plaintext bodies are independently full/raw-verified whitespace, and still
+  reject multiple substantive or unverifiable alternatives. The exact private
+  response now admits with one selected body; focused source/import/bridge/
+  ingestion coverage passes 73 tests. The complete frozen CPython 3.12 gate
+  passes 371 tests plus schema, template, package, and privacy validation.
+- Next: publish the compatible repair, rebuild the immutable package, create the
+  required new empty root and Sheet, and repeat install/bind/recovery plus the
+  complete four-day ingestion through canonical Drive publication and
+  independent validation.
+
+## 2026-09-10 — MIME accounting architecture approved for implementation
+
+- The single GPT-6 Astra consultation confirmed that repeated live MIME failures
+  come from conflating one presentation body with complete message content. The
+  user approved its detailed bounded remedy and authorized implementation plus a
+  new four-day live ingestion. The approved change does not alter hybrid Drive
+  storage, canonical state, publication transactions, task semantics, or
+  delivery behavior.
+- Recorded `mime-accounting-v1` as the active source boundary in the recovery
+  plan, Gmail adapter contract, and source-catalog contract. Exact byte custody,
+  full/raw reconciliation, identities, provenance, finite bounds, audit, and
+  cursor gates remain strict. Deterministic MIME traversal must assign every
+  content-bearing node one disposition and preserve every substantive admitted
+  text unit; a primary body is only a presentation alias.
+- Implementation order is schema/contracts, shared accounting and Gmail
+  normalization, catalog custody v2, semantic packet/audit v2, connected
+  ingestion/publication equality, focused generated/table tests, complete gate,
+  exact package build, then a new empty root/Sheet and the privately frozen
+  four-day live run with images excluded. HTML conversion, calendar semantics,
+  unsupported opaque-format reconstruction, migration, and any new Drive object
+  remain out of scope.
+- Next: implement and validate the approved source-contract change before any
+  further provider mutation.
+
+## 2026-09-10 — MIME accounting implementation passes static and exact-receipt gates
+
+- Implemented the approved `mime-accounting-v1` boundary without changing the
+  five-file Drive layout, checkpoint publication, task model, or delivery
+  architecture. The reconciled Gmail tree now records every structural and
+  content leaf, preserves every exact plaintext unit and HTML evidence unit,
+  selects a primary body only as a deterministic presentation alias, and
+  retains padding and same-alternative exact duplicates with explicit
+  dispositions. Non-text leaves remain bound to the existing attachment
+  outcome pipeline; the temporary image exclusions still occur before fetch.
+- Added source schema v3, catalog custody version 2, independently constructed
+  source snapshots, semantic packet/result version 2, one-to-one MIME audit
+  acknowledgments, and exact raw-message bundle-reference validation. Legacy
+  schema/custody readers and synthetic fixtures remain active only for their
+  existing compatibility tests; new connected Gmail records use the accounted
+  path. No new Drive object, migration, HTML conversion, calendar semantics, or
+  generalized workflow was introduced.
+- Replayed the previously failing ignored private full/raw connector receipt
+  through the new normalizer. It now proves one complete message with three
+  leaves and two preserved text units: one `interpret` and one `padding`; no
+  private identity or content was copied to Git or logs. Added table-driven
+  mixed, alternative, padding, HTML-evidence, nullable-primary, catalog
+  round-trip, and semantic-packet tests. The complete suite passes 375 tests.
+- Next: commit and push this accepted implementation checkpoint, run the
+  committed package/privacy gate, build the exact immutable package, and create
+  a new empty live root and isolated Sheet for the four-day ingestion.

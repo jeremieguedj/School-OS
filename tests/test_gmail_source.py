@@ -158,8 +158,55 @@ class GmailMimeNormalizerTests(unittest.TestCase):
             "body": {"size": 0, "base64_url_content": None, "content": None, "attachment_id": None}, "read_attachment_supported": None,
             "parts": [leaf("0", "text/plain", "a", 1), leaf("1", "text/plain", "b", 1)],
         }
-        with self.assertRaisesRegex(GmailSourceError, "unique"):
-            self.normalizer.normalize(full(alternative), raw(multipart))
+        normalized = self.normalizer.normalize(full(alternative), raw(multipart))
+        self.assertEqual(["interpret", "interpret"], [
+            item["disposition"] for item in normalized["mime_contents"]
+        ])
+        self.assertEqual("1", next(
+            item["source_part_id"] for item in normalized["mime_contents"]
+            if item["content_id"] == normalized["mime_accounting"]["primary_content_id"]
+        ))
+
+    def test_whitespace_plain_leaf_does_not_ambiguous_substantive_body(self) -> None:
+        source = (
+            b"Content-Type: multipart/mixed; boundary=x\r\n\r\n"
+            b"--x\r\nContent-Type: text/plain; charset=utf-8\r\n"
+            b"Content-Transfer-Encoding: base64\r\n\r\naGVsbG8=\r\n"
+            b"--x\r\nContent-Type: image/jpeg\r\n"
+            b"Content-Disposition: inline; filename=photo.jpg\r\n"
+            b"Content-Transfer-Encoding: base64\r\n\r\n/9j/2Q==\r\n"
+            b"--x\r\nContent-Type: text/plain; charset=utf-8\r\n"
+            b"Content-Transfer-Encoding: base64\r\n\r\nDQo=\r\n--x--\r\n"
+        )
+        image = leaf(
+            "1", "image/jpeg", None, 4, charset=None, filename="photo.jpg",
+            attachment_id="inline-1", supported=True,
+        )
+        image["headers"] = headers(
+            "image/jpeg", charset=None, transfer="base64",
+            disposition="inline; filename=photo.jpg",
+        )
+        payload = {
+            "part_id": "", "mime_type": "multipart/mixed", "filename": "",
+            "headers": headers("multipart/mixed"),
+            "body": {"size": 0, "base64_url_content": None, "content": None, "attachment_id": None},
+            "read_attachment_supported": None,
+            "parts": [
+                leaf("0", "text/plain", "hello", 5),
+                image,
+                leaf("2", "text/plain", "\r\n", 2),
+            ],
+        }
+        normalized = self.normalizer.normalize(full(payload), raw(source))
+        self.assertTrue(normalized["parts"][0]["selected_plaintext"])
+        self.assertFalse(normalized["parts"][2]["selected_plaintext"])
+        self.assertEqual("\r\n", normalized["parts"][2]["provider_unicode"])
+        self.assertEqual(
+            "admitted",
+            admit_exact_plaintext_representation(
+                normalized["parts"], mime_tree_complete=True,
+            ).outcome,
+        )
 
     def test_attachment_never_uses_filename_as_an_identity_and_html_must_be_exact(self) -> None:
         attachment_raw = (

@@ -27,6 +27,7 @@ from .importer import (
     admit_exact_plaintext_representation,
     discover_direct_html_resources,
 )
+from .mime_accounting import MimeAccountingError, build_mime_accounting
 
 
 class GmailSourceError(ValueError):
@@ -49,6 +50,8 @@ class _HeaderEvidence:
     disposition_present: bool
     filename: str | None
     content_type_present: bool
+    content_id: str | None
+    related_start: str | None
 
 
 @dataclass(frozen=True)
@@ -107,10 +110,23 @@ def _normalized_filename(value: Any, label: str) -> str | None:
     return value
 
 
+def _normalized_content_id(value: Any, label: str) -> str | None:
+    if value is None or value == "":
+        return None
+    if not isinstance(value, str) or "\r" in value or "\n" in value:
+        raise GmailSourceError(f"{label} has malformed Content-ID evidence")
+    result = value.strip()
+    if result.startswith("<") and result.endswith(">"):
+        result = result[1:-1]
+    if not result:
+        raise GmailSourceError(f"{label} has empty Content-ID evidence")
+    return result
+
+
 def _header_evidence(message: Any, label: str) -> _HeaderEvidence:
     """Return only the technical MIME headers which must agree across views."""
     values: dict[str, list[str]] = {}
-    for name in ("Content-Type", "Content-Transfer-Encoding", "Content-Disposition"):
+    for name in ("Content-Type", "Content-Transfer-Encoding", "Content-Disposition", "Content-ID"):
         found = message.get_all(name, [])
         if not isinstance(found, list) or len(found) > 1 or any(not isinstance(item, str) for item in found):
             raise GmailSourceError(f"{label} has ambiguous {name} evidence")
@@ -128,6 +144,10 @@ def _header_evidence(message: Any, label: str) -> _HeaderEvidence:
         disposition_present=bool(values["Content-Disposition"]),
         filename=_normalized_filename(message.get_filename(), label),
         content_type_present=bool(values["Content-Type"]),
+        content_id=_normalized_content_id(
+            values["Content-ID"][0] if values["Content-ID"] else None, label,
+        ),
+        related_start=_normalized_content_id(message.get_param("start"), label),
     )
 
 
@@ -144,7 +164,7 @@ def _full_header_evidence(value: Mapping[str, Any], label: str) -> _HeaderEviden
         ):
             raise GmailSourceError(f"{label} has a malformed header")
         if header["name"].lower() in {
-            "content-type", "content-transfer-encoding", "content-disposition",
+            "content-type", "content-transfer-encoding", "content-disposition", "content-id",
         }:
             if "\r" in header["value"] or "\n" in header["value"]:
                 raise GmailSourceError(f"{label} has an unsafe MIME header value")
@@ -309,6 +329,8 @@ def _headers_agree(full: _HeaderEvidence, raw: _HeaderEvidence) -> bool:
         and full.disposition_present == raw.disposition_present
         and full.filename == raw.filename
         and full.content_type_present == raw.content_type_present
+        and full.content_id == raw.content_id
+        and full.related_start == raw.related_start
     )
 
 
@@ -352,7 +374,8 @@ class GmailMimeNormalizer:
         if not isinstance(payload, Mapping):
             raise GmailSourceError("Gmail full message lacks a complete MIME payload")
         full_nodes = _full_nodes(payload)
-        raw_nodes = _raw_nodes(_base64url(raw.get("raw")))
+        raw_message = _base64url(raw.get("raw"))
+        raw_nodes = _raw_nodes(raw_message)
         if set(full_nodes) != set(raw_nodes):
             raise GmailSourceError("Gmail full/raw MIME node inventories disagree")
         for path, (full_part, full_multipart, full_headers) in full_nodes.items():
@@ -404,6 +427,8 @@ class GmailMimeNormalizer:
                 "raw_part_byte_length": len(raw_leaf.data),
                 "raw_part_locator": {"kind": "raw_part_bytes", "byte_start": 0, "byte_end": len(raw_leaf.data)},
                 "source_part_ordinal": ordinal,
+                "mime_path": path,
+                "parent_mime_path": None if path == "" else (path.rpartition(".")[0] if "." in path else ""),
             }
             if mime_type in {"text/plain", "text/html"} and not is_attachment:
                 item["provider_unicode"] = _provider_unicode(part, raw_leaf, decoded)
@@ -435,15 +460,42 @@ class GmailMimeNormalizer:
                     "source_part_ordinal": ordinal,
                 })
             parts.append(item)
-        if len(text_candidates) != 1:
-            raise GmailSourceError("Gmail MIME has no unique provider-designated plaintext alternative")
-        text_candidates[0]["selected_plaintext"] = True
+        node_inventory = [
+            {
+                "path": path,
+                "mime_type": node.mime_type,
+                "multipart": node.multipart,
+                "content_disposition": node.headers.disposition,
+                "content_id_header": node.headers.content_id,
+                "related_start": node.headers.related_start,
+            }
+            for path, node in sorted(
+                raw_nodes.items(),
+                key=lambda item: tuple(int(value) for value in item[0].split(".")) if item[0] else (),
+            )
+        ]
         try:
-            admission = admit_exact_plaintext_representation(parts, mime_tree_complete=True)
-        except ImportError as exc:
-            raise GmailSourceError(f"Gmail plaintext admission failed: {exc}") from exc
-        if admission.outcome != "admitted" or admission.plaintext is None:
-            raise GmailSourceError(f"Gmail plaintext admission failed: {admission.reason}")
+            mime_accounting, mime_contents, selected_part_id = build_mime_accounting(
+                message_id=message_id, raw_message=raw_message,
+                nodes=node_inventory, parts=parts,
+            )
+        except MimeAccountingError as exc:
+            raise GmailSourceError(f"Gmail MIME accounting failed: {exc}") from exc
+        for item in parts:
+            item["selected_plaintext"] = item["part_id"] == selected_part_id
+        accounted_by_path = {
+            item["provider_part_id"]: item["disposition"] for item in mime_contents
+        }
+        for item in parts:
+            if item["provider_part_id"] in accounted_by_path:
+                item["mime_accounting_disposition"] = accounted_by_path[item["provider_part_id"]]
+        if selected_part_id is not None:
+            try:
+                admission = admit_exact_plaintext_representation(parts, mime_tree_complete=True)
+            except ImportError as exc:
+                raise GmailSourceError(f"Gmail plaintext admission failed: {exc}") from exc
+            if admission.outcome != "admitted" or admission.plaintext is None:
+                raise GmailSourceError(f"Gmail plaintext admission failed: {admission.reason}")
         return {
             "message_id": message_id,
             "thread_id": thread_id,
@@ -454,6 +506,8 @@ class GmailMimeNormalizer:
             "parts": parts,
             "html_parts": html_parts,
             "attachments": attachments,
+            "mime_accounting": mime_accounting,
+            "mime_contents": [dict(item) for item in mime_contents],
         }
 
     def normalize_thread(

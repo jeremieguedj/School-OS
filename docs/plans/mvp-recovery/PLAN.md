@@ -324,6 +324,21 @@ exclusive start-of-tomorrow end) in the private configured timezone. Freeze the
 exact bounds only in private evidence and keep the temporary all-image exclusion.
 This is a bounded live compatibility gate; it does not replace the recovery
 MVP's final 14-day acceptance case.
+The subsequent four-day run isolated a broader normal-email compatibility
+defect: the adapter flattened one `multipart/mixed` message and treated a
+full/raw-verified whitespace-only plaintext padding leaf as a second competing
+body. The user approved the bounded `mime-accounting-v1` source-contract repair
+recommended by the single Astra consultation. Exact message bytes, complete
+full/raw reconciliation, stable identities, limits, provenance, independent
+audit, and cursor gates remain strict. MIME structure is instead traversed
+deterministically with every node assigned one audited disposition; every
+substantive admitted text unit is preserved and interpreted, while verified
+padding and exact same-alternative duplicates remain byte-accounted no-Fact
+units. The primary body is only a presentation alias and cannot hide other
+content. This change is confined to Gmail normalization, source catalog/schema,
+semantic packet/audit, and connected ingestion/publication validation. It adds
+no Drive object, provider framework, migration, HTML conversion, calendar
+semantics, or storage-layout change. Fresh installs only remain in scope.
 For the later final recovery acceptance, use the Phase 0 `window_start_ms` and
 `window_end_ms` 14-day `[start,end)` bounds, recorded only in private evidence.
 Use a new

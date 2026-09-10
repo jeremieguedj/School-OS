@@ -24,16 +24,22 @@ class SemanticPacket:
     catalog_record_sha256: str
     segments: tuple[dict[str, Any], ...]
     source_outcomes: tuple[dict[str, Any], ...] = ()
+    mime_accounting: tuple[dict[str, Any], ...] = ()
+    evidence_segments: tuple[dict[str, Any], ...] = ()
 
     def as_mapping(self) -> dict[str, Any]:
-        return {
-            "schema_version": 1,
+        result = {
+            "schema_version": 2 if self.mime_accounting else 1,
             "record_id": self.record_id,
             "conversation_id": self.conversation_id,
             "catalog_record_sha256": self.catalog_record_sha256,
             "segments": deepcopy(self.segments),
             "source_outcomes": deepcopy(self.source_outcomes),
         }
+        if self.mime_accounting:
+            result["mime_accounting"] = deepcopy(self.mime_accounting)
+            result["evidence_segments"] = deepcopy(self.evidence_segments)
+        return result
 
 
 def stable_fact_id(
@@ -71,6 +77,7 @@ def semantic_packet_from_verified_record(
     if total > max_bytes:
         raise SemanticError("verified catalog content exceeds the semantic byte bound")
     segments: list[dict[str, Any]] = []
+    evidence_segments: list[dict[str, Any]] = []
     for entry in entries:
         segment_id = "segment-" + sha256_bytes(
             f"{record.header['record_id']}\0{entry['content_id']}".encode("utf-8")
@@ -87,9 +94,12 @@ def semantic_packet_from_verified_record(
             "source_content_ordinal": entry["content_ordinal"],
             "text": entry["text"],
         }
-        if entry["content_kind"] != "body":
+        if entry["content_kind"] != "body" or record.header.get("custody_version") == 2:
             segment["source_provenance"] = deepcopy(entry["provenance"])
-        segments.append(segment)
+        if entry["content_kind"] == "html_evidence":
+            evidence_segments.append(segment)
+        else:
+            segments.append(segment)
     source_outcomes: list[dict[str, Any]] = []
     for message in record.header["messages"]:
         for kind, collection in (("attachment", "attachments"), ("resource", "resources")):
@@ -99,9 +109,28 @@ def semantic_packet_from_verified_record(
                 if item["outcome"] not in {"extracted", "duplicate", "excluded_by_policy"}:
                     raise SemanticError("catalog has an unresolved source outcome and cannot be interpreted")
                 source_outcomes.append(item)
+    mime_accounting: list[dict[str, Any]] = []
+    if record.header.get("custody_version") == 2:
+        from .mime_accounting import accounting_sha256
+        for message in record.header["messages"]:
+            accounting = message["mime_accounting"]
+            mime_accounting.append({
+                "message_id": message["message_id"],
+                "accounting_sha256": accounting_sha256(accounting),
+                "node_dispositions": [
+                    {
+                        "path": node["path"],
+                        "mime_type": node["mime_type"],
+                        "disposition": node["disposition"],
+                        **({"content_id": node["content_id"]} if "content_id" in node else {}),
+                    }
+                    for node in accounting["nodes"]
+                ],
+            })
     return SemanticPacket(
         record.header["record_id"], record.header["conversation_id"],
         record.record_sha256 or sha256_bytes(persisted), tuple(segments), tuple(source_outcomes),
+        tuple(mime_accounting), tuple(evidence_segments),
     )
 
 
@@ -123,16 +152,14 @@ def _segments_by_id(packet: SemanticPacket) -> dict[str, dict[str, Any]]:
             raise SemanticError("semantic packet segment lacks immutable identity or custody")
         if not isinstance(text, str) or sha256_bytes(text.encode("utf-8")) != digest:
             raise SemanticError("semantic packet segment text does not match its catalog hash")
-        if content_kind not in {"body", "attachment", "resource"}:
+        if content_kind not in {"body", "body_supplement", "attachment", "resource"}:
             raise SemanticError("semantic packet segment has an invalid content kind")
         if not isinstance(message_ordinal, int) or message_ordinal < 0 or not isinstance(content_ordinal, int) or content_ordinal < 0:
             raise SemanticError("semantic packet segment lacks ordered source coordinates")
         if segment_id in result or (message_ordinal, content_ordinal) in ordinals:
             raise SemanticError("semantic packet has duplicate segment identity or ordering")
         provenance = segment.get("source_provenance")
-        if content_kind == "body" and provenance is not None:
-            raise SemanticError("body segment cannot carry attachment/resource provenance")
-        if content_kind != "body" and not isinstance(provenance, Mapping):
+        if content_kind in {"attachment", "resource", "body_supplement"} and not isinstance(provenance, Mapping):
             raise SemanticError("non-body segment lacks preserved source provenance")
         result[segment_id] = deepcopy(segment)
         ordinals.add((message_ordinal, content_ordinal))
@@ -168,7 +195,7 @@ def _packet_hash(packet: SemanticPacket) -> str:
         seen_outcomes.add(outcome_id)
     non_body_ids: set[str] = set()
     for segment in packet.segments:
-        if segment.get("content_kind") == "body":
+        if segment.get("content_kind") not in {"attachment", "resource"}:
             continue
         content_id = segment.get("content_id")
         outcome = extracted_by_content.get(content_id)
@@ -180,6 +207,42 @@ def _packet_hash(packet: SemanticPacket) -> str:
         non_body_ids.add(content_id)
     if non_body_ids != set(extracted_by_content):
         raise SemanticError("semantic packet omits an extracted source outcome")
+    if packet.mime_accounting:
+        message_ids: set[str] = set()
+        accounted_content_ids: set[str] = set()
+        for item in packet.mime_accounting:
+            if not isinstance(item, Mapping):
+                raise SemanticError("semantic packet MIME accounting is malformed")
+            message_id = item.get("message_id")
+            digest = item.get("accounting_sha256")
+            nodes = item.get("node_dispositions")
+            if (
+                not isinstance(message_id, str) or not message_id or message_id in message_ids
+                or not isinstance(digest, str) or len(digest) != 64
+                or not isinstance(nodes, list) or not nodes
+            ):
+                raise SemanticError("semantic packet MIME accounting lacks stable evidence")
+            for node in nodes:
+                if not isinstance(node, Mapping) or node.get("disposition") not in {
+                    "structural", "interpret", "padding", "duplicate_text",
+                    "html_evidence", "external_attachment",
+                }:
+                    raise SemanticError("semantic packet has an invalid MIME node disposition")
+                if isinstance(node.get("content_id"), str):
+                    accounted_content_ids.add(node["content_id"])
+            message_ids.add(message_id)
+        supplied_content_ids = {
+            item.get("content_id") for item in [*packet.segments, *packet.evidence_segments]
+        }
+        if supplied_content_ids != accounted_content_ids:
+            raise SemanticError("semantic packet content does not match MIME accounting")
+        for item in packet.evidence_segments:
+            if (
+                not isinstance(item, Mapping) or item.get("content_kind") != "html_evidence"
+                or not isinstance(item.get("text"), str)
+                or item.get("content_sha256") != sha256_bytes(item["text"].encode("utf-8"))
+            ):
+                raise SemanticError("semantic packet HTML evidence is malformed")
     mapping = packet.as_mapping()
     _segments_by_id(packet)
     return sha256_bytes(canonical_json_bytes(mapping))
@@ -258,6 +321,8 @@ def interpret_packet(
         frozen_mapping["record_id"], frozen_mapping["conversation_id"],
         frozen_mapping["catalog_record_sha256"], tuple(deepcopy(frozen_mapping["segments"])),
         tuple(deepcopy(frozen_mapping["source_outcomes"])),
+        tuple(deepcopy(frozen_mapping.get("mime_accounting", []))),
+        tuple(deepcopy(frozen_mapping.get("evidence_segments", []))),
     )
     segments = _segments_by_id(frozen_packet)
     packet_sha256 = _packet_hash(frozen_packet)
@@ -275,6 +340,10 @@ def interpret_packet(
     if not isinstance(review_cases, Sequence) or isinstance(review_cases, (str, bytes)):
         raise SemanticError("semantic interpreter review_cases must be an array")
     normalized_coverage = _normalized_coverage(coverage, segments, segment_order)
+    for coverage_item in normalized_coverage:
+        disposition = segments[coverage_item["segment_id"]].get("source_provenance", {}).get("disposition")
+        if disposition in {"padding", "duplicate_text"} and coverage_item["outcome"] != "no_fact":
+            raise SemanticError("padding or duplicate MIME content cannot produce a Fact")
     normalized_candidates: list[dict[str, Any]] = []
     for candidate in candidates:
         if not isinstance(candidate, Mapping):
@@ -357,7 +426,7 @@ def interpret_packet(
             "text": candidate["text"],
             "flags": deepcopy(candidate["flags"]),
         }
-        if segment["content_kind"] != "body":
+        if segment["content_kind"] in {"attachment", "resource"}:
             fact["attachment"] = _fact_attachment(segment, start, end)
         if "task_relation" in candidate:
             fact["task_relation"] = deepcopy(candidate["task_relation"])
@@ -386,13 +455,17 @@ def interpret_packet(
             "provenance_sha256": sha256_bytes(canonical_json_bytes(dict(item))),
         })
     result = {
-        "schema_version": 1,
+        "schema_version": 2 if frozen_packet.mime_accounting else 1,
         "conversation_id": frozen_packet.conversation_id,
         "candidates": normalized_candidates,
         "coverage": normalized_coverage,
         "attachment_outcomes": attachment_outcomes,
         "review_cases": normalized_reviews,
     }
+    if frozen_packet.mime_accounting:
+        result["mime_accounting_sha256"] = sha256_bytes(
+            canonical_json_bytes(list(frozen_packet.mime_accounting))
+        )
     _validated(result, extraction_schema, "semantic extraction result")
     interpreted_sha256 = sha256_bytes(canonical_json_bytes({"facts": facts, "result": result}))
     return {"facts": facts, "result": result, "packet_sha256": packet_sha256, "interpreted_sha256": interpreted_sha256}
@@ -430,12 +503,15 @@ def validate_independent_audit(
     coverage_audit = audit.get("coverage")
     fact_audit = audit.get("facts")
     outcome_audit = audit.get("source_outcomes")
+    accounting_audit = audit.get("mime_accounting", [])
     if not isinstance(coverage_audit, Sequence) or isinstance(coverage_audit, (str, bytes)):
         raise SemanticError("independent audit coverage must be an array")
     if not isinstance(fact_audit, Sequence) or isinstance(fact_audit, (str, bytes)):
         raise SemanticError("independent audit facts must be an array")
     if not isinstance(outcome_audit, Sequence) or isinstance(outcome_audit, (str, bytes)):
         raise SemanticError("independent audit source_outcomes must be an array")
+    if not isinstance(accounting_audit, Sequence) or isinstance(accounting_audit, (str, bytes)):
+        raise SemanticError("independent audit MIME accounting must be an array")
     expected_coverage = result.get("coverage")
     if not isinstance(expected_coverage, Sequence):
         raise SemanticError("interpreted coverage is malformed")
@@ -482,3 +558,12 @@ def validate_independent_audit(
             raise SemanticError("independent audit does not identify the exact source outcome")
         if audited.get("audit_disposition") != "accepted" or not isinstance(audited.get("reason"), str) or not audited["reason"].strip():
             raise SemanticError("independent audit found an unresolved source-outcome error")
+    if len(accounting_audit) != len(packet.mime_accounting):
+        raise SemanticError("independent audit does not account for every MIME disposition inventory")
+    for expected, audited in zip(packet.mime_accounting, accounting_audit):
+        if not isinstance(audited, Mapping) or audited.get("message_id") != expected.get("message_id"):
+            raise SemanticError("independent MIME audit references the wrong message")
+        if audited.get("accounting_sha256") != expected.get("accounting_sha256"):
+            raise SemanticError("independent MIME audit does not identify the exact accounting")
+        if audited.get("audit_disposition") != "accepted" or not isinstance(audited.get("reason"), str) or not audited["reason"].strip():
+            raise SemanticError("independent audit found an unresolved MIME accounting error")

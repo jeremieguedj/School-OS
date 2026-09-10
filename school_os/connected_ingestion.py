@@ -50,6 +50,7 @@ from .semantic import (
     validate_independent_audit,
 )
 from .gmail_source import decode_raw_rfc2822
+from .mime_accounting import accounting_sha256
 from .tasks import canonical_task_id
 
 
@@ -442,7 +443,7 @@ def _conversation_messages(
     excluded_resource_origins: Mapping[str, str],
     max_resource_bytes: int, max_resource_redirects: int,
     readback: Mapping[str, Any] | None = None,
-) -> tuple[list[dict[str, Any]], dict[str, str]]:
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     conversation_id = _require_string(conversation, "conversation_id", "enumerated conversation")
     raw = source.read_conversation(conversation_id) if readback is None else readback
     if raw.get("conversation_id") != conversation_id:
@@ -455,7 +456,9 @@ def _conversation_messages(
         raise ConnectedIngestionError("enumerated conversation has malformed discovery identities")
     seen_messages: set[str] = set()
     rendered: list[dict[str, Any]] = []
-    source_bodies: dict[str, str] = {}
+    source_snapshot: dict[str, Any] = {"schema_version": 1, "messages": []}
+    legacy_source_bodies: dict[str, str] = {}
+    accounted_mode: bool | None = None
     for member in members:
         if not isinstance(member, Mapping):
             raise ConnectedIngestionError("full conversation message is malformed")
@@ -470,7 +473,10 @@ def _conversation_messages(
             raise ConnectedIngestionError("full conversation message has no normalized MIME parts")
         admission = admit_exact_plaintext_representation(parts, mime_tree_complete=member.get("mime_tree_complete"))
         if admission.outcome != "admitted" or admission.plaintext is None:
-            raise ConnectedIngestionError(f"message {message_id} did not admit: {admission.reason}")
+            accounting_candidate = member.get("mime_accounting")
+            if not isinstance(accounting_candidate, Mapping) or accounting_candidate.get("primary_content_id") is not None:
+                raise ConnectedIngestionError(f"message {message_id} did not admit: {admission.reason}")
+            admission = None
         attachments = member.get("attachments")
         if not isinstance(attachments, Sequence) or isinstance(attachments, (str, bytes)):
             raise ConnectedIngestionError("full conversation message has malformed attachment inventory")
@@ -512,19 +518,45 @@ def _conversation_messages(
                     excluded_resources=exclusions,
                 )
         try:
-            require_complete_message_coverage(admission.plaintext, attachment_outcomes, resource_outcomes)
+            require_complete_message_coverage(
+                b"" if admission is None else admission.plaintext,
+                attachment_outcomes, resource_outcomes,
+            )
         except ImportError as exc:
             raise ConnectedIngestionError(f"message {message_id} has unresolved substantive source content: {exc}") from exc
+        mime_accounting = member.get("mime_accounting")
+        mime_contents = member.get("mime_contents")
+        accounted = isinstance(mime_accounting, Mapping) and isinstance(mime_contents, Sequence)
+        if accounted_mode is None:
+            accounted_mode = accounted
+        elif accounted_mode != accounted:
+            raise ConnectedIngestionError("full conversation mixes accounted and legacy MIME messages")
         rendered.append(build_catalog_message(
             message_id=message_id, received_at=received_at, received_date=received_date,
             admission=admission, attachment_outcomes=attachment_outcomes,
             resource_outcomes=resource_outcomes,
             gmail_internal_date_ms=member.get("gmail_internal_date_ms"),
+            mime_accounting=mime_accounting if accounted else None,
+            mime_contents=mime_contents if accounted else None,
         ))
-        source_bodies[message_id] = admission.plaintext.decode("utf-8", errors="strict")
+        if accounted:
+            source_snapshot["messages"].append({
+                "message_id": message_id,
+                "accounting_sha256": accounting_sha256(mime_accounting),
+                "contents": [
+                    {
+                        "content_id": item.get("content_id"),
+                        "sha256": item.get("sha256"),
+                        "text": item.get("text"),
+                    }
+                    for item in mime_contents if isinstance(item, Mapping)
+                ],
+            })
+        else:
+            legacy_source_bodies[message_id] = admission.plaintext.decode("utf-8", errors="strict")
     if not set(required_hits) <= seen_messages:
         raise ConnectedIngestionError("full conversation omits a discovery-hit message")
-    return rendered, source_bodies
+    return rendered, source_snapshot if accounted_mode else legacy_source_bodies
 
 
 def _full_message_ids(
@@ -723,8 +755,28 @@ def _named(
     return artifact
 
 
-def _source_bodies_from_catalog(data: bytes) -> dict[str, str]:
+def _source_bodies_from_catalog(data: bytes) -> dict[str, Any]:
     record = parse_v2_record(data)
+    if record.header.get("custody_version") == 2:
+        text_by_id = dict(record.contents)
+        return {
+            "schema_version": 1,
+            "messages": [
+                {
+                    "message_id": message["message_id"],
+                    "accounting_sha256": accounting_sha256(message["mime_accounting"]),
+                    "contents": [
+                        {
+                            "content_id": item["content_id"],
+                            "sha256": item["sha256"],
+                            "text": text_by_id[item["content_id"]],
+                        }
+                        for item in message["mime_contents"]
+                    ],
+                }
+                for message in record.header["messages"]
+            ],
+        }
     return {message_id: body for message_id, body in record.bodies}
 
 
@@ -959,7 +1011,10 @@ class ConnectedIngestionWorker:
                 or parsed.header.get("scope") != dict(scope)
             ):
                 return None
-            full_message_ids = [message_id for message_id, _body in parsed.bodies]
+            full_message_ids = [
+                message["message_id"] for message in parsed.header.get("messages", [])
+                if isinstance(message, Mapping)
+            ]
             stored_full_ids = unit.get("full_message_ids")
             if stored_full_ids is not None and stored_full_ids != full_message_ids:
                 return None
@@ -1177,7 +1232,8 @@ class ConnectedIngestionWorker:
             )
             record_id = stable_record_id(self.adapter_id, conversation_id)
             conversation = {
-                "schema_version": 2, "adapter_id": self.adapter_id,
+                "schema_version": 3 if all("mime_accounting" in item for item in messages) else 2,
+                "adapter_id": self.adapter_id,
                 "conversation_id": conversation_id, "scope": dict(scope),
                 "pagination": {
                     "completed": True,

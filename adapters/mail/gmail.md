@@ -25,12 +25,25 @@ Status: reference adapter template.
 
 ## Catalog requirements
 
-The adapter must return actual available plaintext body content, not a generated summary. A runtime that exposes only snippets cannot claim lossless catalog capability. Threading is provider metadata; ordered immutable messages are the durable evidence unit.
+The adapter must return actual available message content, not a generated
+summary. A runtime that exposes only snippets cannot claim lossless catalog
+capability. Threading is provider metadata; ordered immutable messages are the
+durable evidence unit.
 
-For the selected plaintext part, the adapter supplies complete raw part bytes,
-part identity, declared transfer encoding and charset, a whole-part locator,
-and the provider Unicode value. The admission boundary strictly decodes the raw
-bytes and requires exact equality with that Unicode value before cataloguing.
-A raw-message read may establish this evidence at the adapter boundary; raw MIME
-is not the canonical catalog body. Attachments and direct image/PDF references
-from a complete HTML alternative remain separately inventoried outcomes.
+The adapter reconciles the complete full and raw MIME trees before content
+selection. It preserves tree order and ancestry, provider and normalized part
+identities, declared/effective MIME metadata, exact transport and decoded hashes,
+whole-part locators, and the provider Unicode value when exposed. The admission
+boundary strictly decodes raw bytes and requires exact equality with that value
+before cataloguing.
+
+`mime-accounting-v1` deterministically distinguishes independent mixed content,
+alternative representations, related roots, verified whitespace padding,
+inline assets, attachments, and subordinate embedded messages. The primary
+plaintext body is a presentation alias, not a completeness boundary. Every
+substantive admitted text unit is preserved and independently audited; every
+other content-bearing node has an explicit outcome or blocks. A raw-message read
+anchors the evidence but is not itself a substitute for content accounting.
+Attachments and direct image/PDF references remain separately inventoried
+outcomes. For the current recovery run, image outcomes are recorded before any
+separate fetch and terminate as `excluded_by_policy`.

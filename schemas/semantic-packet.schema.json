@@ -6,10 +6,12 @@
   "additionalProperties": false,
   "required": ["schema_version", "record_id", "conversation_id", "catalog_record_sha256", "segments", "source_outcomes"],
   "properties": {
-    "schema_version": {"const": 1},
+    "schema_version": {"enum": [1, 2]},
     "record_id": {"type": "string", "minLength": 1},
     "conversation_id": {"type": "string", "minLength": 1},
     "catalog_record_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "mime_accounting": {"type": "array", "items": {"type": "object"}},
+    "evidence_segments": {"type": "array", "items": {"type": "object"}},
     "source_outcomes": {"type": "array", "items": {
       "type": "object",
       "required": ["outcome_id", "content_id", "source_message_id", "source_kind", "origin", "outcome", "disposition_reason"],
@@ -26,7 +28,7 @@
         "required": ["segment_id", "content_id", "content_kind", "content_sha256", "source_message_id", "source_received_at", "received_date", "source_message_ordinal", "source_content_ordinal", "text"],
         "properties": {
           "segment_id": {"type": "string", "minLength": 1}, "content_id": {"type": "string", "minLength": 1},
-          "content_kind": {"enum": ["body", "attachment", "resource"]}, "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "content_kind": {"enum": ["body", "body_supplement", "attachment", "resource"]}, "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
           "source_message_id": {"type": "string", "minLength": 1}, "source_received_at": {"type": "string", "minLength": 1},
           "received_date": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
           "source_message_ordinal": {"type": "integer", "minimum": 0}, "source_content_ordinal": {"type": "integer", "minimum": 0},

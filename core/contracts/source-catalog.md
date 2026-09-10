@@ -12,7 +12,11 @@ A catalog record contains:
 - one or more source conversation/thread identifiers when intentionally folded;
 - ordered source message identifiers;
 - source metadata needed for provenance;
-- one raw body for every ordered source message, retained verbatim from the complete body returned by the selected mail adapter;
+- one nullable primary-body presentation alias for every ordered source
+  message, plus every ordered admitted MIME text unit retained verbatim from
+  the complete message returned by the selected mail adapter;
+- a complete `mime-accounting-v1` inventory binding the raw message, MIME tree,
+  every content-bearing node, and exactly one audited disposition per node;
 - atomic Fact records;
 - source coverage entries ordered with the source;
 - attachment presence and processing outcomes; and
@@ -61,14 +65,18 @@ attachment/resource content it could not read.
 
 ## Lossless acceptance gate
 
-New records use the v2 raw-UTF-8 Markdown codec in `school_os.catalog`. Its
+New MIME-accounted records use source schema v3 while retaining the v2
+raw-UTF-8 Markdown framing codec in `school_os.catalog` with
+`custody_version: 2`. Its
 header records stable record/conversation identity, ordered message metadata,
-scope, pagination evidence, selected-body custody, and every ordered attachment
-and direct-resource outcome. Each body is preceded by a compact JSON frame
-with its immutable message ID and exact UTF-8 byte length. The parser reads that
-many bytes before looking for another frame, so headings, HTML comments, and
-delimiter-like text inside a source body are data, not structure. V1 heading
-framing remains a fail-closed migration input and is not used for new records.
+scope, pagination evidence, MIME accounting, primary-body alias custody, and
+every ordered attachment and direct-resource outcome. Primary and supplemental
+text units use declared byte-counted frames with immutable content IDs and exact
+UTF-8 lengths. A message with no primary body still exists through the header
+membership and accounting inventory. The parser reads each declared byte count
+before looking for another frame, so headings, HTML comments, and delimiter-like
+text are data, not structure. V1 heading framing remains a fail-closed
+migration input and is not used for new records.
 
 Each extracted attachment/resource text has its own byte-counted content frame,
 stable code-assigned content ID, exact text hash, and source-message association.
@@ -80,9 +88,23 @@ attribute, original/final URL, and redirect chain. Parsing must dereference each
 frame exactly once and reject missing, duplicate, unreferenced, or inconsistent
 content.
 
-For each ordered source message, the catalog record identifies the immutable message ID and contains a distinct raw-message section. Before accepting a new or changed record, compare that section directly with the complete plaintext body returned for the same message ID by the selected mail adapter. The strings must be equal without deletion, substitution, summarization, reordering, ellipsis, or whitespace normalization. Headers and metadata exposed separately by the adapter remain required provenance fields but are not invented when the adapter does not expose them.
+For each ordered source message, the catalog identifies the immutable message ID
+and carrier-relative raw-message entry, then accounts for the complete reconciled
+MIME tree in source order. Every content-bearing part must map to preserved text,
+an attachment/resource outcome, verified padding, an exact duplicate in the same
+alternative group, or a precise blocking disposition. The primary body is only
+a presentation alias to one preserved content ID. Every substantive text unit
+must reach interpretation and independent audit; no winning-body heuristic may
+discard another unit. Source text is compared without deletion, substitution,
+summarization, reordering, ellipsis, or whitespace normalization.
 
-The complete raw Markdown file must then be read back byte-for-byte. A record is verified only when both comparisons pass: source body to raw-message section, and intended Markdown bytes to persisted Markdown bytes. Comparing persisted content only with an agent-authored draft is circular and does not prove losslessness. An unverified record must not enter the catalog index or drive any Fact, derived record, task, brief, delivery, or cursor change.
+The complete raw Markdown file must then be read back byte-for-byte. A record is
+verified only when the independently constructed adapter snapshot matches the
+declared message membership, raw-message hashes, MIME accounting, ordered text
+units, and persisted Markdown bytes. Reconstructing both sides from the catalog
+is circular and does not prove losslessness. An unverified record must not enter
+the catalog index or drive any Fact, derived record, task, brief, delivery, or
+cursor change.
 
 ## Derived filters
 

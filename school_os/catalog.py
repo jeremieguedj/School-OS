@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping, Sequence
+from copy import deepcopy
 from dataclasses import dataclass
 from typing import Any
 
@@ -122,35 +123,44 @@ def _outcome_mapping(
 
 
 def build_catalog_message(
-    *, message_id: str, received_at: str, received_date: str, admission: Any,
+    *, message_id: str, received_at: str, received_date: str, admission: Any | None,
     attachment_outcomes: Sequence[Any] = (), resource_outcomes: Sequence[Any] = (),
     gmail_internal_date_ms: int | None = None,
+    mime_accounting: Mapping[str, Any] | None = None,
+    mime_contents: Sequence[Mapping[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Bind one admitted body and importer-owned outcomes into catalog input."""
     if not all(isinstance(item, str) and item for item in (message_id, received_at, received_date)):
         raise CatalogError("catalog message lacks source identity or time")
-    if admission.outcome != "admitted" or admission.plaintext is None:
-        raise CatalogError("only an admitted exact plaintext body can enter a catalog message")
-    if not isinstance(admission.selected_part_id, str) or not admission.selected_part_id:
-        raise CatalogError("admitted body lacks selected MIME-part identity")
-    body = admission.plaintext.decode("utf-8", errors="strict")
-    body_bytes = body.encode("utf-8")
-    content_id = stable_content_id(message_id, "body", admission.selected_part_id)
-    raw_locator = dict(admission.raw_part_locator or {})
-    custody = {
-        "outcome": "admitted",
-        "complete": True,
-        "content_id": content_id,
-        "selected_part_id": admission.selected_part_id,
-        "declared_charset": admission.declared_charset,
-        "content_transfer_encoding": admission.content_transfer_encoding,
-        "raw_part_sha256": admission.raw_part_sha256,
-        "raw_part_byte_length": admission.raw_part_byte_length,
-        "raw_part_locator": raw_locator,
-        "provider_unicode_sha256": sha256_bytes(body_bytes),
-        "plaintext_sha256": sha256_bytes(body_bytes),
-        "plaintext_byte_length": len(body_bytes),
-    }
+    if admission is None:
+        if not isinstance(mime_accounting, Mapping) or mime_accounting.get("primary_content_id") is not None:
+            raise CatalogError("a missing primary body requires complete MIME accounting")
+        body = None
+        custody = None
+        content_id = None
+    else:
+        if admission.outcome != "admitted" or admission.plaintext is None:
+            raise CatalogError("only an admitted exact plaintext body can enter a catalog message")
+        if not isinstance(admission.selected_part_id, str) or not admission.selected_part_id:
+            raise CatalogError("admitted body lacks selected MIME-part identity")
+        body = admission.plaintext.decode("utf-8", errors="strict")
+        body_bytes = body.encode("utf-8")
+        content_id = stable_content_id(message_id, "body", admission.selected_part_id)
+        raw_locator = dict(admission.raw_part_locator or {})
+        custody = {
+            "outcome": "admitted",
+            "complete": True,
+            "content_id": content_id,
+            "selected_part_id": admission.selected_part_id,
+            "declared_charset": admission.declared_charset,
+            "content_transfer_encoding": admission.content_transfer_encoding,
+            "raw_part_sha256": admission.raw_part_sha256,
+            "raw_part_byte_length": admission.raw_part_byte_length,
+            "raw_part_locator": raw_locator,
+            "provider_unicode_sha256": sha256_bytes(body_bytes),
+            "plaintext_sha256": sha256_bytes(body_bytes),
+            "plaintext_byte_length": len(body_bytes),
+        }
     attachments = [
         _outcome_mapping(value, source_message_id=message_id, kind="attachment", outcome_ordinal=index)
         for index, value in enumerate(attachment_outcomes)
@@ -159,7 +169,7 @@ def build_catalog_message(
         _outcome_mapping(value, source_message_id=message_id, kind="resource", outcome_ordinal=index)
         for index, value in enumerate(resource_outcomes)
     ]
-    content_ids = [content_id, *(value["content_id"] for value in [*attachments, *resources] if value["outcome"] == "extracted")]
+    content_ids = [*([] if content_id is None else [content_id]), *(value["content_id"] for value in [*attachments, *resources] if value["outcome"] == "extracted")]
     if len(content_ids) != len(set(content_ids)):
         raise CatalogError("catalog message has duplicate content identity")
     outcome_ids = [value["outcome_id"] for value in [*attachments, *resources]]
@@ -174,6 +184,21 @@ def build_catalog_message(
         "attachments": attachments,
         "resources": resources,
     }
+    if mime_accounting is not None or mime_contents is not None:
+        if not isinstance(mime_accounting, Mapping) or not isinstance(mime_contents, Sequence):
+            raise CatalogError("MIME accounting and content inventory must be supplied together")
+        result["mime_accounting"] = dict(mime_accounting)
+        result["mime_contents"] = [dict(item) for item in mime_contents]
+        # The primary body remains a compatibility/presentation alias. Its
+        # custody identity must be the primary accounted content identity.
+        primary = mime_accounting.get("primary_content_id")
+        if primary != content_id:
+            raise CatalogError("admitted body differs from MIME accounting primary content")
+        try:
+            from .mime_accounting import validate_mime_accounting
+            validate_mime_accounting(result)
+        except ValueError as exc:
+            raise CatalogError(str(exc)) from exc
     if gmail_internal_date_ms is not None:
         if isinstance(gmail_internal_date_ms, bool) or not isinstance(gmail_internal_date_ms, int) or gmail_internal_date_ms < 0:
             raise CatalogError("catalog message Gmail internal date is invalid")
@@ -372,8 +397,43 @@ def _validate_content_outcome(value: Mapping[str, Any], kind: str) -> None:
                 raise CatalogError("resource outcome has invalid redirect custody")
 
 
+def _validate_mime_external_outcomes(message: Mapping[str, Any]) -> None:
+    accounting = message.get("mime_accounting")
+    if not isinstance(accounting, Mapping):
+        return
+    nodes = accounting.get("nodes")
+    attachments = message.get("attachments")
+    if not isinstance(nodes, list) or not isinstance(attachments, list):
+        raise CatalogError("MIME accounting cannot be matched to attachment outcomes")
+    external = [
+        item for item in nodes
+        if isinstance(item, Mapping) and item.get("disposition") == "external_attachment"
+    ]
+    if len(external) != len(attachments):
+        raise CatalogError("MIME external leaves and attachment outcomes differ")
+
+
 def _validate_custody_message(message: Mapping[str, Any]) -> None:
     custody = message.get("body_custody")
+    if custody is None:
+        if message.get("body") is not None:
+            raise CatalogError("source message has a body without custody")
+        attachments = message.get("attachments")
+        resources = message.get("resources")
+        if not isinstance(attachments, list) or not isinstance(resources, list):
+            raise CatalogError("source message lacks attachment/resource inventories")
+        for kind, values in (("attachment", attachments), ("resource", resources)):
+            for value in values:
+                if not isinstance(value, Mapping):
+                    raise CatalogError(f"{kind} outcome is malformed")
+                _validate_content_outcome(value, kind)
+        try:
+            from .mime_accounting import validate_mime_accounting
+            validate_mime_accounting(message)
+            _validate_mime_external_outcomes(message)
+        except ValueError as exc:
+            raise CatalogError(str(exc)) from exc
+        return
     if not isinstance(custody, Mapping):
         raise CatalogError("version-2 source message lacks typed body custody")
     body = message.get("body")
@@ -419,7 +479,12 @@ def _validate_custody_message(message: Mapping[str, Any]) -> None:
         if not isinstance(value, Mapping):
             raise CatalogError("resource outcome is malformed")
         _validate_content_outcome(value, "resource")
-    ids = [custody["content_id"], *(value["content_id"] for value in [*attachments, *resources] if value["outcome"] == "extracted")]
+    ids = (
+        [item.get("content_id") for item in message.get("mime_contents", [])]
+        if isinstance(message.get("mime_contents"), list)
+        else [custody["content_id"]]
+    )
+    ids.extend(value["content_id"] for value in [*attachments, *resources] if value["outcome"] == "extracted")
     if len(ids) != len(set(ids)):
         raise CatalogError("source message has duplicate content identity")
     outcome_ids = [value["outcome_id"] for value in [*attachments, *resources]]
@@ -427,6 +492,13 @@ def _validate_custody_message(message: Mapping[str, Any]) -> None:
         raise CatalogError("source message has duplicate outcome identity")
     if any(value["source_message_id"] != message.get("message_id") for value in [*attachments, *resources]):
         raise CatalogError("content outcome source-message association disagrees")
+    if "mime_accounting" in message or "mime_contents" in message:
+        try:
+            from .mime_accounting import validate_mime_accounting
+            validate_mime_accounting(message)
+            _validate_mime_external_outcomes(message)
+        except ValueError as exc:
+            raise CatalogError(str(exc)) from exc
 
 
 def validate_source_conversation(conversation: Mapping[str, Any], schema: Mapping[str, Any]) -> None:
@@ -445,16 +517,21 @@ def validate_source_conversation(conversation: Mapping[str, Any], schema: Mappin
                 raise CatalogError("invalid legacy source message")
             if not isinstance(message.get("body"), str) or not isinstance(message.get("attachments"), list):
                 raise CatalogError("invalid legacy source message content")
-    elif version == 2:
+    elif version in {2, 3}:
         errors = validate(conversation, dict(schema))
         if errors:
             raise CatalogError("invalid source conversation: " + "; ".join(errors))
+        if version == 3 and any(
+            not {"mime_accounting", "mime_contents"} <= set(message)
+            for message in conversation["messages"]
+        ):
+            raise CatalogError("version-3 source conversation lacks MIME accounting")
     else:
         raise CatalogError("source conversation has an unsupported schema version")
     message_ids = [message["message_id"] for message in conversation["messages"]]
     if len(message_ids) != len(set(message_ids)):
         raise CatalogError("source conversation has duplicate immutable message_id values")
-    if version == 2:
+    if version in {2, 3}:
         for message in conversation["messages"]:
             _validate_custody_message(message)
 
@@ -463,8 +540,13 @@ def serialize_v2_record(conversation: Mapping[str, Any], schema: Mapping[str, An
     """Mechanically frame every complete UTF-8 body using its exact byte count."""
     validate_source_conversation(conversation, schema)
     messages = conversation["messages"]
-    custody_version = 1 if conversation.get("schema_version") == 2 else None
+    custody_version = (
+        2 if conversation.get("schema_version") == 3
+        else 1 if conversation.get("schema_version") == 2
+        else None
+    )
     body_content_frames: list[dict[str, Any]] = []
+    mime_content_frames: list[dict[str, Any]] = []
     extracted_content_frames: list[dict[str, Any]] = []
     header_messages: list[dict[str, Any]] = []
     for message in messages:
@@ -475,9 +557,9 @@ def serialize_v2_record(conversation: Mapping[str, Any], schema: Mapping[str, An
                 "attachments": message["attachments"],
             })
             continue
-        body = message["body"].encode("utf-8")
-        body_custody = dict(message["body_custody"])
-        header_messages.append({
+        body = message["body"].encode("utf-8") if isinstance(message["body"], str) else None
+        body_custody = dict(message["body_custody"]) if isinstance(message["body_custody"], Mapping) else None
+        header_message = {
             "message_id": message["message_id"],
             "received_at": message["received_at"],
             "received_date": message["received_date"],
@@ -491,14 +573,34 @@ def serialize_v2_record(conversation: Mapping[str, Any], schema: Mapping[str, An
                 {key: item for key, item in outcome.items() if key != "extracted_text"}
                 for outcome in message["resources"]
             ],
-        })
-        body_content_frames.append({
-            "content_id": body_custody["content_id"],
-            "content_kind": "body",
-            "source_message_id": message["message_id"],
-            "byte_length": len(body),
-            "sha256": sha256_bytes(body),
-        })
+        }
+        if custody_version == 2:
+            header_message["mime_accounting"] = dict(message["mime_accounting"])
+            header_message["mime_contents"] = [
+                {key: value for key, value in item.items() if key != "text"}
+                for item in message["mime_contents"]
+            ]
+        header_messages.append(header_message)
+        if body is not None and body_custody is not None:
+            body_content_frames.append({
+                "content_id": body_custody["content_id"],
+                "content_kind": "body",
+                "source_message_id": message["message_id"],
+                "byte_length": len(body),
+                "sha256": sha256_bytes(body),
+            })
+        if custody_version == 2:
+            for item in message["mime_contents"]:
+                if body_custody is not None and item["content_id"] == body_custody["content_id"]:
+                    continue
+                text = item["text"].encode("utf-8")
+                mime_content_frames.append({
+                    "content_id": item["content_id"],
+                    "content_kind": item["content_kind"],
+                    "source_message_id": message["message_id"],
+                    "byte_length": len(text),
+                    "sha256": sha256_bytes(text),
+                })
         for kind, outcomes in (("attachment", message["attachments"]), ("resource", message["resources"])):
             for outcome in outcomes:
                 if outcome["outcome"] != "extracted":
@@ -522,9 +624,11 @@ def serialize_v2_record(conversation: Mapping[str, Any], schema: Mapping[str, An
     }
     if custody_version is not None:
         header["custody_version"] = custody_version
-        header["content_frames"] = [*body_content_frames, *extracted_content_frames]
+        header["content_frames"] = [*body_content_frames, *mime_content_frames, *extracted_content_frames]
     result = bytearray(RECORD_PREFIX + RECORD_MARKER + _canonical_inline(header) + MARKER_END)
     for message_index, message in enumerate(messages):
+        if message["body"] is None:
+            continue
         body = message["body"].encode("utf-8")
         descriptor = {"byte_length": len(body), "message_id": message["message_id"]}
         if custody_version is not None:
@@ -541,7 +645,13 @@ def serialize_v2_record(conversation: Mapping[str, Any], schema: Mapping[str, An
             for outcome in [*message["attachments"], *message["resources"]]
             if outcome["outcome"] == "extracted"
         }
-        for descriptor in extracted_content_frames:
+        if custody_version == 2:
+            content_by_id.update({
+                item["content_id"]: item["text"]
+                for message in messages for item in message["mime_contents"]
+                if message["body_custody"] is None or item["content_id"] != message["body_custody"]["content_id"]
+            })
+        for descriptor in [*mime_content_frames, *extracted_content_frames]:
             text = content_by_id[descriptor["content_id"]].encode("utf-8")
             result.extend(CONTENT_MARKER + _canonical_inline(descriptor) + MARKER_END)
             result.extend(text)
@@ -556,19 +666,25 @@ def parse_v2_record(data: bytes) -> CatalogRecord:
     if header.get("format_version") != 2 or not isinstance(header.get("messages"), list):
         raise CatalogError("record header is not a complete v2 catalog header")
     custody_version = header.get("custody_version")
-    if custody_version not in {None, 1}:
+    if custody_version not in {None, 1, 2}:
         raise CatalogError("record has an unsupported custody version")
-    frames = header.get("content_frames") if custody_version == 1 else None
-    if custody_version == 1 and (not isinstance(frames, list) or not frames):
+    frames = header.get("content_frames") if custody_version in {1, 2} else None
+    if custody_version in {1, 2} and (not isinstance(frames, list) or not frames):
         raise CatalogError("custody record lacks ordered content frames")
     bodies: list[tuple[str, str]] = []
     contents: list[tuple[str, str]] = []
     body_frames = [frame for frame in frames or [] if isinstance(frame, Mapping) and frame.get("content_kind") == "body"]
-    if custody_version == 1 and len(body_frames) != len(header["messages"]):
+    expected_body_count = sum(
+        1 for item in header["messages"]
+        if isinstance(item, Mapping) and item.get("body_custody") is not None
+    ) if custody_version == 2 else len(header["messages"])
+    if custody_version in {1, 2} and len(body_frames) != expected_body_count:
         raise CatalogError("custody record body-frame inventory is incomplete")
     for expected in header["messages"]:
         if not isinstance(expected, dict) or not isinstance(expected.get("message_id"), str):
             raise CatalogError("record header has invalid ordered message metadata")
+        if custody_version == 2 and expected.get("body_custody") is None:
+            continue
         descriptor, offset = _read_marker(data, offset, MESSAGE_MARKER, "message")
         message_id = descriptor.get("message_id")
         length = descriptor.get("byte_length")
@@ -581,7 +697,7 @@ def parse_v2_record(data: bytes) -> CatalogRecord:
             decoded = body.decode("utf-8")
         except UnicodeDecodeError as exc:
             raise CatalogError("message body is not UTF-8") from exc
-        if custody_version == 1:
+        if custody_version in {1, 2}:
             body_custody = expected.get("body_custody")
             if not isinstance(body_custody, Mapping):
                 raise CatalogError("custody record message lacks body metadata")
@@ -604,21 +720,28 @@ def parse_v2_record(data: bytes) -> CatalogRecord:
             contents.append((content_id, decoded))
         bodies.append((message_id, decoded))
         offset += length
-    if custody_version == 1:
+    if custody_version in {1, 2}:
         seen_content_ids = {content_id for content_id, _text in contents}
         for expected in frames:
             if not isinstance(expected, Mapping):
                 raise CatalogError("content-frame inventory entry is malformed")
             if expected.get("content_kind") == "body":
                 continue
-            if expected.get("content_kind") not in {"attachment", "resource"}:
+            allowed_kinds = {"attachment", "resource"}
+            if custody_version == 2:
+                allowed_kinds |= {"body_supplement", "html_evidence"}
+            if expected.get("content_kind") not in allowed_kinds:
                 raise CatalogError("content-frame inventory has an invalid kind")
             descriptor, offset = _read_marker(data, offset, CONTENT_MARKER, "content")
             if descriptor != dict(expected):
                 raise CatalogError("content frame does not match ordered custody metadata")
             content_id = descriptor.get("content_id")
             length = descriptor.get("byte_length")
-            if not isinstance(content_id, str) or not content_id or content_id in seen_content_ids or not isinstance(length, int) or length < 1:
+            if (
+                not isinstance(content_id, str) or not content_id
+                or content_id in seen_content_ids or not isinstance(length, int)
+                or length < (0 if expected.get("content_kind") in {"body_supplement", "html_evidence"} else 1)
+            ):
                 raise CatalogError("content frame has invalid identity or length")
             text_bytes = data[offset:offset + length]
             if len(text_bytes) != length:
@@ -638,14 +761,15 @@ def parse_v2_record(data: bytes) -> CatalogRecord:
     if offset != len(data):
         raise CatalogError("record has trailing bytes outside declared message frames")
     record = CatalogRecord(header, tuple(bodies), tuple(contents), sha256_bytes(data))
-    if custody_version == 1:
+    if custody_version in {1, 2}:
         verified_catalog_contents(record)
     return record
 
 
 def verified_catalog_contents(record: CatalogRecord) -> tuple[dict[str, Any], ...]:
     """Dereference typed, hashed body/extraction frames from one parsed record."""
-    if record.header.get("custody_version") != 1:
+    custody_version = record.header.get("custody_version")
+    if custody_version not in {1, 2}:
         raise CatalogError("catalog record lacks typed source custody")
     messages = record.header.get("messages")
     frames = record.header.get("content_frames")
@@ -670,10 +794,20 @@ def verified_catalog_contents(record: CatalogRecord) -> tuple[dict[str, Any], ..
             raise CatalogError("catalog message metadata is malformed")
         message_id = header_message.get("message_id")
         body = bodies.get(message_id)
-        if not isinstance(message_id, str) or body is None:
+        if not isinstance(message_id, str) or (custody_version == 1 and body is None):
             raise CatalogError("catalog message body cannot be dereferenced")
         reconstructed = dict(header_message)
         reconstructed["body"] = body
+        if custody_version == 2:
+            raw_mime_contents = reconstructed.get("mime_contents")
+            if not isinstance(raw_mime_contents, list):
+                raise CatalogError("catalog message lacks MIME content metadata")
+            reconstructed["mime_contents"] = [
+                {**dict(item), "text": content_text.get(item.get("content_id"))}
+                for item in raw_mime_contents if isinstance(item, Mapping)
+            ]
+            if len(reconstructed["mime_contents"]) != len(raw_mime_contents):
+                raise CatalogError("catalog MIME content metadata is malformed")
         for collection in ("attachments", "resources"):
             outcomes = reconstructed.get(collection)
             if not isinstance(outcomes, list):
@@ -688,31 +822,64 @@ def verified_catalog_contents(record: CatalogRecord) -> tuple[dict[str, Any], ..
             reconstructed[collection] = restored
         _validate_custody_message(reconstructed)
         body_custody = reconstructed["body_custody"]
-        body_id = body_custody["content_id"]
-        body_frame = frames_by_id.get(body_id)
-        body_bytes = body.encode("utf-8")
-        if body_frame != {
-            "content_id": body_id,
-            "content_kind": "body",
-            "source_message_id": message_id,
-            "byte_length": len(body_bytes),
-            "sha256": sha256_bytes(body_bytes),
-        }:
-            raise CatalogError("catalog body frame cannot be dereferenced exactly")
-        used.add(body_id)
-        entries.append({
-            "content_id": body_id,
-            "content_kind": "body",
-            "source_message_id": message_id,
-            "message_ordinal": message_ordinal,
-            "content_ordinal": 0,
-            "received_at": reconstructed["received_at"],
-            "received_date": reconstructed["received_date"],
-            "sha256": sha256_bytes(body_bytes),
-            "text": body,
-            "provenance": {"body_custody": dict(body_custody)},
-        })
-        content_ordinal = 1
+        body_id = body_custody["content_id"] if isinstance(body_custody, Mapping) else None
+        body_bytes = body.encode("utf-8") if isinstance(body, str) else None
+        if body_id is not None and body_bytes is not None:
+            body_frame = frames_by_id.get(body_id)
+            if body_frame != {
+                "content_id": body_id,
+                "content_kind": "body",
+                "source_message_id": message_id,
+                "byte_length": len(body_bytes),
+                "sha256": sha256_bytes(body_bytes),
+            }:
+                raise CatalogError("catalog body frame cannot be dereferenced exactly")
+        if custody_version == 1:
+            ordered_mime_contents = [{
+                "content_id": body_id, "content_kind": "body", "text": body,
+                "sha256": sha256_bytes(body_bytes), "custody": dict(body_custody),
+                "disposition": "interpret", "source_part_id": body_custody["selected_part_id"],
+                "provider_part_id": body_custody["selected_part_id"], "mime_type": "text/plain",
+                "duplicate_of_part_id": None, "byte_length": len(body_bytes),
+            }]
+        else:
+            ordered_mime_contents = reconstructed["mime_contents"]
+        content_ordinal = 0
+        for mime_content in ordered_mime_contents:
+            content_id = mime_content["content_id"]
+            text = mime_content["text"]
+            encoded = text.encode("utf-8")
+            frame = frames_by_id.get(content_id)
+            expected_frame = {
+                "content_id": content_id,
+                "content_kind": mime_content["content_kind"],
+                "source_message_id": message_id,
+                "byte_length": len(encoded),
+                "sha256": sha256_bytes(encoded),
+            }
+            if frame != expected_frame:
+                raise CatalogError("catalog MIME content frame cannot be dereferenced exactly")
+            used.add(content_id)
+            entries.append({
+                "content_id": content_id,
+                "content_kind": mime_content["content_kind"],
+                "source_message_id": message_id,
+                "message_ordinal": message_ordinal,
+                "content_ordinal": content_ordinal,
+                "received_at": reconstructed["received_at"],
+                "received_date": reconstructed["received_date"],
+                "sha256": sha256_bytes(encoded),
+                "text": text,
+                "provenance": {
+                    "mime_type": mime_content["mime_type"],
+                    "disposition": mime_content["disposition"],
+                    "source_part_id": mime_content["source_part_id"],
+                    "provider_part_id": mime_content["provider_part_id"],
+                    "duplicate_of_part_id": mime_content["duplicate_of_part_id"],
+                    "custody": deepcopy(mime_content["custody"]),
+                },
+            })
+            content_ordinal += 1
         for kind, collection in (("attachment", "attachments"), ("resource", "resources")):
             for outcome in reconstructed[collection]:
                 if outcome["outcome"] != "extracted":
@@ -748,14 +915,50 @@ def verified_catalog_contents(record: CatalogRecord) -> tuple[dict[str, Any], ..
     return tuple(entries)
 
 
-def validate_source_to_record(data: bytes, source_bodies: Mapping[str, str]) -> list[str]:
+def validate_source_to_record(data: bytes, source_bodies: Mapping[str, Any]) -> list[str]:
     """Prove exact ordered adapter bodies against a parsed v2 record."""
     try:
         parsed = parse_v2_record(data)
     except CatalogError as exc:
         return [str(exc)]
-    catalogued = dict(parsed.bodies)
     errors: list[str] = []
+    if source_bodies.get("schema_version") == 1 and isinstance(source_bodies.get("messages"), list):
+        from .mime_accounting import accounting_sha256
+        content_text = dict(parsed.contents)
+        header_messages = parsed.header.get("messages")
+        if not isinstance(header_messages, list):
+            return ["catalog header message inventory is malformed"]
+        expected_messages = source_bodies["messages"]
+        if len(expected_messages) != len(header_messages):
+            errors.append("ordered message count differs")
+        if [item.get("message_id") for item in header_messages] != [item.get("message_id") for item in expected_messages if isinstance(item, Mapping)]:
+            errors.append("ordered message IDs differ")
+        for expected, header in zip(expected_messages, header_messages):
+            if not isinstance(expected, Mapping) or not isinstance(header, Mapping):
+                errors.append("source snapshot message is malformed")
+                continue
+            accounting = header.get("mime_accounting")
+            if not isinstance(accounting, Mapping) or expected.get("accounting_sha256") != accounting_sha256(accounting):
+                errors.append(f"message {expected.get('message_id')!r} accounting differs")
+            contents = expected.get("contents")
+            if not isinstance(contents, list):
+                errors.append(f"message {expected.get('message_id')!r} content snapshot is malformed")
+                continue
+            declared_contents = header.get("mime_contents")
+            if not isinstance(declared_contents, list) or [item.get("content_id") for item in declared_contents if isinstance(item, Mapping)] != [item.get("content_id") for item in contents if isinstance(item, Mapping)]:
+                errors.append(f"message {expected.get('message_id')!r} ordered content IDs differ")
+            for item in contents:
+                if not isinstance(item, Mapping):
+                    errors.append("source snapshot content is malformed")
+                    continue
+                content_id = item.get("content_id")
+                text = item.get("text")
+                if not isinstance(content_id, str) or content_text.get(content_id) != text:
+                    errors.append(f"content {content_id!r} is missing or not verbatim")
+                elif item.get("sha256") != sha256_bytes(text.encode("utf-8")):
+                    errors.append(f"content {content_id!r} source hash disagrees")
+        return errors
+    catalogued = dict(parsed.bodies)
     if list(message_id for message_id, _body in parsed.bodies) != list(source_bodies):
         errors.append("ordered message IDs differ")
     for message_id, body in source_bodies.items():
@@ -766,7 +969,7 @@ def validate_source_to_record(data: bytes, source_bodies: Mapping[str, str]) -> 
     return errors
 
 
-def verify_persisted_record(source_bodies: Mapping[str, str], intended: bytes, persisted: bytes) -> None:
+def verify_persisted_record(source_bodies: Mapping[str, Any], intended: bytes, persisted: bytes) -> None:
     """Require independent source equality and intended-byte readback equality."""
     errors = validate_source_to_record(intended, source_bodies)
     if errors:
@@ -776,7 +979,7 @@ def verify_persisted_record(source_bodies: Mapping[str, str], intended: bytes, p
 
 
 def recover_catalog_index(
-    source_bodies: Mapping[str, str], intended: bytes, persisted: bytes,
+    source_bodies: Mapping[str, Any], intended: bytes, persisted: bytes,
     index: Mapping[str, Any], facts: list[Mapping[str, Any]],
 ) -> CatalogRecovery:
     """Adopt one verified orphaned record without inventing index rows or Fact IDs.

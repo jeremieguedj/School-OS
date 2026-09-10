@@ -6,8 +6,9 @@
   "additionalProperties": false,
   "required": ["schema_version", "conversation_id", "candidates", "coverage", "attachment_outcomes", "review_cases"],
   "properties": {
-    "schema_version": {"const": 1},
+    "schema_version": {"enum": [1, 2]},
     "conversation_id": {"type": "string", "minLength": 1},
+    "mime_accounting_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "candidates": {"type": "array", "items": {
       "type": "object", "additionalProperties": false,
       "required": ["segment_id", "byte_start", "byte_end", "candidate_kind", "category", "entity_scope", "text", "flags", "source_quote_sha256"],

@@ -1080,6 +1080,12 @@ class InstanceScaffoldingTests(unittest.TestCase):
                         "audit_disposition": "accepted", "reason": "wording checked",
                     } for fact in interpreted["facts"]],
                     "source_outcomes": [],
+                    "mime_accounting": [{
+                        "message_id": item["message_id"],
+                        "accounting_sha256": item["accounting_sha256"],
+                        "audit_disposition": "accepted",
+                        "reason": "complete MIME disposition inventory checked",
+                    } for item in packet.get("mime_accounting", [])],
                 }
 
         runtime = lambda: ConnectedDailyRuntime(

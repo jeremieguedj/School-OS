@@ -28,6 +28,7 @@ from .contracts import canonical_json_bytes, sha256_bytes
 from .importer import AttachmentRead, DirectResourceRead
 from .install import publish_hybrid_content_bundle
 from .gmail_source import GmailMimeNormalizer
+from .mime_accounting import raw_message_member_path
 from .hybrid_operations import HybridCheckpointCommit, HybridCheckpointPublisher
 from .operations import checkpoint_pointer
 
@@ -368,7 +369,7 @@ def publish_ingestion_result(
         )
     custody: dict[str, Any] = {"attachments": [], "messages": [], "resources": [], "schema_version": 1}
     for message_id, (conversation_id, data) in sorted(capture.messages.items()):
-        path = f"raw/messages/{_safe_key(message_id)}.eml"
+        path = raw_message_member_path(message_id)
         entries[path] = BundleEntry(data, "raw_gmail_message", "message/rfc822")
         custody["messages"].append({
             "conversation_id": conversation_id, "message_id": message_id,
@@ -416,10 +417,32 @@ def publish_ingestion_result(
                 raise HybridIngestionError("staged record bundle is incomplete")
         catalog_bytes = named[catalog_name].data
         parsed = parse_v2_record(catalog_bytes)
-        message_ids = [item[0] for item in parsed.bodies]
+        header_messages = parsed.header.get("messages", [])
+        if not isinstance(header_messages, list):
+            raise HybridIngestionError("catalog message inventory is malformed")
+        message_ids = [
+            item.get("message_id") for item in header_messages if isinstance(item, Mapping)
+        ]
+        if len(message_ids) != len(header_messages) or any(not isinstance(item, str) or not item for item in message_ids):
+            raise HybridIngestionError("catalog message identity inventory is malformed")
         raw_messages = [
             item for item in custody["messages"] if item["message_id"] in message_ids
         ]
+        if len(raw_messages) != len(message_ids):
+            raise HybridIngestionError("catalog lacks exact raw bytes for every message")
+        raw_by_message = {item["message_id"]: item for item in raw_messages}
+        if parsed.header.get("custody_version") == 2:
+            for header_message in header_messages:
+                accounting = header_message.get("mime_accounting")
+                if not isinstance(accounting, Mapping):
+                    raise HybridIngestionError("catalog lacks MIME accounting for raw-message custody")
+                declared = accounting.get("raw_message")
+                observed = raw_by_message[header_message["message_id"]]
+                if not isinstance(declared, Mapping) or any(
+                    declared.get(key) != observed.get(key)
+                    for key in ("member_path", "sha256", "byte_length")
+                ):
+                    raise HybridIngestionError("catalog MIME accounting disagrees with exact raw-message bytes")
         attachments = [
             item for item in custody["attachments"] if item["message_id"] in message_ids
         ]

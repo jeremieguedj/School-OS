@@ -629,7 +629,41 @@ def admit_exact_plaintext_representation(
         and candidate.get("role") == "body"
         and candidate.get("mime_type") == "text/plain"
     ]
-    if other_plain_bodies:
+    substantive_other_plain_bodies = []
+    for candidate in other_plain_bodies:
+        candidate_data = candidate.get("data")
+        candidate_charset = candidate.get("charset")
+        candidate_encoding = candidate.get("content_transfer_encoding")
+        candidate_unicode = candidate.get("provider_unicode")
+        candidate_locator = candidate.get("raw_part_locator")
+        verified_exact = False
+        if (
+            isinstance(candidate_data, bytes)
+            and isinstance(candidate_charset, str) and candidate_charset
+            and isinstance(candidate_encoding, str) and candidate_encoding
+            and isinstance(candidate_unicode, str)
+            and candidate.get("complete") is True
+            and candidate.get("raw_part_sha256") == sha256_bytes(candidate_data)
+            and candidate.get("raw_part_byte_length") == len(candidate_data)
+            and isinstance(candidate_locator, Mapping)
+            and candidate_locator.get("kind") == "raw_part_bytes"
+            and candidate_locator.get("byte_start") == 0
+            and candidate_locator.get("byte_end") == len(candidate_data)
+        ):
+            try:
+                decoded_candidate = _decode_declared_charset(
+                    _decode_transport(candidate_data, candidate_encoding),
+                    candidate_charset,
+                ).decode("utf-8", errors="strict")
+            except (UnicodeDecodeError, ValueError):
+                decoded_candidate = None
+            verified_exact = decoded_candidate == candidate_unicode
+        accounted = candidate.get("mime_accounting_disposition") in {
+            "interpret", "padding", "duplicate_text",
+        }
+        if not (verified_exact and (not candidate_unicode.strip() or accounted)):
+            substantive_other_plain_bodies.append(candidate)
+    if substantive_other_plain_bodies:
         return SourceAdmission("unsupported", "multiple plausible plain-text bodies are ambiguous", None, part_id)
     if any(candidate.get("role") not in {"body", "attachment"} for candidate in parts):
         return SourceAdmission("manual_review", "MIME part role is malformed", None, part_id)

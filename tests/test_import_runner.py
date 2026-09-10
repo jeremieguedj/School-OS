@@ -146,9 +146,13 @@ class ImportRunnerTests(unittest.TestCase):
                 {"part_id": "html", "role": "body", "selected_plaintext": False, "complete": True, "mime_type": "text/html", "charset": "utf-8", "content_transfer_encoding": "identity", "data": b"<p>Plain alternative</p>"},
                 {"part_id": "attachment", "role": "attachment", "selected_plaintext": False, "complete": True, "mime_type": "application/pdf", "charset": "binary", "content_transfer_encoding": "base64", "data": b"cGRm"},
             ), mime_tree_complete=True),
+            admit_exact_plaintext_representation((
+                part(b"Substantive body"),
+                {**part(b"DQo=", part_id="padding", encoding="base64"), "selected_plaintext": False, "provider_unicode": "\r\n"},
+            ), mime_tree_complete=True),
         )
-        self.assertEqual(["admitted"] * 4, [item.outcome for item in admissions])
-        self.assertEqual([b"Exact\r\n", "café".encode("utf-8"), "café".encode("utf-8"), b"Plain alternative"], [item.plaintext for item in admissions])
+        self.assertEqual(["admitted"] * 5, [item.outcome for item in admissions])
+        self.assertEqual([b"Exact\r\n", "café".encode("utf-8"), "café".encode("utf-8"), b"Plain alternative", b"Substantive body"], [item.plaintext for item in admissions])
         self.assertEqual("body", admissions[3].selected_part_id)
 
         literal = part("\ufffd".encode("utf-8"))
