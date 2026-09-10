@@ -2,6 +2,7 @@ import io
 import gzip
 import json
 import tarfile
+import tempfile
 import unittest
 from dataclasses import replace
 
@@ -12,7 +13,8 @@ from school_os.contracts import canonical_json_bytes, sha256_bytes, validate
 from school_os.install import (
     HYBRID_BOOTSTRAP_PATH, HYBRID_CURRENT_PATH, HYBRID_PACKAGE_PATH,
     HYBRID_SETTINGS_PATH, INITIAL_STATE_PATH, InstallationError,
-    install_hybrid_generation, publish_hybrid_state, recover_hybrid_generation,
+    extract_hybrid_package, install_hybrid_generation, publish_hybrid_state,
+    recover_hybrid_generation,
 )
 from school_os.package import inventory_bytes
 from school_os.references import StoredObject
@@ -290,6 +292,18 @@ class HybridInstallTests(unittest.TestCase):
         )
         self.assertEqual(1, storage.replaces)
         self.assertEqual(2, successor["current"]["generation"])
+
+    def test_hybrid_package_extracts_only_after_admission(self):
+        storage = HybridStorage()
+        recovery = self.install(storage)
+        with tempfile.TemporaryDirectory() as temporary:
+            destination = Path(temporary) / "installed"
+            extracted = extract_hybrid_package(recovery, destination)
+            self.assertEqual(b"system_version: 1.2.3-alpha.1\n", (extracted / "release.yaml").read_bytes())
+        tampered = {**recovery, "package_archive": recovery["package_archive"] + b"x"}
+        with tempfile.TemporaryDirectory() as temporary:
+            with self.assertRaisesRegex(InstallationError, "hash disagrees"):
+                extract_hybrid_package(tampered, Path(temporary) / "installed")
 
 
 if __name__ == "__main__":

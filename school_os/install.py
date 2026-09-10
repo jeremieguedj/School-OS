@@ -1299,3 +1299,29 @@ def extract_recovered_package(recovery: Mapping[str, Any], destination: Path) ->
         raise
     shutil.rmtree(staging, ignore_errors=True)
     return destination
+
+
+def extract_hybrid_package(recovery: Mapping[str, Any], destination: Path) -> Path:
+    """Safely extract package bytes admitted by the five-object bootstrap chain."""
+    bootstrap = _require_mapping(recovery.get("bootstrap"), "hybrid recovery bootstrap")
+    archive = recovery.get("package_archive")
+    if not isinstance(archive, bytes):
+        raise InstallationError("hybrid recovery lacks exact package bytes")
+    archive_sha256 = bootstrap.get("package_sha256")
+    if archive_sha256 != sha256_bytes(archive):
+        raise InstallationError("hybrid recovered package hash disagrees")
+    checksums = f"{archive_sha256}  {HYBRID_PACKAGE_PATH}\n".encode("utf-8")
+    compatible = {
+        "manifest": {
+            "package": {
+                "archive_name": HYBRID_PACKAGE_PATH,
+                "archive_sha256": archive_sha256,
+                "checksums_sha256": sha256_bytes(checksums),
+                "inventory_sha256": bootstrap.get("package_inventory_sha256"),
+                "version": bootstrap.get("system_version"),
+            },
+        },
+        "package_archive": archive,
+        "package_checksums": checksums,
+    }
+    return extract_recovered_package(compatible, destination)

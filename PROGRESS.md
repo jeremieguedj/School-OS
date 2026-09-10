@@ -2855,3 +2855,18 @@ requirements, then read this log from top to bottom.
 - No provider call or external effect occurred. Next: publish this seam, add
   hybrid recovered-package extraction, then implement the bundle-backed runtime
   resolver and switch setup/bootstrap dispatch together.
+
+## 2026-09-09 — recovery MVP hybrid package extraction
+
+- Published the provider-connected five-object install seam at `47fd1fa`.
+- Added hybrid package extraction that derives the conventional checksum input
+  from the already-admitted bootstrap hash, reuses the existing archive/
+  inventory/safe-extraction verifier, and rejects changed package bytes before
+  creating the destination. No checksum file is added to Drive.
+- Focused valid/tampered extraction coverage passes. The complete frozen-
+  interpreter gate passes 349 tests plus schema/template checks. The hybrid
+  setup/bootstrap CLI selection and bundle-backed daily resolver remain open;
+  the old executable route is still selected and no live install should start.
+- No provider call or external effect occurred. Next: publish this extraction
+  checkpoint, add hybrid bootstrap recovery/dispatch and bundle-member runtime
+  resolution, then switch the setup and bootstrap scripts atomically.
