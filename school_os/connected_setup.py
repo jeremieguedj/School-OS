@@ -19,7 +19,7 @@ from .connected_profiles import initial_profile_registry
 from .contracts import canonical_json_bytes, dump_mapping_yaml, load_mapping_yaml, sha256_bytes
 from .install import (
     DAILY_REFERENCE_KINDS, FILE_MAP_PATH, INTEGRATION_REFERENCE_KINDS,
-    OPERATION_STATE_PATH, PACKAGE_ARCHIVE_PATH, InstallationError,
+    HYBRID_PACKAGE_PATH, OPERATION_STATE_PATH, PACKAGE_ARCHIVE_PATH, InstallationError,
     compose_create_only_candidate_payloads,
     managed_mime_type,
     initial_operation_state_bytes, install_create_only_generation,
@@ -41,7 +41,7 @@ GZIP_SIGNATURE = b"\x1f\x8b\x08"
 
 def _admitted_drive_mime_types(name: str, data: bytes, requested: str) -> frozenset[str]:
     """Keep MIME exact except for a byte-proven pinned gzip release archive."""
-    if name != PACKAGE_ARCHIVE_PATH:
+    if name not in {PACKAGE_ARCHIVE_PATH, HYBRID_PACKAGE_PATH}:
         return frozenset({requested})
     if not data.startswith(GZIP_SIGNATURE):
         raise InstallationError("pinned release archive lacks the gzip signature")
@@ -103,7 +103,10 @@ class CodexDriveCreateOnlyStorage(CodexDriveReferenceStorage):
                     item for item in self.list_scoped(parent_id)
                     if item.kind == "file" and item.name == name
                 ]
-                if len(matches) != 1 or matches[0].data != data or matches[0].mime_type != mime_type:
+                if (
+                    len(matches) != 1 or matches[0].data != data
+                    or matches[0].mime_type not in admitted_mime_types
+                ):
                     raise InstallationError("Drive create outcome is absent or ambiguous after provider failure") from exc
                 return matches[0]
         finally:
@@ -171,6 +174,68 @@ class CodexDriveCreateOnlyStorage(CodexDriveReferenceStorage):
         readback = self.read(result["id"])
         if readback is None or readback.kind != "folder" or readback.name != name or readback.parent_id != parent_id:
             raise InstallationError("Drive folder readback differs from its create receipt")
+        return readback
+
+    def replace_file(
+        self, object_id: str, parent_id: str, name: str, data: bytes,
+        mime_type: str, expected_version: str,
+    ) -> StoredObject:
+        """Replace one exact pointer under admitted single-writer evidence.
+
+        The pre-read detects ordinary drift but is not represented as provider
+        compare-and-swap. An uncertain update is adopted only when exact-ID
+        readback contains the complete intended bytes.
+        """
+        current = self.read(object_id)
+        failed = _failed_create_readback_checks(
+            current, parent_id=parent_id, name=name,
+            data=current.data if current is not None and current.data is not None else b"",
+            admitted_mime_types=frozenset({mime_type}),
+        )
+        if failed or current is None or current.version != expected_version:
+            raise InstallationError("Drive pointer replacement base differs: " + ", ".join(failed or ("version",)))
+        self.scratch_directory.mkdir(parents=True, exist_ok=True, mode=0o700)
+        os.chmod(self.scratch_directory, 0o700)
+        descriptor, raw_path = tempfile.mkstemp(prefix="pointer-", dir=self.scratch_directory)
+        path = Path(raw_path)
+        try:
+            os.fchmod(descriptor, 0o600)
+            with os.fdopen(descriptor, "wb") as handle:
+                handle.write(data); handle.flush(); os.fsync(handle.fileno())
+            try:
+                result = self.drive.update(
+                    object_id, file_uri=str(path.resolve(strict=True)), mime_type=mime_type,
+                )
+            except Exception as exc:
+                recovered = self.read(object_id)
+                mismatch = _failed_create_readback_checks(
+                    recovered, parent_id=parent_id, name=name, data=data,
+                    admitted_mime_types=frozenset({mime_type}),
+                )
+                if mismatch:
+                    raise OSError("Drive pointer update outcome is unknown") from exc
+                return recovered
+        finally:
+            path.unlink(missing_ok=True)
+        if (
+            not isinstance(result, Mapping) or result.get("success") is not True
+            or result.get("id") != object_id
+        ):
+            recovered = self.read(object_id)
+            mismatch = _failed_create_readback_checks(
+                recovered, parent_id=parent_id, name=name, data=data,
+                admitted_mime_types=frozenset({mime_type}),
+            )
+            if mismatch:
+                raise InstallationError("Drive pointer update receipt and readback differ")
+            return recovered
+        readback = self.read(object_id)
+        mismatch = _failed_create_readback_checks(
+            readback, parent_id=parent_id, name=name, data=data,
+            admitted_mime_types=frozenset({mime_type}),
+        )
+        if mismatch:
+            raise InstallationError("Drive pointer update readback mismatch: " + ", ".join(mismatch))
         return readback
 
 

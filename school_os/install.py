@@ -90,6 +90,15 @@ class CreateOnlyStorage(ReferenceStorage, Protocol):
     def create_file(self, parent_id: str, name: str, data: bytes, mime_type: str) -> StoredObject: ...
 
 
+class HybridMutableStorage(CreateOnlyStorage, Protocol):
+    """Finite storage surface for publishing one successor state generation."""
+
+    def replace_file(
+        self, object_id: str, parent_id: str, name: str, data: bytes,
+        mime_type: str, expected_version: str,
+    ) -> StoredObject: ...
+
+
 def _hybrid_reference(object_: StoredObject, root_id: str, *, include_version: bool = True) -> dict[str, Any]:
     """Return an exact direct-child reference from one verified write/read receipt."""
     if (
@@ -293,7 +302,6 @@ def install_hybrid_generation(
         "settings_reference": _hybrid_reference(settings_object, root.object_id),
         "settings_sha256": settings_sha256,
         "source_identity": package_value["source_identity"],
-        "state_reference": _hybrid_reference(state_object, root.object_id),
         "system_version": package_value["version"],
     }
     _validated(bootstrap, Path(__file__).resolve().parents[1], "bootstrap-descriptor.schema.json", "bootstrap descriptor")
@@ -343,11 +351,13 @@ def recover_hybrid_generation(
     _validated(current, Path(__file__).resolve().parents[1], "current-state.schema.json", "current state pointer")
     state = _require_mapping(current.get("state"), "current state bundle reference")
     _required_keys(state, {"bundle_reference", "bundle_sha256", "identity"}, "current state bundle reference")
-    if state.get("bundle_reference") != bootstrap.get("state_reference") or current.get("generation") != 1:
-        raise InstallationError("initial current pointer disagrees with bootstrap state")
+    generation = current.get("generation")
+    expected_identity = f"state-{generation:06d}" if isinstance(generation, int) and not isinstance(generation, bool) else ""
+    if state.get("identity") != expected_identity:
+        raise InstallationError("current pointer generation disagrees with its state identity")
     state_object = _hybrid_read(
         storage, state["bundle_reference"], root_id=root.object_id,
-        name=INITIAL_STATE_PATH, admitted_mime_types=frozenset({STATE_BUNDLE_MIME}),
+        name=f"{expected_identity}.bundle", admitted_mime_types=frozenset({STATE_BUNDLE_MIME}),
     )
     package_bytes = package_object.data or b""
     settings_bytes = settings_object.data or b""
@@ -376,9 +386,14 @@ def recover_hybrid_generation(
         or manifest.get("package_sha256") != bootstrap.get("package_sha256")
         or manifest.get("settings_sha256") != bootstrap.get("settings_sha256")
         or manifest.get("configuration_fingerprint") != current.get("configuration_fingerprint")
-        or manifest.get("predecessor") is not None
     ):
         raise InstallationError("current state bundle bindings disagree with bootstrap/current")
+    previous = current.get("previous")
+    expected_predecessor = None if previous is None else {
+        "identity": previous.get("identity"), "sha256": previous.get("bundle_sha256"),
+    }
+    if manifest.get("predecessor") != expected_predecessor:
+        raise InstallationError("current state predecessor disagrees with the pointer")
     return {
         "bootstrap": bootstrap,
         "bootstrap_reference": dict(bootstrap_reference),
@@ -387,6 +402,122 @@ def recover_hybrid_generation(
         "package_archive": package_bytes,
         "settings": settings_bytes,
         "state": verified_state,
+    }
+
+
+def _validated_serialization(value: Any) -> dict[str, Any]:
+    if not isinstance(value, Mapping) or set(value) != {"mode", "evidence"}:
+        raise InstallationError("state publication requires exact serialization evidence")
+    mode, evidence = value.get("mode"), value.get("evidence")
+    if not isinstance(evidence, Mapping):
+        raise InstallationError("state publication serialization evidence must be an object")
+    required = {
+        "attended_single_writer": {
+            "actor_id", "attempt_id", "scheduler_inactive",
+            "competing_mutators_excluded", "observed_at",
+        },
+        "runtime_serialized": {
+            "instance_key", "queue_receipt", "competing_mutators_excluded",
+            "observed_at",
+        },
+        "native_conditional": {
+            "expected_version", "precondition_receipt", "observed_at",
+        },
+    }.get(mode)
+    if required is None or set(evidence) != required:
+        raise InstallationError("state publication serialization mode/evidence is unsupported")
+    if any(
+        not isinstance(evidence[key], str) or not evidence[key]
+        for key in required - {"scheduler_inactive", "competing_mutators_excluded"}
+    ):
+        raise InstallationError("state publication serialization text evidence is incomplete")
+    for key in required & {"scheduler_inactive", "competing_mutators_excluded"}:
+        if evidence[key] is not True:
+            raise InstallationError("state publication does not prove writer exclusion")
+    return {"mode": mode, "evidence": dict(evidence)}
+
+
+def publish_hybrid_state(
+    storage: HybridMutableStorage, *, recovery: Mapping[str, Any],
+    state_entries: Mapping[str, BundleEntry], serialization: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Publish an immutable successor, then advance and verify CURRENT exactly."""
+    bootstrap = _require_mapping(recovery.get("bootstrap"), "recovered bootstrap")
+    current = _require_mapping(recovery.get("current"), "recovered current pointer")
+    current_reference = _require_mapping(recovery.get("current_reference"), "recovered current reference")
+    previous_state = _require_mapping(current.get("state"), "recovered current state")
+    root_reference = _require_mapping(bootstrap.get("root_reference"), "recovered root reference")
+    root_id = root_reference.get("object_id")
+    if not isinstance(root_id, str) or not root_id:
+        raise InstallationError("recovered root identity is invalid")
+    observed = _hybrid_read(
+        storage, current_reference, root_id=root_id, name=HYBRID_CURRENT_PATH,
+        admitted_mime_types=frozenset({JSON_MIME}),
+    )
+    if observed.data != canonical_json_bytes(current):
+        raise InstallationError("current pointer changed before state publication")
+    generation = current.get("generation")
+    if isinstance(generation, bool) or not isinstance(generation, int) or generation < 1 or generation >= 999_999:
+        raise InstallationError("current generation cannot advance")
+    next_generation = generation + 1
+    next_identity = f"state-{next_generation:06d}"
+    serialization_value = _validated_serialization(serialization)
+    try:
+        state_bytes = build_bundle(
+            bundle_kind="state", identity=next_identity,
+            instance_id=bootstrap["instance_id"],
+            package_sha256=bootstrap["package_sha256"],
+            settings_sha256=bootstrap["settings_sha256"],
+            configuration_fingerprint=current["configuration_fingerprint"],
+            entries=state_entries,
+            predecessor={
+                "identity": previous_state["identity"],
+                "sha256": previous_state["bundle_sha256"],
+            },
+        )
+    except (BundleError, KeyError) as exc:
+        raise InstallationError(f"successor state bundle is invalid: {exc}") from exc
+    state_object = _hybrid_create_or_adopt(
+        storage, parent_id=root_id, name=f"{next_identity}.bundle",
+        data=state_bytes, mime_type=STATE_BUNDLE_MIME,
+    )
+    next_state = _bundle_state_reference(
+        state_object, root_id, state_bytes, next_identity,
+    )
+    successor = {
+        "configuration_fingerprint": current["configuration_fingerprint"],
+        "generation": next_generation,
+        "package_sha256": current["package_sha256"],
+        "previous": previous_state,
+        "schema_version": 1,
+        "serialization": serialization_value,
+        "settings_sha256": current["settings_sha256"],
+        "state": next_state,
+    }
+    successor_bytes = canonical_json_bytes(successor)
+    _validated(successor, Path(__file__).resolve().parents[1], "current-state.schema.json", "successor current pointer")
+    version = current_reference.get("version")
+    if not isinstance(version, str) or not version:
+        raise InstallationError("current pointer lacks the expected version evidence")
+    try:
+        written = storage.replace_file(
+            current_reference["object_id"], root_id, HYBRID_CURRENT_PATH,
+            successor_bytes, JSON_MIME, version,
+        )
+    except OSError as exc:
+        candidate = storage.read(current_reference["object_id"])
+        if candidate is None or candidate.data != successor_bytes:
+            raise InstallationError("current pointer update outcome is unknown") from exc
+        written = candidate
+    written_reference = _hybrid_reference(written, root_id)
+    if written.name != HYBRID_CURRENT_PATH or written.mime_type != JSON_MIME or written.data != successor_bytes:
+        raise InstallationError("successor current pointer readback differs")
+    verified = read_bundle(state_bytes, expected_kind="state")
+    return {
+        **dict(recovery),
+        "current": successor,
+        "current_reference": written_reference,
+        "state": verified,
     }
 
 

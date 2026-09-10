@@ -2786,3 +2786,30 @@ requirements, then read this log from top to bottom.
   occurred. Next: publish this core checkpoint, compose the real settings and
   initial logical entries in connected setup, separate projection binding, and
   route connected bootstrap recovery through these five objects.
+
+## 2026-09-09 — recovery MVP immutable successor publication
+
+- Published and remotely verified the five-object installer core at exact
+  commit `95a3a08`.
+- Corrected bootstrap admission so the immutable descriptor binds the stable
+  current-pointer identity but does not pin generation 1. `CURRENT.json` alone
+  names the current immutable state and previous generation, allowing later
+  publication without rewriting bootstrap or introducing a circular hash.
+- Added successor publication: verify the current base/version, require exact
+  admitted writer-exclusion evidence, build and verify one immutable successor,
+  create it first, replace/read back `CURRENT.json` second, and preserve the
+  prior state reference. Lost pointer-update responses adopt only the exact
+  intended bytes by the existing pointer ID; they never cause an automatic
+  second mutation.
+- Added the finite connected Drive pointer replacement surface. It labels its
+  pre-read explicitly as a drift guard rather than compare-and-swap, performs
+  complete byte readback, and preserves the byte-proven gzip MIME equivalence
+  for the new package filename.
+- Focused tests cover predecessor preservation, recovery following generation
+  2, insufficient serialization evidence blocking before creation, and exact
+  lost-response adoption. The complete frozen-interpreter validation passes 346
+  tests plus schema/template checks. No provider call or external effect
+  occurred.
+- Next: publish this successor checkpoint, then compose human-readable settings
+  and initial logical bundle members in the connected setup route. Projection
+  initialization/binding remains deliberately after five-object admission.

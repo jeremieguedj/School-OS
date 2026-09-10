@@ -168,9 +168,11 @@ Installation ordering is:
    or an actually returned provider SHA-256 bound to that exact version.
 4. Create and verify `CURRENT.json`, naming generation 1 and the verified state
    object/hash. It records no prior generation.
-5. Create and verify `BOOTSTRAP.json`, naming the exact root and the four prior
-   objects and hashes. The host bootstrap receipt supplies the exact bootstrap
-   object reference; `BOOTSTRAP.json` never self-references.
+5. Create and verify `BOOTSTRAP.json`, naming the exact root, package, settings,
+   and stable current-pointer identity and immutable hashes. The state generation
+   is named only by the pointer so bootstrap does not stale after publication.
+   The host bootstrap receipt supplies the exact bootstrap object reference;
+   `BOOTSTRAP.json` never self-references.
 6. Recover once from that host receipt in a new local directory. Verify root,
    bootstrap, package, settings, current pointer, current bundle, every required
    member, package inventory, configuration fingerprint, and entrypoint before

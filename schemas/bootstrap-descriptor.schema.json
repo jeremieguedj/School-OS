@@ -4,7 +4,7 @@
   "title": "School-OS five-object installation bootstrap descriptor",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "instance_id", "root_reference", "package_reference", "package_sha256", "package_inventory_sha256", "settings_reference", "settings_sha256", "current_reference", "state_reference", "source_identity", "system_version", "runtime"],
+  "required": ["schema_version", "instance_id", "root_reference", "package_reference", "package_sha256", "package_inventory_sha256", "settings_reference", "settings_sha256", "current_reference", "source_identity", "system_version", "runtime"],
   "properties": {
     "schema_version": {"const": 1},
     "instance_id": {"type": "string", "minLength": 1},
@@ -15,7 +15,6 @@
     "settings_reference": {"type": "object"},
     "settings_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "current_reference": {"type": "object"},
-    "state_reference": {"type": "object"},
     "source_identity": {
       "type": "object",
       "additionalProperties": false,

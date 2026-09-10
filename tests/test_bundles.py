@@ -12,7 +12,7 @@ from school_os.contracts import canonical_json_bytes, sha256_bytes, validate
 from school_os.install import (
     HYBRID_BOOTSTRAP_PATH, HYBRID_CURRENT_PATH, HYBRID_PACKAGE_PATH,
     HYBRID_SETTINGS_PATH, INITIAL_STATE_PATH, InstallationError,
-    install_hybrid_generation, recover_hybrid_generation,
+    install_hybrid_generation, publish_hybrid_state, recover_hybrid_generation,
 )
 from school_os.package import inventory_bytes
 from school_os.references import StoredObject
@@ -106,11 +106,13 @@ class BundleTests(unittest.TestCase):
 
 
 class HybridStorage:
-    def __init__(self, lose_name=None):
+    def __init__(self, lose_name=None, lose_replace=False):
         self.objects = {}
         self.creates = []
         self.reads = []
         self.lose_name = lose_name
+        self.lose_replace = lose_replace
+        self.replaces = 0
 
     def create_file(self, parent_id, name, data, mime_type):
         self.creates.append(name)
@@ -130,6 +132,21 @@ class HybridStorage:
 
     def list_scoped(self, parent_id):
         return [item for item in self.objects.values() if item.parent_id == parent_id]
+
+    def replace_file(self, object_id, parent_id, name, data, mime_type, expected_version):
+        self.replaces += 1
+        current = self.objects[object_id]
+        if (
+            current.parent_id != parent_id or current.name != name
+            or current.mime_type != mime_type or current.version != expected_version
+        ):
+            raise InstallationError("synthetic replacement guard failed")
+        written = replace(current, data=data, version=f"replacement-{self.replaces}")
+        self.objects[object_id] = written
+        if self.lose_replace:
+            self.lose_replace = False
+            raise OSError("synthetic lost replacement response")
+        return written
 
 
 def package_fixture():
@@ -160,6 +177,14 @@ class HybridInstallTests(unittest.TestCase):
     runtime = {
         "implementation": "CPython", "python_version": "3.12.14",
         "dependency_fingerprint": "d" * 64,
+    }
+    serialization = {
+        "mode": "attended_single_writer",
+        "evidence": {
+            "actor_id": "actor-test", "attempt_id": "attempt-test",
+            "scheduler_inactive": True, "competing_mutators_excluded": True,
+            "observed_at": "2026-09-09T00:00:00Z",
+        },
     }
 
     def state_entries(self):
@@ -221,6 +246,50 @@ class HybridInstallTests(unittest.TestCase):
             bootstrap_reference=recovery["bootstrap_reference"],
         )
         self.assertEqual("version-new", reread["current_reference"]["version"])
+
+    def test_successor_preserves_previous_and_recovery_follows_current(self):
+        storage = HybridStorage()
+        initial = self.install(storage)
+        entries = self.state_entries()
+        entries["data/guidelines.json"] = BundleEntry(
+            canonical_json_bytes({"schema_version": 1, "guidelines": ["one"]}),
+            "guidelines", "application/json",
+        )
+        successor = publish_hybrid_state(
+            storage, recovery=initial, state_entries=entries,
+            serialization=self.serialization,
+        )
+        self.assertEqual(2, successor["current"]["generation"])
+        self.assertEqual("state-000001", successor["current"]["previous"]["identity"])
+        self.assertEqual("state-000002", successor["current"]["state"]["identity"])
+        self.assertEqual(6, len(storage.objects))
+        recovered = recover_hybrid_generation(
+            storage, root_reference=self.root,
+            bootstrap_reference=successor["bootstrap_reference"],
+        )
+        self.assertIn("data/guidelines.json", recovered["state"].entries)
+
+    def test_invalid_writer_evidence_blocks_before_successor_create(self):
+        storage = HybridStorage()
+        initial = self.install(storage)
+        invalid = json.loads(json.dumps(self.serialization))
+        invalid["evidence"]["scheduler_inactive"] = False
+        with self.assertRaisesRegex(InstallationError, "writer exclusion"):
+            publish_hybrid_state(
+                storage, recovery=initial, state_entries=self.state_entries(),
+                serialization=invalid,
+            )
+        self.assertEqual(5, len(storage.objects))
+
+    def test_lost_pointer_response_adopts_exact_successor_without_retry(self):
+        storage = HybridStorage(lose_replace=True)
+        initial = self.install(storage)
+        successor = publish_hybrid_state(
+            storage, recovery=initial, state_entries=self.state_entries(),
+            serialization=self.serialization,
+        )
+        self.assertEqual(1, storage.replaces)
+        self.assertEqual(2, successor["current"]["generation"])
 
 
 if __name__ == "__main__":
