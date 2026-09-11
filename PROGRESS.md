@@ -3839,3 +3839,48 @@ requirements, then read this log from top to bottom.
   isolated agent-owned Sheet; then repeat the same private four-day,
   image-excluded journey through cold-recovered `PREVIEW_READY` using only
   packet-bound independent expectations.
+
+## 2026-09-10 — fresh packet-bound four-day preview passes both repairs
+
+- Committed and pushed `6eb787e80f01da722f250cc4a7b1c6d9a61c04f6`.
+  The focused gate passed 59 tests; the complete qualified CPython 3.12.14 gate
+  passed 387 tests plus schema/template validation, privacy scan and diff
+  checks. The immutable `0.1.0-alpha.13` package passes extracted-package and
+  checksum verification.
+- Created a new folder under the authorized test parent, proved its exact
+  parent/type/identity and empty child inventory, then installed exactly five
+  initial files. Installation used 30 connector calls: five uploads, 12
+  metadata reads, ten byte fetches and three scoped listing calls. No connector
+  result reported an error. A new native Sheet was created only after
+  admission, populated by the instance agent with its private layout, read
+  completely and bound as the selected projection in generation 2.
+- The unchanged frozen four-day source scope completed nine conversations and
+  nine raw-message custody members. Fresh independent review produced nine
+  packet-bound expectations and 27 source-linked Facts. The prior and current
+  catalogs share eight records with no removals; the two shared records that
+  previously used zero-Fact notes now produce six Facts, while one newly
+  discovered record produces eight. All nine private expectation packet hashes
+  equal the nine accepted audit packet hashes. Attachment, direct-resource and
+  image reads were zero. Source publication committed generation 3 without
+  advancing the eligible cursor.
+- A complete empty Sheet snapshot planned three canonical task creations. Each
+  authorization was durably current before its guarded native write; each blank
+  target row was written once, read back exactly and confirmed in Drive. The
+  same run directory completed three `authorize` phases at generations 5, 7
+  and 9, proving the second-authorize filename collision is repaired while
+  exclusive same-generation overwrite protection remains tested. No pending
+  action or review case remains.
+- Finish published and exactly reread one immutable output bundle containing
+  nonempty brief input, HTML and text, committed the eligible cursor last, and
+  returned terminal generation 11 `PREVIEW_READY`. Delivery state has no
+  reservation or effect; no email, audio, Todoist or scheduler call occurred.
+  A separate Drive-only cold recovery selected generation 11. Static final
+  validation matched all source/member hashes, Fact indexes, private packet
+  bindings, three Sheet canonical IDs, three Drive task bindings and output
+  member hashes.
+- Private receipts and the final sanitized summary are under
+  `private/mvp-recovery/artifacts/live-6eb787e-4d/`; connector exchanges are
+  under `private/mvp-recovery/runs/live-6eb787e-4d-*`. Next: preserve this
+  compatibility gate, then resume the recovery plan's distinct final 14-day
+  Todoist switch, two-send, audio, interruption/replay, scheduler-disable and
+  fresh-session acceptance chain from a new final root when authorized.

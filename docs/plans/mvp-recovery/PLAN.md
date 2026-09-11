@@ -382,6 +382,22 @@ name local preview state by phase and committed generation while retaining
 exclusive creation. Both repairs need focused regression, a rebuilt package and
 one new empty compatibility root. They do not change source meaning, canonical
 data, Drive layout, provider contracts or the temporary image policy.
+The exact `6eb787e80f01da722f250cc4a7b1c6d9a61c04f6` package then
+qualified those repairs in a new verified-empty root and new isolated
+agent-owned Sheet. The unchanged frozen four-day source scope committed nine
+complete records, nine raw-message custody members and 27 source-linked Facts.
+Every accepted semantic audit matched one of nine independently reviewed exact
+packet hashes. The two prior zero-Fact records produced six Facts when reviewed
+against their own packets, and one newly discovered record produced eight
+Facts; no prior record disappeared. Three canonical task actions were made
+current before dispatch, written to blank rows, read back exactly and confirmed
+without review or pending work. Two same-named authorization phases completed
+in one run directory with distinct generation-qualified artifacts. Terminal
+generation 11 stored and reread nonempty HTML/text output, advanced the eligible
+cursor last and returned `PREVIEW_READY`; delivery remained unreserved/unsent.
+Final Drive-only recovery, exact source/output bundle checks and Sheet/Drive
+canonical-ID comparison passed. Attachment, direct-resource and image reads
+were zero.
 For the later final recovery acceptance, use the Phase 0 `window_start_ms` and
 `window_end_ms` 14-day `[start,end)` bounds, recorded only in private evidence.
 Use a new

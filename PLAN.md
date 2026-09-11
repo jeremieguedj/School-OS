@@ -38,18 +38,19 @@ returns complete normalized snapshots and verified readbacks. The existing
 fixed-layout Sheet implementation is reference evidence, not active generic
 routing.
 
-The installed `970d9b2` agent-task package completed the four-day compatibility
-journey through Drive generation 9 and terminal `PREVIEW_READY`: eight complete
-conversations, 13 source-linked Facts, two canonically confirmed agent-operated
-Sheet actions, an immutable HTML/text output bundle, cursor-last completion,
-and fresh Drive recovery all passed with image reads disabled. Delivery stayed
-unreserved and unsent. Qualification then exposed two narrow defects: private
-zero-Fact expectation notes were not themselves bound to the exact packet even
-though the resulting canonical audit was, and repeated preview phases reused a
-fixed local filename. Packet-bound expectation evidence and
-generation-qualified preview filenames are now the active compatible repair.
-Executable bytes change, so final qualification requires a rebuilt package and
-a new empty root; the completed `970d9b2` root remains diagnosis evidence only.
+The exact `6eb787e80f01da722f250cc4a7b1c6d9a61c04f6` package has now
+qualified both compatible repairs in a new empty root and new isolated
+agent-owned Sheet. The unchanged frozen four-day scope produced nine complete
+conversations, 27 source-linked Facts, three canonically confirmed Sheet
+actions and terminal generation 11 `PREVIEW_READY`. All nine independent
+semantic expectations matched the exact accepted packet hashes. Two records
+that previously used unbound zero-Fact notes produced six Facts under fresh
+packet-bound review; one newly discovered record produced eight more. Repeated
+`authorize` phases in one run directory produced distinct generation-qualified
+artifacts without overwrite. Exact source/output readback, Sheet identity
+comparison and Drive-only cold recovery passed. Images and other binary reads
+remained disabled; delivery stayed unreserved and unsent. The earlier
+`970d9b2` root remains diagnosis evidence only.
 
 The private execution values and unsanitized reference adapter receipts live
 only in
