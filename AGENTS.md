@@ -50,3 +50,9 @@ When a live connector response exposes a possible runtime defect:
    the adapter boundary, then test immediate create/readback and the
    lost-response recovery pass against the observed connector shape. A fixture
    that echoes the write request verbatim cannot prove provider readback.
+9. Bind every private independent semantic expectation to the exact packet
+   hash and ordered segment identities/content hashes before it can generate an
+   interpretation or audit response. An empty candidate list is a substantive
+   zero-Fact decision, not a reusable default. Prove with a cross-packet test
+   that a zero-Fact expectation for one packet is rejected for every other
+   packet.

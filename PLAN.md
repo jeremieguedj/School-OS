@@ -38,21 +38,18 @@ returns complete normalized snapshots and verified readbacks. The existing
 fixed-layout Sheet implementation is reference evidence, not active generic
 routing.
 
-The current four-day compatibility run has now passed exact source ingestion on
-the installed `263b152` package: eight complete conversations and their audited
-Facts are canonical in Drive generation 3, image fetches remained disabled, and
-a separate cold recovery revalidated that generation. Phase 1 remains active at
-the explicit `reconcile` continuation boundary; canonical task projection,
-unsent brief rendering, and cursor-last completion are not yet claimed.
-
-The first live Sheet continuation exposed one exact adapter defect after the
-provider accepted the task row: a missing native blank `Source Due` cell was
-returned as null while the canonical projection uses an empty string. The
-pre-dispatch checkpoint correctly left the effect unknown and recovery refused
-the apparent conflict. The generic adapter normalization and a provider-shaped
-regression are now implemented and validated; this changes runtime code, so the
-failed root remains evidence only and the next execution must use a rebuilt
-package and a new empty root.
+The installed `970d9b2` agent-task package completed the four-day compatibility
+journey through Drive generation 9 and terminal `PREVIEW_READY`: eight complete
+conversations, 13 source-linked Facts, two canonically confirmed agent-operated
+Sheet actions, an immutable HTML/text output bundle, cursor-last completion,
+and fresh Drive recovery all passed with image reads disabled. Delivery stayed
+unreserved and unsent. Qualification then exposed two narrow defects: private
+zero-Fact expectation notes were not themselves bound to the exact packet even
+though the resulting canonical audit was, and repeated preview phases reused a
+fixed local filename. Packet-bound expectation evidence and
+generation-qualified preview filenames are now the active compatible repair.
+Executable bytes change, so final qualification requires a rebuilt package and
+a new empty root; the completed `970d9b2` root remains diagnosis evidence only.
 
 The private execution values and unsanitized reference adapter receipts live
 only in

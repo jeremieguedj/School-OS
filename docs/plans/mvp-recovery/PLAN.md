@@ -366,6 +366,22 @@ designed and did not create a duplicate. The adapter now normalizes only that
 optional empty field and includes a provider-shaped regression. Because
 executable code changed, the attempted root is evidence only; rebuild the
 package and start another new empty root.
+The subsequent exact `970d9b2` agent-task package completed a new isolated
+four-day journey through terminal `PREVIEW_READY`. Eight complete conversations
+produced 13 source-linked Facts; two canonical tasks were durably authorized,
+applied by the instance agent to its private Sheet layout, read back exactly and
+confirmed in Drive. The immutable HTML/text output and eligible cursor were
+committed last, delivery remained unreserved/unsent, image reads remained zero,
+and Drive-only recovery selected the terminal generation. Two qualification
+defects remain narrow and compatible: a zero-Fact private expectation could be
+reused against a different packet because the expectation note lacked packet
+identity, and a second phase of the same name collided with the first phase's
+fixed local state filename. Require an exact packet hash plus ordered segment
+identity/content hashes for every expectation, including empty candidate lists;
+name local preview state by phase and committed generation while retaining
+exclusive creation. Both repairs need focused regression, a rebuilt package and
+one new empty compatibility root. They do not change source meaning, canonical
+data, Drive layout, provider contracts or the temporary image policy.
 For the later final recovery acceptance, use the Phase 0 `window_start_ms` and
 `window_end_ms` 14-day `[start,end)` bounds, recorded only in private evidence.
 Use a new

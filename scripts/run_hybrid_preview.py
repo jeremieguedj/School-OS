@@ -53,7 +53,10 @@ def _updated_runtime(document: dict[str, Any], transaction: Any, storage: Any, r
     state_object = storage.read(state_reference["object_id"])
     if state_object is None or state_object.data is None or sha256_bytes(state_object.data) != current["state"]["bundle_sha256"]:
         raise ValueError("preview state bundle exact readback disagrees")
-    path = run_directory / f"preview-{phase}-state.bundle"
+    generation = current.get("generation")
+    if not isinstance(generation, int) or isinstance(generation, bool) or generation < 1:
+        raise ValueError("preview current pointer lacks a valid generation")
+    path = run_directory / f"preview-{phase}-generation-{generation:06d}.state.bundle"
     _write_new(path, state_object.data)
     return {
         **document, "current": current,

@@ -3788,3 +3788,54 @@ requirements, then read this log from top to bottom.
   effect occurred. Next: obtain explicit authorization for the private
   settings payload at the isolated canonical Drive destination, then resume on
   a verified-empty root with the same exact package and qualified interpreter.
+
+## 2026-09-10 — agent-operated four-day preview completes; two qualification defects repaired
+
+- With explicit authorization for the private settings payload, the exact
+  `970d9b2e4a7a8cabbf23af31eb79d73c1ea9930d` package completed its five-file
+  installation, generic post-install task binding and Drive cold recovery in a
+  new isolated root. The bounded image-excluded ingestion committed eight
+  complete source conversations, eight raw-message custody members and 13
+  source-linked Facts. Exact source-bundle readback and a second Drive recovery
+  validated the catalog, Facts/indexes and unchanged eligible cursor at the
+  intermediate `reconcile` boundary; attachment, direct-resource and image
+  reads remained zero.
+- A complete agent-owned Sheet snapshot produced two canonical task actions.
+  Each action was made current as unknown before the native write, translated
+  by the instance agent into its private layout, read back exactly and then
+  confirmed in Drive with stable semantic identity. The second authorization
+  committed successfully but the installed wrapper then collided with the
+  first authorization's fixed local state filename. No second provider action
+  was attempted: a new private directory cold-recovered the one exact unknown
+  action, after which its guarded write and confirmation completed without a
+  duplicate.
+- The installed finish path stored and reread an immutable HTML/text output
+  bundle, advanced the eligible source cursor only in terminal generation 9,
+  and returned `PREVIEW_READY`. Delivery remained unreserved and unsent; no
+  audio, Todoist, scheduler or production effect occurred. A final cold
+  recovery selected the complete operation state.
+- Content review also exposed that the private expectation helper could accept
+  several legacy zero-Fact notes for one current packet. The canonical semantic
+  audit binds its packet hash, but an empty private candidate list had no span
+  that bound the independent review decision to that packet. Therefore the
+  affected zero-Fact classifications were not sufficient independent
+  correctness evidence even though source custody remained exact.
+- Added `school_os.semantic_expectations` to require the exact packet hash,
+  catalog identity, ordered segment/content hashes and auxiliary-inventory
+  hashes before any private expectation can drive a response. Added a
+  cross-packet zero-Fact rejection test, text-tamper and unknown-field tests,
+  and developer guidance in `AGENTS.md`. Updated the private live helper to use
+  this gate.
+- Changed the installed preview runtime artifact name to include its committed
+  generation while retaining exclusive creation. A focused repeated-authorize
+  regression proves two same-named phases in one directory produce distinct
+  artifacts and an exact same-generation replay still cannot overwrite.
+- Focused semantic/ingestion/task/bootstrap validation passes 59 tests. The
+  complete qualified-Python gate passes 387 tests plus schema and template
+  validation, and the tracked privacy scan passes. No provider call occurred
+  while implementing these repairs.
+- Next: commit, push and remotely verify the compatible repair; build and
+  validate the exact immutable package; create a new empty authorized root and
+  isolated agent-owned Sheet; then repeat the same private four-day,
+  image-excluded journey through cold-recovered `PREVIEW_READY` using only
+  packet-bound independent expectations.
