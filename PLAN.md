@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: recovery MVP live acceptance repair in progress; a false MIME-versus-extracted-content semantic check is fixed and fully validated, and one repaired package/new empty 14-day instance is the next gate
+Status: recovery MVP live acceptance repair in progress; the repaired semantic package passed install/bind/cold recovery, and exact private attachment receipts now prove the subsequent ignored-preview locator fix before one rebuilt package/new empty 14-day instance
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 ## Next-release planning
@@ -70,9 +70,18 @@ validator defect: body MIME-accounting identifiers were compared with the full
 packet that also contains already-validated extracted PDF/resource segments.
 The repair separates those sets and preserves both strict checks. A privacy
 scanner false positive on the runtime audio-key environment lookup was also
-narrowed without allowing literal secrets. Focused tests and the complete
-repository validator pass; commit/package freeze is the remaining static gate
-before one new clean 14-day acceptance environment is created.
+narrowed without allowing literal secrets. That exact package then passed a new
+five-file installation, post-admission Sheet binding, and cold recovery. Its
+live ingestion exposed a second finite compatibility defect before publication:
+the connector's optional extracted-preview reference used its internal
+`sediment:` locator even though the original attachment reference remained
+direct HTTPS. The adapter now validates that finite preview transport shape but
+continues to ignore it and fetch/verify only the original bytes. Two exact
+private receipts reach the original-resource fetch through the repair;
+malformed or surplus preview metadata still blocks. Focused tests and the
+complete repository validator pass. Because executable bytes changed,
+commit/package freeze and one new clean 14-day acceptance environment remain
+the next gate.
 
 The private execution values and unsanitized reference adapter receipts live
 only in

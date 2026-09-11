@@ -4028,3 +4028,48 @@ requirements, then read this log from top to bottom.
   changed, the `a9a29b7` root is diagnostic evidence only. Next: commit, push
   and remotely verify this repair; build and validate its exact immutable
   package; then create one new empty 14-day root and resume the full live chain.
+
+## 2026-09-11 — exact extracted-preview locator failure replayed and repaired
+
+- Published semantic-accounting and privacy-scan repairs at exact source
+  commit `84aec1d5a409441deef73234de492b0e9dfd1723`; the remote recovery branch
+  was verified at the same commit. Its immutable `0.1.0-alpha.13` package has
+  SHA-256
+  `4c817f3943782a9a98b280ea7f8214d55d454fa387f03dfa0a0c49c64294df5b`
+  and passed installed validation under the privately fingerprinted CPython
+  3.12.14 runtime.
+- A new exact empty root accepted the five-file hybrid installation in 30
+  bridge requests. Separate cold recovery used 13 requests. A new isolated
+  native Sheet was created only after admission, read completely, and bound as
+  the selected agent-managed projection at Drive generation 2; a second cold
+  recovery revalidated that state in 13 requests.
+- The installed image-excluded 14-day ingestion completed 71 bounded bridge
+  requests and stopped before any source publication with the local sanitized
+  error `resource URL is not direct HTTPS`. No source checkpoint, cursor,
+  canonical task, delivery, audio, Todoist, or scheduler effect occurred. The
+  connector attachment calls themselves succeeded; this is not evidence of a
+  Google quota or rate-limit failure.
+- The exact private attachment receipts showed that the original file locator
+  remained direct HTTPS while an optional, ignored complete-extraction preview
+  used a connector-internal `sediment:` locator. The adapter had incorrectly
+  applied the original-resource HTTPS rule to that noncanonical preview. It now
+  validates only the observed finite preview-reference shape, accepts direct
+  HTTPS or the finite internal locator, ignores the preview, and continues to
+  fetch and verify the original attachment bytes. Wrong schemes, missing
+  authority, fragments, wrong preview MIME, and unknown surplus remain
+  blocking.
+- Both exact mode-0600 receipts replay through the repaired dispatcher/adapter
+  boundary and reach the original-resource fetch. The privacy-safe replay
+  summary is
+  `private/mvp-recovery/artifacts/final-84aec1d/extraction-locator-replay.json`
+  with SHA-256
+  `8de28dfdcc1746350a9ef276057598963dce077fb9d28651389bac5330477f8a`.
+  Focused source/bridge/ingestion validation passes 55 tests; the complete
+  qualified validator passes 434 tests plus schemas, manifests, release smoke,
+  privacy, and diff checks.
+- This is a compatible connector-boundary repair, not an architecture change.
+  Because executable bytes changed, the installed root is retained as
+  diagnostic evidence only. Next: commit, push, and remotely verify the repair;
+  build and validate its exact immutable package; then create one new empty
+  final root and resume the 14-day live ingestion through canonical publication
+  and validation.

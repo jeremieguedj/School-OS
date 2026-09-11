@@ -1,9 +1,12 @@
 # School-OS recovery MVP plan and implementation specification
 
-- Status: recovery live acceptance in progress; Phase 0, the four-day Phase 1
-  compatibility preview, and consolidated Phase 2 implementation/package
-  qualification are complete; the final 14-day instance is installed,
-  cold-recovered, and bound to its isolated Sheet at Drive generation 2
+- Status: recovery live acceptance repair in progress; Phase 0, the four-day
+  Phase 1 compatibility preview, and consolidated Phase 2 implementation are
+  complete; the latest diagnostic 14-day instance installed, cold-recovered,
+  bound its isolated Sheet at Drive generation 2, and exposed one compatible
+  ignored-preview locator defect before source publication. The exact private
+  receipts now pass the repaired boundary and the complete static gate; commit,
+  package rebuild, and one new empty final root are the next acceptance gate.
 - Written: 2026-09-09
 - Release identity: record the early candidate in Phase 0 and freeze the final
   identity in Phase 2; do not assume that `main`,

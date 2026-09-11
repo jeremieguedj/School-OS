@@ -73,6 +73,36 @@ def _https(value: Any) -> str:
     return value
 
 
+def _ignored_extraction_reference(value: Any) -> None:
+    """Validate the connector's noncanonical extracted-preview locator."""
+    if (
+        not isinstance(value, Mapping)
+        or set(value) - {"download_url", "file_id", "file_name", "mime_type"}
+        or not isinstance(value.get("file_id"), str)
+        or not value["file_id"]
+        or (
+            value.get("file_name") is not None
+            and not isinstance(value.get("file_name"), str)
+        )
+        or value.get("mime_type") not in (None, "application/json")
+    ):
+        raise ConnectedSourcesError("Gmail complete extraction file reference is malformed")
+    locator = value.get("download_url")
+    if not isinstance(locator, str) or any(
+        ord(character) <= 32 or ord(character) == 127 for character in locator
+    ):
+        raise ConnectedSourcesError("Gmail complete extraction file reference is malformed")
+    parsed = urlparse(locator)
+    if parsed.scheme == "https":
+        _https(locator)
+    elif (
+        parsed.scheme != "sediment" or not parsed.hostname
+        or parsed.username or parsed.password or parsed.fragment
+        or parsed.hostname.endswith(".")
+    ):
+        raise ConnectedSourcesError("Gmail complete extraction file reference is malformed")
+
+
 def _remaining_seconds(deadline: float, clock: Callable[[], float]) -> float:
     remaining = deadline - clock()
     if remaining <= 0:
@@ -500,13 +530,7 @@ class ConnectedSourceAdapters:
                 raise ConnectedSourcesError("Gmail inline extraction preview is malformed")
         extraction_uri = result.get("extraction_file_uri")
         if extraction_uri is not None:
-            if (
-                not isinstance(extraction_uri, Mapping)
-                or set(extraction_uri) - {"download_url", "file_id", "file_name", "mime_type"}
-                or _https(extraction_uri.get("download_url")) != extraction_uri.get("download_url")
-                or not isinstance(extraction_uri.get("file_id"), str) or not extraction_uri["file_id"]
-            ):
-                raise ConnectedSourcesError("Gmail complete extraction file reference is malformed")
+            _ignored_extraction_reference(extraction_uri)
         original = self.fetch_https(download_url)
         data = original.data
         if original.mime_type != mime_type:

@@ -162,7 +162,7 @@ class ConnectedSourcesTests(unittest.TestCase):
             "filename": "notice.png", "size_bytes": len(PNG),
             "content": [{"preview": "not evidence"}], "images": [], "content_truncated": True,
             "file_uri": {"download_url": download_url, "file_id": "f1", "file_name": "notice.png", "mime_type": "image/png"},
-            "extraction_file_uri": {"download_url": "https://files.example/extraction.json", "file_id": "e1", "mime_type": "application/json"},
+            "extraction_file_uri": {"download_url": "sediment://connector/extraction.json", "file_id": "e1", "mime_type": "application/json"},
         }
         self.peer.fetch = {
             "requested_url": download_url, "final_url": download_url, "redirect_chain": [download_url],
@@ -175,6 +175,40 @@ class ConnectedSourcesTests(unittest.TestCase):
         self.assertEqual(sha256_bytes(PNG), read.read_locator["sha256"])
         self.assertTrue(read.read_locator["provider_preview_ignored"])
         self.assertEqual(["gmail.read_attachment", "resource.fetch_https"], self.peer.calls)
+
+        malformed_extraction_references = (
+            {
+                "download_url": "file:///private/extraction.json",
+                "file_id": "e1", "mime_type": "application/json",
+            },
+            {
+                "download_url": "sediment:///extraction.json",
+                "file_id": "e1", "mime_type": "application/json",
+            },
+            {
+                "download_url": "sediment://connector/extraction.json#fragment",
+                "file_id": "e1", "mime_type": "application/json",
+            },
+            {
+                "download_url": "sediment://connector/extraction.json",
+                "file_id": "e1", "mime_type": "text/plain",
+            },
+            {
+                "download_url": "sediment://connector/extraction.json",
+                "file_id": "e1", "mime_type": "application/json", "surplus": True,
+            },
+        )
+        for reference in malformed_extraction_references:
+            with self.subTest(reference=reference):
+                self.peer.calls.clear()
+                self.peer.attachment["extraction_file_uri"] = reference
+                with self.assertRaisesRegex(
+                    ConnectedSourcesError, "complete extraction file reference is malformed",
+                ):
+                    self.adapter.gmail_attachment(
+                        "m1", "a1", mime_type="image/png", declared_byte_size=len(PNG),
+                    )
+                self.assertEqual(["gmail.read_attachment"], self.peer.calls)
 
         url = "https://assets.example/notice.png"
         self.peer.fetch = {
