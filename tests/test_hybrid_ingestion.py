@@ -16,6 +16,7 @@ from school_os.adapters import Page
 from school_os.bundles import BundleEntry, build_bundle, read_bundle
 from school_os.connected_ingestion import ConnectedIngestionWorker
 from school_os.connected_sources import ConnectedSourceAdapters
+from school_os.contracts import canonical_json_bytes
 from school_os.hybrid_ingestion import (
     LocalIngestionStore, SourceByteCapture, publish_ingestion_result,
     stage_connected_ingestion, stage_ingestion,
@@ -59,11 +60,18 @@ class Source:
 class FakeTransaction:
     def __init__(self) -> None:
         self.working = type("Working", (), {"recovery": {}})()
-        self.staged: dict[str, bytes] = {}
+        self.staged: dict[str, bytes] = {
+            "data/source-catalog-index.json": canonical_json_bytes({"schema_version": 2, "records": []}),
+            "data/facts.json": canonical_json_bytes({"schema_version": 1, "facts": []}),
+            "data/fact-indexes.json": canonical_json_bytes({"schema_version": 1, "by_fact_id": {}}),
+        }
 
     def stage(self, path: str, data: bytes, **_kwargs: Any) -> "FakeTransaction":
         self.staged[path] = data
         return self
+
+    def read(self, path: str) -> Any:
+        return type("Artifact", (), {"data": self.staged[path]})()
 
 
 class HybridIngestionTests(unittest.TestCase):
@@ -230,6 +238,72 @@ class HybridIngestionTests(unittest.TestCase):
         self.assertEqual(row["record_id"], result.fact_indexes["by_fact_id"][fact_id]["record_id"])
         self.assertIn("data/facts.json", transaction.staged)
         self.assertIn("data/fact-indexes.json", transaction.staged)
+        self.assertEqual(
+            [{"fact_id": fact_id, "delta_kind": "new"}],
+            result.source_delta["facts"],
+        )
+
+    def test_second_batch_merges_prior_records_and_unchanged_refresh_is_not_delta(self) -> None:
+        staged = stage_ingestion(
+            worker_factory=self.worker, scope={"query": "bounded"},
+            max_records=5, max_bytes=16_384,
+        )
+        capture = SourceByteCapture()
+        capture.raw_message("message-1", "thread-1", b"RFC2822 exact bytes")
+        first = FakeTransaction()
+
+        def publish(_storage: Any, *, recovery: Any, bundle_kind: str, identity: str, entries: Any) -> dict[str, Any]:
+            data = build_bundle(
+                bundle_kind=bundle_kind, identity=identity, instance_id="instance",
+                package_sha256="a" * 64, settings_sha256="b" * 64,
+                configuration_fingerprint="c" * 64, entries=entries,
+            )
+            verified = read_bundle(data, expected_kind="source")
+            return {
+                "bundle": verified, "bundle_bytes": data, "bundle_sha256": verified.sha256,
+                "bundle_reference": {"object_id": identity, "kind": "file", "permitted_ancestor_id": "root", "mime_type": "application/x-tar", "version": "1"},
+                "identity": identity,
+            }
+
+        with patch("school_os.hybrid_ingestion.publish_hybrid_content_bundle", side_effect=publish):
+            first_result = publish_ingestion_result(
+                storage=object(), transaction=first, result=staged.result,
+                staged=staged.store, capture=capture, identity="source-1",
+            )
+        second = FakeTransaction()
+        historical_row = {
+            "record_id": "record-historical", "record_sha256": "f" * 64,
+            "fact_ids": ["fact-historical"], "source_members": {},
+        }
+        historical_fact = {
+            "fact_id": "fact-historical", "record_id": "record-historical",
+        }
+        second.staged.update({
+            "data/source-catalog-index.json": canonical_json_bytes({
+                **first_result.catalog_index,
+                "records": [*first_result.catalog_index["records"], historical_row],
+            }),
+            "data/facts.json": canonical_json_bytes({
+                **first_result.facts,
+                "facts": [*first_result.facts["facts"], historical_fact],
+            }),
+            "data/fact-indexes.json": canonical_json_bytes({
+                **first_result.fact_indexes,
+                "by_fact_id": {
+                    **first_result.fact_indexes["by_fact_id"],
+                    "fact-historical": {"record_id": "record-historical"},
+                },
+            }),
+        })
+        with patch("school_os.hybrid_ingestion.publish_hybrid_content_bundle", side_effect=publish):
+            refreshed = publish_ingestion_result(
+                storage=object(), transaction=second, result=staged.result,
+                staged=staged.store, capture=capture, identity="source-2",
+            )
+        self.assertEqual(2, len(refreshed.catalog_index["records"]))
+        self.assertEqual(2, len(refreshed.facts["facts"]))
+        self.assertIn("fact-historical", refreshed.fact_indexes["by_fact_id"])
+        self.assertEqual([], refreshed.source_delta["facts"])
 
 
 if __name__ == "__main__":

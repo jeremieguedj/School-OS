@@ -29,6 +29,7 @@ OPTIONAL_FIELDS = frozenset({
     "source_link", "source_due", "parent_planned_due", "latest_progress",
     "completion_comment",
 })
+COMMENT_FIELDS = frozenset({"comment_id", "kind", "text", "effect_id"})
 PARENT_FIELDS = {
     "action": "action",
     "entity_scope": "entity_scope",
@@ -112,9 +113,29 @@ def _normalized_task(value: Mapping[str, Any], *, require_object_id: bool) -> di
     if revision is not None and (not isinstance(revision, str) or not revision):
         raise AgentTaskError("provider revision must be nonempty or null")
     result["provider_revision"] = revision
-    result["comment_evidence"] = deepcopy(value.get("comment_evidence"))
-    if not isinstance(result["comment_evidence"], list):
+    comments = deepcopy(value.get("comment_evidence"))
+    if not isinstance(comments, list):
         raise AgentTaskError("normalized comment evidence must be an array")
+    comment_ids: set[str] = set()
+    for comment in comments:
+        if not isinstance(comment, Mapping) or set(comment) != COMMENT_FIELDS:
+            raise AgentTaskError("normalized comment evidence is malformed")
+        comment_id = _required_text(comment.get("comment_id"), "normalized comment identity")
+        if comment_id in comment_ids:
+            raise AgentTaskError("normalized comment evidence repeats an identity")
+        comment_ids.add(comment_id)
+        if comment.get("kind") not in {"parent", "system"}:
+            raise AgentTaskError("normalized comment evidence kind is invalid")
+        if not isinstance(comment.get("text"), str):
+            raise AgentTaskError("normalized comment evidence text must be a string")
+        effect_id = comment.get("effect_id")
+        if effect_id is not None and (not isinstance(effect_id, str) or not effect_id):
+            raise AgentTaskError("normalized comment effect identity is invalid")
+        if comment["kind"] == "system" and effect_id is None:
+            raise AgentTaskError("normalized system comment lacks its effect identity")
+        if comment["kind"] == "parent" and effect_id is not None:
+            raise AgentTaskError("normalized parent comment cannot claim a system effect identity")
+    result["comment_evidence"] = comments
     observed_hash = value.get("observation_sha256")
     expected_hash = _hash({key: result[key] for key in result if key != "observation_sha256"})
     if observed_hash != expected_hash:
@@ -173,7 +194,9 @@ def validate_snapshot(snapshot: Mapping[str, Any], schema: Mapping[str, Any]) ->
     return value
 
 
-def _projection(task: Mapping[str, Any]) -> dict[str, Any]:
+def _projection(
+    task: Mapping[str, Any], current: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
     return {
         "canonical_task_id": task["task_id"],
         "origin": task["origin"],
@@ -186,7 +209,8 @@ def _projection(task: Mapping[str, Any]) -> dict[str, Any]:
         "parent_planned_due": task.get("parent_planned_due"),
         "latest_progress": task.get("latest_progress"),
         "resolution": task.get("resolution", task.get("projection_state", {}).get("resolution", "unresolved")),
-        "completion_comment": None,
+        # Completion comments are parent evidence, never a system-managed field.
+        "completion_comment": current.get("completion_comment") if current else None,
     }
 
 
@@ -208,6 +232,33 @@ def _parent_snapshot(remote: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
+def _set_resolution(task: dict[str, Any], resolution: str) -> None:
+    task["resolution"] = resolution
+    task["projection_state"] = {
+        **deepcopy(dict(task.get("projection_state", {}))),
+        "resolution": resolution,
+    }
+
+
+def _lifecycle_event(
+    *, kind: str, task: Mapping[str, Any], remote: Mapping[str, Any],
+    occurrence: int, comment: str | None = None,
+) -> dict[str, Any]:
+    identity = {
+        "kind": kind, "task_id": task["task_id"],
+        "provider_object_id": remote["provider_object_id"],
+        "occurrence": occurrence,
+    }
+    event = {
+        "event_id": "event-" + _hash(identity), "kind": kind,
+        "provider_object_id": remote["provider_object_id"],
+        "occurrence": occurrence,
+    }
+    if comment is not None:
+        event["comment"] = comment
+    return event
+
+
 def _mark_task_changed(task: dict[str, Any], before: Mapping[str, Any], evidence: Mapping[str, Any]) -> None:
     if any(task.get(key) != before.get(key) for key in task if key not in {"revision", "last_modified_evidence"}):
         task["revision"] = int(before.get("revision", 1)) + 1
@@ -221,13 +272,18 @@ def _action(
     canonical_sha256: str, snapshot_sha256: str,
     expected: Mapping[str, Any] | None, desired: Mapping[str, Any],
     allowed_changes: Sequence[str],
+    postconditions: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     if kind not in ACTION_KINDS:
         raise AgentTaskError("unsupported semantic task action")
+    exact_postconditions = deepcopy(dict(postconditions)) if postconditions is not None else {
+        key: deepcopy(value) for key, value in desired.items()
+    }
     identity = {
         "provider_id": state["provider_id"], "binding_id": state["binding_id"],
         "scope_sha256": state["scope_sha256"], "task_id": task["task_id"],
         "kind": kind, "desired_sha256": _hash(desired),
+        "postconditions_sha256": _hash(exact_postconditions),
     }
     return {
         "schema_version": 1, "contract_version": CONTRACT_VERSION,
@@ -240,7 +296,7 @@ def _action(
         "expected": deepcopy(dict(expected)) if expected is not None else None,
         "desired": deepcopy(dict(desired)),
         "allowed_changes": sorted(set(allowed_changes)),
-        "postconditions": {key: deepcopy(value) for key, value in desired.items()},
+        "postconditions": exact_postconditions,
         "outcome": "pending", "dispatch_attempt": 0, "verification": {},
     }
 
@@ -266,6 +322,9 @@ def plan_task_sync(
     snapshot: Mapping[str, Any], *, task_schema: Mapping[str, Any],
     register_schema: Mapping[str, Any], provider_state_schema: Mapping[str, Any],
     snapshot_schema: Mapping[str, Any], action_schema: Mapping[str, Any],
+    completion_comment_required: bool = True,
+    reopen_when_comment_missing: bool = True,
+    missing_comment_reminder: str = "Completion needs a parent comment before it can be recorded.",
 ) -> AgentTaskPlan:
     """Import one complete snapshot and plan actions without provider calls."""
     _validated(register, register_schema, "canonical task register")
@@ -275,6 +334,8 @@ def plan_task_sync(
     state.setdefault("review_cases", [])
     if state["pending_actions"]:
         raise AgentTaskError("pending task actions must be reconciled before a fresh snapshot")
+    if completion_comment_required and reopen_when_comment_missing and not missing_comment_reminder.strip():
+        raise AgentTaskError("missing-comment policy requires a nonempty reminder")
     snap = validate_snapshot(snapshot, snapshot_schema)
     for field in ("provider_id", "adapter_id", "binding_id", "scope_sha256"):
         if snap[field] != state.get(field):
@@ -290,6 +351,7 @@ def plan_task_sync(
     if len(bindings) != len(state["bindings"]):
         raise AgentTaskError("provider state repeats a canonical binding")
     reviews: list[dict[str, Any]] = []
+    policy_actions: dict[str, dict[str, Any]] = {}
 
     for candidate in snap["unbound_candidates"]:
         parent = parent_task_from_provider(
@@ -348,6 +410,74 @@ def plan_task_sync(
                     "reason": "simultaneous canonical and parent changes",
                     "base": base, "canonical": local, "provider": remote_value,
                 })
+        base_present, base_resolution = _snapshot_field(prior, "resolution")
+        local_resolution = task.get("resolution", task.get("projection_state", {}).get("resolution", "unresolved"))
+        remote_resolution = current["resolution"]
+        if prior is None or not base_present:
+            if remote_resolution != local_resolution:
+                reviews.append({
+                    "task_id": task_id, "field": "resolution",
+                    "reason": "provider resolution lacks a verified common base",
+                    "base": None, "canonical": local_resolution,
+                    "provider": remote_resolution,
+                })
+        elif local_resolution == remote_resolution:
+            pass
+        elif local_resolution == base_resolution:
+            if remote_resolution == "completed":
+                comment = current.get("completion_comment")
+                if completion_comment_required and (not isinstance(comment, str) or not comment.strip()):
+                    if not reopen_when_comment_missing:
+                        reviews.append({
+                            "task_id": task_id, "field": "completion_comment",
+                            "reason": "completion requires a nonempty parent comment",
+                            "base": None, "canonical": None, "provider": comment,
+                        })
+                    else:
+                        occurrence = 1 + sum(
+                            event.get("kind") in {
+                                "parent_completion", "reopened_missing_completion_comment",
+                            }
+                            for event in task.get("lifecycle_history", [])
+                        )
+                        policy_actions[task_id] = {
+                            "current": deepcopy(current),
+                            "occurrence": occurrence,
+                            "reminder": missing_comment_reminder,
+                        }
+                else:
+                    occurrence = 1 + sum(
+                        event.get("kind") in {
+                            "parent_completion", "reopened_missing_completion_comment",
+                        }
+                        for event in task.get("lifecycle_history", [])
+                    )
+                    event = _lifecycle_event(
+                        kind="parent_completion", task=task, remote=current,
+                        occurrence=occurrence, comment=comment if isinstance(comment, str) else "",
+                    )
+                    if not any(item.get("event_id") == event["event_id"] for item in task.get("lifecycle_history", [])):
+                        task["lifecycle_history"] = [*task.get("lifecycle_history", []), event]
+                    _set_resolution(task, "completed")
+            else:
+                occurrence = 1 + sum(
+                    event.get("kind") == "parent_reopen"
+                    for event in task.get("lifecycle_history", [])
+                )
+                event = _lifecycle_event(
+                    kind="parent_reopen", task=task, remote=current,
+                    occurrence=occurrence,
+                )
+                if not any(item.get("event_id") == event["event_id"] for item in task.get("lifecycle_history", [])):
+                    task["lifecycle_history"] = [*task.get("lifecycle_history", []), event]
+                _set_resolution(task, "unresolved")
+        elif remote_resolution != base_resolution:
+            reviews.append({
+                "task_id": task_id, "field": "resolution",
+                "reason": "simultaneous canonical and parent changes",
+                "base": base_resolution, "canonical": local_resolution,
+                "provider": remote_resolution,
+            })
         if any(item["task_id"] == task_id for item in reviews):
             task["workflow_state"] = "needs_review"
         _mark_task_changed(task, before, {
@@ -364,15 +494,50 @@ def plan_task_sync(
     snapshot_sha = _hash(snap)
     actions: list[dict[str, Any]] = []
     review_ids = {item["task_id"] for item in reviews}
-    candidate_by_action = {item["action"]: item for item in snap["unbound_candidates"]}
+    candidates_by_id = {item["candidate_id"]: item for item in snap["unbound_candidates"]}
     for task in canonical["tasks"]:
         task_id = task["task_id"]
         if task_id in review_ids:
             continue
-        desired = _projection(task)
+        if task_id in policy_actions:
+            policy = policy_actions[task_id]
+            current = policy["current"]
+            desired = _projection(task, current)
+            reminder = _action(
+                kind="write_system_comment", task=task, state=state,
+                canonical_sha256=canonical_sha, snapshot_sha256=snapshot_sha,
+                expected=current, desired=desired,
+                allowed_changes=("comment_evidence",),
+                postconditions={"system_comment": {"text": policy["reminder"]}},
+            )
+            reminder["postconditions"]["system_comment"]["effect_id"] = reminder["effect_id"]
+            reopen_desired = {**desired, "resolution": "unresolved"}
+            reopen = _action(
+                kind="set_task_resolution", task=task, state=state,
+                canonical_sha256=canonical_sha, snapshot_sha256=snapshot_sha,
+                expected={
+                    "provider_object_id": current["provider_object_id"],
+                    "canonical_task_id": task_id,
+                    "resolution": "completed",
+                },
+                desired=reopen_desired, allowed_changes=("resolution",),
+                postconditions={"resolution": "unresolved"},
+            )
+            reopen["verification"] = {
+                "completion_policy": "reopen_missing_completion_comment",
+                "occurrence": policy["occurrence"],
+                "reminder_effect_id": reminder["effect_id"],
+            }
+            actions.extend((reminder, reopen))
+            continue
         current = remote.get(task_id)
+        desired = _projection(task, current)
         if current is None:
-            candidate = candidate_by_action.get(task["action"]) if task["origin"] == "parent" else None
+            if task.get("resolution", "unresolved") == "completed":
+                continue
+            admission = task.get("last_modified_evidence", {}).get("parent_admission", {})
+            candidate_id = admission.get("candidate_id") if task["origin"] == "parent" else None
+            candidate = candidates_by_id.get(candidate_id)
             kind = "claim_task" if candidate is not None else "create_task"
             expected = {"candidate": candidate} if candidate is not None else None
             actions.append(_action(
@@ -381,14 +546,31 @@ def plan_task_sync(
                 allowed_changes=NORMALIZED_FIELDS,
             ))
             continue
-        differing = [field for field in NORMALIZED_FIELDS if current[field] != desired[field]]
-        if differing:
+        differing = [
+            field for field in NORMALIZED_FIELDS
+            if field != "completion_comment" and current[field] != desired[field]
+        ]
+        non_resolution = [field for field in differing if field != "resolution"]
+        if non_resolution:
             actions.append(_action(
                 kind="update_task_fields", task=task, state=state,
                 canonical_sha256=canonical_sha, snapshot_sha256=snapshot_sha,
-                expected=current, desired=desired, allowed_changes=differing,
+                expected=current, desired=desired, allowed_changes=non_resolution,
+                postconditions={field: desired[field] for field in non_resolution},
             ))
-        else:
+        if "resolution" in differing:
+            actions.append(_action(
+                kind="set_task_resolution", task=task, state=state,
+                canonical_sha256=canonical_sha, snapshot_sha256=snapshot_sha,
+                expected={
+                    "provider_object_id": current["provider_object_id"],
+                    "canonical_task_id": task_id,
+                    "resolution": current["resolution"],
+                },
+                desired=desired, allowed_changes=("resolution",),
+                postconditions={"resolution": desired["resolution"]},
+            ))
+        if not differing:
             bindings[task_id] = {
                 "task_id": task_id, "provider_object_id": current["provider_object_id"],
                 "status": current["resolution"],
@@ -477,12 +659,36 @@ def confirm_action(
     readback = _normalized_task(response["readback"], require_object_id=True)
     desired = action["desired"]
     for field, expected in action["postconditions"].items():
-        if readback.get(field) != expected:
+        if field == "system_comment":
+            matches = [
+                item for item in readback["comment_evidence"]
+                if item.get("kind") == "system"
+                and item.get("effect_id") == expected.get("effect_id")
+                and item.get("text") == expected.get("text")
+            ]
+            if len(matches) != 1:
+                raise AgentTaskError("confirmed task action lacks one exact system comment")
+        elif readback.get(field) != expected:
             raise AgentTaskError(f"confirmed task action fails postcondition {field}")
     tasks = {item["task_id"]: deepcopy(dict(item)) for item in register["tasks"]}
     task = tasks.get(action["task_id"])
     if task is None:
         raise AgentTaskError("task action references an absent canonical task")
+    before_task = deepcopy(task)
+    if action["kind"] == "set_task_resolution":
+        _set_resolution(task, readback["resolution"])
+        policy = action.get("verification", {}).get("completion_policy")
+        if policy == "reopen_missing_completion_comment":
+            occurrence = action["verification"].get("occurrence")
+            event = {
+                "event_id": action["effect_id"],
+                "kind": "reopened_missing_completion_comment",
+                "provider_object_id": readback["provider_object_id"],
+                "occurrence": occurrence,
+                "reminder_effect_id": action["verification"].get("reminder_effect_id"),
+            }
+            if not any(item.get("event_id") == event["event_id"] for item in task.get("lifecycle_history", [])):
+                task["lifecycle_history"] = [*task.get("lifecycle_history", []), event]
     existing = [
         item for item in task["provider_bindings"]
         if item.get("provider_id") != state["provider_id"]
@@ -492,13 +698,18 @@ def confirm_action(
         "provider_object_id": readback["provider_object_id"],
     })
     task["provider_bindings"] = existing
+    _mark_task_changed(task, before_task, {
+        "kind": "agent_task_action_confirmation",
+        "provider_id": state["provider_id"],
+        "effect_id": action["effect_id"],
+    })
     bindings = {item["task_id"]: deepcopy(dict(item)) for item in state["bindings"]}
     bindings[action["task_id"]] = {
         "task_id": action["task_id"],
         "provider_object_id": readback["provider_object_id"],
         "status": readback["resolution"],
-        "last_managed_projection": deepcopy(desired),
-        "projection_sha256": _hash(desired),
+        "last_managed_projection": _projection(task, readback),
+        "projection_sha256": _hash(_projection(task, readback)),
         "last_parent_snapshot": _parent_snapshot(readback),
         "verified_readback": {
             "effect_id": action["effect_id"],

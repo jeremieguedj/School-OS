@@ -169,6 +169,7 @@ class HybridIngestionPublication:
     catalog_index: dict[str, Any]
     facts: dict[str, Any]
     fact_indexes: dict[str, Any]
+    source_delta: dict[str, Any]
 
 
 @dataclass(frozen=True)
@@ -403,9 +404,21 @@ def publish_ingestion_result(
         bundle_kind="source", identity=identity, entries=entries,
     )
     index_v1 = json.loads(named["index.json"].data.decode("utf-8"))
+    try:
+        prior_index = json.loads(transaction.read("data/source-catalog-index.json").data)
+        prior_facts = json.loads(transaction.read("data/facts.json").data)
+        prior_fact_indexes = json.loads(transaction.read("data/fact-indexes.json").data)
+    except (AttributeError, KeyError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise HybridIngestionError("current canonical source state is unavailable") from exc
+    if (
+        not isinstance(prior_index, dict) or not isinstance(prior_index.get("records"), list)
+        or not isinstance(prior_facts, dict) or not isinstance(prior_facts.get("facts"), list)
+        or not isinstance(prior_fact_indexes, dict) or not isinstance(prior_fact_indexes.get("by_fact_id"), dict)
+    ):
+        raise HybridIngestionError("current canonical source state is malformed")
     rows: list[dict[str, Any]] = []
-    all_facts: list[dict[str, Any]] = []
-    by_fact: dict[str, Any] = {}
+    batch_facts: list[dict[str, Any]] = []
+    batch_by_fact: dict[str, Any] = {}
     for row in index_v1.get("records", []):
         record_id = row["record_id"]
         catalog_name = f"{record_id}.md"
@@ -473,18 +486,54 @@ def publish_ingestion_result(
         rows.append({**dict(row), "source_members": source_members})
         for fact in record_facts:
             fact_id = fact.get("fact_id") if isinstance(fact, Mapping) else None
-            if not isinstance(fact_id, str) or not fact_id or fact_id in by_fact:
+            if not isinstance(fact_id, str) or not fact_id or fact_id in batch_by_fact:
                 raise HybridIngestionError("staged Fact identity is invalid or duplicate")
-            all_facts.append(dict(fact))
-            by_fact[fact_id] = {
+            batch_facts.append(dict(fact))
+            batch_by_fact[fact_id] = {
                 "record_id": record_id,
                 "source_message_id": fact.get("source_message_id"),
                 "facts_member": source_members["facts"],
                 "catalog_member": source_members["catalog"],
             }
-    catalog_index = {"schema_version": 2, "records": sorted(rows, key=lambda item: item["record_id"])}
-    facts = {"schema_version": 1, "facts": sorted(all_facts, key=lambda item: item["fact_id"])}
-    fact_indexes = {"schema_version": 1, "by_fact_id": dict(sorted(by_fact.items()))}
+    batch_records = {item["record_id"] for item in rows}
+    if len(batch_records) != len(rows):
+        raise HybridIngestionError("staged catalog repeats a record identity")
+    prior_rows = {item.get("record_id"): dict(item) for item in prior_index["records"] if isinstance(item, Mapping)}
+    prior_facts_by_id = {item.get("fact_id"): dict(item) for item in prior_facts["facts"] if isinstance(item, Mapping)}
+    if len(prior_rows) != len(prior_index["records"]) or len(prior_facts_by_id) != len(prior_facts["facts"]):
+        raise HybridIngestionError("current canonical source state repeats an identity")
+    prior_record_fact_ids = {
+        fact_id for fact_id, fact in prior_facts_by_id.items()
+        if fact.get("record_id") in batch_records
+    }
+    missing_prior = prior_record_fact_ids - set(batch_by_fact)
+    if missing_prior:
+        raise HybridIngestionError("refreshed source record would remove canonical Facts")
+    merged_rows = {**prior_rows, **{item["record_id"]: item for item in rows}}
+    retained_facts = {
+        fact_id: fact for fact_id, fact in prior_facts_by_id.items()
+        if fact.get("record_id") not in batch_records
+    }
+    merged_facts = {**retained_facts, **{item["fact_id"]: item for item in batch_facts}}
+    retained_indexes = {
+        fact_id: dict(value) for fact_id, value in prior_fact_indexes["by_fact_id"].items()
+        if fact_id in retained_facts
+    }
+    merged_indexes = {**retained_indexes, **batch_by_fact}
+    if set(merged_indexes) != set(merged_facts):
+        raise HybridIngestionError("merged Fact index coverage disagrees")
+    catalog_index = {"schema_version": 2, "records": [merged_rows[key] for key in sorted(merged_rows)]}
+    facts = {"schema_version": 1, "facts": [merged_facts[key] for key in sorted(merged_facts)]}
+    fact_indexes = {"schema_version": 1, "by_fact_id": {key: merged_indexes[key] for key in sorted(merged_indexes)}}
+    source_delta = {
+        "schema_version": 1,
+        "facts": [{
+            "fact_id": fact["fact_id"],
+            "delta_kind": "new" if fact["fact_id"] not in prior_facts_by_id else "changed",
+        } for fact in sorted(batch_facts, key=lambda item: item["fact_id"])
+        if fact["fact_id"] not in prior_facts_by_id or canonical_json_bytes(fact) != canonical_json_bytes(prior_facts_by_id[fact["fact_id"]])],
+        "tasks": [],
+    }
     updated = transaction.stage(
         "data/source-catalog-index.json", canonical_json_bytes(catalog_index),
     ).stage(
@@ -493,9 +542,12 @@ def publish_ingestion_result(
     ).stage(
         "data/fact-indexes.json", canonical_json_bytes(fact_indexes),
         role="fact_indexes", media_type="application/json",
+    ).stage(
+        "state/pending-run-delta.json", canonical_json_bytes(source_delta),
+        role="reconciliation_delta", media_type="application/json",
     )
     return HybridIngestionPublication(
-        source, updated, catalog_index, facts, fact_indexes,
+        source, updated, catalog_index, facts, fact_indexes, source_delta,
     )
 
 
@@ -504,10 +556,13 @@ def commit_ingestion(
     capture: SourceByteCapture, identity: str, operation_id: str,
     attempt_id: str, source_commit: str, serialization: Mapping[str, Any],
     installed_root: Any,
+    entrypoint: str = "manual", operation_mode: str = "unsent_preview",
 ) -> HybridIngestionCommit:
     """Publish a complete source batch and atomically adopt its canonical index."""
     if len(source_commit) != 40 or any(item not in "0123456789abcdef" for item in source_commit):
         raise HybridIngestionError("ingestion source commit is invalid")
+    if entrypoint not in {"manual", "scheduled"} or operation_mode not in {"unsent_preview", "delivery"}:
+        raise HybridIngestionError("ingestion operation surface or mode is unsupported")
     publication = publish_ingestion_result(
         storage=storage, transaction=resolved.state, result=staged.result,
         staged=staged.store, capture=capture, identity=identity,
@@ -523,9 +578,9 @@ def commit_ingestion(
             "source_commit": source_commit,
         },
         "scope": {
-            "entrypoint": "manual",
+            "entrypoint": entrypoint,
             "source_scope_sha256": sha256_bytes(canonical_json_bytes(resolved.source_scope)),
-            "operation_mode": "unsent_preview",
+            "operation_mode": operation_mode,
         },
         "configuration_fingerprint": resolved.configuration_fingerprint,
         "phase": "catalog",
@@ -565,7 +620,7 @@ def commit_ingestion(
         },
         "serialization": {
             "mode": serialization["mode"],
-            "evidence": {"entrypoint": "manual"},
+            "evidence": {"entrypoint": entrypoint},
         },
         "checkpoint": checkpoint_pointer(checkpoint),
         "last_terminal": None,

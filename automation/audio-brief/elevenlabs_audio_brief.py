@@ -19,11 +19,9 @@ from typing import Any
 
 API_URL = "https://api.elevenlabs.io/v1/text-to-dialogue?output_format=mp3_44100_128"
 MAX_TEXT_CHARACTERS = 2000
-# These two public premade voices were verified by a successful
-# /v1/text-to-dialogue call with the Keychain-backed account on 2026-09-02.
-# Voice IDs are still provider/account configuration: validate against
-# /v1/voices before a paid synthesis request, and replace this map when needed.
-VOICES = {
+# Public example values only. Runtime generation never falls back to them;
+# every private manifest must carry its exact configured voice mapping.
+EXAMPLE_VOICES = {
     "narrator": "CwhRBWXzGAHq8TQ4Fs17",  # Roger
     "voice_a": "CwhRBWXzGAHq8TQ4Fs17",  # Roger
     "voice_b": "EXAVITQu4vr4xnSDxMaL",  # Sarah
@@ -77,30 +75,22 @@ def coverage_summary(records: list[dict[str, Any]]) -> str:
     return join_words(phrases)
 
 
-def tag_for(record: dict[str, Any]) -> str:
-    section = record["section"]
-    if section == "news":
-        return "[warmly]"
-    if section == "guideline":
-        return "[clear, calm]"
-    if section == "action":
-        status = record.get("due_status", "normal")
-        if status not in {"normal", "due_today", "overdue", "resolved"}:
-            raise BriefError(f"unsupported action due_status: {status}")
-        if status in {"due_today", "overdue"}:
-            return "[gently, urgent]"
-        return "[warmly]" if status == "resolved" else "[clear, matter-of-fact]"
-    raise BriefError(f"unsupported section: {section}")
+def _configured_tag(value: Any, label: str) -> str:
+    if not isinstance(value, str) or not value.startswith("[") or not value.endswith("]"):
+        raise BriefError(f"{label} must be one explicit bracketed dialogue tag")
+    return value
 
 
-def turn_for(record: dict[str, Any]) -> dict[str, str]:
+def turn_for(record: dict[str, Any], voices: dict[str, str]) -> dict[str, str]:
     voice_role = record["voice_role"]
-    if voice_role not in VOICES:
+    if voice_role not in voices:
         raise BriefError(f"unsupported voice_role: {voice_role}")
     prefixes = {"news": "News", "guideline": "School guideline", "action": "Action update"}
+    if record["section"] not in prefixes:
+        raise BriefError(f"unsupported section: {record['section']}")
     return {
-        "voice_id": VOICES[voice_role],
-        "text": f"{tag_for(record)} {prefixes[record['section']]}: {normalize_spoken_text(record['spoken_text'])}",
+        "voice_id": voices[voice_role],
+        "text": f"{_configured_tag(record['dialogue_tag'], 'record dialogue_tag')} {prefixes[record['section']]}: {normalize_spoken_text(record['spoken_text'])}",
     }
 
 
@@ -117,12 +107,20 @@ def build_inputs(manifest: dict[str, Any]) -> tuple[list[dict[str, str]], int]:
     records = manifest.get("records")
     if not isinstance(records, list):
         raise BriefError("manifest records must be a list")
+    voices = manifest.get("voices")
+    if (
+        not isinstance(voices, dict) or "narrator" not in voices
+        or any(not isinstance(role, str) or not role or not isinstance(identity, str) or not identity for role, identity in voices.items())
+    ):
+        raise BriefError("manifest voices must explicitly map narrator and record roles")
+    opening_tag = _configured_tag(manifest.get("opening_tag"), "manifest opening_tag")
+    closing_tag = _configured_tag(manifest.get("closing_tag"), "manifest closing_tag")
     unique: list[dict[str, Any]] = []
     seen: set[str] = set()
     for record in records:
         if not isinstance(record, dict):
             raise BriefError("each manifest record must be an object")
-        for field in ("delta_kind", "section", "voice_role", "subject_label", "spoken_text", "source_tid", "fact_or_row_id"):
+        for field in ("delta_kind", "section", "voice_role", "dialogue_tag", "subject_label", "spoken_text", "source_tid", "fact_or_row_id"):
             require_string(record, field)
         if record["delta_kind"] not in {"new", "changed"}:
             raise BriefError("manifest record must be a current-run new or changed delta")
@@ -132,13 +130,13 @@ def build_inputs(manifest: dict[str, Any]) -> tuple[list[dict[str, str]], int]:
             unique.append(record)
     spoken_date = display_date(run_date)
     opening = {
-        "voice_id": VOICES["narrator"],
-        "text": f"[warmly] S-H-A Daily Brief for {spoken_date}. Today we're going to cover {coverage_summary(unique)}.",
+        "voice_id": voices["narrator"],
+        "text": f"{opening_tag} S-H-A Daily Brief for {spoken_date}. Today we're going to cover {coverage_summary(unique)}.",
     }
-    closing = {"voice_id": VOICES["narrator"], "text": "[warmly] End of today's new school information."}
+    closing = {"voice_id": voices["narrator"], "text": f"{closing_tag} End of today's new school information."}
     accepted = [opening]
     for position, record in enumerate(unique):
-        candidate = turn_for(record)
+        candidate = turn_for(record, voices)
         if sum(len(turn["text"]) for turn in accepted + [candidate, closing]) <= MAX_TEXT_CHARACTERS:
             accepted.append(candidate)
         else:
@@ -148,22 +146,6 @@ def build_inputs(manifest: dict[str, Any]) -> tuple[list[dict[str, str]], int]:
     if len(accepted) == 1:
         return [], 0
     return accepted + [closing], 0
-
-
-def keychain_secret(service: str, account: str) -> str:
-    try:
-        result = subprocess.run(
-            ["security", "find-generic-password", "-s", service, "-a", account, "-w"],
-            capture_output=True, check=True, text=True,
-        )
-    except FileNotFoundError as error:
-        raise BriefError("macOS Keychain command is unavailable") from error
-    except subprocess.CalledProcessError as error:
-        raise BriefError("ElevenLabs secret is unavailable in macOS Keychain") from error
-    secret = result.stdout.strip()
-    if not secret:
-        raise BriefError("ElevenLabs secret is empty")
-    return secret
 
 
 def is_mp3(content: bytes) -> bool:
@@ -280,8 +262,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--whatsapp-compatible", action="store_true", help="stream-copy output to WhatsApp-compatible ID3v2.3")
-    parser.add_argument("--keychain-service", default="School-OS.ElevenLabs.APIKey")
-    parser.add_argument("--keychain-account", default=os.environ.get("USER", ""))
     return parser.parse_args()
 
 
@@ -294,11 +274,16 @@ def main() -> int:
             print("audio skipped: no new information in this run")
             return 0
         if args.dry_run:
-            print(json.dumps({"inputs": inputs, "omitted_records": omitted}, ensure_ascii=False, indent=2))
+            serialized = json.dumps(inputs, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+            print(json.dumps({
+                "input_count": len(inputs), "omitted_records": omitted,
+                "spoken_character_count": sum(len(item["text"]) for item in inputs),
+                "inputs_sha256": hashlib.sha256(serialized).hexdigest(),
+            }, sort_keys=True))
             return 0
-        if not args.keychain_account:
-            raise BriefError("keychain account is required; set --keychain-account")
-        key = keychain_secret(args.keychain_service, args.keychain_account)
+        key = os.environ.get("ELEVENLABS_API_KEY", "").strip()
+        if not key:
+            raise BriefError("ELEVENLABS_API_KEY is unavailable in the runtime secret environment")
         validate_voice_ids(inputs, key)
         body = request_audio(inputs, manifest["run_date"], key)
         output, digest = write_fresh_mp3(

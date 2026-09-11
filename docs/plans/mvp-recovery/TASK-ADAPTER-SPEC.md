@@ -73,6 +73,13 @@ completion evidence, and provider revision or a normalized observation hash.
 Provider-specific labels, headers, locators and request bodies never enter the
 canonical vocabulary.
 
+Comment evidence is an ordered array of exact
+`{comment_id, kind, text, effect_id}` records. Parent comments use
+`kind: parent` with a null effect ID; School-OS-authored comments use
+`kind: system` with their exact committed effect ID. Missing or duplicated
+comment identities, a system comment without its effect, or a parent comment
+claiming a system effect are blocking normalization failures.
+
 Named optional values use one canonical null representation. Missing native
 values may normalize to null only for those named optional fields. An omitted
 required field never means unchanged. Required strings remain nonempty.
@@ -215,7 +222,13 @@ imported or overwritten. Ordinary runs never write two projections.
 
 `school_os.agent_tasks` implements schema validation and provider-neutral state
 transitions. `school_os.hybrid_tasks` persists those transitions through the
-existing bundled checkpoint boundary. `school_os.hybrid_preview` provides the
+existing bundled checkpoint boundary. The installed
+`scripts/run_hybrid_task_sync.py` supports both admitted manual and scheduled
+surfaces; `scripts/run_hybrid_task_switch.py` is the attended guided-switch
+surface. A provider may be operated only while selected/active or while it is
+the named staging target. A dormant binding cannot authorize or confirm an
+effect, and switch abort discards only actions whose zero dispatch count proves
+they never reached the provider. `school_os.hybrid_preview` provides the
 tracked installed continuation from committed ingestion through task exchange,
 rendered unsent output and cursor-last completion.
 
@@ -231,17 +244,21 @@ it, and the frozen package must exclude archived provider executables.
 
 ## Implementation order and acceptance
 
-1. Add the schemas and pure normalized validation/state transitions.
+1. Add the schemas and pure normalized validation/state transitions. **Done.**
 2. Give create, claim, update, resolution and system-comment actions one durable
    authorization/result protocol.
+   **Done.**
 3. Replace Sheet-specific hybrid setup/resolution with an opaque selected task
    binding and agent-owned private configuration reference.
+   **Done.**
 4. Add tracked hybrid task/preview continuation and cursor-last completion.
+   **Done.**
 5. Rewrite the task adapter documents as agent procedures and exclude archived
-   executables from the release payload.
+   executables from the release payload. **Done.**
 6. Prove focused identity, completeness, conflict, interruption, null
    normalization, switch and recovery cases; then run the complete repository
-   and installed-package validation.
+   and installed-package validation. **Repository proof complete; exact committed
+   package proof pending.**
 7. Build an exact package and execute one new four-day, image-excluded live
    journey: five-file install, cold recovery, agent-prepared isolated Sheet
    binding, source ingestion, canonical task commit, guarded agent action and

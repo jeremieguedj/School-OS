@@ -10,6 +10,7 @@ from typing import Any
 from .agent_tasks import (
     AgentTaskPlan, authorize_next_action, confirm_action, plan_task_sync,
 )
+from .audio import merge_parent_task_delta
 from .brief import build_brief_input, render_brief
 from .bundles import BundleEntry, BundleMemberReference, read_bundle, resolve_member
 from .catalog import parse_v2_record
@@ -42,6 +43,14 @@ class PreviewFinish:
     checkpoint: dict[str, Any]
     evidence: dict[str, Any]
     output_bundle: Mapping[str, Any]
+
+
+@dataclass(frozen=True)
+class CurrentBrief:
+    brief_input: dict[str, Any]
+    html: bytes
+    text: bytes
+    source: dict[str, Any]
 
 
 def _json(data: bytes, label: str) -> dict[str, Any]:
@@ -84,6 +93,7 @@ def _publish(
     verification: Mapping[str, Any], effects: list[dict[str, Any]],
     terminal: bool = False, artifacts: list[dict[str, Any]] | None = None,
     required_phases: tuple[str, ...] = (),
+    terminal_reason: str = "verified agent-operated unsent preview complete",
 ) -> PreviewAdvance:
     sequence = int(prior["sequence"]) + 1
     operation_id = prior["operation_id"]
@@ -111,7 +121,7 @@ def _publish(
             "last_terminal": {
                 "operation_id": operation_id, "status": "complete",
                 "checkpoint": pointer,
-                "reason": "verified agent-operated unsent preview complete",
+                "reason": terminal_reason,
             },
         }
     else:
@@ -121,7 +131,7 @@ def _publish(
             "current_operation": deepcopy_json(active),
             "serialization": {
                 "mode": serialization["mode"],
-                "evidence": {"entrypoint": "manual"},
+                "evidence": {"entrypoint": prior["scope"].get("entrypoint", "manual")},
             },
             "checkpoint": pointer, "last_terminal": None,
         }
@@ -150,31 +160,42 @@ def _source_context(
     facts = facts_doc.get("facts")
     if not isinstance(facts, list):
         raise HybridPreviewError("canonical Facts document lacks its array")
-    source_refs = {
-        row["source_members"]["catalog"]["bundle_sha256"]:
-        row["source_members"]["catalog"]["bundle_reference"]
-        for row in catalog_index.get("records", [])
-    }
-    if len(source_refs) != 1:
-        raise HybridPreviewError("bounded preview requires one exact source bundle")
-    source_hash, source_reference = next(iter(source_refs.items()))
-    source_object = storage.read(source_reference["object_id"])
-    if (
-        source_object is None or source_object.parent_id != source_reference["permitted_ancestor_id"]
-        or source_object.mime_type != source_reference["mime_type"]
-        or source_object.version != source_reference["version"]
-        or source_object.data is None or sha256_bytes(source_object.data) != source_hash
-    ):
-        raise HybridPreviewError("source bundle exact provider readback disagrees")
-    bundle = read_bundle(source_object.data, expected_kind="source")
+    source_refs: dict[str, dict[str, Any]] = {}
+    for row in catalog_index.get("records", []):
+        catalog = row["source_members"]["catalog"]
+        source_hash = catalog["bundle_sha256"]
+        source_reference = catalog["bundle_reference"]
+        known = source_refs.get(source_hash)
+        if known is not None and canonical_json_bytes(known) != canonical_json_bytes(source_reference):
+            raise HybridPreviewError(
+                "one source bundle hash is paired with conflicting physical references"
+            )
+        source_refs[source_hash] = source_reference
+    bundles: dict[str, Any] = {}
+    for source_hash, source_reference in sorted(source_refs.items()):
+        source_object = storage.read(source_reference["object_id"])
+        if (
+            source_object is None or source_object.parent_id != source_reference["permitted_ancestor_id"]
+            or source_object.mime_type != source_reference["mime_type"]
+            or source_object.version != source_reference["version"]
+            or source_object.data is None or sha256_bytes(source_object.data) != source_hash
+        ):
+            raise HybridPreviewError("source bundle exact provider readback disagrees")
+        bundles[source_hash] = read_bundle(source_object.data, expected_kind="source")
     source_record_map: dict[str, dict[str, Any]] = {}
     task_source_links: dict[str, str] = {}
     guideline_selection: list[dict[str, Any]] = []
     facts_by_record: dict[str, list[dict[str, Any]]] = {}
+    source_threads: dict[str, str] = {}
     for fact in facts:
         facts_by_record.setdefault(fact["record_id"], []).append(fact)
     for row in sorted(catalog_index["records"], key=lambda item: item["record_id"]):
         members = row["source_members"]
+        source_hash = members["catalog"]["bundle_sha256"]
+        source_reference = members["catalog"]["bundle_reference"]
+        bundle = bundles.get(source_hash)
+        if bundle is None:
+            raise HybridPreviewError("catalog row references an unavailable source bundle")
         for key in ("catalog", "interpretation", "audit", "facts"):
             resolve_member(BundleMemberReference.from_mapping(members[key]), bundle)
         catalog = resolve_member(BundleMemberReference.from_mapping(members["catalog"]), bundle)
@@ -183,6 +204,10 @@ def _source_context(
         parsed = parse_v2_record(catalog)
         if parsed.header["record_id"] != row["record_id"]:
             raise HybridPreviewError("catalog identity differs from current index")
+        conversation_id = parsed.header.get("conversation_id")
+        if not isinstance(conversation_id, str) or not conversation_id:
+            raise HybridPreviewError("catalog lacks its immutable conversation identity")
+        source_threads[row["record_id"]] = conversation_id
         by_message = {item["message_id"]: item for item in parsed.header["messages"]}
         record_facts = sorted(facts_by_record.get(row["record_id"], []), key=lambda item: item["fact_id"])
         if sorted(row["fact_ids"]) != [item["fact_id"] for item in record_facts]:
@@ -216,6 +241,7 @@ def _source_context(
         "source_record_map": source_record_map,
         "task_source_links": task_source_links,
         "guideline_selection": guideline_selection,
+        "source_threads": source_threads,
     }
 
 
@@ -230,14 +256,15 @@ def plan_preview_tasks(
         raise HybridPreviewError("preview is not at the admitted reconcile boundary")
     schemas = _schemas(installed_root)
     source = _source_context(transaction, storage)
+    prior_register = _json(transaction.read("data/canonical-tasks.json").data, "canonical tasks")
     register = reconcile_canonical_tasks(
-        _json(transaction.read("data/canonical-tasks.json").data, "canonical tasks"),
+        prior_register,
         source["facts"], fact_schema=schemas["fact.schema.json"],
         task_schema=schemas["task.schema.json"],
         register_schema=schemas["canonical-tasks.schema.json"],
     )
     provider_state = _json(
-        transaction.read(resolved.file_map["task_sync_state"]).data,
+        transaction.read(resolved.task_binding["provider_state_path"]).data,
         "task provider state",
     )
     plan: AgentTaskPlan = plan_task_sync(
@@ -252,12 +279,18 @@ def plan_preview_tasks(
         source["facts"], fact_schema=schemas["fact.schema.json"],
         task_schema=schemas["task.schema.json"],
     )
+    try:
+        delta = _json(transaction.read("state/pending-run-delta.json").data, "pending run delta")
+    except HybridPreviewError:
+        delta = {"schema_version": 1, "facts": [], "tasks": []}
+    delta = merge_parent_task_delta(delta, prior_register, plan.canonical_tasks)
     transaction = (
         transaction
         .stage("data/canonical-tasks.json", canonical_json_bytes(plan.canonical_tasks))
-        .stage(resolved.file_map["task_sync_state"], canonical_json_bytes(plan.provider_state))
+        .stage(resolved.task_binding["provider_state_path"], canonical_json_bytes(plan.provider_state))
         .stage("data/guidelines.json", canonical_json_bytes({"schema_version": 1, "guidelines": derived["guidelines"]}))
         .stage("data/rolling-updates.json", canonical_json_bytes({"schema_version": 1, "rolling_updates": derived["rolling_updates"]}))
+        .stage("state/pending-run-delta.json", canonical_json_bytes(delta), role="reconciliation_delta", media_type="application/json")
     )
     remaining = {"phase": "task_sync"}
     if plan.actions:
@@ -290,14 +323,14 @@ def authorize_preview_action(
     transaction = resolved.state
     state, prior = _tip(transaction)
     schemas = _schemas(installed_root)
-    provider_state = _json(transaction.read(resolved.file_map["task_sync_state"]).data, "task provider state")
+    provider_state = _json(transaction.read(resolved.task_binding["provider_state_path"]).data, "task provider state")
     authorized_state, action = authorize_next_action(
         provider_state,
         action_schema=schemas["task-adapter-action.schema.json"],
         provider_state_schema=schemas["provider-state.schema.json"],
     )
     transaction = transaction.stage(
-        resolved.file_map["task_sync_state"], canonical_json_bytes(authorized_state),
+        resolved.task_binding["provider_state_path"], canonical_json_bytes(authorized_state),
     )
     advanced = _publish(
         transaction=transaction, storage=storage, prior_state=state, prior=prior,
@@ -326,7 +359,7 @@ def confirm_preview_action(
     state, prior = _tip(transaction)
     schemas = _schemas(installed_root)
     register = _json(transaction.read("data/canonical-tasks.json").data, "canonical tasks")
-    provider_state = _json(transaction.read(resolved.file_map["task_sync_state"]).data, "task provider state")
+    provider_state = _json(transaction.read(resolved.task_binding["provider_state_path"]).data, "task provider state")
     confirmation = confirm_action(
         register, provider_state, result,
         register_schema=schemas["canonical-tasks.schema.json"],
@@ -337,7 +370,7 @@ def confirm_preview_action(
     transaction = (
         transaction
         .stage("data/canonical-tasks.json", canonical_json_bytes(confirmation.canonical_tasks))
-        .stage(resolved.file_map["task_sync_state"], canonical_json_bytes(confirmation.provider_state))
+        .stage(resolved.task_binding["provider_state_path"], canonical_json_bytes(confirmation.provider_state))
     )
     remaining = len(confirmation.remaining_actions)
     outcome = result["outcome"]
@@ -363,19 +396,15 @@ def confirm_preview_action(
     return advanced
 
 
-def finish_preview(
-    *, storage: Any, resolved: Any, installed_root: Path,
-    local_day: str, output_identity: str, serialization: Mapping[str, Any],
-) -> PreviewFinish:
-    """Render/store an unsent brief, advance the source cursor last, and finish."""
+def render_current_brief(
+    *, storage: Any, resolved: Any, installed_root: Path, local_day: str,
+) -> CurrentBrief:
+    """Render current canonical state through the one installed brief recipe."""
     transaction = resolved.state
-    state, prior = _tip(transaction)
-    if prior.get("remaining_work") != {"phase": "brief_delivery"} or "task_sync" not in prior.get("completed_phases", []):
-        raise HybridPreviewError("preview is not ready for render")
     schemas = _schemas(installed_root)
     source = _source_context(transaction, storage)
     register = _json(transaction.read("data/canonical-tasks.json").data, "canonical tasks")
-    provider_state = _json(transaction.read(resolved.file_map["task_sync_state"]).data, "task provider state")
+    provider_state = _json(transaction.read(resolved.task_binding["provider_state_path"]).data, "task provider state")
     if provider_state.get("pending_actions"):
         raise HybridPreviewError("preview cannot render with pending task actions")
     brief_tasks = unresolved_finite_task_selection(
@@ -405,6 +434,24 @@ def finish_preview(
         },
     )
     rendered = render_brief(brief_input, schemas["brief-input.schema.json"])
+    return CurrentBrief(brief_input, rendered["html"], rendered["text"], source)
+
+
+def finish_preview(
+    *, storage: Any, resolved: Any, installed_root: Path,
+    local_day: str, output_identity: str, serialization: Mapping[str, Any],
+) -> PreviewFinish:
+    """Render/store an unsent brief, advance the source cursor last, and finish."""
+    transaction = resolved.state
+    state, prior = _tip(transaction)
+    if prior.get("remaining_work") != {"phase": "brief_delivery"} or "task_sync" not in prior.get("completed_phases", []):
+        raise HybridPreviewError("preview is not ready for render")
+    current = render_current_brief(
+        storage=storage, resolved=resolved, installed_root=installed_root,
+        local_day=local_day,
+    )
+    brief_input = current.brief_input
+    rendered = {"html": current.html, "text": current.text}
     input_bytes = canonical_json_bytes(brief_input)
     output = publish_hybrid_content_bundle(
         storage, recovery=transaction.working.recovery,

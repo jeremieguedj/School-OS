@@ -17,6 +17,7 @@ def record(**overrides):
         "section": "news",
         "delta_kind": "new",
         "voice_role": "voice_b",
+        "dialogue_tag": "[warmly]",
         "subject_label": "Student A",
         "spoken_text": "A source-linked update.",
         "source_tid": "thread-1",
@@ -26,27 +27,32 @@ def record(**overrides):
     return value
 
 
+def manifest(records):
+    return {
+        "run_date": "2026-09-02", "records": records,
+        "voices": dict(worker.EXAMPLE_VOICES),
+        "opening_tag": "[warmly]", "closing_tag": "[warmly]",
+    }
+
+
 class AudioBriefWorkerTests(unittest.TestCase):
     def test_dialogue_uses_recipe_voice_and_tag_mapping(self):
-        inputs, omitted = worker.build_inputs({"run_date": "2026-09-02", "records": [record()]})
+        inputs, omitted = worker.build_inputs(manifest([record()]))
 
         self.assertEqual(omitted, 0)
-        self.assertEqual(inputs[0]["voice_id"], worker.VOICES["narrator"])
+        self.assertEqual(inputs[0]["voice_id"], worker.EXAMPLE_VOICES["narrator"])
         self.assertEqual(inputs[1], {
-            "voice_id": worker.VOICES["voice_b"],
+            "voice_id": worker.EXAMPLE_VOICES["voice_b"],
             "text": "[warmly] News: A source-linked update.",
         })
-        self.assertEqual(inputs[-1]["voice_id"], worker.VOICES["narrator"])
+        self.assertEqual(inputs[-1]["voice_id"], worker.EXAMPLE_VOICES["narrator"])
 
     def test_opening_spells_sha_and_summarizes_subjects_by_section(self):
-        manifest = {
-            "run_date": "2026-09-02",
-            "records": [
+        value = manifest([
                 record(section="guideline", subject_label="Student B"),
                 record(section="action", subject_label="Student C", fact_or_row_id="fact-2"),
-            ],
-        }
-        inputs, _ = worker.build_inputs(manifest)
+            ])
+        inputs, _ = worker.build_inputs(value)
 
         self.assertEqual(
             inputs[0]["text"],
@@ -71,36 +77,29 @@ class AudioBriefWorkerTests(unittest.TestCase):
         with patch.object(sys, "argv", ["worker", "--manifest", "m.json", "--output-dir", "out", "--whatsapp-compatible"]):
             self.assertTrue(worker.parse_args().whatsapp_compatible)
 
-    def test_verified_fallback_voice_pair_is_the_default_recipe(self):
-        self.assertEqual(worker.VOICES["voice_a"], "CwhRBWXzGAHq8TQ4Fs17")
-        self.assertEqual(worker.VOICES["voice_b"], "EXAVITQu4vr4xnSDxMaL")
+    def test_public_example_voice_pair_remains_documentation_only(self):
+        self.assertEqual(worker.EXAMPLE_VOICES["voice_a"], "CwhRBWXzGAHq8TQ4Fs17")
+        self.assertEqual(worker.EXAMPLE_VOICES["voice_b"], "EXAVITQu4vr4xnSDxMaL")
 
     def test_first_record_over_character_cap_fails_closed(self):
-        manifest = {"run_date": "2026-09-02", "records": [record(spoken_text="x" * 3000)]}
+        value = manifest([record(spoken_text="x" * 3000)])
 
         with self.assertRaisesRegex(worker.BriefError, "first complete record exceeds the 2,000-character limit"):
-            worker.build_inputs(manifest)
+            worker.build_inputs(value)
 
     def test_action_due_status_must_be_recipe_defined(self):
-        manifest = {
-            "run_date": "2026-09-02",
-            "records": [record(section="action", due_status="someday")],
-        }
-
-        with self.assertRaisesRegex(worker.BriefError, "unsupported action due_status"):
-            worker.build_inputs(manifest)
+        value = manifest([record(section="action", dialogue_tag="urgent")])
+        with self.assertRaisesRegex(worker.BriefError, "bracketed dialogue tag"):
+            worker.build_inputs(value)
 
     def test_current_run_new_and_changed_news_guidelines_and_actions_feed_audio(self):
-        manifest = {
-            "run_date": "2026-09-02",
-            "records": [
+        value = manifest([
                 record(section="news", delta_kind="new", spoken_text="New school update."),
-                record(section="guideline", delta_kind="changed", fact_or_row_id="fact-2", spoken_text="Updated guideline."),
-                record(section="action", delta_kind="changed", fact_or_row_id="fact-3", spoken_text="Action status changed."),
-            ],
-        }
+                record(section="guideline", delta_kind="changed", dialogue_tag="[clear, calm]", fact_or_row_id="fact-2", spoken_text="Updated guideline."),
+                record(section="action", delta_kind="changed", dialogue_tag="[clear, matter-of-fact]", fact_or_row_id="fact-3", spoken_text="Action status changed."),
+            ])
 
-        inputs, omitted = worker.build_inputs(manifest)
+        inputs, omitted = worker.build_inputs(value)
 
         self.assertEqual(omitted, 0)
         self.assertEqual(
@@ -116,7 +115,14 @@ class AudioBriefWorkerTests(unittest.TestCase):
         for delta_kind in ("rolling_window", "unchanged"):
             with self.subTest(delta_kind=delta_kind):
                 with self.assertRaisesRegex(worker.BriefError, "current-run new or changed delta"):
-                    worker.build_inputs({"run_date": "2026-09-02", "records": [record(delta_kind=delta_kind)]})
+                    worker.build_inputs(manifest([record(delta_kind=delta_kind)]))
+
+    def test_runtime_manifest_requires_explicit_voices_and_tags(self):
+        with self.assertRaisesRegex(worker.BriefError, "voices"):
+            worker.build_inputs({"run_date": "2026-09-02", "records": [record()]})
+        bad = manifest([record(voice_role="not-configured")])
+        with self.assertRaisesRegex(worker.BriefError, "voice_role"):
+            worker.build_inputs(bad)
 
 
 if __name__ == "__main__":

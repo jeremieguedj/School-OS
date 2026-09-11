@@ -3884,3 +3884,75 @@ requirements, then read this log from top to bottom.
   compatibility gate, then resume the recovery plan's distinct final 14-day
   Todoist switch, two-send, audio, interruption/replay, scheduler-disable and
   fresh-session acceptance chain from a new final root when authorized.
+
+## 2026-09-10 — consolidated final-chain execution authorized
+
+- The user approved an execution sequence that completes static qualification
+  and accumulates ordinary compatible fixes before creating the next live test
+  environment. A full restart is reserved for changes that invalidate the
+  frozen runtime evidence; documentation, tests, planned mutable task/provider
+  state and conclusively reconciled transient outcomes do not trigger one.
+- Added the exact seven-step sequence and evidence-invalidation rules to the
+  recovery plan: static path inventory, consolidated repair, candidate freeze,
+  one clean 14-day installation/ingestion, both task lifecycles and guided
+  switch, the two authorized delivery/recovery cases, and evidence closure.
+  This changes execution ordering only; the approved Drive layout, agent-owned
+  task adapters, temporary all-image exclusion and acceptance matrix remain
+  unchanged.
+- No provider mutation or test email was made in this planning unit. Next:
+  inventory the active installed Todoist/switch/delivery/audio/scheduler and
+  recovery seams against their contracts and package inventory, run their
+  focused tests, and record one bounded repair list before changing runtime
+  code.
+
+## 2026-09-10 — final-chain static implementation consolidated
+
+- Added the provider-neutral Drive-generation task continuation and installed
+  task sync/switch entrypoints. Complete normalized snapshots import parent
+  add/edit/comment/complete/reopen state before projection; each finite action
+  is current as unknown before dispatch and advances its base only after exact
+  normalized readback. Guided switching stages Todoist while Sheets remains
+  selected, activates only after exact target proof, reuses dormant mappings,
+  blocks dormant dispatch, and aborts only actions proven undispatched.
+- Corrected hybrid ingestion to retain every prior catalog row, Fact and Fact
+  index across later bounded batches. Only refreshed record rows are replaced;
+  a refresh that would silently remove a prior Fact blocks. The operation now
+  persists a finite current-run new/changed source delta, and task imports add
+  parent-origin task changes to that same delta without treating system
+  projection metadata as parent news.
+- Added exact audio-manifest construction from the persisted current delta and
+  private explicit voice/tag routing. The existing ElevenLabs worker now
+  requires configured account-qualified voices, uses `eleven_v3`, preserves the
+  fixed 2,000-character prefix rule, reads its key only from the environment,
+  makes one synthesis request, and never substitutes a fallback voice.
+- Added the ordered hybrid delivery continuation: render and store HTML/text,
+  reserve the delivery, persist current delta and audio intent, record exactly
+  one terminal audio outcome, attach only verified MP3 bytes, persist Gmail
+  intent/effect checkpoints, send one structured multipart message, verify the
+  exact raw Sent MIME, advance the eligible source cursor last, and complete the
+  operation. A lost Gmail response recovers from Drive and reconciles the one
+  exact Sent match without a second send; failed/unavailable audio remains a
+  truthful independent disposition and cannot fabricate attachment success.
+- Extended the finite Gmail bridge only for the bounded nested MIME and
+  base64url attachment form actually exposed by the connector. The bridge
+  rejects unknown MIME fields, excessive nesting, malformed/empty binary data,
+  and incomplete attachment metadata. Existing privacy-safe raw connector
+  error preservation remains unchanged.
+- Fixed two cross-boundary integrity gaps found during static review: the same
+  source-bundle hash may not name conflicting physical Drive references, and
+  dormant task providers cannot authorize or confirm actions. Added regressions
+  for both, for failure-safe switch abort, cumulative ingestion, exact audio,
+  ordered delivery and lost-response recovery.
+- The final installed wrapper inventory found and repaired one additional
+  composition defect before freeze: the task/reconcile wrapper was manual-only,
+  so a scheduled delivery could not traverse the same operation checkpoints.
+  It now accepts the admitted manual or scheduled profile and requires private
+  runtime-serialization evidence for scheduled execution; the provider-neutral
+  state machine and delivery semantics are unchanged.
+- The final qualified bundled Python gate passes 431 tests plus schema/template
+  validation; focused task/delivery gates pass 28 tests and diff checks pass.
+  No Drive, Gmail, Sheets, Todoist, ElevenLabs, scheduler, or other live
+  provider call occurred in this implementation unit. Next: rerun the complete
+  gate with the final guards, inspect the exact release payload, commit/push and
+  verify the checkpoint, build/validate its immutable package, then freeze and
+  start one new clean 14-day acceptance environment.

@@ -7,6 +7,8 @@ mode-0700 run directory.  This module never accepts a tool name from input.
 
 from __future__ import annotations
 
+import base64
+import binascii
 import json
 import os
 import re
@@ -44,7 +46,7 @@ class ConnectorToolError(BridgeError):
 
 
 PROTOCOL = 1
-MAX_REQUEST_BYTES = 2 * 1024 * 1024
+MAX_REQUEST_BYTES = 16 * 1024 * 1024
 MAX_RESPONSE_BYTES = 16 * 1024 * 1024
 REQUEST_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 
@@ -167,10 +169,18 @@ def _nullable_string(value: Any, label: str) -> None:
         _nonempty_string(value, label)
 
 
-def _mime_payload(value: Any) -> None:
+def _mime_payload(value: Any, *, depth: int = 0) -> None:
     """Validate the finite structured MIME form used by the Gmail binding."""
     if not isinstance(value, Mapping):
         raise BridgeError("gmail.send.payload must be an object")
+    if depth > 2:
+        raise BridgeError("gmail.send.payload exceeds the admitted MIME depth")
+    allowed = {
+        "body", "charset", "content_disposition", "content_id", "filename",
+        "mime_type", "parts",
+    }
+    if set(value) - allowed:
+        raise BridgeError("gmail.send.payload contains unsupported fields")
     mime_type = value.get("mime_type")
     _nonempty_string(mime_type, "gmail.send.payload.mime_type")
     has_body, has_parts = "body" in value, "parts" in value
@@ -178,22 +188,35 @@ def _mime_payload(value: Any) -> None:
         raise BridgeError("gmail.send.payload requires exactly one of body or parts")
     if has_body:
         body = value["body"]
-        if not isinstance(body, Mapping) or set(body) != {"content"} or not isinstance(body["content"], str):
-            raise BridgeError("gmail.send.payload.body must contain one string content")
+        if not isinstance(body, Mapping) or set(body) not in ({"content"}, {"base64_url_content"}):
+            raise BridgeError("gmail.send.payload.body must contain one admitted representation")
+        key = next(iter(body))
+        if not isinstance(body[key], str):
+            raise BridgeError("gmail.send.payload.body representation must be a string")
+        if key == "base64_url_content":
+            try:
+                decoded = base64.b64decode(
+                    body[key] + "=" * (-len(body[key]) % 4), altchars=b"-_", validate=True,
+                )
+            except (binascii.Error, ValueError) as exc:
+                raise BridgeError("gmail.send.payload attachment body is not base64url") from exc
+            if not decoded:
+                raise BridgeError("gmail.send.payload attachment body is empty")
+        for key in ("charset", "content_disposition", "content_id", "filename"):
+            if key in value:
+                _nonempty_string(value[key], f"gmail.send.payload.{key}")
+        if value.get("content_disposition") == "attachment" and (
+            "filename" not in value or "base64_url_content" not in body
+        ):
+            raise BridgeError("gmail.send.payload attachment requires filename and binary body")
         return
     parts = value["parts"]
     if not isinstance(parts, list) or not parts:
         raise BridgeError("gmail.send.payload.parts must be a nonempty list")
     for part in parts:
-        if not isinstance(part, Mapping) or not {"mime_type", "body"} <= set(part):
+        if not isinstance(part, Mapping):
             raise BridgeError("gmail.send.payload part is malformed")
-        _nonempty_string(part["mime_type"], "gmail.send.payload part MIME type")
-        body = part["body"]
-        if not isinstance(body, Mapping) or set(body) != {"content"} or not isinstance(body["content"], str):
-            raise BridgeError("gmail.send.payload part body is malformed")
-        for key in ("charset", "content_disposition"):
-            if key in part:
-                _nonempty_string(part[key], f"gmail.send.payload part.{key}")
+        _mime_payload(part, depth=depth + 1)
 
 
 def _comment_operations(args: Mapping[str, Any]) -> None:

@@ -57,6 +57,7 @@ Every other existing logical artifact is a member of the current state bundle:
 | Per-provider task bindings/sync bases | `state/task-providers/<provider-id>.json` |
 | Capability profile selection and admitted profiles | `state/runtime-profile-selection.json`, `state/capability-profiles/<profile-id>.json` |
 | Delivery ledger and pending/confirmed effects | `state/delivery-state.json` |
+| Current reconciliation delta for audio/delivery | `state/pending-run-delta.json` and the operation-bound `state/runs/<operation-id>/current-delta.json` |
 | Last run evidence | `state/final-run-checkpoint.json` |
 
 The package owns the generic daily recipe and brief templates; a state member
@@ -402,6 +403,11 @@ receipts and `I` ID-allocation operations. Actual safety boundaries determine
    `connected_profiles.py`, `connected_ingestion.py`, `connected_tasks.py`, and
    `connected_daily.py` to use member references and shared state commits while
    retaining domain algorithms.
+   The final active route uses `school_os.hybrid_ingestion` for cumulative
+   source/Facts adoption, `school_os.hybrid_tasks` for provider-neutral task
+   generations and switching, and `school_os.hybrid_delivery` for ordered
+   output/audio/email publication. Each persists through the same immutable
+   state-generation/current-pointer boundary.
 5. Extend `school_os/codex_bridge.py` only for privacy-safe diagnostics and
    accounting actually observable from the current tools. Do not build a new
    connector framework.
@@ -409,6 +415,9 @@ receipts and `I` ID-allocation operations. Actual safety boundaries determine
    installed validator, templates, and focused fixtures. Preserve archived
    migration/per-object code and tests as historical, but exclude them from the
    active fresh-install route and frozen package.
+   The active installed continuation scripts are `run_hybrid_ingestion.py`,
+   `run_hybrid_task_sync.py`, `run_hybrid_task_switch.py`,
+   `run_hybrid_preview.py`, and `run_hybrid_delivery.py`.
 7. Build the exact package, use a new empty acceptance root, measure the live
    installation/cold recovery calls, bind the Sheet afterward, and resume the
    recovery plan's existing early preview and final live journey.

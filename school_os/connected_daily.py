@@ -295,7 +295,7 @@ def resolve_hybrid_instance(
 
     selector = _json(state.read(file_map["active_task_provider"]).data, "task provider selector")
     _validated(selector, package_root, "task-provider-selector.schema.json", "task provider selector")
-    if selector.get("status") != "bound" or not isinstance(selector.get("bindings"), Mapping):
+    if selector.get("status") not in {"bound", "switching"} or not isinstance(selector.get("bindings"), Mapping):
         raise ConnectedDailyError("hybrid task provider is not bound for execution")
     selected_provider = selector["selected_provider"]
     binding = selector["bindings"].get(selected_provider)
@@ -308,12 +308,15 @@ def resolve_hybrid_instance(
         }
         or binding.get("status") != "active"
         or binding.get("adapter_contract_version") != "agent-task-v1"
-        or binding.get("provider_state_path") != file_map.get("task_sync_state")
     ):
         raise ConnectedDailyError("hybrid selected agent task binding is malformed")
     configuration = state.read(binding["adapter_configuration_path"])
     if sha256_bytes(configuration.data) != binding["adapter_configuration_sha256"]:
         raise ConnectedDailyError("hybrid task adapter configuration hash disagrees")
+    try:
+        state.read(binding["provider_state_path"])
+    except ConnectedStorageError as exc:
+        raise ConnectedDailyError("hybrid selected task provider state is unavailable") from exc
 
     instance = dict(settings["instance"])
     household = dict(settings["household"])

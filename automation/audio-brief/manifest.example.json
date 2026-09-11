@@ -1,4 +1,11 @@
 {
+  "voices": {
+    "narrator": "CwhRBWXzGAHq8TQ4Fs17",
+    "voice_a": "CwhRBWXzGAHq8TQ4Fs17",
+    "voice_b": "EXAVITQu4vr4xnSDxMaL"
+  },
+  "opening_tag": "[warmly]",
+  "closing_tag": "[warmly]",
   "run_date": "2026-09-03",
   "window": {
     "start": "2026-09-02T06:00:00-07:00",
@@ -9,6 +16,7 @@
       "delta_kind": "new",
       "section": "news",
       "voice_role": "voice_a",
+      "dialogue_tag": "[warmly]",
       "subject_label": "Student A",
       "spoken_text": "Example source-linked school update.",
       "source_tid": "example-thread-id",
@@ -18,6 +26,7 @@
       "delta_kind": "changed",
       "section": "action",
       "voice_role": "voice_b",
+      "dialogue_tag": "[gently, urgent]",
       "subject_label": "Student B",
       "spoken_text": "Example action due today.",
       "source_tid": "example-thread-id",

@@ -3,7 +3,10 @@ from __future__ import annotations
 import unittest
 from email.message import EmailMessage
 
-from school_os.delivery import DeliveryError, ExactDeliveryRequest, deliver_exact
+from school_os.delivery import (
+    DeliveryError, ExactAudioAttachment, ExactDeliveryRequest, deliver_exact,
+    record_reserved_audio, reserve_delivery,
+)
 
 
 def raw_message(request: ExactDeliveryRequest) -> bytes:
@@ -16,6 +19,11 @@ def raw_message(request: ExactDeliveryRequest) -> bytes:
     message["Subject"] = request.subject
     message.set_content(request.text.decode("utf-8"), cte="8bit")
     message.add_alternative(request.html.decode("utf-8"), subtype="html", cte="8bit")
+    if request.audio is not None:
+        message.add_attachment(
+            request.audio.data, maintype="audio", subtype="mpeg",
+            filename=request.audio.filename,
+        )
     return message.as_bytes()
 
 
@@ -71,6 +79,87 @@ class DeliveryRuntimeTests(unittest.TestCase):
         second = self.request("key-b", "scheduled")
         self.assertNotEqual(first.fingerprint, second.fingerprint)
         self.assertEqual("multipart/alternative", first.gmail_args()["payload"]["mime_type"])
+
+    def test_exact_mp3_is_in_intent_structured_mime_and_sent_readback(self) -> None:
+        audio = ExactAudioAttachment.build(filename="Daily Brief.mp3", data=b"ID3audio")
+        request = ExactDeliveryRequest.build(
+            key="audio-1", variant="manual", to=("parent@example.invalid",),
+            subject="Audio [School-OS:audio-1]", text=b"Plain body\n",
+            html=b"<p>HTML body</p>\n", audio=audio,
+        )
+        args = request.gmail_args()
+        self.assertEqual("multipart/mixed", args["payload"]["mime_type"])
+        encoded = args["payload"]["parts"][1]["body"]["base64_url_content"]
+        self.assertEqual("SUQzYXVkaW8", encoded)
+        self.assertEqual(audio.intent(), request.intent()["audio"])
+        observation = {"id": "m1", "label_ids": ["SENT"], "raw": raw_message(request)}
+        from school_os.delivery import verify_sent_message
+        self.assertEqual("m1", verify_sent_message(request, observation, "m1"))
+        altered = ExactAudioAttachment.build(filename="Daily Brief.mp3", data=b"ID3other")
+        wrong = ExactDeliveryRequest.build(
+            key="audio-1", variant="manual", to=("parent@example.invalid",),
+            subject="Audio [School-OS:audio-1]", text=b"Plain body\n",
+            html=b"<p>HTML body</p>\n", audio=altered,
+        )
+        with self.assertRaisesRegex(DeliveryError, "attachment disagrees"):
+            verify_sent_message(wrong, observation, "m1")
+
+    def test_rejects_non_mp3_attachment(self) -> None:
+        with self.assertRaisesRegex(DeliveryError, "MP3"):
+            ExactAudioAttachment.build(filename="bad.mp3", data=b"not-audio")
+
+    def test_reserve_then_record_audio_then_send_preserves_order(self) -> None:
+        base = self.request("reserved-audio")
+        ledgers, effects, messages, persist, read, persist_effect, read_effect, read_sent = self.harness()
+        reserved = reserve_delivery(
+            base, audio_planned=True, read_ledger=read, persist_ledger=persist,
+        )
+        self.assertEqual("pending", reserved["audio"]["status"])
+        with self.assertRaisesRegex(DeliveryError, "not terminal"):
+            deliver_exact(
+                base, read_ledger=read, persist_ledger=persist,
+                persist_effect_checkpoint=persist_effect,
+                read_effect_checkpoint=read_effect, send=lambda _: self.fail("early send"),
+                read_sent=read_sent, search_sent=lambda _token: ((), None),
+            )
+        attachment = ExactAudioAttachment.build(filename="brief.mp3", data=b"ID3audio")
+        request = ExactDeliveryRequest.build(
+            key=base.key, variant=base.variant, to=base.to, cc=base.cc, bcc=base.bcc,
+            subject=base.subject, text=base.text, html=base.html, audio=attachment,
+        )
+        recorded = record_reserved_audio(
+            request, outcome="verified", read_ledger=read, persist_ledger=persist,
+        )
+        self.assertEqual(attachment.intent()["sha256"], recorded["audio"]["sha256"])
+        def send(value):
+            self.assertEqual("pending", read()["status"])
+            messages["m1"] = {"id": "m1", "label_ids": ["SENT"], "raw": raw_message(value)}
+            return {"id": "m1"}
+        result = deliver_exact(
+            request, read_ledger=read, persist_ledger=persist,
+            persist_effect_checkpoint=persist_effect,
+            read_effect_checkpoint=read_effect, send=send,
+            read_sent=read_sent, search_sent=lambda _token: ((), None),
+        )
+        self.assertEqual("confirmed", result["outcome"])
+        self.assertEqual("verified", result["ledger"]["reservation"]["audio"]["status"])
+
+    def test_reserved_audio_failure_can_send_without_fabricating_attachment(self) -> None:
+        request = self.request("audio-failed")
+        ledgers, effects, messages, persist, read, persist_effect, read_effect, read_sent = self.harness()
+        reserve_delivery(request, audio_planned=True, read_ledger=read, persist_ledger=persist)
+        record_reserved_audio(
+            request, outcome="failed", read_ledger=read, persist_ledger=persist,
+        )
+        def send(value):
+            messages["m1"] = {"id": "m1", "label_ids": ["SENT"], "raw": raw_message(value)}
+            return {"id": "m1"}
+        self.assertEqual("confirmed", deliver_exact(
+            request, read_ledger=read, persist_ledger=persist,
+            persist_effect_checkpoint=persist_effect,
+            read_effect_checkpoint=read_effect, send=send,
+            read_sent=read_sent, search_sent=lambda _token: ((), None),
+        )["outcome"])
 
     def test_abrupt_stop_after_provider_acceptance_leaves_may_have_applied_gate(self) -> None:
         request = self.request()

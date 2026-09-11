@@ -31,6 +31,32 @@ def _write_new(path: Path, data: bytes) -> None:
         handle.write(data); handle.flush(); os.fsync(handle.fileno())
 
 
+def _private_json(path: Path, instance_document: Path, label: str) -> dict[str, Any]:
+    if path.parent.resolve(strict=True) != instance_document.parent.resolve(strict=True):
+        raise ValueError(f"{label} escapes the private runtime directory")
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(value, dict):
+        raise ValueError(f"{label} must be a JSON object")
+    return value
+
+
+def _serialization(args: argparse.Namespace) -> dict[str, Any]:
+    if args.serialization is not None:
+        return _private_json(
+            args.serialization, args.instance_document, "serialization evidence",
+        )
+    if args.entrypoint != "manual":
+        raise ValueError("scheduled continuation requires runtime serialization evidence")
+    return {
+        "mode": "attended_single_writer",
+        "evidence": {
+            "actor_id": "installed-agent-preview", "attempt_id": args.phase,
+            "scheduler_inactive": True, "competing_mutators_excluded": True,
+            "observed_at": args.observed_at,
+        },
+    }
+
+
 def _runtime(path: Path) -> tuple[dict[str, Any], dict[str, Any]]:
     document = json.loads(path.read_text(encoding="utf-8"))
     state_bytes = Path(document["state_path"]).read_bytes()
@@ -72,6 +98,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--instance-document", type=Path, required=True)
     parser.add_argument("--run-directory", type=Path, required=True)
     parser.add_argument("--observed-at", required=True)
+    parser.add_argument("--entrypoint", choices=("manual", "scheduled"), default="manual")
+    parser.add_argument("--serialization", type=Path)
     parser.add_argument("--snapshot", type=Path)
     parser.add_argument("--result", type=Path)
     parser.add_argument("--local-day")
@@ -86,27 +114,24 @@ def main(argv: list[str] | None = None) -> int:
             raise ValueError("hybrid preview requires its extracted installed package")
         verify_extracted_tree(root)
         document, recovery = _runtime(args.instance_document)
-        resolved = resolve_hybrid_instance(package_root=root, recovery=recovery, entrypoint="manual")
+        resolved = resolve_hybrid_instance(
+            package_root=root, recovery=recovery, entrypoint=args.entrypoint,
+        )
         run_directory = args.run_directory.resolve(strict=True)
         storage = CodexDriveCreateOnlyStorage(
             CodexDrivePort(JsonlPeer(run_directory)),
             scratch_directory=run_directory / "storage-scratch",
         )
-        serialization = {
-            "mode": "attended_single_writer",
-            "evidence": {
-                "actor_id": "installed-agent-preview", "attempt_id": args.phase,
-                "scheduler_inactive": True, "competing_mutators_excluded": True,
-                "observed_at": args.observed_at,
-            },
-        }
+        serialization = _serialization(args)
         action = None
         if args.phase == "plan":
             if args.snapshot is None:
                 raise ValueError("plan phase requires a normalized snapshot")
             advanced = plan_preview_tasks(
                 storage=storage, resolved=resolved, installed_root=root,
-                snapshot=json.loads(args.snapshot.read_text(encoding="utf-8")),
+                snapshot=_private_json(
+                    args.snapshot, args.instance_document, "task snapshot",
+                ),
                 serialization=serialization,
             )
         elif args.phase == "authorize":
@@ -123,7 +148,9 @@ def main(argv: list[str] | None = None) -> int:
                 raise ValueError("confirm phase requires an agent result")
             advanced = confirm_preview_action(
                 storage=storage, resolved=resolved, installed_root=root,
-                result=json.loads(args.result.read_text(encoding="utf-8")),
+                result=_private_json(
+                    args.result, args.instance_document, "task result",
+                ),
                 serialization=serialization,
             )
         else:

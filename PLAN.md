@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: recovery MVP implementation in progress; Phase 0 complete and Phase 1 fresh-install qualification active
+Status: recovery MVP implementation in progress; Phase 0 and the four-day Phase 1 qualification are complete; final-chain static/package qualification is active
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 ## Next-release planning
@@ -51,6 +51,22 @@ artifacts without overwrite. Exact source/output readback, Sheet identity
 comparison and Drive-only cold recovery passed. Images and other binary reads
 remained disabled; delivery stayed unreserved and unsent. The earlier
 `970d9b2` root remains diagnosis evidence only.
+
+The active recovery execution now uses one consolidated stabilization pass
+before the final live chain: statically qualify all remaining Todoist, switch,
+delivery, audio, scheduler, replay and recovery paths; accumulate only
+compatible repairs; freeze one candidate; then run one new 14-day acceptance
+environment through both authorized deliveries and evidence closure. The exact
+ordering and invalidation rules are recorded under “Current consolidated
+execution plan” in `docs/plans/mvp-recovery/PLAN.md`.
+
+The consolidated implementation now includes provider-neutral Drive-generation
+task sync, failure-safe Sheets/Todoist switching, all-current source/Fact
+retention across batches, an explicit current-run reconciliation delta, exact
+audio-manifest construction, durable delivery reservation, one-call audio
+outcome recording, multipart Gmail delivery, Sent readback, and cursor-last
+completion. Final repository/package qualification is the remaining static gate
+before one new clean 14-day acceptance environment is created.
 
 The private execution values and unsanitized reference adapter receipts live
 only in

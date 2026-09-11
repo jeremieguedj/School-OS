@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import base64
 import json
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
@@ -16,6 +17,40 @@ from .contracts import canonical_json_bytes, sha256_bytes
 
 class DeliveryError(ValueError):
     """Raised when a delivery effect is pending, ambiguous, or not exact."""
+
+
+def _is_mp3(value: bytes) -> bool:
+    return value.startswith(b"ID3") or (
+        len(value) >= 2 and value[0] == 0xFF and value[1] & 0xE0 == 0xE0
+    )
+
+
+@dataclass(frozen=True)
+class ExactAudioAttachment:
+    """One exact verified MP3 attachment for the MVP brief."""
+
+    filename: str
+    data: bytes
+
+    @classmethod
+    def build(cls, *, filename: str, data: bytes) -> "ExactAudioAttachment":
+        if (
+            not isinstance(filename, str) or not filename or filename != filename.strip()
+            or filename != filename.rsplit("/", 1)[-1]
+            or not filename.lower().endswith(".mp3")
+        ):
+            raise DeliveryError("audio attachment requires one safe .mp3 filename")
+        if not isinstance(data, bytes) or not data or not _is_mp3(data):
+            raise DeliveryError("audio attachment requires nonempty MP3 bytes")
+        return cls(filename=filename, data=data)
+
+    def intent(self) -> dict[str, Any]:
+        return {
+            "filename": self.filename,
+            "mime_type": "audio/mpeg",
+            "sha256": sha256_bytes(self.data),
+            "size_bytes": len(self.data),
+        }
 
 
 def _addresses(values: Iterable[str], label: str, *, allow_empty: bool = False) -> tuple[str, ...]:
@@ -35,24 +70,43 @@ class ExactDeliveryRequest:
     subject: str
     text: bytes
     html: bytes
+    audio: ExactAudioAttachment | None
 
     @classmethod
     def build(
         cls, *, key: str, variant: str, to: Iterable[str], cc: Iterable[str] = (),
         bcc: Iterable[str] = (), subject: str, text: bytes, html: bytes,
+        audio: ExactAudioAttachment | None = None,
     ) -> "ExactDeliveryRequest":
         if not key or not variant or not subject or f"[School-OS:{key}]" not in subject:
             raise DeliveryError("delivery requires a key, variant, and exact subject key marker")
         if not isinstance(text, bytes) or not isinstance(html, bytes):
             raise DeliveryError("delivery bodies must be exact bytes")
-        return cls(key, variant, _addresses(to, "To"), _addresses(cc, "CC", allow_empty=True), _addresses(bcc, "BCC", allow_empty=True), subject, text, html)
+        if audio is not None and not isinstance(audio, ExactAudioAttachment):
+            raise DeliveryError("delivery audio must be an exact verified attachment")
+        return cls(
+            key, variant, _addresses(to, "To"),
+            _addresses(cc, "CC", allow_empty=True),
+            _addresses(bcc, "BCC", allow_empty=True), subject, text, html, audio,
+        )
 
     def intent(self) -> dict[str, Any]:
+        return {
+            **self.base_intent(),
+            "audio": self.audio.intent() if self.audio is not None else None,
+        }
+
+    def base_intent(self) -> dict[str, Any]:
+        """Exact delivery fields known before the optional audio call."""
         return {
             "bcc": list(self.bcc), "cc": list(self.cc), "html_sha256": sha256_bytes(self.html),
             "key": self.key, "subject": self.subject, "text_sha256": sha256_bytes(self.text),
             "to": list(self.to), "variant": self.variant,
         }
+
+    @property
+    def base_fingerprint(self) -> str:
+        return sha256_bytes(canonical_json_bytes(self.base_intent()))
 
     @property
     def fingerprint(self) -> str:
@@ -65,14 +119,33 @@ class ExactDeliveryRequest:
             html = self.html.decode("utf-8")
         except UnicodeDecodeError as exc:
             raise DeliveryError("Gmail delivery bodies must be strict UTF-8") from exc
-        result: dict[str, Any] = {
-            "payload": {
-                "mime_type": "multipart/alternative",
+        alternative = {
+            "mime_type": "multipart/alternative",
+            "parts": [
+                {"body": {"content": text}, "charset": "utf-8", "content_disposition": "inline", "mime_type": "text/plain"},
+                {"body": {"content": html}, "charset": "utf-8", "content_disposition": "inline", "mime_type": "text/html"},
+            ],
+        }
+        payload: dict[str, Any] = alternative
+        if self.audio is not None:
+            payload = {
+                "mime_type": "multipart/mixed",
                 "parts": [
-                    {"body": {"content": text}, "charset": "utf-8", "content_disposition": "inline", "mime_type": "text/plain"},
-                    {"body": {"content": html}, "charset": "utf-8", "content_disposition": "inline", "mime_type": "text/html"},
+                    alternative,
+                    {
+                        "body": {
+                            "base64_url_content": base64.urlsafe_b64encode(
+                                self.audio.data
+                            ).decode("ascii").rstrip("=")
+                        },
+                        "content_disposition": "attachment",
+                        "filename": self.audio.filename,
+                        "mime_type": "audio/mpeg",
+                    },
                 ],
-            },
+            }
+        result: dict[str, Any] = {
+            "payload": payload,
             "response_fields": ["id", "thread_id", "label_ids"],
             "subject": self.subject,
             "to": ", ".join(self.to),
@@ -109,15 +182,27 @@ def verify_sent_message(
         if sorted(_header_addresses(message, header)) != sorted(expected):
             raise DeliveryError(f"delivery {header} recipients disagree")
     parts: dict[str, list[bytes]] = {"text/plain": [], "text/html": []}
+    attachments: list[tuple[str | None, str, bytes]] = []
     for part in message.walk():
         content_type = part.get_content_type()
-        if content_type in parts and part.get_content_disposition() != "attachment":
+        disposition = part.get_content_disposition()
+        if disposition == "attachment":
+            payload = part.get_payload(decode=True)
+            if not isinstance(payload, bytes):
+                raise DeliveryError("delivery MIME attachment is unavailable")
+            attachments.append((part.get_filename(), content_type, payload))
+        elif content_type in parts:
             payload = part.get_payload(decode=True)
             if not isinstance(payload, bytes):
                 raise DeliveryError("delivery MIME body is unavailable")
             parts[content_type].append(payload)
     if parts["text/plain"] != [request.text] or parts["text/html"] != [request.html]:
         raise DeliveryError("delivery MIME bodies disagree with intended exact bytes")
+    expected_attachments = [] if request.audio is None else [
+        (request.audio.filename, "audio/mpeg", request.audio.data)
+    ]
+    if attachments != expected_attachments:
+        raise DeliveryError("delivery MIME attachment disagrees with intended exact bytes")
     return identity
 
 
@@ -135,6 +220,61 @@ def _persist_exact(persist: Persist, read: ReadLedger, candidate: Mapping[str, A
     if not isinstance(observed, Mapping) or canonical_json_bytes(dict(observed)) != canonical_json_bytes(expected):
         raise DeliveryError(f"{label} did not read back exactly")
     return expected
+
+
+def reserve_delivery(
+    request: ExactDeliveryRequest, *, audio_planned: bool,
+    read_ledger: ReadLedger, persist_ledger: Persist,
+) -> dict[str, Any]:
+    """Durably reserve one delivery before attempting its optional audio."""
+    if request.audio is not None:
+        raise DeliveryError("delivery must be reserved before audio exists")
+    candidate = {
+        "audio": {"status": "pending" if audio_planned else "not_requested"},
+        "base_fingerprint": request.base_fingerprint,
+        "base_intent": request.base_intent(),
+        "schema_version": 1,
+        "status": "reserved",
+    }
+    current = read_ledger()
+    if current is None:
+        return _persist_exact(
+            persist_ledger, read_ledger, candidate, "delivery reservation",
+        )
+    if not _exactly(current, candidate):
+        raise DeliveryError("delivery key already has a different reservation or effect")
+    return dict(current)
+
+
+def record_reserved_audio(
+    request: ExactDeliveryRequest, *, outcome: str,
+    read_ledger: ReadLedger, persist_ledger: Persist,
+) -> dict[str, Any]:
+    """Record the single audio outcome before the send effect is authorized."""
+    if outcome not in {"verified", "skipped_empty", "unavailable", "failed"}:
+        raise DeliveryError("audio outcome is unsupported")
+    current = read_ledger()
+    if (
+        not isinstance(current, Mapping) or current.get("status") != "reserved"
+        or current.get("base_fingerprint") != request.base_fingerprint
+        or current.get("base_intent") != request.base_intent()
+    ):
+        raise DeliveryError("audio outcome has no matching delivery reservation")
+    prior_audio = current.get("audio")
+    if not isinstance(prior_audio, Mapping) or prior_audio.get("status") != "pending":
+        raise DeliveryError("reserved audio has already reached a terminal outcome")
+    if outcome == "verified":
+        if request.audio is None:
+            raise DeliveryError("verified audio outcome lacks exact MP3 bytes")
+        audio = {"status": "verified", **request.audio.intent()}
+    else:
+        if request.audio is not None:
+            raise DeliveryError("failed or skipped audio outcome cannot attach bytes")
+        audio = {"status": outcome}
+    candidate = {**dict(current), "audio": audio}
+    return _persist_exact(
+        persist_ledger, read_ledger, candidate, "reserved audio outcome",
+    )
 
 
 def _effect(request: ExactDeliveryRequest, outcome: str, provider_message_id: str | None = None) -> dict[str, Any]:
@@ -155,9 +295,34 @@ def deliver_exact(
 ) -> dict[str, Any]:
     """Send once after durable intent, or reconcile one exact unknown effect."""
     current = read_ledger()
+    reservation: dict[str, Any] | None = None
     if current is not None:
-        if current.get("fingerprint") != request.fingerprint or current.get("intent") != request.intent():
-            raise DeliveryError("delivery key already exists with different exact intent")
+        if current.get("status") == "reserved":
+            if (
+                current.get("base_fingerprint") != request.base_fingerprint
+                or current.get("base_intent") != request.base_intent()
+            ):
+                raise DeliveryError("delivery reservation differs from send intent")
+            audio = current.get("audio")
+            if not isinstance(audio, Mapping) or audio.get("status") == "pending":
+                raise DeliveryError("delivery audio outcome is not terminal")
+            if audio.get("status") == "verified":
+                if request.audio is None or dict(audio) != {
+                    "status": "verified", **request.audio.intent(),
+                }:
+                    raise DeliveryError("verified audio reservation differs from send attachment")
+            elif request.audio is not None or audio.get("status") not in {
+                "not_requested", "skipped_empty", "unavailable", "failed",
+            }:
+                raise DeliveryError("delivery audio disposition differs from send intent")
+            if read_effect_checkpoint() is not None:
+                raise DeliveryError("reserved delivery unexpectedly has an effect checkpoint")
+            reservation = dict(current)
+            current = None
+        else:
+            if current.get("fingerprint") != request.fingerprint or current.get("intent") != request.intent():
+                raise DeliveryError("delivery key already exists with different exact intent")
+    if current is not None:
         if current.get("status") == "confirmed":
             identity = current.get("provider_message_id")
             if not isinstance(identity, str):
@@ -197,6 +362,8 @@ def deliver_exact(
             "fingerprint": request.fingerprint, "intent": request.intent(), "provider_message_id": None,
             "schema_version": 1, "status": "pending",
         }
+        if reservation is not None:
+            pending["reservation"] = reservation
         pending = _persist_exact(persist_ledger, read_ledger, pending, "pending delivery ledger")
         _persist_exact(
             persist_effect_checkpoint, read_effect_checkpoint, _effect(request, "pending"),

@@ -72,6 +72,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--attempt-id", required=True)
     parser.add_argument("--source-bundle-id", required=True)
     parser.add_argument("--observed-at", required=True)
+    parser.add_argument("--entrypoint", choices=("manual", "scheduled"), default="manual")
+    parser.add_argument("--operation-mode", choices=("unsent_preview", "delivery"), default="unsent_preview")
+    parser.add_argument("--serialization", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
@@ -84,7 +87,7 @@ def main(argv: list[str] | None = None) -> int:
         verify_extracted_tree(root)
         recovery = _runtime(args.instance_document)
         resolved = resolve_hybrid_instance(
-            package_root=root, recovery=recovery, entrypoint="manual",
+            package_root=root, recovery=recovery, entrypoint=args.entrypoint,
         )
         peer = JsonlPeer(run_directory)
         drive = CodexDrivePort(peer)
@@ -97,12 +100,10 @@ def main(argv: list[str] | None = None) -> int:
             gmail=CodexGmailPort(peer), semantic=CodexSemanticPort(peer),
             capture=capture,
         )
-        committed = commit_ingestion(
-            storage=storage, resolved=resolved, staged=staged, capture=capture,
-            identity=args.source_bundle_id, operation_id=args.operation_id,
-            attempt_id=args.attempt_id,
-            source_commit=recovery["bootstrap"]["source_identity"]["commit"],
-            serialization={
+        if args.serialization is not None:
+            serialization = json.loads(args.serialization.read_text(encoding="utf-8"))
+        elif args.entrypoint == "manual":
+            serialization = {
                 "mode": "attended_single_writer",
                 "evidence": {
                     "actor_id": "installed-manual-ingestion",
@@ -111,8 +112,17 @@ def main(argv: list[str] | None = None) -> int:
                     "competing_mutators_excluded": True,
                     "observed_at": args.observed_at,
                 },
-            },
+            }
+        else:
+            raise ValueError("scheduled ingestion requires runtime serialization evidence")
+        committed = commit_ingestion(
+            storage=storage, resolved=resolved, staged=staged, capture=capture,
+            identity=args.source_bundle_id, operation_id=args.operation_id,
+            attempt_id=args.attempt_id,
+            source_commit=recovery["bootstrap"]["source_identity"]["commit"],
+            serialization=serialization,
             installed_root=root,
+            entrypoint=args.entrypoint, operation_mode=args.operation_mode,
         )
         evidence = {
             "schema_version": 1,

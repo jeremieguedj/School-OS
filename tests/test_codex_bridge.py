@@ -187,6 +187,29 @@ class CodexBridgeTests(unittest.TestCase):
         with self.assertRaisesRegex(BridgeError, "unknown effects"):
             JsonlPeer(self.run_dir, input_stream=io.StringIO(control), output_stream=io.StringIO()).call("drive.get_metadata", {"fileId": "x"}, request_id="error")
 
+    def test_gmail_send_accepts_bounded_nested_mime_and_rejects_malformed_binary(self) -> None:
+        peer = JsonlPeer(self.run_dir, input_stream=io.StringIO(), output_stream=io.StringIO())
+        payload = {
+            "mime_type": "multipart/mixed",
+            "parts": [{
+                "mime_type": "multipart/alternative",
+                "parts": [
+                    {"mime_type": "text/plain", "charset": "utf-8", "content_disposition": "inline", "body": {"content": "plain"}},
+                    {"mime_type": "text/html", "charset": "utf-8", "content_disposition": "inline", "body": {"content": "<p>html</p>"}},
+                ],
+            }, {
+                "mime_type": "audio/mpeg", "filename": "brief.mp3",
+                "content_disposition": "attachment",
+                "body": {"base64_url_content": "SUQzYXVkaW8"},
+            }],
+        }
+        with self.assertRaisesRegex(BridgeError, "closed before returning"):
+            peer.call("gmail.send", {"to": "x@example.invalid", "subject": "s", "payload": payload}, request_id="mime")
+        malformed = json.loads(json.dumps(payload))
+        malformed["parts"][1]["body"]["base64_url_content"] = "%%%"
+        with self.assertRaisesRegex(BridgeError, "base64url"):
+            peer.call("gmail.send", {"to": "x@example.invalid", "subject": "s", "payload": malformed}, request_id="bad-mime")
+
     def test_connector_error_is_preserved_privately_and_safely_diagnosed(self) -> None:
         request_id = "error-detail"
         request = {

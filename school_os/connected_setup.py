@@ -19,6 +19,7 @@ from .connected_storage import (
 from .connected_profiles import initial_profile_registry
 from .contracts import canonical_json_bytes, dump_mapping_yaml, load_mapping_yaml, sha256_bytes
 from .agent_tasks import initialize_provider_state, validate_snapshot
+from .hybrid_tasks import adapter_configuration_path, provider_state_path
 from .install import (
     DAILY_REFERENCE_KINDS, FILE_MAP_PATH, INTEGRATION_REFERENCE_KINDS,
     HYBRID_PACKAGE_PATH, OPERATION_STATE_PATH, PACKAGE_ARCHIVE_PATH, InstallationError,
@@ -45,6 +46,8 @@ GZIP_SIGNATURE = b"\x1f\x8b\x08"
 _HYBRID_STATE_PATHS = {
     "source_checkpoint": "state/source-checkpoint.json",
     "source_catalog_index": "data/source-catalog-index.json",
+    "canonical_facts": "data/facts.json",
+    "fact_indexes": "data/fact-indexes.json",
     "canonical_action_register": "data/canonical-tasks.json",
     "guidelines": "data/guidelines.json",
     "rolling_updates": "data/rolling-updates.json",
@@ -416,7 +419,16 @@ def compose_hybrid_connected_inputs(
             }.get(role),
         )
         for role, path in _HYBRID_STATE_PATHS.items()
+        if role not in {"canonical_facts", "fact_indexes"}
     }
+    entries[_HYBRID_STATE_PATHS["canonical_facts"]] = BundleEntry(
+        canonical_json_bytes({"schema_version": 1, "facts": []}),
+        "canonical_facts", "application/json",
+    )
+    entries[_HYBRID_STATE_PATHS["fact_indexes"]] = BundleEntry(
+        canonical_json_bytes({"schema_version": 1, "by_fact_id": {}}),
+        "fact_indexes", "application/json",
+    )
     entries[_HYBRID_STATE_PATHS["task_sync_state"]] = BundleEntry(
         canonical_json_bytes({
             "provider_id": "unbound", "adapter_id": "unbound",
@@ -656,7 +668,8 @@ def bind_hybrid_task_projection(
         if isinstance(exc, InstallationError):
             raise
         raise InstallationError(f"initial agent task snapshot is invalid: {exc}") from exc
-    configuration_path = f"state/task-adapters/{binding_id}.json"
+    configuration_path = adapter_configuration_path(binding_id)
+    selected_state_path = provider_state_path(binding_id)
     configuration_sha256 = sha256_bytes(adapter_configuration)
     selected = {
         "adapter_configuration_path": configuration_path,
@@ -665,7 +678,7 @@ def bind_hybrid_task_projection(
         "adapter_id": binding["adapter_id"],
         "binding_id": binding["binding_id"],
         "provider_id": binding["provider_id"],
-        "provider_state_path": _HYBRID_STATE_PATHS["task_sync_state"],
+        "provider_state_path": selected_state_path,
         "scope_sha256": binding["scope_sha256"],
         "status": "active",
     }
@@ -681,7 +694,9 @@ def bind_hybrid_task_projection(
             role="task_adapter_configuration", media_type="application/json",
         )
         .stage(
-            _HYBRID_STATE_PATHS["task_sync_state"], canonical_json_bytes(state),
+            selected_state_path, canonical_json_bytes(state),
+            role="task_sync_state", media_type="application/json",
+            schema_id="provider-state.schema.json",
         )
         .stage(selector_path, canonical_json_bytes(bound_selector))
         .publish(storage, serialization)

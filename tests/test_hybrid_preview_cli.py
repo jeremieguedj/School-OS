@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -49,6 +50,33 @@ class HybridPreviewCliTests(unittest.TestCase):
             self.assertTrue(Path(second["state_path"]).is_file())
             with self.assertRaises(FileExistsError):
                 MODULE._updated_runtime({}, self.transaction(7, payloads["state-7"]), Storage(), run, "authorize")
+
+    def test_scheduled_continuation_requires_private_runtime_serialization(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            private = Path(temporary)
+            instance = private / "instance.json"
+            instance.write_text("{}", encoding="utf-8")
+            missing = SimpleNamespace(
+                serialization=None, entrypoint="scheduled", phase="plan",
+                instance_document=instance, observed_at="2026-09-10T00:00:00Z",
+            )
+            with self.assertRaisesRegex(ValueError, "requires runtime serialization"):
+                MODULE._serialization(missing)
+            evidence = private / "serialization.json"
+            expected = {
+                "mode": "runtime_serialized",
+                "evidence": {
+                    "instance_key": "instance", "queue_receipt": "queue",
+                    "competing_mutators_excluded": True,
+                    "observed_at": "2026-09-10T00:00:00Z",
+                },
+            }
+            evidence.write_text(json.dumps(expected), encoding="utf-8")
+            admitted = SimpleNamespace(
+                serialization=evidence, entrypoint="scheduled", phase="plan",
+                instance_document=instance, observed_at="2026-09-10T00:00:00Z",
+            )
+            self.assertEqual(expected, MODULE._serialization(admitted))
 
 
 if __name__ == "__main__":

@@ -9,7 +9,8 @@ The adapter must:
 - never receive or store credentials in this repository;
 - declare supported formats, job/polling behavior, limits, and cost handling;
 - return a verified retrievable output before email attachment;
-- treat unavailable API access as an optional degraded outcome; and
+- record unavailable API access as an independent degraded outcome without
+  fabricating audio or rolling back canonical/email success; and
 - avoid narrating content outside the approved current-run delta.
 
 ## Dialogue voice compatibility
@@ -20,6 +21,5 @@ is versioned as `v1`; that is separate from the model identifier.
 
 Voice IDs can be account, workspace, or entitlement specific. Before a paid
 dialogue request, retrieve `GET /v1/voices` with the same credential and fail
-closed if any configured ID is absent. A verified public fallback pair is
-Roger (`CwhRBWXzGAHq8TQ4Fs17`) and Sarah (`EXAVITQu4vr4xnSDxMaL`), but an
-instance owner must still validate their own account's catalog.
+closed if any configured ID is absent. Public examples are documentation only;
+runtime generation never substitutes them for the private configured mapping.

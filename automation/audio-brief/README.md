@@ -6,7 +6,7 @@ contact name, Drive ID, provider identifier, or credential belongs here.
 
 ## Boundary
 
-The local scheduled Codex task reads the private Drive knowledge base and writes
+The admitted School-OS runtime reads the private Drive knowledge base and writes
 a temporary, source-linked manifest matching `manifest.example.json`. This
 worker does not search Gmail, read Drive, or send WhatsApp messages. That keeps
 the audio generator testable and gives a future WhatsApp UI step an explicit,
@@ -33,21 +33,12 @@ the documented optional-degradation outcome and still completes the HTML/text
 brief path. It does not invoke this worker or synthesize a substitute. This
 local worker neither rebuilds a delta nor decides HTML eligibility.
 
-## Secret setup: macOS Keychain
+## Runtime secret
 
-Use Keychain Access rather than a shell command, so the API key never enters
-shell history:
-
-1. Open **Keychain Access** and select the **login** keychain.
-2. Choose **File → New Password Item**.
-3. Set **Keychain Item Name** to `School-OS.ElevenLabs.APIKey`.
-4. Set **Account Name** to your macOS login name.
-5. Paste the ElevenLabs API key into **Password**, then save.
-
-The script reads this item only when it actually calls ElevenLabs. It never
-writes it to the repository, a manifest, a log, or an output file. If a
-different Keychain account is needed later, pass `--keychain-account`; the
-default is the current macOS user.
+The worker reads `ELEVENLABS_API_KEY` only from the invoking runtime's secret
+environment. The key must never be placed in Drive, a manifest, a command-line
+argument, a log, or the repository. A missing variable fails before either the
+voice-catalog check or synthesis request.
 
 ## Voice compatibility
 
@@ -56,9 +47,11 @@ The worker uses ElevenLabs' multi-speaker dialogue endpoint,
 model version are distinct: `v1` belongs in the URL and `eleven_v3` belongs in
 the JSON body.
 
-The bundled, verified fallback mapping is Roger
+The public example mapping uses Roger
 (`CwhRBWXzGAHq8TQ4Fs17`) and Sarah (`EXAVITQu4vr4xnSDxMaL`). They were
-confirmed to generate a multi-voice MP3 through this endpoint. Before every
+confirmed to generate a multi-voice MP3 through this endpoint. It is never a
+runtime fallback. Every private manifest supplies the exact admitted voice map
+and opening, closing, and per-record dialogue tags. Before every
 paid synthesis request, the worker calls `GET /v1/voices` and refuses to run
 if any configured voice ID is absent. This prevents a confusing paid request
 failure when a copied recipe contains library or workspace-specific IDs.
@@ -67,9 +60,9 @@ If you want different voices, first list the voices available to *your* API
 key, then update a private voice map or your local copy of the mapping. Do not
 assume an ID published by someone else is licensed for your account.
 
-Each private manifest selects a generic `voice_role` (`voice_a` or `voice_b`)
-rather than placing household names in this public worker. The role mapping is
-the only part that changes when an instance owner chooses a different voice.
+Each private manifest selects a generic `voice_role` rather than placing
+household names in this public worker. The explicit role mapping is validated
+against the account and no voice is silently substituted.
 Each record also supplies a private `subject_label`. The worker uses those
 labels only in the spoken opening to summarize the sections covered that day.
 It speaks the school name as `S-H-A`, produces a filename such as
@@ -100,7 +93,7 @@ python3 automation/audio-brief/elevenlabs_audio_brief.py \
   --whatsapp-compatible
 ```
 
-The output is a new `sha-daily-audio-YYYY-MM-DD.mp3`. The script refuses to
+The output is a new human-readable `SHA Daily Brief <date>.mp3`. The script refuses to
 overwrite a same-date file, verifies `audio/mpeg` and the MP3 signature, and
 prints a SHA-256 after writing it.
 

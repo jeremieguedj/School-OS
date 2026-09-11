@@ -1,7 +1,9 @@
 # School-OS recovery MVP plan and implementation specification
 
-- Status: recovery implementation in progress; Phase 0 reconciliation is
-  complete and Phase 1 hybrid live-ingestion qualification is active
+- Status: recovery implementation in progress; Phase 0 reconciliation and the
+  Phase 1 four-day hybrid preview qualification are complete; consolidated
+  Phase 2 implementation is complete and final static/package qualification is
+  active
 - Written: 2026-09-09
 - Release identity: record the early candidate in Phase 0 and freeze the final
   identity in Phase 2; do not assume that `main`,
@@ -157,11 +159,11 @@ recipes rather than duplicating them in a new framework.
 |---|---|
 | Candidate `school_os/connected_bootstrap.py`, `connected_setup.py`, `connected_profiles.py`; `scripts/setup_connected_instance.py`, `run_connected_operation.py`, `readmit_connected_profile.py` | Reconcile onto `main`; recover only admitted package/bootstrap/profile bytes; fresh create-only setup; finite operation routing; exact readback and profile selection. |
 | `school_os.connected_ingestion.ConnectedIngestionWorker`, candidate `school_os/connected_sources.py`, `scripts/run_source_host.py` | Bind the frozen `[start,end)` search, full/raw Gmail reads, complete bodies, attachment bytes, bounded PDF resources, the temporary pre-fetch all-image exclusion, persisted Facts/audit, and continuation. Retain the inactive image pipeline and existing custody/semantic validators. |
-| `school_os.connected_tasks.ConnectedTaskWorker`, proposed `school_os.agent_tasks` and `school_os.hybrid_tasks` | Preserve `reconcile` as the Drive-canonical readmission step; make provider comparison pure; commit parent imports and each high-level action before the user's agent performs it; validate normalized readback before advancing a binding/base. |
+| `school_os.connected_tasks.ConnectedTaskWorker`, `school_os.agent_tasks` and `school_os.hybrid_tasks` | Preserve `reconcile` as the Drive-canonical readmission step; make provider comparison pure; commit parent imports and each high-level action before the user's agent performs it; validate normalized readback before advancing a binding/base. |
 | `adapters/tasks/google-sheets.md`, `adapters/tasks/todoist.md` and the agent task interface | Make both providers agent-operated procedures over the same complete normalized snapshot/action/readback contract. Reuse the private Todoist procedure; do not create a native Todoist worker or require a fixed Sheet layout. |
-| Candidate `school_os.connected_daily.ConnectedDailyRuntime` and proposed tracked `school_os.hybrid_preview` | Remove hard-coded Sheet construction from active hybrid routing. Carry the exact reconcile output through the selected agent adapter, retain all-current Facts/tasks for brief building, store the unsent output bundle, and commit the cursor last. |
-| **Proposed** thin guided-switch command in `scripts/` backed by a small function beside connected task selection | Final old-provider pull and Drive persist; stage/read back target projection; atomically activate selector only after target proof; retain dormant mappings for switchback; leave old selected if preparation fails. |
-| `school_os.brief`, `school_os.delivery`, candidate connected daily delivery phase, `automation/audio-brief/elevenlabs_audio_brief.py` | Implement render/validate -> reserve -> persist current reconciliation delta -> one-call MP3 generate/verify -> one multipart send -> exact Sent readback -> commit. Record empty/unavailable/failed audio separately; keep email success independent while requiring one live MP3 for MVP. |
+| Candidate `school_os.connected_daily.ConnectedDailyRuntime` and tracked `school_os.hybrid_preview` | Remove hard-coded Sheet construction from active hybrid routing. Carry the exact reconcile output through the selected agent adapter, retain all-current Facts/tasks for brief building, store the unsent output bundle, and commit the cursor last. |
+| `school_os.hybrid_tasks`, `scripts/run_hybrid_task_sync.py`, and `scripts/run_hybrid_task_switch.py` | Final old-provider pull and Drive persist; stage/read back target projection; activate selector only after target proof; retain dormant mappings for switchback; leave old selected if preparation fails. Dormant bindings cannot dispatch, and abort may discard only actions proven undispatched. |
+| `school_os.brief`, `school_os.delivery`, `school_os.audio`, `school_os.hybrid_delivery`, `scripts/run_hybrid_delivery.py`, and `automation/audio-brief/elevenlabs_audio_brief.py` | Implement render/validate -> reserve -> persist current reconciliation delta -> one-call MP3 generate/verify -> one multipart send -> exact Sent readback -> commit. Record empty/unavailable/failed audio separately; keep email success independent while requiring one live MP3 for MVP. |
 | `school_os.references`, `school_os.operations`, `school_os.daily`, `scripts/run_operation.py` | Route fresh manual, scheduled, task-sync, and guided-switch operations from installed references; recover phase outputs/effect receipts from Drive after process/local-state loss; reject substituted package/config/profile bytes. |
 | `scripts/build_release.py`, `scripts/validate_installed.py`, release inventory | Package only the active fresh-install route and required assets. Keep upgrade/migration and superseded implementation files in Git for future use while excluding them from active operation routing; do not delete useful code. |
 
@@ -210,6 +212,67 @@ source/expected-content evidence may be reused only when exact source IDs,
 window, and bytes match; final installed outputs must come from the final package.
 
 ## Phases, deliverables, and stop conditions
+
+### Current consolidated execution plan
+
+Use one accumulated stabilization pass before creating the final live
+environment. This is an execution ordering inside the already approved
+architecture, not a new architecture or acceptance matrix.
+
+1. **Static path inventory.** Map each remaining acceptance observation to the
+   active installed entrypoint, contract, package member, focused test, and
+   private agent-operated provider procedure. Inspect Todoist lifecycle and
+   guided switching, delivery reservation and Sent reconciliation, audio
+   preparation/one-call handling, scheduler creation/disable, duplicate replay,
+   interruption, local deletion, and fresh-process recovery. Make no live
+   provider mutation in this step.
+2. **Consolidated compatible repair.** Reproduce any demonstrated gap with an
+   existing synthetic fixture or exact ignored private receipt, then repair all
+   ordinary contract-preserving defects as one candidate. Exercise every finite
+   task action kind and switch boundary, exact delivery ordering, audio failure
+   classification, scheduler cleanup, and recovery from every already-defined
+   effect boundary. Do not add providers, workflow machinery, new effects, or
+   acceptance cases.
+3. **Candidate qualification and freeze.** Run focused tests, the complete
+   repository validator, privacy and installed-package checks, then build one
+   immutable package. Record the source commit, package hash, interpreter,
+   dependencies, configuration fingerprint, private source bounds, recipients,
+   provider scopes, and scenario before the first final-root write.
+4. **One clean final installation and ingestion.** Create and prove one new
+   empty Drive root, one isolated agent-owned Sheet, and one isolated Todoist
+   project. Install and cold-recover the five-file layout, bind Sheets, then run
+   the frozen 14-day two-domain inventory with the temporary all-image
+   exclusion. Preserve complete text and supported non-image/PDF custody,
+   independently bind every semantic expectation to its packet, query Facts,
+   and render the existing-recipe brief without reserving delivery early.
+5. **Task lifecycle and guided switch.** With Sheets selected, perform complete
+   snapshot import plus parent add/edit/comment/complete/reopen and guarded
+   refresh. Pull and commit Sheets, stage and verify Todoist without activating
+   it, activate only after proof, exercise the same Todoist lifecycle, and
+   switch back through dormant mappings. Verify stable Drive identities,
+   relationships, fields, status, comments, bases, and zero duplicates.
+6. **The two authorized deliveries and recovery cases.** Perform the manual
+   TEST delivery in the required render/reserve/persist/audio/send/Sent/commit
+   order with at most one audio call. Create the temporary schedule for the
+   distinct scheduled TEST run, observe one fire, disable it immediately, and
+   independently prove it inactive. Replay both keys; exercise pre-effect and
+   lost-response task recovery without another provider effect; delete local
+   run state; and continue from Drive in a fresh process and fresh session.
+7. **Evidence closure.** Validate exact artifacts and expected content, record
+   a pass/block disposition for every existing acceptance row, update the plans
+   and progress log, commit/push/verify all accepted repository work, and only
+   then use the authorized release workflow for the identical tested package.
+
+Do not restart the full live chain for documentation-only changes, additional
+tests, planned mutable scenario state, or a conclusively reconciled transient
+read/lost response. Exact source evidence may be reused only when source IDs,
+window and bytes match. Any executable, interpreter, policy, recipe,
+configuration, source-bound, or declared-scenario change invalidates downstream
+runtime evidence and requires a rebuilt package and new empty final root. When a
+live defect appears, preserve it, inspect the remaining paths for the same
+defect class, accumulate compatible repairs, and requalify before starting one
+replacement final chain. Stop only the affected path if a repair would require
+an architecture change or weakened invariant.
 
 ### Phase 0 — reconcile and freeze the candidate
 
@@ -434,8 +497,9 @@ specific failed identity, kind, name, parent, MIME, URL, or byte predicate.
 
 ### Phase 2 — finish bindings and freeze the final candidate
 
-**Status: pending.** Add only the Todoist, selected-provider dispatch,
-failure-safe guided-switch, and audio delivery seams in the code-change map.
+**Status: implementation complete; final static/package qualification active.**
+The Todoist-neutral selected-provider dispatch, failure-safe guided switch, and
+ordered audio delivery seams in the code-change map are implemented.
 Sanitize public adapter code; leave private values in the companion. Reuse the
 existing task, delivery, audio, recovery, and validation helpers. Focused
 behavioral checks must prove pull-before-push, last-sync conflict handling,
