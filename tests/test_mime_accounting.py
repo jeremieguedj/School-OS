@@ -11,9 +11,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from school_os.catalog import build_catalog_message, parse_v2_record, serialize_v2_record, verify_persisted_record
-from school_os.importer import admit_exact_plaintext_representation
+from school_os.importer import AttachmentOutcome, admit_exact_plaintext_representation
 from school_os.mime_accounting import accounting_sha256, build_mime_accounting
-from school_os.semantic import semantic_packet_from_verified_record
+from school_os.semantic import _packet_hash, semantic_packet_from_verified_record
 
 
 def part(path: str, text: str, mime: str = "text/plain") -> dict:
@@ -127,6 +127,83 @@ class MimeAccountingTests(unittest.TestCase):
         }, self.schema))
         self.assertEqual((), record.bodies)
         self.assertEqual(1, len(record.contents))
+
+    def test_mime_accounting_and_extracted_pdf_use_distinct_content_sets(self) -> None:
+        parts = [
+            part("0", "Primary"),
+            {
+                **part("1", "", "application/pdf"),
+                "role": "attachment",
+                "provider_unicode": None,
+            },
+        ]
+        accounting, contents, primary = build_mime_accounting(
+            message_id="m-pdf", raw_message=b"raw-message",
+            nodes=[
+                node("", "multipart/mixed", True),
+                node("0", "text/plain", False),
+                node("1", "application/pdf", False),
+            ],
+            parts=parts,
+        )
+        parts[0]["selected_plaintext"] = True
+        parts[0]["mime_accounting_disposition"] = "interpret"
+        admission = admit_exact_plaintext_representation(
+            parts, mime_tree_complete=True,
+        )
+        extracted = "Complete visible PDF text"
+        original = b"%PDF-synthetic"
+        outcome = AttachmentOutcome(
+            attachment_id="pdf-1", outcome="extracted",
+            mime_type="application/pdf",
+            original_content_sha256=hashlib.sha256(original).hexdigest(),
+            extracted_text_sha256=hashlib.sha256(extracted.encode()).hexdigest(),
+            text=extracted,
+            locator={
+                "kind": "extracted_text_span", "byte_start": 0,
+                "byte_end": len(extracted.encode()),
+            },
+            original_bytes_observed=True,
+            read_evidence={
+                "complete": True, "identity": "pdf-1",
+                "mime_type": "application/pdf",
+                "declared_byte_size": len(original),
+                "observed_byte_size": len(original),
+                "mode": "original_bytes",
+                "locator": {"kind": "provider_attachment_download"},
+                "version": None,
+            },
+            complete_units=("page:1",), unit_count=1,
+            disposition_reason="complete bounded PDF extraction",
+        )
+        message = build_catalog_message(
+            message_id="m-pdf", received_at="2026-09-09T08:00:00Z",
+            received_date="2026-09-09", admission=admission,
+            attachment_outcomes=(outcome,),
+            mime_accounting=accounting, mime_contents=contents,
+        )
+        conversation = {
+            "schema_version": 3, "adapter_id": "mail",
+            "conversation_id": "c-pdf", "scope": {"fixed": True},
+            "pagination": {"completed": True}, "messages": [message],
+        }
+        record_bytes = serialize_v2_record(conversation, self.schema)
+        snapshot = {"schema_version": 1, "messages": [{
+            "message_id": "m-pdf",
+            "accounting_sha256": accounting_sha256(accounting),
+            "contents": [{
+                "content_id": item["content_id"],
+                "sha256": item["sha256"], "text": item["text"],
+            } for item in contents],
+        }]}
+        packet = semantic_packet_from_verified_record(
+            record_bytes, snapshot, max_segments=10, max_bytes=1000,
+        )
+        self.assertEqual(
+            ["body", "attachment"],
+            [item["content_kind"] for item in packet.segments],
+        )
+        self.assertEqual(64, len(_packet_hash(packet)))
 
 
 if __name__ == "__main__":

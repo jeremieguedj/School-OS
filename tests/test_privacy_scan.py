@@ -44,6 +44,17 @@ class PrivacyScanTests(unittest.TestCase):
         assignment = "client" + "_secret: REPLACE_WITH_PRIVATE_SECRET"
         self.assertEqual([], scan_text("fixture.txt", assignment))
 
+    def test_runtime_environment_secret_reads_pass(self) -> None:
+        for assignment in (
+            "api" + '_key = os.environ.get("PRIVATE_API_KEY")',
+            "password = os.environ[" + '"PRIVATE_PASSWORD"]',
+        ):
+            self.assertEqual([], scan_text("fixture.py", assignment))
+
+    def test_control_flow_does_not_consume_the_next_line_as_a_secret(self) -> None:
+        text = "if not api" + '_key:\n    audio_outcome = "unavailable"'
+        self.assertEqual([], scan_text("fixture.py", text))
+
     def test_environment_needles_are_not_embedded_in_diagnostics(self) -> None:
         needle = "private" + "-household-marker"
         needles = configured_private_needles({"SCHOOL_OS_PRIVATE_NEEDLES": needle + "\nsecond-private-value"})

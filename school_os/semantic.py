@@ -231,8 +231,15 @@ def _packet_hash(packet: SemanticPacket) -> str:
                 if isinstance(node.get("content_id"), str):
                     accounted_content_ids.add(node["content_id"])
             message_ids.add(message_id)
+        # MIME accounting owns only original text MIME units.  Extracted
+        # attachment/resource segments are independently bound above through
+        # their typed source outcomes and must not be folded into this set.
         supplied_content_ids = {
-            item.get("content_id") for item in [*packet.segments, *packet.evidence_segments]
+            item.get("content_id")
+            for item in [*packet.segments, *packet.evidence_segments]
+            if item.get("content_kind") in {
+                "body", "body_supplement", "html_evidence",
+            }
         }
         if supplied_content_ids != accounted_content_ids:
             raise SemanticError("semantic packet content does not match MIME accounting")

@@ -312,14 +312,19 @@ blocks the affected path.
 
 ### Phase 1 — storage simplification and early live integration
 
-**Status: final 14-day execution in progress.** The exact `a9a29b7` source
-package is installed in a new verified-empty root through the five-object
-layout. A clean local session cold-recovered and extracted it from Drive, and
-the isolated agent-owned Sheet is durably selected at generation 2 after a
-complete empty-range snapshot. The next action is the installed, image-excluded
-14-day ingestion followed by independent semantic review, task projection, and
-the stored unsent preview gate. The historical compatibility sequence below
-records how this point was reached.
+**Status: final 14-day execution repair and refreeze in progress.** The exact
+`a9a29b7` package passed five-object installation, cold recovery and
+post-admission Sheet binding, but the installed image-excluded ingestion found
+one false semantic-integrity rejection before any source publication. MIME
+body accounting incorrectly compared its body-only identifiers with the full
+semantic packet, which also contains separately validated extracted PDF and
+resource segments. The compatible repair keeps those two validation paths
+separate and has passed focused and complete repository validation. Because
+executable bytes changed, the installed root remains diagnostic evidence only;
+the next action is to commit and freeze the repaired package, then run one new
+empty 14-day instance through ingestion and the remaining acceptance chain.
+The historical compatibility sequence below records how this point was
+reached.
 
 The preview handoff repair is complete at `a654f048`.
 The approved five-file hybrid Drive layout and MIME-accounting source boundary

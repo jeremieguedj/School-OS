@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: recovery MVP live acceptance in progress; the final package is qualified, the five-object 14-day instance is installed and cold-recovered, and its isolated Sheet is bound at generation 2
+Status: recovery MVP live acceptance repair in progress; a false MIME-versus-extracted-content semantic check is fixed and fully validated, and one repaired package/new empty 14-day instance is the next gate
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 ## Next-release planning
@@ -65,7 +65,13 @@ task sync, failure-safe Sheets/Todoist switching, all-current source/Fact
 retention across batches, an explicit current-run reconciliation delta, exact
 audio-manifest construction, durable delivery reservation, one-call audio
 outcome recording, multipart Gmail delivery, Sent readback, and cursor-last
-completion. Final repository/package qualification is the remaining static gate
+completion. The first installed final ingestion exposed a compatible semantic
+validator defect: body MIME-accounting identifiers were compared with the full
+packet that also contains already-validated extracted PDF/resource segments.
+The repair separates those sets and preserves both strict checks. A privacy
+scanner false positive on the runtime audio-key environment lookup was also
+narrowed without allowing literal secrets. Focused tests and the complete
+repository validator pass; commit/package freeze is the remaining static gate
 before one new clean 14-day acceptance environment is created.
 
 The private execution values and unsanitized reference adapter receipts live

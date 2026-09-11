@@ -3999,3 +3999,32 @@ requirements, then read this log from top to bottom.
   installed image-excluded 14-day Gmail ingestion, independently bind semantic
   expectations, publish its source/Facts checkpoint, and complete the task plus
   stored-unsent-preview gate before binding Todoist or audio.
+
+## 2026-09-10 — final ingestion false rejection isolated and repaired
+
+- The installed 14-day run reached 57 bounded bridge operations, including the
+  required PDF extraction handoff, then stopped before any Drive publication.
+  Preserved private terminal evidence identified the exact local rejection:
+  semantic packet content did not match MIME accounting. No Google connector
+  error, provider write, cursor movement, email, audio, Todoist or scheduler
+  effect occurred.
+- The defect was in the final packet-integrity comparison, not source custody
+  or extraction. Extracted attachment/resource segments were already validated
+  exactly against typed source outcomes, but the subsequent MIME-accounting
+  check compared body-only MIME identifiers with every packet segment. The
+  compatible repair limits that comparison to body, body-supplement and HTML
+  evidence while retaining the independent exact check for extracted content.
+  A regression proves a MIME-accounted body plus a completely extracted PDF
+  passes both validation paths.
+- Corrected a separate repository-validator false positive without weakening
+  privacy checks. Its credential regex crossed line boundaries and treated an
+  `os.environ` key lookup as literal secret material. Horizontal whitespace is
+  now required around assignments, only the finite environment-read forms are
+  exempted, and hard-coded credential values remain rejected. Regressions cover
+  environment reads, control flow and literal secrets.
+- Focused MIME/privacy validation passes 16 tests. The complete qualified
+  CPython 3.12.14 repository validator passes 434 tests plus schemas, manifests,
+  release smoke-build, privacy scan and diff checks. Since executable bytes
+  changed, the `a9a29b7` root is diagnostic evidence only. Next: commit, push
+  and remotely verify this repair; build and validate its exact immutable
+  package; then create one new empty 14-day root and resume the full live chain.

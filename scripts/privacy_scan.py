@@ -17,7 +17,7 @@ TOKEN_RE = re.compile(r"(?<![A-Za-z0-9_-])[A-Za-z0-9_-]{25,}(?![A-Za-z0-9_-])")
 PRIVATE_KEY_RE = re.compile(r"-{5}BEGIN (?:RSA |EC |OPENSSH )?PRIVATE" + r" KEY-{5}")
 CREDENTIAL_ASSIGNMENT_RE = re.compile(
     r"(?im)\b(?:api[_-]?key|client[_-]?secret|access[_-]?token|refresh[_-]?token|password|passwd)"
-    r"\b\s*[:=]\s*[\"']?([^\s\"'#]{8,})"
+    r"\b[ \t]*[:=][ \t]*[\"']?([^\s\"'#]{8,})"
 )
 KNOWN_TOKEN_RES = (
     re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
@@ -50,6 +50,11 @@ def _is_placeholder(value: str) -> bool:
     return any(marker in upper for marker in PLACEHOLDER_MARKERS) or value.startswith(("$", "<", "{"))
 
 
+def _is_runtime_secret_reference(value: str) -> bool:
+    """Recognize a secret read from the process environment, not secret material."""
+    return value in {"os.environ.get(", "os.environ["}
+
+
 def scan_text(path: str, text: str, private_needles: tuple[str, ...] = ()) -> list[str]:
     """Return non-secret-bearing diagnostics for high-confidence privacy leaks."""
     violations: list[str] = []
@@ -69,7 +74,8 @@ def scan_text(path: str, text: str, private_needles: tuple[str, ...] = ()) -> li
         for match in pattern.finditer(text):
             violations.append(_violation(path, text, match.start(), "credential token"))
     for match in CREDENTIAL_ASSIGNMENT_RE.finditer(text):
-        if not _is_placeholder(match.group(1)):
+        value = match.group(1)
+        if not (_is_placeholder(value) or _is_runtime_secret_reference(value)):
             violations.append(_violation(path, text, match.start(), "credential assignment"))
     for index, needle in enumerate(private_needles, 1):
         if len(needle) < 4:
