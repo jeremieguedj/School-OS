@@ -3956,3 +3956,46 @@ requirements, then read this log from top to bottom.
   gate with the final guards, inspect the exact release payload, commit/push and
   verify the checkpoint, build/validate its immutable package, then freeze and
   start one new clean 14-day acceptance environment.
+
+## 2026-09-10 — final 14-day instance installed and Sheet bound
+
+- Committed and remotely verified the consolidated final runtime at exact
+  source commit `a9a29b7a3cf2b645503c6fec787b4a034b56676a`. Its immutable
+  `0.1.0-alpha.13` archive has SHA-256
+  `d065cf68abcf67fc29a55f8d58d8515353dc846171f5605c703c65b5d15c6b63`,
+  passes extracted-package validation, and runs under CPython 3.12.14 with the
+  recorded private dependency fingerprint. The complete repository validator
+  passed 431 tests plus schema, template, and privacy checks before freeze.
+- Froze the exact private 14-day inclusive-start/exclusive-end bounds in the
+  configured timezone, the two approved domains, recipient restriction,
+  image-before-fetch exclusion, required audio policy, package, commit, and
+  empty-root identity only in ignored mode-0600 evidence. No private value was
+  added to Git.
+- Two setup roots were quarantined before admission after host-orchestration
+  defects: a newly created ID lost connector grounding across orchestration
+  cells, and the first large private receipt exceeded a terminal single-line
+  transport limit. The exact connector failure was a workspace argument clamp
+  reporting missing `fileId`, not a Drive quota response. Replaced the local
+  evidence transport with length-bounded raw-mode chunks and proved a 750 KB
+  round trip before creating the final root. Neither defect changed product
+  code or architecture.
+- The final root passed exact empty-parent/type checks and installed the five
+  physical objects in 30 connector calls: 12 metadata reads, three scoped
+  listings, five uploads, and ten byte fetches. A separate clean local run
+  rediscovered the exact five-file inventory, then cold-recovered the installed
+  package with seven metadata reads and six byte fetches. Search-index delay was
+  handled by one direct read-only folder inventory; it was not used as
+  containment evidence.
+- The instance agent created one isolated native Sheet from a locally rendered
+  and verified workbook, placed it directly under the admitted root, and read
+  the complete managed `A1:J200` range. The exact headers were present and all
+  provider task cells were empty. Its normalized `agent-task-v1` snapshot and
+  private adapter mapping passed the installed schema, and the binder published
+  and exactly reread Drive generation 2 with Sheets selected. No source import,
+  Todoist project, audio call, email, or scheduler effect has occurred.
+- Private package, scenario, connector, recovery, Sheet, and binding evidence is
+  under `private/mvp-recovery/artifacts/final-a9a29b7/` and corresponding
+  `private/mvp-recovery/runs/final-a9a29b7-*` directories. Next: run the exact
+  installed image-excluded 14-day Gmail ingestion, independently bind semantic
+  expectations, publish its source/Facts checkpoint, and complete the task plus
+  stored-unsent-preview gate before binding Todoist or audio.

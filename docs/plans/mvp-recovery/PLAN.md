@@ -1,9 +1,9 @@
 # School-OS recovery MVP plan and implementation specification
 
-- Status: recovery implementation in progress; Phase 0 reconciliation and the
-  Phase 1 four-day hybrid preview qualification are complete; consolidated
-  Phase 2 implementation is complete and final static/package qualification is
-  active
+- Status: recovery live acceptance in progress; Phase 0, the four-day Phase 1
+  compatibility preview, and consolidated Phase 2 implementation/package
+  qualification are complete; the final 14-day instance is installed,
+  cold-recovered, and bound to its isolated Sheet at Drive generation 2
 - Written: 2026-09-09
 - Release identity: record the early candidate in Phase 0 and freeze the final
   identity in Phase 2; do not assume that `main`,
@@ -312,7 +312,16 @@ blocks the affected path.
 
 ### Phase 1 — storage simplification and early live integration
 
-**Status: in progress.** The preview handoff repair is complete at `a654f048`.
+**Status: final 14-day execution in progress.** The exact `a9a29b7` source
+package is installed in a new verified-empty root through the five-object
+layout. A clean local session cold-recovered and extracted it from Drive, and
+the isolated agent-owned Sheet is durably selected at generation 2 after a
+complete empty-range snapshot. The next action is the installed, image-excluded
+14-day ingestion followed by independent semantic review, task projection, and
+the stored unsent preview gate. The historical compatibility sequence below
+records how this point was reached.
+
+The preview handoff repair is complete at `a654f048`.
 The approved five-file hybrid Drive layout and MIME-accounting source boundary
 are implemented; the current four-day compatibility journey is exercising an
 exact installed package before the final 14-day acceptance root is frozen.
@@ -497,7 +506,8 @@ specific failed identity, kind, name, parent, MIME, URL, or byte predicate.
 
 ### Phase 2 — finish bindings and freeze the final candidate
 
-**Status: implementation complete; final static/package qualification active.**
+**Status: implementation/package qualification complete; live bindings in
+progress.**
 The Todoist-neutral selected-provider dispatch, failure-safe guided switch, and
 ordered audio delivery seams in the code-change map are implemented.
 Sanitize public adapter code; leave private values in the companion. Reuse the

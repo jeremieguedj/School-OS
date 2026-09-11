@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: recovery MVP implementation in progress; Phase 0 and the four-day Phase 1 qualification are complete; final-chain static/package qualification is active
+Status: recovery MVP live acceptance in progress; the final package is qualified, the five-object 14-day instance is installed and cold-recovered, and its isolated Sheet is bound at generation 2
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 ## Next-release planning
