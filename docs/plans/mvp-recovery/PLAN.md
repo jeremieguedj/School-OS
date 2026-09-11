@@ -315,26 +315,31 @@ blocks the affected path.
 
 ### Phase 1 — storage simplification and early live integration
 
-**Status: 14-day ingestion committed; one semantic correction blocks preview
+**Status: stable Gmail attachment identity decision required before ingestion
 acceptance.** The exact `ddd5364` package passed five-object installation, cold
 recovery, post-admission agent-managed Sheet binding and another Drive-only
 recovery in a new empty root. Its image-excluded 14-day ingestion committed 38
 source records, 41 raw messages and 43 source-linked Facts at generation 3 in
 275 bounded bridge requests. Exact source/state bundle readback and a separate
 13-request cold recovery passed; the eligible cursor did not advance, and no
-task, delivery, Todoist, audio or scheduler effect occurred. The tracked preview
-plan then completely reread the empty Sheet and all canonical source material,
-publishing generation 4 without provider effects. Integrated independent
-content review rejected one Fact containing a finite parent response requirement
-because it had been marked non-actionable, so zero canonical tasks is not an
-accepted result. Correct the exact private packet-bound expectation and replay
-the semantic run. In parallel, retain the compatible no-action transition fix:
-when a complete task snapshot truthfully produces no actions, task sync becomes
-complete and advances to the brief boundary without dispatch. After focused and
-full validation, freeze one new exact package and empty root for the final live
-chain; do not reuse this semantically rejected ingestion as acceptance evidence.
-The historical compatibility sequence below records how this point was
-reached.
+task, delivery, Todoist, audio or scheduler effect occurred. Integrated review
+then corrected one Fact containing a finite parent response requirement, and
+the genuine zero-action transition repair passed focused and full validation.
+
+Exact package `c59d077` contains those repairs. A new empty root passed five-file
+installation in 30 bridge requests, cold recovery in 13, post-admission
+agent-managed Sheet binding in 24, and another cold recovery in 13. During the
+clean 14-day replay, the same Gmail source message and exact same PDF bytes
+returned a different provider attachment ID from the accepted prior run.
+Because the current catalog, content, Fact and replay identities transitively
+depend on that ID, the runtime cannot honestly reuse the prior extraction or
+prove duplicate-safe replay. No canonical source generation or external
+task/delivery effect was published. The affected path is paused under the
+no-architecture-change instruction. The next decision is whether to adopt a
+stable message-and-MIME-part attachment identity while retaining the current
+provider attachment ID only as the ephemeral read locator, or to treat this
+connector behavior as an MVP blocker. The historical compatibility sequence
+below records how this point was reached.
 
 The preview handoff repair is complete at `a654f048`.
 The approved five-file hybrid Drive layout and MIME-accounting source boundary

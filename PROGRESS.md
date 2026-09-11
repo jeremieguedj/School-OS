@@ -4195,3 +4195,36 @@ requirements, then read this log from top to bottom.
   repository gate, commit/push/verify, freeze one package, and use one new empty
   final root for the full live chain. The current root remains durable diagnostic
   evidence only once executable bytes change.
+
+## 2026-09-11 — final-package replay exposed unstable Gmail attachment identity
+
+- Published the verified zero-action transition and developer continuity update
+  at exact commit `c59d077e6c180ac41490d741c0600137a2d1d25d`; the remote recovery
+  branch was verified at that commit. Its immutable `0.1.0-alpha.13` package has
+  SHA-256
+  `f6a944c58cfb64fa516b06e18879864c5b0ca6efe3693dce5240a561ba880568`
+  and passed installed validation under the qualified CPython 3.12.14 runtime.
+- A new empty root passed the five-file installation in 30 bridge requests,
+  separate cold recovery in 13, post-admission agent-managed Sheet binding in
+  24, and another Drive-only cold recovery in 13. Interrupted ingestion attempts
+  did not publish canonical source state; a subsequent cold recovery still
+  admitted generation 2. No task, email, Todoist, audio or scheduler effect
+  occurred.
+- Static exact-packet replay now reuses earlier semantic work only when the
+  frozen packet hash and paired independent audit hash match. Prior PDF evidence
+  was recovered into exact one-page and eight-page boundaries, and image MIME
+  ingestion remained excluded.
+- The next clean live replay reproduced a stable-identity failure before
+  publication: one PDF retained the same Gmail source message and exact original
+  bytes but its provider attachment ID differed from the prior accepted run.
+  The current catalog content ID, Fact provenance and duplicate-replay behavior
+  depend on that field, so bytes-only adoption would weaken the explicit source
+  identity requirement. The complete private receipt and hashes are in
+  `private/mvp-recovery/runs/final-c59d077-ingestion-r5/attachment-identity-mismatch-summary.json`
+  with the surrounding mode-0600 raw receipts in the same run directory.
+- This is an identity-contract question, not a rate-limit, transcription or
+  Drive-storage failure. Under the instruction not to make architecture changes,
+  the ingestion path is paused. Next decision: approve a stable attachment
+  identity derived from the immutable Gmail message plus canonical MIME-part
+  coordinates while retaining the provider attachment ID as a current-read
+  locator, or record the connector behavior as a blocking incapability.

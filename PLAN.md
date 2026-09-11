@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: recovery MVP live acceptance semantic correction in progress; exact package `ddd5364` completed and cold-recovered the image-excluded 14-day ingestion, but integrated content validation rejected one missed actionable Fact before task projection or delivery
+Status: recovery MVP live acceptance blocked for an identity-contract decision; exact package `c59d077` passed fresh installation, Sheet binding and cold recovery, but a replay of the same Gmail message and exact PDF bytes returned a different attachment ID before canonical ingestion publication
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 ## Next-release planning
@@ -107,10 +107,17 @@ delivery, audio, Todoist or scheduler effect occurred. The subsequent tracked
 preview plan correctly re-read the complete empty Sheet and source bundle, but
 assembled-content validation found that one finite parent response requirement
 had been accepted with `is_action: false`. Its packet-bound private expectation
-is being corrected. A separate compatible runtime repair lets a genuinely
+was corrected. A separate compatible runtime repair lets a genuinely
 action-free complete snapshot advance directly to brief rendering instead of
-trying to authorize a nonexistent action. These ordinary fixes are being
-batched before rebuilding one new exact package/root for the final live chain.
+trying to authorize a nonexistent action. Exact package `c59d077` contains that
+repair and passed a new five-file install, post-admission Sheet binding and two
+Drive-only cold recoveries. Before its 14-day ingestion could publish, an exact
+replay comparison proved that one Gmail PDF attachment retained the same source
+message and byte hash but received a different provider attachment ID. The
+active contract derives attachment and downstream Fact identities from that
+field, so continuing would risk treating a replay as new content. The affected
+path is paused pending an approved stable attachment-identity contract; no task,
+email, audio, Todoist or scheduler effect has occurred in this environment.
 
 The private execution values and unsanitized reference adapter receipts live
 only in
