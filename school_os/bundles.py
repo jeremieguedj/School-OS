@@ -24,11 +24,11 @@ MAX_ENTRY_COUNT = 10_000
 MAX_PATH_CODEPOINTS = 256
 _LOWER_SHA256 = re.compile(r"^[0-9a-f]{64}$")
 _SAFE_IDENTITY = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
-_LIMITS = {
+BUNDLE_BYTE_LIMITS = MappingProxyType({
     "state": (32 * 1024 * 1024, 8 * 1024 * 1024),
     "source": (64 * 1024 * 1024, 32 * 1024 * 1024),
     "output": (64 * 1024 * 1024, 32 * 1024 * 1024),
-}
+})
 
 
 @dataclass(frozen=True)
@@ -185,7 +185,7 @@ def build_bundle(
     predecessor: Mapping[str, str] | None = None,
 ) -> bytes:
     """Build deterministic ustar bytes after validating every logical member."""
-    if bundle_kind not in _LIMITS:
+    if bundle_kind not in BUNDLE_BYTE_LIMITS:
         raise BundleError("bundle kind is unsupported")
     if _SAFE_IDENTITY.fullmatch(identity) is None:
         raise BundleError("bundle identity is unsafe")
@@ -195,7 +195,7 @@ def build_bundle(
     _required_hash(configuration_fingerprint, "configuration fingerprint")
     if not isinstance(entries, Mapping) or not entries or len(entries) > MAX_ENTRY_COUNT:
         raise BundleError("bundle requires a bounded nonempty entry mapping")
-    maximum_bundle, maximum_member = _LIMITS[bundle_kind]
+    maximum_bundle, maximum_member = BUNDLE_BYTE_LIMITS[bundle_kind]
     manifest_entries: list[dict[str, Any]] = []
     normalized: dict[str, BundleEntry] = {}
     for raw_path, entry in entries.items():
@@ -267,7 +267,7 @@ def _parse_manifest(data: bytes, expected_kind: str | None) -> dict[str, Any]:
     if set(value) != required or value["schema_version"] != 1 or value["bundle_format"] != BUNDLE_FORMAT:
         raise BundleError("bundle manifest has an unsupported shape or version")
     kind = value["bundle_kind"]
-    if kind not in _LIMITS or (expected_kind is not None and kind != expected_kind):
+    if kind not in BUNDLE_BYTE_LIMITS or (expected_kind is not None and kind != expected_kind):
         raise BundleError("bundle kind disagrees with the expected kind")
     if _SAFE_IDENTITY.fullmatch(value.get("identity", "")) is None:
         raise BundleError("bundle manifest identity is unsafe")
@@ -290,9 +290,9 @@ def read_bundle(data: bytes, *, expected_kind: str | None = None) -> VerifiedBun
     """Verify deterministic bundle structure, inventory, bounds, bytes, and hashes."""
     if not isinstance(data, bytes) or len(data) < 1024 or len(data) % 512:
         raise BundleError("bundle bytes are missing or not a complete tar record")
-    if expected_kind is not None and expected_kind not in _LIMITS:
+    if expected_kind is not None and expected_kind not in BUNDLE_BYTE_LIMITS:
         raise BundleError("expected bundle kind is unsupported")
-    absolute_limit = max(limit[0] for limit in _LIMITS.values())
+    absolute_limit = max(limit[0] for limit in BUNDLE_BYTE_LIMITS.values())
     if len(data) > absolute_limit:
         raise BundleError("bundle exceeds the maximum supported byte bound")
     try:
@@ -314,7 +314,7 @@ def read_bundle(data: bytes, *, expected_kind: str | None = None) -> VerifiedBun
             if manifest_file is None:
                 raise BundleError("bundle manifest bytes are unavailable")
             manifest = _parse_manifest(manifest_file.read(), expected_kind)
-            maximum_bundle, maximum_member = _LIMITS[manifest["bundle_kind"]]
+            maximum_bundle, maximum_member = BUNDLE_BYTE_LIMITS[manifest["bundle_kind"]]
             if len(data) > maximum_bundle:
                 raise BundleError("bundle exceeds its kind byte bound")
             declared = manifest["entries"]

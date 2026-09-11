@@ -85,6 +85,49 @@ class CodexBridgeTests(unittest.TestCase):
         self.assertNotEqual(0, result.returncode)
         self.assertFalse(truncated.exists())
 
+    def test_drive_fetch_response_allows_base64_expansion_but_other_kinds_do_not(self) -> None:
+        raw = b"verified bundle bytes"
+        result = {
+            "id": "bundle-id",
+            "b64_string": __import__("base64").b64encode(raw).decode("ascii"),
+            "file_size_bytes": len(raw),
+            "is_empty": False,
+        }
+        path, digest = self.response("drive-large", result)
+        size = path.stat().st_size
+        self.assertGreater(size, 64)
+        control = json.dumps({
+            "request_id": "drive-large", "response_path": str(path), "sha256": digest,
+        }) + "\n"
+        peer = JsonlPeer(
+            self.run_dir,
+            input_stream=io.StringIO(control),
+            output_stream=io.StringIO(),
+            max_response_bytes=64,
+            max_drive_fetch_response_bytes=size,
+        )
+        self.assertEqual(
+            result,
+            peer.call("drive.fetch", {"url": "https://drive.example/bundle"}, request_id="drive-large"),
+        )
+
+        path, digest = self.response("metadata-large", {"padding": "x" * 128})
+        control = json.dumps({
+            "request_id": "metadata-large", "response_path": str(path), "sha256": digest,
+        }) + "\n"
+        peer = JsonlPeer(
+            self.run_dir,
+            input_stream=io.StringIO(control),
+            output_stream=io.StringIO(),
+            max_response_bytes=64,
+            max_drive_fetch_response_bytes=path.stat().st_size,
+        )
+        with self.assertRaisesRegex(BridgeError, "configured byte bound"):
+            peer.call(
+                "drive.get_metadata", {"fileId": "metadata-large"},
+                request_id="metadata-large",
+            )
+
     def test_host_dispatch_script_preserves_the_reviewed_binding_boundary(self) -> None:
         request_id = "dispatch-1"
         request = {

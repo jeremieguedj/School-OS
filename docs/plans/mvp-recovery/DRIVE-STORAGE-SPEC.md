@@ -175,6 +175,14 @@ the smaller configured ingestion/effect bounds. Exceeding a bound produces a
 durable continuation or precise blocker under the existing operation rules; it
 does not silently omit or truncate content.
 
+The private JSONL bridge applies operation-specific transport bounds. Ordinary
+responses remain capped at 16 MiB. An exact `drive.fetch` response is capped at
+the base64 expansion of the largest admitted 64 MiB bundle plus a finite 16 MiB
+validated-envelope allowance. This does not raise a bundle, member, ingestion,
+or effect bound; it only accounts for base64 JSON being larger than the exact
+bytes it proves. The child still validates decoded length and the bundle reader
+still enforces the canonical kind-specific limits.
+
 Readers parse members without `extractall`. They enforce the same path/type/
 count/size bounds before allocating or writing, reject trailing or undeclared
 members and duplicate names, stream/hash each declared length, and compare every

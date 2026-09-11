@@ -20,6 +20,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, TextIO
 
+from .bundles import BUNDLE_BYTE_LIMITS
 from .contracts import canonical_json_bytes, sha256_bytes
 
 
@@ -48,6 +49,14 @@ class ConnectorToolError(BridgeError):
 PROTOCOL = 1
 MAX_REQUEST_BYTES = 16 * 1024 * 1024
 MAX_RESPONSE_BYTES = 16 * 1024 * 1024
+# Drive returns exact binary file bytes as standard base64 inside JSON.  The
+# response ceiling must therefore cover the largest admitted immutable bundle
+# after base64 expansion, plus a finite allowance for the validated connector
+# envelope.  Other operations retain the smaller general response ceiling.
+MAX_DRIVE_FETCH_OBJECT_BYTES = max(limit[0] for limit in BUNDLE_BYTE_LIMITS.values())
+MAX_DRIVE_FETCH_RESPONSE_BYTES = (
+    4 * ((MAX_DRIVE_FETCH_OBJECT_BYTES + 2) // 3) + MAX_RESPONSE_BYTES
+)
 REQUEST_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 
 
@@ -1005,12 +1014,14 @@ class JsonlPeer:
         output_stream: TextIO = sys.stdout,
         max_request_bytes: int = MAX_REQUEST_BYTES,
         max_response_bytes: int = MAX_RESPONSE_BYTES,
+        max_drive_fetch_response_bytes: int = MAX_DRIVE_FETCH_RESPONSE_BYTES,
     ) -> None:
         self.run_dir = _verify_run_directory(run_dir)
         self.input_stream = input_stream
         self.output_stream = output_stream
         self.max_request_bytes = max_request_bytes
         self.max_response_bytes = max_response_bytes
+        self.max_drive_fetch_response_bytes = max_drive_fetch_response_bytes
         self._issued: set[str] = set()
         self._consumed: set[str] = set()
 
@@ -1051,7 +1062,12 @@ class JsonlPeer:
             status = response_path.stat()
             if not stat.S_ISREG(status.st_mode) or stat.S_IMODE(status.st_mode) != 0o600:
                 raise BridgeError("host response must be a mode-0600 regular file")
-            if status.st_size > self.max_response_bytes:
+            response_limit = (
+                self.max_drive_fetch_response_bytes
+                if kind == "drive.fetch"
+                else self.max_response_bytes
+            )
+            if status.st_size > response_limit:
                 raise BridgeError("host response exceeds the configured byte bound")
             response_bytes = response_path.read_bytes()
             if len(response_bytes) != status.st_size or sha256_bytes(response_bytes) != control["sha256"]:

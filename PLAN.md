@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: recovery MVP live acceptance repair in progress; the exact connector-preview repair passed install/bind/cold recovery, and the next 14-day diagnostic run isolated a MIME-internal CID reference that must not be treated as a fetchable direct resource before one rebuilt package/new empty instance
+Status: recovery MVP live acceptance transport repair in progress; the exact `592c76a` package passed install/bind/cold recovery and full source interpretation, then a valid source-archive readback exposed a bridge ceiling that failed to account for base64 expansion before canonical publication
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 ## Next-release planning
@@ -90,7 +90,16 @@ raw custody, processes the corresponding MIME leaf once under the frozen image
 policy, and does not emit a second direct-resource fetch. Exact private
 full/raw replay and focused tests pass; malformed CID forms and other non-HTTPS
 resource locators still block. Because executable bytes changed again, the
-next gate is full validation, commit/package freeze, and one new clean 14-day
+resulting `592c76a` package was frozen and admitted in a new clean 14-day
+environment. That run completed its source reads, PDF extraction and independent
+semantic work, then stopped before canonical publication when the bridge
+rejected the valid 16.1 MB source archive's 21.4 MB base64 JSON readback under
+the ordinary 16 MiB response ceiling. The compatible transport repair now uses
+an operation-specific `drive.fetch` ceiling derived from the already-approved
+64 MiB bundle bound plus finite JSON-envelope allowance; every other operation
+retains the original ceiling, and decoded bundle/content limits are unchanged.
+Exact private receipt replay and the full validator pass. Because executable
+bytes changed, the next gate is commit/package freeze and one new clean 14-day
 acceptance environment.
 
 The private execution values and unsanitized reference adapter receipts live

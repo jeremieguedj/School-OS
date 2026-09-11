@@ -11,9 +11,14 @@ import sys
 from pathlib import Path
 
 sys.dont_write_bytecode = True
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from school_os.codex_bridge import MAX_DRIVE_FETCH_RESPONSE_BYTES  # noqa: E402
 
 
-MAX_RESPONSE_BYTES = 16 * 1024 * 1024
+# This generic private writer may receive a Drive fetch response.  JsonlPeer
+# applies the tighter operation-specific ceiling when it consumes the file.
+MAX_RESPONSE_BYTES = MAX_DRIVE_FETCH_RESPONSE_BYTES
 
 
 def main(argv: list[str] | None = None) -> int:

@@ -4114,3 +4114,43 @@ requirements, then read this log from top to bottom.
   tests. This is a compatible source-classification repair, not an architecture
   change. Next: complete repository validation, commit/push/verify, build the
   exact package, and create one new empty final root for the 14-day chain.
+
+## 2026-09-11 — valid source-archive readback transport bound repaired
+
+- Published the CID classification repair at exact commit
+  `592c76a6a403762ccfcc3259f2a1a7f01456f0ab`; the remote recovery branch was
+  verified at the same commit. Its immutable `0.1.0-alpha.13` package has
+  SHA-256
+  `25af6d3bb9449a3dc6f9e9aeda066ce80b1d16687461a760dd13618cfcb50229`
+  and passed installed validation under the qualified CPython 3.12.14 runtime.
+- A new empty root passed the five-file installation in 30 bridge requests,
+  separate cold recovery in 13, post-admission agent-managed Sheet binding in
+  24, and another Drive-only cold recovery in 13. The installed image-excluded
+  14-day ingestion completed the bounded Gmail reads, PDF extraction and
+  independent interpretation/audit work, then stopped after 265 bridge requests
+  before canonical source/state publication.
+- The exact failure was local and fully isolated: a verified 16,066,560-byte
+  immutable source archive was returned by Drive as 21,424,967 bytes of
+  base64-bearing JSON, which exceeded the bridge's 16 MiB ordinary-response
+  ceiling. This was not a connector error, quota response, rate-limit signal,
+  source-bound violation, or architecture failure. The archive create is a
+  noncanonical orphan candidate because the successor state and pointer were
+  never published.
+- The bridge now keeps the 16 MiB response ceiling for ordinary operations and
+  derives a finite `drive.fetch` ceiling from the approved 64 MiB maximum bundle
+  size, base64 expansion, and a 16 MiB validated-envelope allowance. Bundle,
+  member, ingestion and effect limits are unchanged. The exact preserved
+  mode-0600 receipt replays through host normalization, response framing,
+  decoded-byte/length validation and child consumption. Its private replay
+  summary is under
+  `private/mvp-recovery/runs/final-592c76a-large-fetch-replay/`; the summary
+  SHA-256 is
+  `95f8ce84f325f6ebf49ffca0aec41638cb57e7263c4a4f4614cd2f82e5b0e08d`.
+- Focused bridge/bundle/ingestion/source validation passes 75 tests. The complete
+  qualified repository validator passes 435 tests plus schemas, manifests,
+  release smoke-build, privacy and diff checks. This is a compatible transport
+  sizing repair within the approved hybrid architecture. Because executable
+  bytes changed, the current root remains diagnostic evidence only. Next:
+  commit/push/verify, build and validate the exact package, then create one new
+  empty final root and rerun the complete 14-day chain through canonical
+  ingestion publication and independent Drive-only recovery.

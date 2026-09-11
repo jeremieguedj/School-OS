@@ -315,21 +315,23 @@ blocks the affected path.
 
 ### Phase 1 — storage simplification and early live integration
 
-**Status: final 14-day execution repair and refreeze in progress.** The exact
-`0ecd4e1` package passed five-object installation, cold recovery and
-post-admission Sheet binding in a new empty root. Its first image-excluded
-ingestion attempt stopped before publication because the content helper wrote
-an empty PDF-page transcription; a clean retry passed that boundary and all
-subsequent PDF/semantic work, then exposed a distinct HTML classification
-error. One `cid:` reference was being treated as a direct web resource even
-though it identifies an already inventoried MIME leaf. The compatible repair
-keeps the CID in exact raw HTML/MIME custody, lets its MIME leaf follow the
-frozen image-exclusion policy once, and emits no direct-resource fetch for it.
-Exact private full/raw replay and focused tests pass, while malformed CID forms
-and other non-HTTPS locators remain blocking. Because executable bytes changed,
-the current root remains diagnostic evidence only; the next action is complete
-validation, commit/package freeze, then one new empty 14-day instance through
-ingestion and the remaining acceptance chain.
+**Status: final 14-day execution transport repair and refreeze in progress.**
+The exact `592c76a` package passed five-object installation, cold recovery and
+post-admission agent-managed Sheet binding in a new empty root. Its
+image-excluded ingestion completed the bounded source reads, PDF extraction and
+independent semantic work, then stopped before canonical publication while
+reading back the newly written immutable source archive. The archive was within
+the approved 64 MiB source-bundle limit, but its base64 JSON representation
+exceeded the bridge's unrelated 16 MiB ordinary-response ceiling. The compatible
+repair derives a larger operation-specific `drive.fetch` transport ceiling from
+the existing bundle limit while preserving the 16 MiB ceiling for every other
+operation and all existing decoded bundle/member/content bounds. The exact
+private 16.1 MB archive receipt now replays through normalization, response
+framing, decoded-byte validation and consumption; focused and full repository
+validation pass. Because executable bytes changed, that root is diagnostic
+evidence only. Next: commit/push/verify, rebuild the exact package, and use one
+new empty 14-day environment through ingestion and the remaining acceptance
+chain.
 The historical compatibility sequence below records how this point was
 reached.
 
