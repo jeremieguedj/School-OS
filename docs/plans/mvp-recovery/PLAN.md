@@ -331,8 +331,8 @@ blocks the affected path.
 
 ### Phase 1 — storage simplification and early live integration
 
-**Status: local-only temporary body-only implementation and proof complete;
-package build and live qualification await explicit user approval.**
+**Status: one authorized body-only qualification stopped before ingestion after
+an operator privacy-boundary violation; no second journey is authorized.**
 The exact `ddd5364` package passed five-object installation, cold
 recovery, post-admission agent-managed Sheet binding and another Drive-only
 recovery in a new empty root. Its image-excluded 14-day ingestion committed 38
@@ -361,6 +361,21 @@ adopt a stable message-and-MIME-part attachment identity while retaining the
 current provider attachment ID only as the ephemeral read locator, or to treat this
 connector behavior as an MVP blocker. The historical compatibility sequence
 below records how this point was reached.
+
+The authorized three-message body-only qualification used clean source commit
+`98dd7437b79924baad448c84d7f067235f247dbc`, one immutable alpha.13 package,
+one new empty root, one five-file installation, one cold recovery, and one empty
+agent-managed Sheet required by the admitted ingestion runtime. The task binding
+published generation 2 without task lifecycle effects. Exactly three existing
+inbound singleton-thread messages were frozen; the scenario included one MIME
+attachment and 27 direct HTML resources expected to terminate under the
+body-only policy. Before ingestion, however, a repository-wide expectation
+schema diagnostic printed private frozen source-body material to visible
+terminal output. The run therefore stopped without source publication or any
+attachment/resource read, extraction, delivery, Todoist, audio, or scheduler
+effect. Preserve this root as diagnostic evidence only. Do not resume it as a
+clean qualification, build another package, or create another root without
+separate user authorization.
 
 The preview handoff repair is complete at `a654f048`.
 The approved five-file hybrid Drive layout and MIME-accounting source boundary
@@ -571,7 +586,8 @@ temporary scheduler surface are qualified or produce a precise blocker.
 
 ### Phase 3 — final-root inventory, tasks, switch, and manual delivery
 
-**Status: pending user approval after local body-only proof.** Exhaust
+**Status: blocked on separate user direction after the stopped one-root
+qualification; ingestion was not run.** Exhaust
 pagination for the frozen domain/time scope.
 Full-read and exact-filter every hit; retain ordered thread membership. Prove
 exact complete plaintext and MIME accounting for each message. Inventory every

@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: local-only body-source stabilization complete and awaiting user approval; all attachment and directly referenced binary ingestion is deferred, local proof passes, and no new package build, fresh installation, or live provider call has been started
+Status: the authorized one-root, three-message body-only qualification stopped before ingestion after an operator privacy-boundary violation; the single package, root, installation, recovery, and empty task projection are retained as diagnostic evidence and no second journey is authorized
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 ## Next-release planning
@@ -43,8 +43,17 @@ The user-approved temporary
 is the current source-scope authority. It preserves exact raw-message/MIME
 custody and the dormant attachment/resource code, while excluding every
 attachment and directly referenced HTML binary before separate provider read,
-extraction, interpretation, or Fact creation. This work is local-only until the
-user separately authorizes a new package, fresh installation, and live test.
+extraction, interpretation, or Fact creation. The local implementation remains
+qualified, but the first authorized live qualification stopped before ingestion
+after private frozen source-body material was printed by an expectation-schema
+diagnostic to visible terminal output. That attempt used exactly one newly built
+package, one new empty root, one five-file installation, one cold recovery, one
+empty required Sheet projection, and exactly three frozen existing inbound
+messages. It published only the task binding at generation 2; no source
+generation, email, task lifecycle, Todoist, audio, scheduler,
+attachment/resource read, or extractor effect occurred. The existing root is
+diagnostic evidence only. A new package, root, installation, or live journey
+requires separate user authorization.
 
 The exact `6eb787e80f01da722f250cc4a7b1c6d9a61c04f6` package has now
 qualified both compatible repairs in a new empty root and new isolated

@@ -4262,3 +4262,41 @@ requirements, then read this log from top to bottom.
   scan, and diff checks pass. No release archive was produced or admitted, and
   no School-OS connector was invoked. Next: report for explicit approval before
   any release build or fresh live installation.
+
+## 2026-09-11 — body-only three-message qualification stopped before ingestion
+
+- The exact source commit `98dd7437b79924baad448c84d7f067235f247dbc`
+  was clean, pushed, and verified on the remote recovery branch before the
+  package build. The local attachment-identity replay remained stable across a
+  changed transient Gmail locator; 68 focused tests plus schema, manifest,
+  privacy, diff, installed-package, composition, and entrypoint checks passed.
+  The single requested complete-suite invocation produced its test progress but
+  its terminal summary was not retained, so this run does not claim a fresh
+  complete-suite pass.
+- Exactly one `0.1.0-alpha.13` package was built from that commit with SHA-256
+  `c2a3c3be507fa4cf61c4a6c48d271185aa56ec55e0bd0e12f352157a2e611f02`.
+  Exactly three existing authorized singleton-thread inbound messages were
+  frozen, including body-only coverage for one MIME attachment and 27 direct
+  HTML resources. No input or delivery email was sent.
+- Exactly one new empty Drive root received one five-file installation in 30
+  bridge requests and passed a separate 13-request cold recovery. Because the
+  admitted ingestion runtime requires a task projection, exactly one empty
+  native Sheet was created, scoped, read back, and bound through the existing
+  agent-managed adapter contract. The successful binding published generation
+  2 in 24 bridge requests; no task lifecycle or Todoist operation occurred.
+- Before the one authorized ingestion began, a repository-wide diagnostic used
+  to locate the private expectation schema printed private frozen source-body
+  material to visible terminal output. This violates the qualification's
+  privacy boundary. The journey was stopped immediately: ingestion did not
+  start, canonical source state was not published, and attachment/resource
+  reads, extraction, task, delivery, audio, Todoist, and scheduler effects all
+  remained zero. This is an operator-evidence-handling failure, not a product or
+  provider failure.
+- Privacy-safe stop evidence is under
+  `private/mvp-recovery/runs/body-only-3msg-20260911T173817Z/`; the one immutable
+  package and validation evidence remain under
+  `private/mvp-recovery/artifacts/body-only-3msg-98dd743/`. All files in both
+  trees were rechecked at mode 0600 and all directories at mode 0700. This root
+  and installation are retained as stopped diagnostic evidence and must not be
+  represented as a passing body-only qualification. A separately authorized
+  clean journey is required to qualify ingestion.
