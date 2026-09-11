@@ -53,6 +53,16 @@ class CurrentBrief:
     source: dict[str, Any]
 
 
+def _planned_task_sync_transition(action_count: int) -> tuple[str, list[str], dict[str, Any]]:
+    """Return the truthful next checkpoint after a complete task snapshot plan."""
+    completed = ["preflight", "discover", "catalog", "reconcile"]
+    if action_count == 0:
+        return "task_sync", completed + ["task_sync"], {"phase": "brief_delivery"}
+    return "reconcile", completed, {
+        "phase": "task_sync", "pending_action_count": action_count,
+    }
+
+
 def _json(data: bytes, label: str) -> dict[str, Any]:
     try:
         value = json.loads(data.decode("utf-8"))
@@ -292,9 +302,7 @@ def plan_preview_tasks(
         .stage("data/rolling-updates.json", canonical_json_bytes({"schema_version": 1, "rolling_updates": derived["rolling_updates"]}))
         .stage("state/pending-run-delta.json", canonical_json_bytes(delta), role="reconciliation_delta", media_type="application/json")
     )
-    remaining = {"phase": "task_sync"}
-    if plan.actions:
-        remaining["pending_action_count"] = len(plan.actions)
+    phase, completed, remaining = _planned_task_sync_transition(len(plan.actions))
     effects = [{
         "effect_id": item["effect_id"], "kind": item["kind"],
         "outcome": item["outcome"], "verification": {},
@@ -302,7 +310,7 @@ def plan_preview_tasks(
     advanced = _publish(
         transaction=transaction, storage=storage, prior_state=state, prior=prior,
         resolved=resolved, installed_root=installed_root, serialization=serialization,
-        phase="reconcile", completed=["preflight", "discover", "catalog", "reconcile"],
+        phase=phase, completed=completed,
         remaining=remaining,
         verification={
             "verified": True, "phase_complete": True,

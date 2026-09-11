@@ -4154,3 +4154,44 @@ requirements, then read this log from top to bottom.
   commit/push/verify, build and validate the exact package, then create one new
   empty final root and rerun the complete 14-day chain through canonical
   ingestion publication and independent Drive-only recovery.
+
+## 2026-09-11 — 14-day ingestion committed; integrated semantic check found one missed action
+
+- Published the operation-specific Drive fetch-bound repair at exact commit
+  `ddd53642766692008fbf38e5f9f3c70a20e602ee`; the remote recovery branch was
+  verified at that commit. Its immutable `0.1.0-alpha.13` package has SHA-256
+  `9e55709d611c9622f42d01d3d2b192d0fd0c244820a029bda6ba487e71342608`
+  and passed installed validation under the qualified CPython 3.12.14 runtime.
+- A new empty root passed five-file installation in 30 bridge requests, separate
+  cold recovery in 13, post-admission agent-managed Sheet binding in 24, and
+  post-bind cold recovery in 13. The isolated Sheet was completely read and had
+  no task rows before binding.
+- The exact installed image-excluded 14-day ingestion completed in 275 bounded
+  bridge requests and committed Drive generation 3: 38 complete source records,
+  41 raw messages, one required attachment, one inventoried direct resource and
+  43 source-linked Facts. The eligible cursor remained unchanged at the catalog
+  boundary. A new 13-request Drive-only recovery admitted the exact package,
+  settings, pointer and state bundle. The tracked preview plan then reread the
+  complete Sheet and exact source bundle and committed generation 4 with zero
+  provider effects. No email, Todoist, audio or scheduler effect occurred.
+- Integrated independent content validation rejected the assembled semantic
+  result: one of the 43 accepted Facts contains a finite parent response
+  requirement but was marked `is_action: false`. The other 42 Facts are
+  non-action updates; the standing-policy Fact remains non-actionable. Therefore
+  the resulting zero-task state is not acceptance evidence even though every
+  packet-level audit had passed. The exact packet-bound private expectation is
+  being corrected from source evidence, not from generated output.
+- A separate compatible runtime defect was exposed by the same state: a
+  genuinely action-free, completely read snapshot remained at `task_sync` and
+  the next command would attempt to authorize a nonexistent action. The runtime
+  now advances that case directly to `brief_delivery`; pending-action behavior
+  is unchanged. Focused transition/task/CLI validation passes 29 tests. Developer
+  continuity guidance now requires an integrated independent check of semantic
+  flags and an explicit justification for aggregate zero-action results.
+- Private receipts and runtime evidence are under
+  `private/mvp-recovery/artifacts/final-ddd5364/` and corresponding
+  `private/mvp-recovery/runs/final-ddd5364-*` directories. Next: finish the exact
+  expectation correction, add the focused semantic replay, run the complete
+  repository gate, commit/push/verify, freeze one package, and use one new empty
+  final root for the full live chain. The current root remains durable diagnostic
+  evidence only once executable bytes change.

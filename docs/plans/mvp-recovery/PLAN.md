@@ -315,23 +315,24 @@ blocks the affected path.
 
 ### Phase 1 — storage simplification and early live integration
 
-**Status: final 14-day execution transport repair and refreeze in progress.**
-The exact `592c76a` package passed five-object installation, cold recovery and
-post-admission agent-managed Sheet binding in a new empty root. Its
-image-excluded ingestion completed the bounded source reads, PDF extraction and
-independent semantic work, then stopped before canonical publication while
-reading back the newly written immutable source archive. The archive was within
-the approved 64 MiB source-bundle limit, but its base64 JSON representation
-exceeded the bridge's unrelated 16 MiB ordinary-response ceiling. The compatible
-repair derives a larger operation-specific `drive.fetch` transport ceiling from
-the existing bundle limit while preserving the 16 MiB ceiling for every other
-operation and all existing decoded bundle/member/content bounds. The exact
-private 16.1 MB archive receipt now replays through normalization, response
-framing, decoded-byte validation and consumption; focused and full repository
-validation pass. Because executable bytes changed, that root is diagnostic
-evidence only. Next: commit/push/verify, rebuild the exact package, and use one
-new empty 14-day environment through ingestion and the remaining acceptance
-chain.
+**Status: 14-day ingestion committed; one semantic correction blocks preview
+acceptance.** The exact `ddd5364` package passed five-object installation, cold
+recovery, post-admission agent-managed Sheet binding and another Drive-only
+recovery in a new empty root. Its image-excluded 14-day ingestion committed 38
+source records, 41 raw messages and 43 source-linked Facts at generation 3 in
+275 bounded bridge requests. Exact source/state bundle readback and a separate
+13-request cold recovery passed; the eligible cursor did not advance, and no
+task, delivery, Todoist, audio or scheduler effect occurred. The tracked preview
+plan then completely reread the empty Sheet and all canonical source material,
+publishing generation 4 without provider effects. Integrated independent
+content review rejected one Fact containing a finite parent response requirement
+because it had been marked non-actionable, so zero canonical tasks is not an
+accepted result. Correct the exact private packet-bound expectation and replay
+the semantic run. In parallel, retain the compatible no-action transition fix:
+when a complete task snapshot truthfully produces no actions, task sync becomes
+complete and advances to the brief boundary without dispatch. After focused and
+full validation, freeze one new exact package and empty root for the final live
+chain; do not reuse this semantically rejected ingestion as acceptance evidence.
 The historical compatibility sequence below records how this point was
 reached.
 

@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: recovery MVP live acceptance transport repair in progress; the exact `592c76a` package passed install/bind/cold recovery and full source interpretation, then a valid source-archive readback exposed a bridge ceiling that failed to account for base64 expansion before canonical publication
+Status: recovery MVP live acceptance semantic correction in progress; exact package `ddd5364` completed and cold-recovered the image-excluded 14-day ingestion, but integrated content validation rejected one missed actionable Fact before task projection or delivery
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 ## Next-release planning
@@ -98,9 +98,19 @@ the ordinary 16 MiB response ceiling. The compatible transport repair now uses
 an operation-specific `drive.fetch` ceiling derived from the already-approved
 64 MiB bundle bound plus finite JSON-envelope allowance; every other operation
 retains the original ceiling, and decoded bundle/content limits are unchanged.
-Exact private receipt replay and the full validator pass. Because executable
-bytes changed, the next gate is commit/package freeze and one new clean 14-day
-acceptance environment.
+Exact private receipt replay and the full validator pass. Package `ddd5364`
+then passed a new five-file install, post-admission Sheet binding and cold
+recovery. Its 14-day ingestion committed 38 source records, 41 raw messages and
+43 source-linked Facts at generation 3; Drive-only recovery and exact source
+bundle readmission passed. The eligible cursor remained unchanged and no task,
+delivery, audio, Todoist or scheduler effect occurred. The subsequent tracked
+preview plan correctly re-read the complete empty Sheet and source bundle, but
+assembled-content validation found that one finite parent response requirement
+had been accepted with `is_action: false`. Its packet-bound private expectation
+is being corrected. A separate compatible runtime repair lets a genuinely
+action-free complete snapshot advance directly to brief rendering instead of
+trying to authorize a nonexistent action. These ordinary fixes are being
+batched before rebuilding one new exact package/root for the final live chain.
 
 The private execution values and unsanitized reference adapter receipts live
 only in

@@ -56,3 +56,12 @@ When a live connector response exposes a possible runtime defect:
    zero-Fact decision, not a reusable default. Prove with a cross-packet test
    that a zero-Fact expectation for one packet is rejected for every other
    packet.
+10. Treat semantic flags as acceptance-critical content, not incidental
+    metadata. After all packet audits pass, independently compare the assembled
+    Fact inventory with the packet-bound source expectations, including finite
+    response requirements and their `is_action` disposition. A packet audit
+    cannot validate itself through an expectation copied from generated output,
+    and a zero-action aggregate must be explicitly justified before task sync is
+    accepted. Separately, the runtime must advance a genuinely action-free,
+    completely read task snapshot directly to the brief boundary without
+    attempting to authorize a nonexistent provider action.
