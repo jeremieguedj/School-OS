@@ -4228,3 +4228,37 @@ requirements, then read this log from top to bottom.
   identity derived from the immutable Gmail message plus canonical MIME-part
   coordinates while retaining the provider attachment ID as a current-read
   locator, or record the connector behavior as a blocking incapability.
+
+## 2026-09-11 — temporary body-only source policy implemented locally
+
+- The user deferred all attachment support, extending the prior image-only
+  exclusion to every MIME attachment and directly referenced HTML image/PDF.
+  The focused authority is
+  `docs/plans/mvp-recovery/ATTACHMENT-DEFERRAL-PLAN.md`. This work unit is
+  explicitly local-only: no release package, fresh installation, test root, or
+  live provider call is authorized before a separate user approval.
+- The active connected composers now select explicit body-only Gmail
+  normalization, a global `*/*` attachment exclusion, and both finite direct
+  resource-origin exclusions. The Gmail source adapter blocks attachment reads
+  before its provider method, no direct-resource fetcher is bound, and no
+  attachment or direct-resource extractor is bound on the active path. Existing
+  attachment/PDF/image/resource code remains available and its prior focused
+  tests remain active as dormant-path coverage.
+- Policy-excluded attachment identity is derived from the exact source message
+  and normalized MIME-part coordinate. The connector attachment ID is neither
+  required nor persisted in body-only normalized output. Exact raw RFC2822
+  custody and complete MIME accounting remain mandatory, so the system neither
+  invents attachment content nor treats ignored bytes as body Facts.
+- A new global MIME exclusion regression proves text, PDF, image, and an unseen
+  MIME type all stop before the read callback. Direct embedded-image and linked-
+  PDF regressions prove zero fetch/extractor calls. A normalizer/catalog replay
+  proves two otherwise identical Gmail reads with different transient attachment
+  locators produce identical body-only normalized and catalog bytes.
+- The ignored exact private receipt set was replayed locally through the new
+  normalizer. One observed distinct-locator pair produced identical body-only
+  output; the mode-0600 result is retained beside the prior private mismatch
+  evidence. Focused source/ingestion validation passes 58 tests. The complete
+  local unit suite passes 442 tests. Local schemas, template manifests, privacy
+  scan, and diff checks pass. No release archive was produced or admitted, and
+  no School-OS connector was invoked. Next: report for explicit approval before
+  any release build or fresh live installation.

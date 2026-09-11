@@ -1,12 +1,14 @@
 # School-OS recovery MVP plan and implementation specification
 
-- Status: recovery live acceptance repair in progress; Phase 0, the four-day
-  Phase 1 compatibility preview, and consolidated Phase 2 implementation are
-  complete; the latest diagnostic 14-day instance installed, cold-recovered,
-  bound its isolated Sheet at Drive generation 2, and exposed one compatible
-  ignored-preview locator defect before source publication. The exact private
-  receipts now pass the repaired boundary and the complete static gate; commit,
-  package rebuild, and one new empty final root are the next acceptance gate.
+- Status: local-only body-source stabilization complete and awaiting user
+  approval for a new build/live run. The latest live
+  replay exposed a transient Gmail attachment ID for otherwise identical source
+  bytes. The user has deferred all attachment and directly referenced binary
+  ingestion rather than expanding the attachment identity contract now. The
+  focused [temporary body-only source policy](ATTACHMENT-DEFERRAL-PLAN.md)
+  controls this work unit. No package build, fresh installation, or live
+  provider call is authorized until its local proof passes and the user approves
+  the next live run.
 - Written: 2026-09-09
 - Release identity: record the early candidate in Phase 0 and freeze the final
   identity in Phase 2; do not assume that `main`,
@@ -23,6 +25,11 @@
   layouts and native calls in active core routing with a two-way normalized
   snapshot/action/readback interface operated by the user's agent. Drive,
   stable identities and reconciliation decisions remain canonical.
+- Temporary source-scope authority:
+  [`ATTACHMENT-DEFERRAL-PLAN.md`](ATTACHMENT-DEFERRAL-PLAN.md). It keeps the
+  attachment/resource implementation but disables all separate attachment and
+  direct-resource reads, extraction, interpretation, and Facts for the current
+  MVP qualification.
 
 ## Outcome and fixed endpoint
 
@@ -33,9 +40,10 @@ journey on the authorized test surfaces:
    School OS Tests parent;
 2. freeze a new inclusive-start/exclusive-end 14-day source window at execution
    start and ingest every message in the private companion's two-domain scope;
-3. preserve complete email bodies, supported attachments, and bounded directly
-   referenced PDF assets with provenance; inventory every image but terminate it
-   as `excluded_by_policy` without fetching, interpreting, or creating Facts;
+3. preserve complete email bodies and MIME structure; for this temporary
+   body-only qualification, terminate every attachment and directly referenced
+   binary asset as `excluded_by_policy` before separate fetch, extraction,
+   interpretation, or Fact creation;
 4. create source-linked, queryable Facts and canonical Drive tasks;
 5. import parent changes and new/completed/reopened tasks from the one selected
    task tool into Drive before refreshing any task projection;
@@ -82,15 +90,18 @@ tasks exception. It must not dump every preserved Fact merely to demonstrate
 coverage. Facts and knowledge remain source-linked and queryable independently of
 brief eligibility.
 
-For the current MVP qualification only, the user has explicitly selected a
-temporary all-image exclusion policy. MIME attachments matching `image/*` and
-direct resources discovered as `html_embedded` remain visible in the canonical
-source inventory as `excluded_by_policy`, with their source identity and
-provenance, but are not downloaded, sent to image extraction, added to semantic
-packets, or converted into Facts. Text and PDF processing are unchanged. The
-existing image fetch, verification, MIME/signature, and extraction code remains
-available but inactive. A later include/exclude policy for meaningful images
-versus decorative headers and footers is deferred until after the MVP is proven.
+For the current MVP qualification only, the user has explicitly selected the
+temporary body-only policy in `ATTACHMENT-DEFERRAL-PLAN.md`. Every MIME
+attachment and directly referenced HTML image/PDF is visible as
+`excluded_by_policy`, but no separate attachment/resource read, extraction,
+interpretation, or Fact creation occurs. Canonical excluded-attachment identity
+uses the immutable source message and normalized MIME-part coordinate, never a
+transient connector attachment locator. Exact raw RFC2822 custody and complete
+MIME accounting remain required. The existing attachment, PDF, image and
+direct-resource implementation remains available but inactive. A later source
+policy for selectively re-enabling useful attachments and distinguishing
+meaningful images from decorative headers/footers is deferred until after the
+body-only MVP is proven.
 
 Only fresh installation is in scope. Defer upgrades, migration of old private
 instances, broad runtime/adapter matrices, generalized workflow engines,
@@ -161,7 +172,7 @@ recipes rather than duplicating them in a new framework.
 | File or seam | Exact MVP deliverable |
 |---|---|
 | Candidate `school_os/connected_bootstrap.py`, `connected_setup.py`, `connected_profiles.py`; `scripts/setup_connected_instance.py`, `run_connected_operation.py`, `readmit_connected_profile.py` | Reconcile onto `main`; recover only admitted package/bootstrap/profile bytes; fresh create-only setup; finite operation routing; exact readback and profile selection. |
-| `school_os.connected_ingestion.ConnectedIngestionWorker`, candidate `school_os/connected_sources.py`, `scripts/run_source_host.py` | Bind the frozen `[start,end)` search, full/raw Gmail reads, complete bodies, attachment bytes, bounded PDF resources, the temporary pre-fetch all-image exclusion, persisted Facts/audit, and continuation. Retain the inactive image pipeline and existing custody/semantic validators. |
+| `school_os.gmail_source`, `school_os.connected_ingestion.ConnectedIngestionWorker`, candidate `school_os/connected_sources.py`, `scripts/run_source_host.py` | Bind the frozen `[start,end)` search and full/raw Gmail reads; preserve complete bodies and MIME accounting; terminate all attachments and direct HTML resources under the temporary body-only policy before separate reads or extraction; persist Facts/audit and continuation. Retain the dormant attachment/resource pipeline and strict custody/semantic validators. |
 | `school_os.connected_tasks.ConnectedTaskWorker`, `school_os.agent_tasks` and `school_os.hybrid_tasks` | Preserve `reconcile` as the Drive-canonical readmission step; make provider comparison pure; commit parent imports and each high-level action before the user's agent performs it; validate normalized readback before advancing a binding/base. |
 | `adapters/tasks/google-sheets.md`, `adapters/tasks/todoist.md` and the agent task interface | Make both providers agent-operated procedures over the same complete normalized snapshot/action/readback contract. Reuse the private Todoist procedure; do not create a native Todoist worker or require a fixed Sheet layout. |
 | Candidate `school_os.connected_daily.ConnectedDailyRuntime` and tracked `school_os.hybrid_preview` | Remove hard-coded Sheet construction from active hybrid routing. Carry the exact reconcile output through the selected agent adapter, retain all-current Facts/tasks for brief building, store the unsent output bundle, and commit the cursor last. |
@@ -236,19 +247,24 @@ architecture, not a new architecture or acceptance matrix.
    classification, scheduler cleanup, and recovery from every already-defined
    effect boundary. Do not add providers, workflow machinery, new effects, or
    acceptance cases.
-3. **Candidate qualification and freeze.** Run focused tests, the complete
-   repository validator, privacy and installed-package checks, then build one
-   immutable package. Record the source commit, package hash, interpreter,
-   dependencies, configuration fingerprint, private source bounds, recipients,
-   provider scopes, and scenario before the first final-root write.
-4. **One clean final installation and ingestion.** Create and prove one new
+3. **Local body-only qualification.** Implement and validate the focused
+   `ATTACHMENT-DEFERRAL-PLAN.md` entirely against synthetic and ignored exact
+   private evidence. Run focused and complete local tests, but create no release
+   package, installation, root, or provider effect. Stop and report for user
+   approval after this gate.
+4. **Candidate qualification and freeze, only after approval.** Run privacy and
+   installed-package checks, build one immutable package, and record the source
+   commit, package hash, interpreter, dependencies, configuration fingerprint,
+   private source bounds, recipients, provider scopes, and scenario before the
+   first final-root write.
+5. **One clean final installation and ingestion.** Create and prove one new
    empty Drive root, one isolated agent-owned Sheet, and one isolated Todoist
    project. Install and cold-recover the five-file layout, bind Sheets, then run
-   the frozen 14-day two-domain inventory with the temporary all-image
-   exclusion. Preserve complete text and supported non-image/PDF custody,
+   the frozen 14-day two-domain inventory with the temporary body-only policy.
+   Preserve complete text and explicit attachment/resource exclusions,
    independently bind every semantic expectation to its packet, query Facts,
    and render the existing-recipe brief without reserving delivery early.
-5. **Task lifecycle and guided switch.** With Sheets selected, perform complete
+6. **Task lifecycle and guided switch.** With Sheets selected, perform complete
    snapshot import plus parent add/edit/comment/complete/reopen and guarded
    refresh. Pull and commit Sheets, stage and verify Todoist without activating
    it, activate only after proof, exercise the same Todoist lifecycle, and
@@ -315,8 +331,9 @@ blocks the affected path.
 
 ### Phase 1 — storage simplification and early live integration
 
-**Status: stable Gmail attachment identity decision required before ingestion
-acceptance.** The exact `ddd5364` package passed five-object installation, cold
+**Status: local-only temporary body-only implementation and proof complete;
+package build and live qualification await explicit user approval.**
+The exact `ddd5364` package passed five-object installation, cold
 recovery, post-admission agent-managed Sheet binding and another Drive-only
 recovery in a new empty root. Its image-excluded 14-day ingestion committed 38
 source records, 41 raw messages and 43 source-linked Facts at generation 3 in
@@ -334,10 +351,14 @@ returned a different provider attachment ID from the accepted prior run.
 Because the current catalog, content, Fact and replay identities transitively
 depend on that ID, the runtime cannot honestly reuse the prior extraction or
 prove duplicate-safe replay. No canonical source generation or external
-task/delivery effect was published. The affected path is paused under the
-no-architecture-change instruction. The next decision is whether to adopt a
-stable message-and-MIME-part attachment identity while retaining the current
-provider attachment ID only as the ephemeral read locator, or to treat this
+task/delivery effect was published. The user subsequently deferred attachment
+and direct-resource ingestion under `ATTACHMENT-DEFERRAL-PLAN.md`. The active
+local repair makes policy-excluded outcomes stable on message/MIME-part
+coordinates and never invokes or persists the transient locator. The next gate
+is complete local proof and a report; package build and live installation await
+separate approval. The historical decision at this point had been whether to
+adopt a stable message-and-MIME-part attachment identity while retaining the
+current provider attachment ID only as the ephemeral read locator, or to treat this
 connector behavior as an MVP blocker. The historical compatibility sequence
 below records how this point was reached.
 
@@ -550,13 +571,16 @@ temporary scheduler surface are qualified or produce a precise blocker.
 
 ### Phase 3 — final-root inventory, tasks, switch, and manual delivery
 
-**Status: pending.** Exhaust pagination for the frozen domain/time scope.
+**Status: pending user approval after local body-only proof.** Exhaust
+pagination for the frozen domain/time scope.
 Full-read and exact-filter every hit; retain ordered thread membership. Prove
-exact complete plaintext for each message. Inventory every provider attachment
-and each bounded directly referenced image/PDF asset. Verify original bytes,
-MIME/signature, size/hash, redirects, extraction/page or exact-text locator, and
-read/fetch evidence. A substantive missing, ambiguous, unsupported, or unreadable
-unit blocks acceptance; it is not a passing disposition.
+exact complete plaintext and MIME accounting for each message. Inventory every
+MIME attachment and direct HTML image/PDF reference with the stable source
+coordinate and `excluded_by_policy` disposition. Verify that no separate
+attachment/resource read, extraction, interpretation, or Fact occurs. A missing
+body, ambiguous MIME structure, incomplete inventory, or non-policy source
+failure blocks acceptance; an explicitly policy-excluded attachment/resource is
+a passing disposition for this temporary scope.
 
 Build Facts only from source-equal persisted content. Independently check every
 source disposition, Fact wording/classification/provenance, relation, and expected
@@ -660,7 +684,7 @@ never authorizes production cutover.
 | Case | Required observation |
 |---|---|
 | Fresh install | Complete empty-root proof, immutable package/admission/bootstrap readback, isolated Sheet/project, exact package execution |
-| Complete inventory | Independent listing matches the frozen two-domain `[start,end)` scope; every body, attachment, and supported direct asset has a disposition |
+| Complete inventory | Independent listing matches the frozen two-domain `[start,end)` scope; every body has exact custody and every attachment/direct asset has a stable `excluded_by_policy` disposition with zero separate reads |
 | Facts and queries | Every Fact/source link resolves; representative eligible and brief-ineligible facts are queryable and content-correct |
 | Manual brief | Existing eligibility rules, approved parent-added exception, stored HTML/text equality, approved recipient only, exact Sent verification, no scheduler |
 | Sheets lifecycle | Stable IDs; parent add/edit/comment/complete/reopen pulled to Drive before guarded refresh |

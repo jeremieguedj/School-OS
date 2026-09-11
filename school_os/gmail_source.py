@@ -34,6 +34,11 @@ class GmailSourceError(ValueError):
     """Raised when full and raw Gmail source evidence cannot be reconciled."""
 
 
+ATTACHMENT_MODE_PROCESS = "process"
+ATTACHMENT_MODE_EXCLUDE = "exclude"
+_ATTACHMENT_MODES = {ATTACHMENT_MODE_PROCESS, ATTACHMENT_MODE_EXCLUDE}
+
+
 _BASE64URL = re.compile(r"^[A-Za-z0-9_-]+$")
 _BASE64URL_BODY = re.compile(r"^[A-Za-z0-9_-]+={0,2}$")
 
@@ -351,11 +356,14 @@ def _timestamp(value: Mapping[str, Any], timezone: ZoneInfo) -> tuple[str, str, 
 class GmailMimeNormalizer:
     """Concrete full/raw normalizer for the observed Gmail connector shape."""
 
-    def __init__(self, timezone: str) -> None:
+    def __init__(self, timezone: str, *, attachment_mode: str = ATTACHMENT_MODE_PROCESS) -> None:
         try:
             self.timezone = ZoneInfo(timezone)
         except (TypeError, ZoneInfoNotFoundError) as exc:
             raise GmailSourceError("configured source timezone is unavailable") from exc
+        if attachment_mode not in _ATTACHMENT_MODES:
+            raise GmailSourceError("configured attachment mode is unsupported")
+        self.attachment_mode = attachment_mode
 
     def normalize(self, full: Mapping[str, Any], raw: Mapping[str, Any]) -> dict[str, Any]:
         """Return one complete source-port message or fail before cataloguing.
@@ -444,21 +452,37 @@ class GmailMimeNormalizer:
                     raise GmailSourceError(f"Gmail HTML alternative is not exact: {exc}") from exc
                 html_parts.append(html)
             if is_attachment:
-                attachment_id = body.get("attachment_id")
-                if not isinstance(attachment_id, str) or not attachment_id:
-                    raise GmailSourceError("Gmail attachment has no provider attachment_id")
-                supported = part.get("read_attachment_supported")
-                if not isinstance(supported, bool):
-                    raise GmailSourceError("Gmail attachment lacks read_attachment_supported evidence")
-                attachments.append({
-                    "attachment_id": attachment_id,
-                    "mime_type": mime_type,
-                    "byte_size": body["size"],
-                    "filename": part.get("filename"),
-                    "read_attachment_supported": supported,
-                    "part_id": part_id,
-                    "source_part_ordinal": ordinal,
-                })
+                if self.attachment_mode == ATTACHMENT_MODE_EXCLUDE:
+                    # The temporary body-only policy never calls the
+                    # attachment-retrieval surface. Use the already-proved
+                    # message/MIME-part coordinate as canonical identity and
+                    # omit the connector's transient read locator.
+                    attachments.append({
+                        "attachment_id": "mime-part-" + sha256_bytes(
+                            f"{message_id}\0{part_id}".encode("utf-8")
+                        ),
+                        "mime_type": mime_type,
+                        "byte_size": body["size"],
+                        "filename": part.get("filename"),
+                        "part_id": part_id,
+                        "source_part_ordinal": ordinal,
+                    })
+                else:
+                    attachment_id = body.get("attachment_id")
+                    if not isinstance(attachment_id, str) or not attachment_id:
+                        raise GmailSourceError("Gmail attachment has no provider attachment_id")
+                    supported = part.get("read_attachment_supported")
+                    if not isinstance(supported, bool):
+                        raise GmailSourceError("Gmail attachment lacks read_attachment_supported evidence")
+                    attachments.append({
+                        "attachment_id": attachment_id,
+                        "mime_type": mime_type,
+                        "byte_size": body["size"],
+                        "filename": part.get("filename"),
+                        "read_attachment_supported": supported,
+                        "part_id": part_id,
+                        "source_part_ordinal": ordinal,
+                    })
             parts.append(item)
         node_inventory = [
             {

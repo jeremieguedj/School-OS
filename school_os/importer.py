@@ -815,8 +815,11 @@ def process_attachments(
         if exclusion_reason is None and isinstance(mime_type, str):
             exclusion_reason = next((
                 reason for media_range, reason in exclusions.items()
-                if media_range.endswith("/*")
-                and mime_type.startswith(media_range[:-1])
+                if media_range == "*/*"
+                or (
+                    media_range.endswith("/*")
+                    and mime_type.startswith(media_range[:-1])
+                )
             ), None)
         if exclusion_reason is not None:
             outcomes.append(AttachmentOutcome(

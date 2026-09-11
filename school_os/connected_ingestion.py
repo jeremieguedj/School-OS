@@ -56,6 +56,15 @@ from .tasks import canonical_task_id
 
 ConnectedIngestionError = ConnectedStorageError
 
+MVP_BODY_ONLY_EXCLUSION_REASON = (
+    "attachment and direct-resource ingestion is temporarily disabled for MVP qualification"
+)
+MVP_BODY_ONLY_ATTACHMENT_EXCLUSIONS = {"*/*": MVP_BODY_ONLY_EXCLUSION_REASON}
+MVP_BODY_ONLY_RESOURCE_EXCLUSIONS = {
+    "html_embedded": MVP_BODY_ONLY_EXCLUSION_REASON,
+    "html_linked": MVP_BODY_ONLY_EXCLUSION_REASON,
+}
+
 
 class SourcePort(Protocol):
     """A normalized, complete Gmail source adapter.
@@ -101,6 +110,7 @@ class CodexGmailSourceAdapter:
         normalize_attachment: Callable[[str, str, Mapping[str, Any]], ReadResult | AttachmentRead],
         capture_raw_message: Callable[[str, str, bytes], None] | None = None,
         capture_attachment: Callable[[str, str, ReadResult | AttachmentRead], None] | None = None,
+        attachment_reads_enabled: bool = True,
     ) -> None:
         if max_thread_messages < 1:
             raise ConnectedIngestionError("Gmail full-thread bound must be positive")
@@ -110,6 +120,9 @@ class CodexGmailSourceAdapter:
         self.normalize_attachment = normalize_attachment
         self.capture_raw_message = capture_raw_message
         self.capture_attachment = capture_attachment
+        if not isinstance(attachment_reads_enabled, bool):
+            raise ConnectedIngestionError("Gmail attachment-read policy must be Boolean")
+        self.attachment_reads_enabled = attachment_reads_enabled
         self._discovery_by_thread: dict[str, set[str]] = {}
 
     @staticmethod
@@ -232,6 +245,8 @@ class CodexGmailSourceAdapter:
         return {"conversation_id": conversation_id, "messages": normalized}
 
     def read_attachment(self, message_id: str, attachment_id: str) -> ReadResult | AttachmentRead:
+        if not self.attachment_reads_enabled:
+            raise ConnectedIngestionError("Gmail attachment reads are disabled by source policy")
         raw = self.gmail.read_attachment(message_id, attachment_id)
         if not isinstance(raw, Mapping):
             raise ConnectedIngestionError("Gmail attachment result is malformed")
@@ -503,16 +518,22 @@ def _conversation_messages(
             if not isinstance(html_part, Mapping):
                 raise ConnectedIngestionError("HTML-part inventory item is malformed")
             resources = discover_direct_html_resources(message_id, html_part)
-            if resources and resource_fetcher is None:
-                raise ConnectedIngestionError("direct HTML resource retrieval is not bound on this runtime")
             if resources:
                 exclusions = {
                     resource.resource_id: excluded_resource_origins[resource.origin]
                     for resource in resources
                     if resource.origin in excluded_resource_origins
                 }
+                if len(exclusions) != len(resources) and resource_fetcher is None:
+                    raise ConnectedIngestionError("direct HTML resource retrieval is not bound on this runtime")
+                def fetch(url: str) -> Any:
+                    if resource_fetcher is None:
+                        raise ConnectedIngestionError(
+                            "policy-excluded direct resource reached the fetch boundary"
+                        )
+                    return resource_fetcher(url)
                 resource_outcomes += process_direct_html_resources(
-                    resources, fetch_resource=resource_fetcher,
+                    resources, fetch_resource=fetch,
                     extractors=resource_extractors, max_bytes=max_resource_bytes,
                     max_redirects=max_resource_redirects,
                     excluded_resources=exclusions,

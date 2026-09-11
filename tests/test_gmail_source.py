@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import base64
+from copy import deepcopy
 import hashlib
+import json
 import sys
 import unittest
 from pathlib import Path
@@ -10,8 +12,15 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from school_os.gmail_source import GmailMimeNormalizer, GmailSourceError, decode_raw_rfc2822
-from school_os.importer import admit_exact_plaintext_representation, discover_direct_html_resources
+from school_os.gmail_source import (
+    ATTACHMENT_MODE_EXCLUDE, GmailMimeNormalizer, GmailSourceError,
+    decode_raw_rfc2822,
+)
+from school_os.catalog import build_catalog_message, serialize_v2_record
+from school_os.importer import (
+    admit_exact_plaintext_representation, discover_direct_html_resources,
+    process_attachments,
+)
 
 
 def encoded(value: bytes) -> str:
@@ -107,6 +116,86 @@ class GmailMimeNormalizerTests(unittest.TestCase):
             "attachment_id": "attachment-1", "mime_type": "application/pdf", "byte_size": 9,
             "filename": "form.pdf", "read_attachment_supported": True, "part_id": "1", "source_part_ordinal": 2,
         }], result["attachments"])
+
+    def test_body_only_attachment_identity_ignores_transient_provider_locator(self) -> None:
+        attachment_transport = b"JVBERi0xLjQK"
+        source = (
+            b"Content-Type: multipart/mixed; boundary=x\r\n\r\n"
+            b"--x\r\nContent-Type: text/plain; charset=utf-8\r\n"
+            b"Content-Transfer-Encoding: base64\r\n\r\naGVsbG8=\r\n"
+            b"--x\r\nContent-Type: application/pdf\r\n"
+            b"Content-Disposition: attachment; filename=form.pdf\r\n"
+            b"Content-Transfer-Encoding: base64\r\n\r\n" + attachment_transport +
+            b"\r\n--x--\r\n"
+        )
+        payload = {
+            "part_id": "", "mime_type": "multipart/mixed", "filename": "",
+            "headers": headers("multipart/mixed"),
+            "body": {"size": 0, "base64_url_content": None, "content": None, "attachment_id": None},
+            "read_attachment_supported": None,
+            "parts": [
+                leaf("0", "text/plain", "hello", 5),
+                leaf(
+                    "1", "application/pdf", None, 9, charset=None,
+                    filename="form.pdf", attachment_id="transient-one", supported=True,
+                ),
+            ],
+        }
+        changed = deepcopy(payload)
+        changed["parts"][1]["body"]["attachment_id"] = "transient-two"
+        changed["parts"][1]["read_attachment_supported"] = False
+        normalizer = GmailMimeNormalizer(
+            "America/Los_Angeles", attachment_mode=ATTACHMENT_MODE_EXCLUDE,
+        )
+
+        first = normalizer.normalize(full(payload), raw(source))
+        second = normalizer.normalize(full(changed), raw(source))
+
+        self.assertEqual(first, second)
+        attachment, = first["attachments"]
+        self.assertTrue(attachment["attachment_id"].startswith("mime-part-"))
+        self.assertNotIn("read_attachment_supported", attachment)
+        self.assertNotIn("transient-one", repr(first))
+        no_locator = deepcopy(changed)
+        no_locator["parts"][1]["body"]["attachment_id"] = None
+        self.assertEqual(first, normalizer.normalize(full(no_locator), raw(source)))
+
+        schema = json.loads(
+            (ROOT / "schemas" / "source-conversation.schema.json").read_text()
+        )
+
+        def catalog_bytes(normalized: dict) -> bytes:
+            admission = admit_exact_plaintext_representation(
+                normalized["parts"],
+                mime_tree_complete=normalized["mime_tree_complete"],
+            )
+            outcomes = process_attachments(
+                normalized["attachments"],
+                read_attachment=lambda _identity: self.fail(
+                    "body-only catalog must not fetch an attachment"
+                ),
+                supported_mime_types=(), excluded_mime_types={"*/*": "body-only policy"},
+                max_bytes=8192,
+            )
+            message = build_catalog_message(
+                message_id=normalized["message_id"],
+                received_at=normalized["received_at"],
+                received_date=normalized["received_date"],
+                admission=admission,
+                attachment_outcomes=outcomes,
+                mime_accounting=normalized["mime_accounting"],
+                mime_contents=normalized["mime_contents"],
+            )
+            return serialize_v2_record({
+                "schema_version": 3, "adapter_id": "gmail-v1",
+                "conversation_id": normalized["thread_id"], "scope": {},
+                "pagination": {"completed": True}, "messages": [message],
+            }, schema)
+
+        self.assertEqual(catalog_bytes(first), catalog_bytes(second))
+
+        with self.assertRaisesRegex(GmailSourceError, "attachment mode"):
+            GmailMimeNormalizer("America/Los_Angeles", attachment_mode="unknown")
 
     def test_qp_charset_decoding_and_configured_local_date_are_exact(self) -> None:
         transport = b"caf=E9"

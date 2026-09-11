@@ -16,6 +16,7 @@ from .brief import build_brief_input, delivery_key, render_brief
 from .connected_ingestion import (
     CodexGmailSourceAdapter, CodexSemanticCallbacks, ConnectedIngestionWorker,
     DiscoveryResult, IngestionArtifacts, IngestionResult,
+    MVP_BODY_ONLY_ATTACHMENT_EXCLUSIONS, MVP_BODY_ONLY_RESOURCE_EXCLUSIONS,
 )
 from .connected_profiles import readmit_capability_profile, select_capability_profile
 from .connected_sources import ConnectedSourceAdapters
@@ -31,7 +32,7 @@ from .connected_tasks import (
 from .contracts import canonical_json_bytes, load_mapping_yaml, sha256_bytes, validate
 from .daily import PHASES, OperationResult, run_daily
 from .delivery import ExactDeliveryRequest, deliver_exact
-from .gmail_source import GmailMimeNormalizer
+from .gmail_source import ATTACHMENT_MODE_EXCLUDE, GmailMimeNormalizer
 from .install import FILE_MAP_PATH, OPERATION_STATE_PATH, parse_daily_values
 from .operations import (
     RecoveryChain, checkpoint_pointer, discover_recovery_chain, resume_from_chain,
@@ -854,7 +855,9 @@ class ConnectedDailyRuntime:
         )
         store = CodexDriveArtifactStore(self.drive, scratch_directory=self.run_directory / "artifact-scratch")
         listing = CodexDriveReferenceStorage(self.drive)
-        normalizer = GmailMimeNormalizer(instance.household["timezone"])
+        normalizer = GmailMimeNormalizer(
+            instance.household["timezone"], attachment_mode=ATTACHMENT_MODE_EXCLUDE,
+        )
         source_bytes = ConnectedSourceAdapters(peer=self.gmail.peer, run_directory=self.run_directory)
         source = CodexGmailSourceAdapter(
             self.gmail, max_thread_messages=instance.source_scope["max_thread_messages"],
@@ -862,6 +865,7 @@ class ConnectedDailyRuntime:
             normalize_attachment=lambda message_id, attachment_id, raw: source_bytes.gmail_attachment(
                 message_id, attachment_id, mime_type=raw["mime_type"], declared_byte_size=raw["size_bytes"],
             ),
+            attachment_reads_enabled=False,
         )
         callbacks = CodexSemanticCallbacks(self.semantic)
         ingestion = ConnectedIngestionWorker(
@@ -870,13 +874,12 @@ class ConnectedDailyRuntime:
             fact_schema=_schema(self.root, "fact.schema.json"),
             extraction_schema=_schema(self.root, "extraction-result.schema.json"),
             interpreter=callbacks.interpret, auditor=callbacks.audit,
-            supported_attachment_mime_types=("text/plain", "application/pdf", "image/png", "image/jpeg"),
-            attachment_extractors={
-                "application/pdf": lambda item: source_bytes.extract_pdf(source_id=item.identity, data=item.data or b""),
-                "image/png": lambda item: source_bytes.extract_image(source_id=item.identity, data=item.data or b"", mime_type=item.mime_type),
-                "image/jpeg": lambda item: source_bytes.extract_image(source_id=item.identity, data=item.data or b"", mime_type=item.mime_type),
-            },
-            resource_fetcher=source_bytes.fetch_https,
+            supported_attachment_mime_types=(),
+            attachment_extractors={},
+            excluded_attachment_mime_types=MVP_BODY_ONLY_ATTACHMENT_EXCLUSIONS,
+            resource_fetcher=None,
+            resource_extractors={},
+            excluded_resource_origins=MVP_BODY_ONLY_RESOURCE_EXCLUSIONS,
             max_attachment_bytes=instance.policies["execution"]["max_bytes_per_unit"],
             max_resource_bytes=instance.policies["execution"]["max_bytes_per_unit"],
         )

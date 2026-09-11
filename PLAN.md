@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: recovery MVP live acceptance blocked for an identity-contract decision; exact package `c59d077` passed fresh installation, Sheet binding and cold recovery, but a replay of the same Gmail message and exact PDF bytes returned a different attachment ID before canonical ingestion publication
+Status: local-only body-source stabilization complete and awaiting user approval; all attachment and directly referenced binary ingestion is deferred, local proof passes, and no new package build, fresh installation, or live provider call has been started
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 ## Next-release planning
@@ -37,6 +37,14 @@ all Google Sheets, Todoist and other task-tool layout/native operations and
 returns complete normalized snapshots and verified readbacks. The existing
 fixed-layout Sheet implementation is reference evidence, not active generic
 routing.
+
+The user-approved temporary
+[body-only source policy](docs/plans/mvp-recovery/ATTACHMENT-DEFERRAL-PLAN.md)
+is the current source-scope authority. It preserves exact raw-message/MIME
+custody and the dormant attachment/resource code, while excluding every
+attachment and directly referenced HTML binary before separate provider read,
+extraction, interpretation, or Fact creation. This work is local-only until the
+user separately authorizes a new package, fresh installation, and live test.
 
 The exact `6eb787e80f01da722f250cc4a7b1c6d9a61c04f6` package has now
 qualified both compatible repairs in a new empty root and new isolated

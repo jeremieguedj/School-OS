@@ -85,16 +85,19 @@ class HybridIngestionTests(unittest.TestCase):
         def inspect_worker(*, worker_factory: Any, **_kwargs: Any) -> str:
             worker = worker_factory(LocalIngestionStore())
             self.assertEqual(
-                {"application/pdf", "image/gif", "image/jpeg", "image/png"},
-                set(worker.resource_extractors),
+                "exclude", worker.source.normalize_message.__self__.attachment_mode,
             )
-            self.assertIn("image/gif", worker.supported_attachment_mime_types)
+            self.assertFalse(worker.source.attachment_reads_enabled)
+            self.assertIsNone(worker.resource_fetcher)
+            self.assertEqual({}, worker.resource_extractors)
+            self.assertEqual((), worker.supported_attachment_mime_types)
             self.assertEqual(
-                {"image/*"},
+                {"*/*"},
                 set(worker.excluded_attachment_mime_types),
             )
             self.assertEqual(
-                {"html_embedded"}, set(worker.excluded_resource_origins),
+                {"html_embedded", "html_linked"},
+                set(worker.excluded_resource_origins),
             )
             self.assertTrue(all(
                 "temporarily disabled" in reason

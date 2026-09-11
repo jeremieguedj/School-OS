@@ -84,6 +84,34 @@ class ImportRunnerTests(unittest.TestCase):
         self.assertIsNone(outcome.read_evidence)
         require_complete_message_coverage(b"complete body", (outcome,), ())
 
+    def test_body_only_policy_excludes_every_attachment_mime_without_reads(self) -> None:
+        attachments = tuple({
+            "attachment_id": f"mime-part-{index}",
+            "source_message_id": "message-1",
+            "mime_type": mime_type,
+            "byte_size": index,
+        } for index, mime_type in enumerate((
+            "text/plain", "application/pdf", "image/png",
+            "application/x-unseen-school-format",
+        ), start=1))
+        outcomes = process_attachments(
+            attachments,
+            read_attachment=lambda _identity: self.fail(
+                "body-only attachment must not be fetched"
+            ),
+            supported_mime_types=("text/plain", "application/pdf", "image/png"),
+            excluded_mime_types={
+                "*/*": "attachment ingestion is temporarily disabled",
+            },
+            max_bytes=8192,
+        )
+        self.assertEqual(
+            ["excluded_by_policy"] * len(attachments),
+            [item.outcome for item in outcomes],
+        )
+        self.assertTrue(all(item.text is None for item in outcomes))
+        require_complete_message_coverage(b"complete body", outcomes, ())
+
     def test_policy_excluded_embedded_image_is_never_fetched(self) -> None:
         html = b'<img src="https://assets.example/banner.png">'
         resources = discover_direct_html_resources(
@@ -120,6 +148,46 @@ class ImportRunnerTests(unittest.TestCase):
             max_redirects=0,
         )
         self.assertEqual("html_embedded", outcome.resource.origin)
+        self.assertEqual("excluded_by_policy", outcome.outcome)
+        self.assertIsNone(outcome.original_content_sha256)
+        self.assertIsNone(outcome.text)
+        require_complete_message_coverage(b"complete body", (), (outcome,))
+
+    def test_body_only_linked_pdf_is_never_fetched_or_extracted(self) -> None:
+        html = b'<a href="https://assets.example/notice.pdf">Notice</a>'
+        resources = discover_direct_html_resources(
+            "message-1",
+            {
+                "part_id": "html-1", "role": "body",
+                "selected_plaintext": False, "complete": True,
+                "mime_type": "text/html", "charset": "utf-8",
+                "content_transfer_encoding": "identity", "data": html,
+                "raw_part_sha256": __import__("hashlib").sha256(html).hexdigest(),
+                "raw_part_byte_length": len(html),
+                "raw_part_locator": {
+                    "kind": "raw_part_bytes", "byte_start": 0,
+                    "byte_end": len(html),
+                },
+                "provider_unicode": html.decode("utf-8"),
+            },
+        )
+        self.assertEqual(1, len(resources))
+        outcome, = process_direct_html_resources(
+            resources,
+            fetch_resource=lambda _url: self.fail(
+                "body-only direct resource must not be fetched"
+            ),
+            extractors={"application/pdf": lambda _read: self.fail(
+                "body-only direct resource must not be extracted"
+            )},
+            excluded_resources={
+                resources[0].resource_id:
+                    "direct-resource ingestion is temporarily disabled",
+            },
+            max_bytes=8192,
+            max_redirects=0,
+        )
+        self.assertEqual("html_linked", outcome.resource.origin)
         self.assertEqual("excluded_by_policy", outcome.outcome)
         self.assertIsNone(outcome.original_content_sha256)
         self.assertIsNone(outcome.text)

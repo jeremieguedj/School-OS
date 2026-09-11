@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from school_os.adapters import Page
+from school_os.catalog import parse_v2_record
 from school_os.connected_ingestion import (
     CodexGmailSourceAdapter,
     CodexDriveArtifactStore,
@@ -188,7 +189,7 @@ class ConnectedIngestionTests(unittest.TestCase):
         self.interpret_calls = 0
         self.audit_calls = 0
 
-    def worker(self, source: Source) -> ConnectedIngestionWorker:
+    def worker(self, source: Source, **source_policy: Any) -> ConnectedIngestionWorker:
         def interpret(packet: dict[str, Any]) -> dict[str, Any]:
             self.interpret_calls += 1
             return {
@@ -222,7 +223,12 @@ class ConnectedIngestionTests(unittest.TestCase):
                     "classification": {"candidate_kind": "statement", "category": "school", "entity_scope": "household", "flags": fact["flags"]},
                     "audit_disposition": "accepted", "reason": "wording checked",
                 } for fact in interpreted["facts"]],
-                "source_outcomes": [],
+                "source_outcomes": [{
+                    "outcome_id": item["outcome_id"],
+                    "outcome_sha256": sha256_bytes(canonical_json_bytes(item)),
+                    "audit_disposition": "accepted",
+                    "reason": "policy exclusion checked",
+                } for item in packet["source_outcomes"]],
             }
             return outcome
 
@@ -230,6 +236,7 @@ class ConnectedIngestionTests(unittest.TestCase):
             source=source, store=self.store, adapter_id="gmail-connected",
             catalog_schema=self.schemas["source-conversation.schema.json"], fact_schema=self.schemas["fact.schema.json"],
             extraction_schema=self.schemas["extraction-result.schema.json"], interpreter=interpret, auditor=audit,
+            **source_policy,
         )
         # Existing custody/recovery cases share this test-only two-phase
         # convenience wrapper. The production worker deliberately has no
@@ -249,6 +256,76 @@ class ConnectedIngestionTests(unittest.TestCase):
             )
         setattr(worker, "run", run)
         return worker
+
+    def test_body_only_worker_excludes_attachments_and_direct_resources_before_calls(self) -> None:
+        class BodyOnlySource(Source):
+            def read_conversation(nested_self, identity: str) -> dict[str, Any]:
+                value = super().read_conversation(identity)
+                message = value["messages"][0]
+                attachment_bytes = b"attachment text must not become a Fact"
+                message["parts"].append({
+                    "part_id": "attachment-1", "role": "attachment",
+                    "selected_plaintext": False, "complete": True,
+                    "mime_type": "text/plain", "charset": "utf-8",
+                    "content_transfer_encoding": "identity", "data": attachment_bytes,
+                    "raw_part_sha256": hashlib.sha256(attachment_bytes).hexdigest(),
+                    "raw_part_byte_length": len(attachment_bytes),
+                    "raw_part_locator": {
+                        "kind": "raw_part_bytes", "byte_start": 0,
+                        "byte_end": len(attachment_bytes),
+                    },
+                })
+                message["attachments"] = [{
+                    "attachment_id": "mime-part-stable", "mime_type": "text/plain",
+                    "byte_size": len(attachment_bytes),
+                }]
+                html = b'<a href="https://assets.example/notice.pdf">Notice</a>'
+                message["html_parts"] = [{
+                    "part_id": "html-1", "role": "body",
+                    "selected_plaintext": False, "complete": True,
+                    "mime_type": "text/html", "charset": "utf-8",
+                    "content_transfer_encoding": "identity", "data": html,
+                    "raw_part_sha256": hashlib.sha256(html).hexdigest(),
+                    "raw_part_byte_length": len(html),
+                    "raw_part_locator": {
+                        "kind": "raw_part_bytes", "byte_start": 0,
+                        "byte_end": len(html),
+                    },
+                    "provider_unicode": html.decode("utf-8"),
+                }]
+                return value
+
+            def read_attachment(nested_self, _message_id: str, _attachment_id: str) -> Any:
+                raise AssertionError("body-only worker called the attachment source")
+
+        worker = self.worker(
+            BodyOnlySource({"thread-1": "Body-only source text"}),
+            supported_attachment_mime_types=(),
+            excluded_attachment_mime_types={"*/*": "body-only policy"},
+            attachment_extractors={},
+            resource_fetcher=None,
+            resource_extractors={},
+            excluded_resource_origins={
+                "html_embedded": "body-only policy",
+                "html_linked": "body-only policy",
+            },
+        )
+        result = worker.run(
+            scope={"query": "bounded"}, catalog_parent=self.parent,
+            index_reference=self.index, continuation_reference=self.state,
+            max_records=1, max_bytes=8192,
+        )
+        record = parse_v2_record(result.artifacts[0].catalog.data)
+        message = record.header["messages"][0]
+        self.assertEqual(["excluded_by_policy"], [
+            item["outcome"] for item in message["attachments"]
+        ])
+        self.assertEqual(["excluded_by_policy"], [
+            item["outcome"] for item in message["resources"]
+        ])
+        facts = json.loads(result.artifacts[0].facts.data)["facts"]
+        self.assertEqual(1, len(facts))
+        self.assertEqual("Body-only source text", facts[0]["source_quote"])
 
     def test_binds_complete_source_bytes_to_readback_catalog_facts_audit_index_and_state(self) -> None:
         source = Source({"thread-1": "Exact Unicode café\n"})
@@ -795,6 +872,20 @@ class CodexGmailSourceAdapterTests(unittest.TestCase):
             ["search", "read", "thread", "read", "attachment"],
             [item[0] for item in gmail.calls],
         )
+
+    def test_gmail_adapter_body_only_guard_blocks_before_attachment_provider_call(self) -> None:
+        gmail = self.Gmail()
+        adapter = CodexGmailSourceAdapter(
+            gmail, max_thread_messages=10,
+            normalize_message=lambda _full, _raw: {},
+            normalize_attachment=lambda _message, _attachment, _raw: self.fail(
+                "disabled attachment normalizer was called"
+            ),
+            attachment_reads_enabled=False,
+        )
+        with self.assertRaisesRegex(ConnectedIngestionError, "disabled by source policy"):
+            adapter.read_attachment("message-1", "attachment-1")
+        self.assertEqual([], gmail.calls)
 
     def test_gmail_adapter_rejects_raw_or_normalized_cross_thread_identity(self) -> None:
         class WrongRawThread(self.Gmail):

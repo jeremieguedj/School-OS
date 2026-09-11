@@ -19,6 +19,7 @@ from .catalog import parse_v2_record
 from .connected_ingestion import (
     CodexGmailSourceAdapter, CodexSemanticCallbacks, ConnectedIngestionError,
     ConnectedIngestionWorker, IngestionResult,
+    MVP_BODY_ONLY_ATTACHMENT_EXCLUSIONS, MVP_BODY_ONLY_RESOURCE_EXCLUSIONS,
 )
 from .connected_sources import ConnectedSourceAdapters, SourceBounds
 from .connected_storage import (
@@ -27,7 +28,7 @@ from .connected_storage import (
 from .contracts import canonical_json_bytes, sha256_bytes
 from .importer import AttachmentRead, DirectResourceRead
 from .install import publish_hybrid_content_bundle
-from .gmail_source import GmailMimeNormalizer
+from .gmail_source import ATTACHMENT_MODE_EXCLUDE, GmailMimeNormalizer
 from .mime_accounting import raw_message_member_path
 from .hybrid_operations import HybridCheckpointCommit, HybridCheckpointPublisher
 from .operations import checkpoint_pointer
@@ -38,9 +39,6 @@ class HybridIngestionError(ValueError):
 
 
 _STAGE_MIME = "application/vnd.google-apps.folder"
-_MVP_IMAGE_EXCLUSION_REASON = (
-    "image ingestion is temporarily disabled for MVP qualification"
-)
 
 
 class LocalIngestionStore:
@@ -226,7 +224,9 @@ def stage_connected_ingestion(
     gmail: Any, semantic: Any, capture: SourceByteCapture,
 ) -> StagedIngestion:
     """Compose the existing live Gmail/semantic adapters over local staging."""
-    normalizer = GmailMimeNormalizer(resolved.household["timezone"])
+    normalizer = GmailMimeNormalizer(
+        resolved.household["timezone"], attachment_mode=ATTACHMENT_MODE_EXCLUDE,
+    )
     maximum = resolved.policies["execution"]["max_bytes_per_unit"]
     source_bytes = ConnectedSourceAdapters(
         peer=gmail.peer, run_directory=run_directory,
@@ -241,11 +241,9 @@ def stage_connected_ingestion(
         ),
         capture_raw_message=capture.raw_message,
         capture_attachment=capture.attachment,
+        attachment_reads_enabled=False,
     )
     callbacks = CodexSemanticCallbacks(semantic)
-
-    def resource_identity(item: DirectResourceRead) -> str:
-        return "direct-resource-" + sha256_bytes(item.data)
 
     def worker_factory(store: LocalIngestionStore) -> ConnectedIngestionWorker:
         def schema(name: str) -> dict[str, Any]:
@@ -255,9 +253,6 @@ def stage_connected_ingestion(
                 raise HybridIngestionError("installed ingestion schema is malformed")
             return value
 
-        def fetch_resource(url: str) -> DirectResourceRead:
-            return capture.resource(url, source_bytes.fetch_https(url))
-
         return ConnectedIngestionWorker(
             source=source, store=store,
             adapter_id=resolved.source_scope["adapter_id"],
@@ -265,50 +260,12 @@ def stage_connected_ingestion(
             fact_schema=schema("fact.schema.json"),
             extraction_schema=schema("extraction-result.schema.json"),
             interpreter=callbacks.interpret, auditor=callbacks.audit,
-            supported_attachment_mime_types=(
-                "text/plain", "application/pdf", "image/png", "image/jpeg", "image/gif",
-            ),
-            excluded_attachment_mime_types={
-                "image/*": _MVP_IMAGE_EXCLUSION_REASON,
-            },
-            attachment_extractors={
-                "application/pdf": lambda item: source_bytes.extract_pdf(
-                    source_id=item.identity, data=item.data or b"",
-                ),
-                "image/png": lambda item: source_bytes.extract_image(
-                    source_id=item.identity, data=item.data or b"",
-                    mime_type=item.mime_type,
-                ),
-                "image/jpeg": lambda item: source_bytes.extract_image(
-                    source_id=item.identity, data=item.data or b"",
-                    mime_type=item.mime_type,
-                ),
-                "image/gif": lambda item: source_bytes.extract_image(
-                    source_id=item.identity, data=item.data or b"",
-                    mime_type=item.mime_type,
-                ),
-            },
-            resource_fetcher=fetch_resource,
-            excluded_resource_origins={
-                "html_embedded": _MVP_IMAGE_EXCLUSION_REASON,
-            },
-            resource_extractors={
-                "application/pdf": lambda item: source_bytes.extract_pdf(
-                    source_id=resource_identity(item), data=item.data,
-                ),
-                "image/png": lambda item: source_bytes.extract_image(
-                    source_id=resource_identity(item), data=item.data,
-                    mime_type=item.mime_type,
-                ),
-                "image/jpeg": lambda item: source_bytes.extract_image(
-                    source_id=resource_identity(item), data=item.data,
-                    mime_type=item.mime_type,
-                ),
-                "image/gif": lambda item: source_bytes.extract_image(
-                    source_id=resource_identity(item), data=item.data,
-                    mime_type=item.mime_type,
-                ),
-            },
+            supported_attachment_mime_types=(),
+            excluded_attachment_mime_types=MVP_BODY_ONLY_ATTACHMENT_EXCLUSIONS,
+            attachment_extractors={},
+            resource_fetcher=None,
+            excluded_resource_origins=MVP_BODY_ONLY_RESOURCE_EXCLUSIONS,
+            resource_extractors={},
             max_attachment_bytes=resolved.policies["execution"]["max_bytes_per_unit"],
             max_resource_bytes=resolved.policies["execution"]["max_bytes_per_unit"],
         )
