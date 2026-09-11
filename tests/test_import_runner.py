@@ -324,6 +324,28 @@ class ImportRunnerTests(unittest.TestCase):
 
         with self.assertRaisesRegex(ImportError, "direct HTTPS"):
             discover_direct_html_resources("message-001", {**html_part, "data": b'<img src="http://assets.example/notice.png">', "raw_part_sha256": __import__("hashlib").sha256(b'<img src="http://assets.example/notice.png">').hexdigest(), "raw_part_byte_length": len(b'<img src="http://assets.example/notice.png">'), "raw_part_locator": {"kind": "raw_part_bytes", "byte_start": 0, "byte_end": len(b'<img src="http://assets.example/notice.png">')}, "provider_unicode": '<img src="http://assets.example/notice.png">'})
+
+        cid_html = b'<img src="cid:banner.part@example.invalid">'
+        cid_part = {
+            **html_part,
+            "data": cid_html,
+            "raw_part_sha256": __import__("hashlib").sha256(cid_html).hexdigest(),
+            "raw_part_byte_length": len(cid_html),
+            "raw_part_locator": {"kind": "raw_part_bytes", "byte_start": 0, "byte_end": len(cid_html)},
+            "provider_unicode": cid_html.decode("utf-8"),
+        }
+        self.assertEqual((), discover_direct_html_resources("message-001", cid_part))
+        for malformed_cid in (b'<img src="cid:">', b'<img src="cid://authority/value">', b'<img src="cid:value#fragment">'):
+            malformed_part = {
+                **cid_part,
+                "data": malformed_cid,
+                "raw_part_sha256": __import__("hashlib").sha256(malformed_cid).hexdigest(),
+                "raw_part_byte_length": len(malformed_cid),
+                "raw_part_locator": {"kind": "raw_part_bytes", "byte_start": 0, "byte_end": len(malformed_cid)},
+                "provider_unicode": malformed_cid.decode("utf-8"),
+            }
+            with self.assertRaisesRegex(ImportError, "direct HTTPS"):
+                discover_direct_html_resources("message-001", malformed_part)
         blocked = process_direct_html_resources(
             resources[:1],
             fetch_resource=lambda _url: DirectResourceRead("https://assets.example/notice.png", ("https://assets.example/notice.png",), b"not an image", "image/png", 200, True, True, 12, 12),

@@ -316,16 +316,20 @@ blocks the affected path.
 ### Phase 1 — storage simplification and early live integration
 
 **Status: final 14-day execution repair and refreeze in progress.** The exact
-`a9a29b7` package passed five-object installation, cold recovery and
-post-admission Sheet binding, but the installed image-excluded ingestion found
-one false semantic-integrity rejection before any source publication. MIME
-body accounting incorrectly compared its body-only identifiers with the full
-semantic packet, which also contains separately validated extracted PDF and
-resource segments. The compatible repair keeps those two validation paths
-separate and has passed focused and complete repository validation. Because
-executable bytes changed, the installed root remains diagnostic evidence only;
-the next action is to commit and freeze the repaired package, then run one new
-empty 14-day instance through ingestion and the remaining acceptance chain.
+`0ecd4e1` package passed five-object installation, cold recovery and
+post-admission Sheet binding in a new empty root. Its first image-excluded
+ingestion attempt stopped before publication because the content helper wrote
+an empty PDF-page transcription; a clean retry passed that boundary and all
+subsequent PDF/semantic work, then exposed a distinct HTML classification
+error. One `cid:` reference was being treated as a direct web resource even
+though it identifies an already inventoried MIME leaf. The compatible repair
+keeps the CID in exact raw HTML/MIME custody, lets its MIME leaf follow the
+frozen image-exclusion policy once, and emits no direct-resource fetch for it.
+Exact private full/raw replay and focused tests pass, while malformed CID forms
+and other non-HTTPS locators remain blocking. Because executable bytes changed,
+the current root remains diagnostic evidence only; the next action is complete
+validation, commit/package freeze, then one new empty 14-day instance through
+ingestion and the remaining acceptance chain.
 The historical compatibility sequence below records how this point was
 reached.
 

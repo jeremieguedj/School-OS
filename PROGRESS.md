@@ -4073,3 +4073,44 @@ requirements, then read this log from top to bottom.
   build and validate its exact immutable package; then create one new empty
   final root and resume the 14-day live ingestion through canonical publication
   and validation.
+
+## 2026-09-11 — MIME-internal CID reference isolated and repaired
+
+- Published the connector-preview repair at exact commit
+  `0ecd4e1507f157fab43d410d7785844265c4c983`; the remote recovery branch was
+  verified at the same commit. Its immutable `0.1.0-alpha.13` package has
+  SHA-256
+  `24ebc8b70e3ce40740bf86224fdfff76ddf85db59ed5bcfc56f41d53ab923290`
+  and passed installed validation under the privately fingerprinted CPython
+  3.12.14 runtime.
+- A new exact empty root accepted the five-file installation in 30 bridge
+  requests. Cold recovery used 13 requests. A new isolated native Sheet was
+  imported, completely read, normalized by the agent-managed adapter and bound
+  at Drive generation 2; post-bind cold recovery used another 13 requests. No
+  Todoist, audio, email or scheduler effect occurred.
+- The first installed 14-day ingestion stopped before publication when the
+  read-only content helper wrote an empty PDF-page transcription. The runtime
+  correctly rejected it. Drive cold recovery proved the pre-ingestion
+  generation remained current. A clean retry used a new local run directory,
+  passed the nonempty original-detail PDF handoffs and exact semantic
+  interpretation/audit boundaries, then stopped after 92 bridge requests on
+  `HTML resource URL is not a direct HTTPS URL`. No source checkpoint, cursor,
+  task, delivery or other external effect was published.
+- Exact private full/raw diagnosis isolated one and only one failing resource
+  scheme: `cid:`. It is a MIME Content-ID reference to bytes already represented
+  by the complete raw-message/MIME inventory, not a remote direct-resource URL.
+  The importer now recognizes only a finite well-formed CID shape, retains the
+  reference in the preserved raw HTML/MIME evidence, and leaves the
+  corresponding MIME leaf to the attachment/image policy instead of emitting a
+  second fetch target. Empty, authority-bearing or fragmented CID forms still
+  block, as do HTTP and other non-HTTPS resource URLs.
+- The exact mode-0600 connector pair replays through bridge normalization,
+  Gmail full/raw reconciliation and direct-resource discovery with zero
+  emitted direct resources. The private replay summary is
+  `private/mvp-recovery/artifacts/final-0ecd4e1/cid-html-replay.json` with
+  SHA-256
+  `1c5d4d37820c5cc573d2963faa3d6e85be290e7696fb93ad0b2f59d20b21c776`.
+  Focused Gmail/import/custody/connected/hybrid ingestion validation passes 48
+  tests. This is a compatible source-classification repair, not an architecture
+  change. Next: complete repository validation, commit/push/verify, build the
+  exact package, and create one new empty final root for the 14-day chain.

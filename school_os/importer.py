@@ -332,6 +332,20 @@ def _direct_https_url(value: str) -> bool:
     return parsed.scheme == "https" and bool(parsed.netloc) and not parsed.username and not parsed.password
 
 
+def _mime_content_id_reference(value: str) -> bool:
+    """Recognize an internal MIME Content-ID reference, never a fetch URL."""
+    if value != value.strip() or any(character.isspace() or ord(character) < 32 for character in value):
+        return False
+    parsed = urlparse(value)
+    return (
+        parsed.scheme.lower() == "cid"
+        and not parsed.netloc
+        and bool(parsed.path)
+        and not parsed.query
+        and not parsed.fragment
+    )
+
+
 def discover_direct_html_resources(
     source_message_id: str, html_part: Mapping[str, Any],
 ) -> tuple[DirectHtmlResource, ...]:
@@ -350,6 +364,12 @@ def discover_direct_html_resources(
         raise ImportError("HTML has an unrecognized resource-bearing construct requiring review")
     resources: list[DirectHtmlResource] = []
     for occurrence, (origin, attribute, url) in enumerate(parser.references):
+        # ``cid:`` identifies bytes already represented by the message's MIME
+        # tree.  It is not a remotely fetchable direct resource.  Keep the
+        # reference in the preserved raw HTML/MIME evidence, and let the
+        # corresponding MIME leaf follow the attachment/image policy once.
+        if _mime_content_id_reference(url):
+            continue
         if not _direct_https_url(url):
             raise ImportError("HTML resource URL is not a direct HTTPS URL")
         resource_id = "resource-" + sha256_bytes(

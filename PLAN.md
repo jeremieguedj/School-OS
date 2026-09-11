@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: recovery MVP live acceptance repair in progress; the repaired semantic package passed install/bind/cold recovery, and exact private attachment receipts now prove the subsequent ignored-preview locator fix before one rebuilt package/new empty 14-day instance
+Status: recovery MVP live acceptance repair in progress; the exact connector-preview repair passed install/bind/cold recovery, and the next 14-day diagnostic run isolated a MIME-internal CID reference that must not be treated as a fetchable direct resource before one rebuilt package/new empty instance
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 ## Next-release planning
@@ -79,9 +79,19 @@ direct HTTPS. The adapter now validates that finite preview transport shape but
 continues to ignore it and fetch/verify only the original bytes. Two exact
 private receipts reach the original-resource fetch through the repair;
 malformed or surplus preview metadata still blocks. Focused tests and the
-complete repository validator pass. Because executable bytes changed,
-commit/package freeze and one new clean 14-day acceptance environment remain
-the next gate.
+complete repository validator pass. The resulting `0ecd4e1` package then
+passed five-file installation, post-admission Sheet binding, and Drive-only
+cold recovery in a new empty root. Its first ingestion attempt stopped on an
+empty PDF-page transcription before publication; a clean retry passed the
+PDF/semantic path and isolated one separate HTML reference: `cid:` identifies
+a MIME leaf already held by the complete raw-message/MIME inventory, not a
+direct HTTPS fetch target. The compatible repair now retains that reference in
+raw custody, processes the corresponding MIME leaf once under the frozen image
+policy, and does not emit a second direct-resource fetch. Exact private
+full/raw replay and focused tests pass; malformed CID forms and other non-HTTPS
+resource locators still block. Because executable bytes changed again, the
+next gate is full validation, commit/package freeze, and one new clean 14-day
+acceptance environment.
 
 The private execution values and unsanitized reference adapter receipts live
 only in
