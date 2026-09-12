@@ -1,9 +1,27 @@
 # School-OS implementation plan
 
-Status: the authorized one-root, three-message body-only qualification stopped before ingestion after an operator privacy-boundary violation; the single package, root, installation, recovery, and empty task projection are retained as diagnostic evidence and no second journey is authorized
+Status: the previous implementation is retired as the restart foundation; the active work is the authorized product-principle revision and synthetic architecture simulation
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
-## Next-release planning
+## Current restart work
+
+Follow [the restart architecture and simulation plan](docs/plans/restart/PLAN.md)
+and the updated [product principles](docs/product-principles.md). The user has
+chosen source-system custody with temporary processing downloads, Drive-based
+knowledge and operational records, unrestricted agent choice, and no current
+solution for simultaneous same-data Drive writes. No dedicated personal machine
+or coding CLI may be required by the architecture.
+
+This work is a design/documentation change and synthetic simulation, not a
+claim that the existing runtime implements the new architecture. It authorizes
+no private-instance migration, live ingestion, schedule or delivery operation.
+The previous architecture may require an explicit future migration; its frozen
+release and clean-root qualification rules do not govern this design exercise.
+
+Everything below is preserved historical implementation context, not the active
+execution plan.
+
+## Archived next-release planning
 
 Implementation is active under an explicit user-authorized continuation with no
 wall-clock checkpoint; work proceeds through validated live ingestion unless a

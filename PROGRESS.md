@@ -4293,10 +4293,69 @@ requirements, then read this log from top to bottom.
   remained zero. This is an operator-evidence-handling failure, not a product or
   provider failure.
 - Privacy-safe stop evidence is under
-  `private/mvp-recovery/runs/body-only-3msg-20260911T173817Z/`; the one immutable
+  the timestamped stopped body-only three-message directory under
+  `private/mvp-recovery/runs/`; the one immutable
   package and validation evidence remain under
   `private/mvp-recovery/artifacts/body-only-3msg-98dd743/`. All files in both
   trees were rechecked at mode 0600 and all directories at mode 0700. This root
   and installation are retained as stopped diagnostic evidence and must not be
   represented as a passing body-only qualification. A separately authorized
   clean journey is required to qualify ingestion.
+
+## 2026-09-11 — restart principles and managed-agent architecture simulation
+
+- The user retired the previous implementation as a restart foundation and
+  explicitly authorized the new source-retention and operating choices.
+  `PLAN.md` now routes current work to `docs/plans/restart/PLAN.md`; prior
+  qualification plans remain historical evidence rather than implementation
+  requirements for the restart.
+- Updated `docs/product-principles.md`: raw material stays at its source and is
+  downloaded only for temporary processing; Drive holds substantive knowledge,
+  accurate source/part references, configuration and operating state. Stable
+  source-account identity is independent of a replaceable connector. Core
+  operation must work in managed/cloud agent applications without a dedicated
+  personal machine or coding CLI.
+- Added the known tools/adapters/connections/jobs/runs register and a core query
+  use case for any capable reader to list known schedules and identify a brief's
+  producer/sender. The register distinguishes desired settings from observed
+  external status and preserves per-job bindings and historical attribution.
+  Users may use any number of agents/jobs. Concurrent updates to the same Drive
+  data are explicitly outside scope; no coordination subsystem was added.
+- `docs/plans/restart/SIMULATION.md` records the opinion, architecture, primary
+  agent-documentation constraints, detailed identity rules, every product
+  priority/use-case mapping, failures found and remaining live tests. The
+  development-only executable model in its `simulation/` directory passes
+  96 assertions across 60 retained state snapshots: 15 fictional source
+  records, 21 consolidated facts, four canonical actions, three jobs and two
+  modeled outputs. All historical/daily gaps close only after explicitly
+  assumed alternative reading/restoration events.
+- The modeled journey covers historical pagination/rescan, separate daily
+  coverage, missed invocation, interruption, temporary cleanup, source readback
+  mismatch, replacement agents/connectors, thread replies, inline corrections,
+  quoted history, identical filenames, repeated bytes, changing retrieval
+  handles, account-qualified message IDs, parent completion, pending effects,
+  known-job queries and output attribution. It does not call real connectors
+  or implement real MIME/PDF/image parsing, natural-language query grading,
+  task-app synchronization, audio generation, installation or upgrades.
+- Independent review repaired lost provenance, weak query/parent-state checks,
+  premature completion, old deadline replay and inaccurate job input bindings.
+  A separate fresh-agent interpretation of the synthetic text found a semantic
+  omission in the expected catalog: term-wide handbook qualifications and page
+  references. These and the reminder's immediate instruction are now retained.
+  The separate interpretation and its limits are preserved; scenario hints
+  in the source fixture mean it was only partly blinded. No vendor-app benchmark
+  or general semantic-quality pass is claimed.
+- The state-model run, local documentation links and diff checks pass. The
+  existing full repository validator passes 442 tests with Python 3.12.14,
+  plus schema, manifest and existing release-smoke validation. An initial run
+  used the system Python 3.9.6 and failed on unsupported language/library
+  features; that was an environment mismatch, not a runtime repair. The privacy
+  scan also flagged an old diagnostic run-directory basename as ID-like; the
+  public historical log now names its parent directory and purpose instead.
+  New fictional artifacts are separately privacy-scanned before publication.
+- No private mailbox/Drive instance was accessed, no live scheduler or delivery
+  effect occurred, and no runtime or published release was changed. Next work:
+  qualify a small source/attachment read and Drive write round trip in the
+  actual managed agent apps, then an unattended schedule and a fresh different
+  agent's recovery/query. Keep physical Drive layout and blanket compatibility
+  claims provisional until those observations exist.

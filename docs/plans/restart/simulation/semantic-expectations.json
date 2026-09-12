@@ -1,0 +1,642 @@
+{
+  "metadata": {
+    "purpose": "Independent manually authored semantic oracle for a deterministic architecture simulation; all facts and source material are fictional.",
+    "not_evidence_of": "Real model interpretation, attachment extraction, provider identity behavior, or live connector correctness.",
+    "schema_notes": "Facts sharing a semantic key may gain additional provenance. Superseded facts remain historical; current answers must prefer an applicable explicit correction. Actions sharing an action key update one task, preserving parent lifecycle state. Oracle expectations must not be admitted before all supporting source parts are read. Every fact has supporting part_ids; every action has part_ids and supporting_fact_keys. Partial source processing may persist facts supported solely by already read parts.",
+    "scenario_source_versions": {
+      "mail-001": "v1",
+      "mail-002": "v1",
+      "mail-003": "v1",
+      "mail-004": "v1",
+      "mail-005": "v1",
+      "mail-006": "v1",
+      "mail-007": "v1",
+      "mail-008": "v1",
+      "mail-009": "v1",
+      "mail-010": "v1",
+      "mail-011": "v1",
+      "mail-012": "v1",
+      "mail-013": "v1",
+      "mail-014": "v1",
+      "mail-015": "v1"
+    },
+    "counts": {
+      "historical_messages": 12,
+      "daily_messages": 3
+    }
+  },
+  "sources": {
+    "mail-001": {
+      "facts": [
+        {
+          "key": "dismissal-time",
+          "text": "Dismissal is 3:15 p.m. at Gate B.",
+          "category": "guideline",
+          "part_ids": [
+            "body-plain"
+          ]
+        },
+        {
+          "key": "late-pickup-call",
+          "text": "If a child remains after 3:25 p.m., call the school office.",
+          "category": "conditional_guideline",
+          "part_ids": [
+            "body-plain"
+          ]
+        }
+      ],
+      "actions": [],
+      "coverage": {
+        "required_part_ids": [
+          "body-plain"
+        ],
+        "non_substantive_part_ids": [
+          "root"
+        ],
+        "initially_unread_part_ids": [],
+        "notes": "Read one verified equivalent body alternative; do not duplicate the facts for plain and HTML representations."
+      }
+    },
+    "mail-002": {
+      "facts": [
+        {
+          "key": "trip-response-required",
+          "text": "Every family must submit a yes or no trip response by January 9.",
+          "category": "finite_request",
+          "action_key": "museum-response",
+          "due": "2026-01-09",
+          "part_ids": [
+            "body"
+          ]
+        },
+        {
+          "key": "museum-trip-date",
+          "text": "The museum trip is February 3.",
+          "category": "event",
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "key": "museum-response",
+          "title": "Submit museum trip response, including a no response if declining.",
+          "due": "2026-01-09",
+          "finite_response": true,
+          "optional": false,
+          "supporting_fact_keys": [
+            "trip-response-required"
+          ],
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "coverage": {
+        "required_part_ids": [
+          "body"
+        ],
+        "non_substantive_part_ids": [],
+        "initially_unread_part_ids": []
+      }
+    },
+    "mail-003": {
+      "facts": [
+        {
+          "key": "art-exhibition-original",
+          "text": "The optional art exhibition is January 23, 5:00–6:00 p.m.; no reply is required.",
+          "category": "optional_event",
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "actions": [],
+      "coverage": {
+        "required_part_ids": [
+          "body"
+        ],
+        "non_substantive_part_ids": [],
+        "initially_unread_part_ids": []
+      }
+    },
+    "mail-004": {
+      "facts": [
+        {
+          "key": "museum-fee-original",
+          "text": "Attending families must pay the museum trip fee by January 14.",
+          "category": "finite_request",
+          "action_key": "museum-fee",
+          "due": "2026-01-14",
+          "condition": "Family attends the museum trip.",
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "key": "museum-fee",
+          "title": "Pay museum trip fee if attending.",
+          "due": "2026-01-14",
+          "optional": false,
+          "condition": "Family attends the museum trip.",
+          "initial_status": "needs_applicability",
+          "supporting_fact_keys": [
+            "museum-fee-original"
+          ],
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "coverage": {
+        "required_part_ids": [
+          "body"
+        ],
+        "non_substantive_part_ids": [],
+        "initially_unread_part_ids": []
+      }
+    },
+    "mail-005": {
+      "facts": [
+        {
+          "key": "swimming-consent-required",
+          "text": "Submit the single term swimming consent form by January 12.",
+          "category": "finite_request",
+          "action_key": "swimming-consent",
+          "due": "2026-01-12",
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "key": "swimming-consent",
+          "title": "Submit term swimming consent form.",
+          "due": "2026-01-12",
+          "optional": false,
+          "supporting_fact_keys": [
+            "swimming-consent-required"
+          ],
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "coverage": {
+        "required_part_ids": [
+          "body"
+        ],
+        "non_substantive_part_ids": [],
+        "initially_unread_part_ids": []
+      }
+    },
+    "mail-006": {
+      "facts": [
+        {
+          "key": "garden-boots",
+          "text": "Bring waterproof boots for the garden morning on January 16.",
+          "category": "finite_request",
+          "action_key": "garden-boots",
+          "due": "2026-01-16",
+          "part_ids": [
+            "garden-image"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "key": "garden-boots",
+          "title": "Bring waterproof boots for garden morning.",
+          "due": "2026-01-16",
+          "optional": false,
+          "supporting_fact_keys": [
+            "garden-boots"
+          ],
+          "part_ids": [
+            "garden-image"
+          ]
+        }
+      ],
+      "coverage": {
+        "required_part_ids": [
+          "body",
+          "garden-image"
+        ],
+        "non_substantive_part_ids": [
+          "root",
+          "logo-image"
+        ],
+        "initially_unread_part_ids": [],
+        "notes": "The body alone does not contain the boot instruction. A text-only reader must mark the meaningful inline image unread until a capable reader processes it."
+      }
+    },
+    "mail-007": {
+      "facts": [
+        {
+          "key": "nut-free-lunches",
+          "text": "Throughout the term, all packed lunches must be nut-free.",
+          "category": "guideline",
+          "part_ids": [
+            "body",
+            "handbook"
+          ],
+          "source_locations": [
+            {
+              "part_id": "handbook",
+              "page": 2
+            },
+            {
+              "part_id": "body",
+              "context": "term-wide applicability"
+            }
+          ]
+        },
+        {
+          "key": "absence-report-time",
+          "text": "Throughout the term, report each absence to the school office before 8:30 a.m.",
+          "category": "conditional_guideline",
+          "part_ids": [
+            "body",
+            "handbook"
+          ],
+          "source_locations": [
+            {
+              "part_id": "handbook",
+              "page": 18
+            },
+            {
+              "part_id": "body",
+              "context": "term-wide applicability"
+            }
+          ]
+        }
+      ],
+      "actions": [],
+      "coverage": {
+        "required_part_ids": [
+          "body",
+          "handbook"
+        ],
+        "non_substantive_part_ids": [],
+        "initially_unread_part_ids": [],
+        "notes": "The declared 40 MB original cannot fit a simulated 8 MB single-transfer budget. Bounded range/page access or a source-side extraction path is required; do not pretend the fixture text itself proves that route."
+      }
+    },
+    "mail-008": {
+      "facts": [
+        {
+          "key": "library-opened",
+          "text": "The renovated library opened on January 6.",
+          "category": "historical_information",
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "actions": [],
+      "coverage": {
+        "required_part_ids": [
+          "body"
+        ],
+        "non_substantive_part_ids": [],
+        "initially_unread_part_ids": [],
+        "notes": "A substantive action-free source produces a fact and zero actions."
+      }
+    },
+    "mail-009": {
+      "facts": [
+        {
+          "key": "menu-jan19",
+          "text": "The January 19 lunch is vegetable pasta.",
+          "category": "menu",
+          "part_ids": [
+            "menu-food"
+          ]
+        },
+        {
+          "key": "menu-jan20",
+          "text": "The January 20 lunch is rice and beans.",
+          "category": "menu",
+          "part_ids": [
+            "menu-food"
+          ]
+        },
+        {
+          "key": "meal-collection-lines",
+          "text": "School-meal children use the blue lunch line; packed-lunch children use the green line.",
+          "category": "guideline",
+          "part_ids": [
+            "menu-procedure"
+          ]
+        }
+      ],
+      "actions": [],
+      "coverage": {
+        "required_part_ids": [
+          "body",
+          "menu-food",
+          "menu-procedure"
+        ],
+        "non_substantive_part_ids": [],
+        "initially_unread_part_ids": [],
+        "notes": "Both identically named attachments must be read. Meal facts cite menu-food; the queue guideline cites menu-procedure."
+      }
+    },
+    "mail-010": {
+      "facts": [
+        {
+          "key": "clubs-term-start",
+          "text": "Clubs begin in the week starting January 19.",
+          "category": "schedule",
+          "part_ids": [
+            "body"
+          ]
+        },
+        {
+          "key": "chess-club",
+          "text": "Chess club meets Tuesdays at 3:45 p.m. in Room 4.",
+          "category": "schedule",
+          "part_ids": [
+            "club-timetable"
+          ]
+        },
+        {
+          "key": "robotics-club",
+          "text": "Robotics club meets Thursdays at 3:45 p.m. in Room 6.",
+          "category": "schedule",
+          "part_ids": [
+            "club-timetable"
+          ]
+        }
+      ],
+      "actions": [],
+      "coverage": {
+        "required_part_ids": [
+          "body",
+          "club-timetable"
+        ],
+        "non_substantive_part_ids": [],
+        "initially_unread_part_ids": [
+          "club-timetable"
+        ],
+        "notes": "The body-only clubs-term-start fact may be committed immediately. Chess and robotics facts are oracle expectations only and must not be published while club-timetable remains unread. Keep source coverage partial and queue later retrieval."
+      }
+    },
+    "mail-011": {
+      "facts": [
+        {
+          "key": "menu-jan19",
+          "text": "The January 19 lunch is vegetable pasta.",
+          "category": "menu",
+          "part_ids": [
+            "menu-copy"
+          ]
+        },
+        {
+          "key": "menu-jan20",
+          "text": "The January 20 lunch is rice and beans.",
+          "category": "menu",
+          "part_ids": [
+            "menu-copy"
+          ]
+        }
+      ],
+      "actions": [],
+      "coverage": {
+        "required_part_ids": [
+          "body",
+          "menu-copy"
+        ],
+        "non_substantive_part_ids": [],
+        "initially_unread_part_ids": [],
+        "notes": "Reuse the semantic keys from mail-009 but retain this distinct message and part as additional provenance."
+      }
+    },
+    "mail-012": {
+      "facts": [
+        {
+          "key": "museum-fee-corrected",
+          "text": "Attending families must pay the museum trip fee by January 20, replacing January 14.",
+          "category": "finite_request",
+          "action_key": "museum-fee",
+          "due": "2026-01-20",
+          "supersedes": "museum-fee-original",
+          "condition": "Family attends the museum trip.",
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "key": "museum-fee",
+          "title": "Pay museum trip fee if attending.",
+          "due": "2026-01-20",
+          "supersedes": "museum-fee-original",
+          "condition": "Family attends the museum trip.",
+          "initial_status": "needs_applicability",
+          "supporting_fact_keys": [
+            "museum-fee-corrected"
+          ],
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "coverage": {
+        "required_part_ids": [
+          "body"
+        ],
+        "non_substantive_part_ids": [],
+        "initially_unread_part_ids": []
+      }
+    },
+    "mail-013": {
+      "facts": [
+        {
+          "key": "art-exhibition-corrected",
+          "text": "The optional art exhibition is now January 24, 5:00–6:00 p.m.; no reply is required.",
+          "category": "optional_event",
+          "supersedes": "art-exhibition-original",
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "actions": [],
+      "coverage": {
+        "required_part_ids": [
+          "body"
+        ],
+        "non_substantive_part_ids": [],
+        "initially_unread_part_ids": [],
+        "notes": "The new school answer is interleaved with quoted questions and replaces January 23 with January 24. Preserve the original source and historical fact; quoted previous text must not defeat the newer correction. Do not interpret the quoted question as a new parent action."
+      }
+    },
+    "mail-014": {
+      "facts": [
+        {
+          "key": "swimming-consent-reminder",
+          "text": "Only families who have not submitted the term swimming consent form need to submit it now; prior submitters need no further action. The original January 12 due date remains unchanged.",
+          "category": "conditional_reminder",
+          "action_key": "swimming-consent",
+          "due": "2026-01-12",
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "key": "swimming-consent",
+          "title": "Submit term swimming consent form if still outstanding.",
+          "due": "2026-01-12",
+          "initial_status": "preserve_existing_completion",
+          "supporting_fact_keys": [
+            "swimming-consent-reminder"
+          ],
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "coverage": {
+        "required_part_ids": [
+          "body"
+        ],
+        "non_substantive_part_ids": [],
+        "initially_unread_part_ids": [],
+        "notes": "After parent-event-001, keep the existing canonical task completed. Do not create a second task or reopen it."
+      }
+    },
+    "mail-015": {
+      "facts": [
+        {
+          "key": "second-school-assembly",
+          "text": "The second school account announces an assembly on January 19 at 9:00 a.m.",
+          "category": "event",
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "actions": [],
+      "coverage": {
+        "required_part_ids": [
+          "body"
+        ],
+        "non_substantive_part_ids": [],
+        "initially_unread_part_ids": [],
+        "notes": "Different account from mail-001 despite equal provider_message_id; both sources and facts must exist."
+      }
+    }
+  },
+  "queries": [
+    {
+      "id": "query-pickup",
+      "question": "Where and when is pickup, and what if we are late?",
+      "expected_fact_keys": [
+        "dismissal-time",
+        "late-pickup-call"
+      ],
+      "expected_answer": "Dismissal is 3:15 p.m. at Gate B. If a child remains after 3:25 p.m., call the office."
+    },
+    {
+      "id": "query-no-response",
+      "question": "Do we need to reply if we decline the museum trip?",
+      "expected_fact_keys": [
+        "trip-response-required"
+      ],
+      "expected_answer": "Yes. Every family must submit a yes or no response by January 9."
+    },
+    {
+      "id": "query-current-fee-deadline",
+      "question": "What is the current museum fee deadline, and did it change?",
+      "expected_fact_keys": [
+        "museum-fee-original",
+        "museum-fee-corrected"
+      ],
+      "expected_answer": "For attending families, January 20 replaces the original January 14 deadline."
+    },
+    {
+      "id": "query-optional-event",
+      "question": "When is the art exhibition, and do I need to reply?",
+      "expected_fact_keys": [
+        "art-exhibition-original",
+        "art-exhibition-corrected"
+      ],
+      "expected_answer": "After the January 13 update, it is January 24, 5:00–6:00 p.m. Attendance is optional and no reply is requested."
+    },
+    {
+      "id": "query-image-instruction",
+      "question": "What should we bring to the garden morning?",
+      "expected_fact_keys": [
+        "garden-boots"
+      ],
+      "expected_answer": "Waterproof boots on January 16.",
+      "qualification": "Answer only after the meaningful image has been read; otherwise disclose the unread image and retrieve it with a capable adapter."
+    },
+    {
+      "id": "query-standing-rules",
+      "question": "What are the lunch and absence rules?",
+      "expected_fact_keys": [
+        "nut-free-lunches",
+        "absence-report-time",
+        "meal-collection-lines"
+      ],
+      "expected_answer": "Packed lunches must be nut-free; report absences before 8:30 a.m.; school-meal children use the blue line and packed-lunch children the green line.",
+      "qualification": "Handbook facts are unavailable until its oversized attachment has been completely processed with a demonstrated bounded route."
+    },
+    {
+      "id": "query-club-before-read",
+      "question": "When is chess club?",
+      "expected_fact_keys": [],
+      "expected_answer": "The club timetable attachment has not been read, so School-OS cannot yet give a verified time.",
+      "qualification": "Do not use oracle fact text from the fixtures as if the unavailable attachment had been read."
+    },
+    {
+      "id": "query-club-after-read",
+      "question": "When is chess club?",
+      "expected_fact_keys": [
+        "chess-club"
+      ],
+      "expected_answer": "Tuesdays at 3:45 p.m. in Room 4.",
+      "qualification": "Valid only after club-timetable retrieval succeeds and its facts are committed and verified."
+    },
+    {
+      "id": "query-completed-task",
+      "question": "Does the new swimming reminder mean I must submit another consent form?",
+      "expected_fact_keys": [
+        "swimming-consent-required",
+        "swimming-consent-reminder"
+      ],
+      "expected_answer": "No. The parent reported submitting the term form on January 12, and the reminder explicitly excludes prior submitters. Keep the task completed."
+    },
+    {
+      "id": "query-source-identity",
+      "question": "Can the repeated lunch menu source be found, and which similarly named file gives the queue instructions?",
+      "expected_fact_keys": [
+        "menu-jan19",
+        "menu-jan20",
+        "meal-collection-lines"
+      ],
+      "expected_answer": "Menu content has provenance in mail-009/menu-food and mail-011/menu-copy. Queue instructions come from the distinct mail-009/menu-procedure attachment despite its identical menu.pdf filename."
+    }
+  ],
+  "expected_global_properties": {
+    "unique_message_count": 15,
+    "distinct_account_count": 2,
+    "all_message_ids_are_account_qualified": true,
+    "replay_creates_new_message": false,
+    "same_filename_implies_same_part": false,
+    "same_bytes_implies_same_provenance": false,
+    "retrieval_token_is_part_identity": false,
+    "thread_id_is_message_identity": false,
+    "unknown_source_content_may_be_inferred_from_oracle": false,
+    "concurrent_same_data_writes": "out_of_scope"
+  }
+}

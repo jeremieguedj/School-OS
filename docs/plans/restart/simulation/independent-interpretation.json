@@ -1,0 +1,681 @@
+{
+  "method": {
+    "description": "Independent semantic interpretation by one fresh Codex agent. Read START-HERE.md and docs/product-principles.md, then used only source-fixtures.json as experimental input. Read the fictional message texts directly and reconciled repeated requests, corrections, and the supplied parent completion. Did not read semantic-expectations.json, run_model.py, result files, SIMULATION.md, or other agents' notes. The source fixture itself contains metadata and identity/semantic probes; those are not generated interpretation results and their semantic keys are not used here. Actions below are source-local finite requests, before cross-message task reconciliation; standing rules remain substantive facts.",
+    "input_path": "docs/plans/restart/simulation/source-fixtures.json",
+    "input_sha256": "ce33225932898943256bca29a55bf4ee692ad58adb2852bb14991bd779b149a2",
+    "ordered_source_binding": [
+      {
+        "message_id": "mail-001",
+        "account": "source-account-a",
+        "provider_message_id": "provider-message-001",
+        "version": "v1",
+        "parts": [
+          {
+            "part_id": "root",
+            "synthetic_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "part_id": "body-plain",
+            "synthetic_text_sha256": "f1511ab3679c73888e787ea5a6b182717ef228b8f0df8198b9d903a047aabc1c"
+          },
+          {
+            "part_id": "body-html",
+            "synthetic_text_sha256": "e3938c08cb27de7abc30a0c71b8976d3f8085a3e62296fcaf8ed794d9ffdbf49"
+          }
+        ]
+      },
+      {
+        "message_id": "mail-002",
+        "account": "source-account-a",
+        "provider_message_id": "provider-message-002",
+        "version": "v1",
+        "parts": [
+          {
+            "part_id": "body",
+            "synthetic_text_sha256": "5a9e30fd2ea4ba081f020162943b5e9d4ca45ac8fefcb8f913aba3bdb040c973"
+          }
+        ]
+      },
+      {
+        "message_id": "mail-003",
+        "account": "source-account-a",
+        "provider_message_id": "provider-message-003",
+        "version": "v1",
+        "parts": [
+          {
+            "part_id": "body",
+            "synthetic_text_sha256": "ee67a465ac3f9d2b737bdbee4ba387d3224ee161e608491d4c42b1504dac51ee"
+          }
+        ]
+      },
+      {
+        "message_id": "mail-004",
+        "account": "source-account-a",
+        "provider_message_id": "provider-message-004",
+        "version": "v1",
+        "parts": [
+          {
+            "part_id": "body",
+            "synthetic_text_sha256": "04a0ed8de45baa144dade92a0eb030e508bcc2e2043d6671c68be4a023537bb9"
+          }
+        ]
+      },
+      {
+        "message_id": "mail-005",
+        "account": "source-account-a",
+        "provider_message_id": "provider-message-005",
+        "version": "v1",
+        "parts": [
+          {
+            "part_id": "body",
+            "synthetic_text_sha256": "c99a555c0bac5860dacd176ae8bb9bd42e46bf0f479247a6c9a77786748326b5"
+          }
+        ]
+      },
+      {
+        "message_id": "mail-006",
+        "account": "source-account-a",
+        "provider_message_id": "provider-message-006",
+        "version": "v1",
+        "parts": [
+          {
+            "part_id": "root",
+            "synthetic_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "part_id": "body",
+            "synthetic_text_sha256": "9516d3bf34c209d9145b9ba819c5f420a84221636ad1719a0815d75c1c044b4f"
+          },
+          {
+            "part_id": "garden-image",
+            "synthetic_text_sha256": "b0f5c97b789ce604d1f84583f88ccf1baa7f610b7b506cd9dfc86ebca4cc2bd7"
+          },
+          {
+            "part_id": "logo-image",
+            "synthetic_text_sha256": "4e43ca910ddb6f1fd95d05127081f2972f4af127ea63abd9d76b18260f561268"
+          }
+        ]
+      },
+      {
+        "message_id": "mail-007",
+        "account": "source-account-a",
+        "provider_message_id": "provider-message-007",
+        "version": "v1",
+        "parts": [
+          {
+            "part_id": "body",
+            "synthetic_text_sha256": "c66910f2d3d3f0bc708786c0dfbcbe681672b30621346fdd0d4b9cc701c53bf9"
+          },
+          {
+            "part_id": "handbook",
+            "synthetic_text_sha256": "bd0ef33f8d66ab7382fdd21d841a9d4d0b92116a8f33bad751d0bbb97b2c7be3"
+          }
+        ]
+      },
+      {
+        "message_id": "mail-008",
+        "account": "source-account-a",
+        "provider_message_id": "provider-message-008",
+        "version": "v1",
+        "parts": [
+          {
+            "part_id": "body",
+            "synthetic_text_sha256": "96854d0d3ab4315b24d097fc1c63f7b58d4f07f8377450f17dc06aaf82c4454a"
+          }
+        ]
+      },
+      {
+        "message_id": "mail-009",
+        "account": "source-account-a",
+        "provider_message_id": "provider-message-009",
+        "version": "v1",
+        "parts": [
+          {
+            "part_id": "body",
+            "synthetic_text_sha256": "568f8275a8059bf04d331592cb06b09e10666dc5e50ffc00b4f10df3fa17e165"
+          },
+          {
+            "part_id": "menu-food",
+            "synthetic_text_sha256": "faec5c92784e37fad0c69c1e85b2edbc167bf872a57dbd5483e1afda2a9b3e1e"
+          },
+          {
+            "part_id": "menu-procedure",
+            "synthetic_text_sha256": "82fbca3b35809ed546cca1e90797530311c2e0165bb27e48eec8cc645f652004"
+          }
+        ]
+      },
+      {
+        "message_id": "mail-010",
+        "account": "source-account-a",
+        "provider_message_id": "provider-message-010",
+        "version": "v1",
+        "parts": [
+          {
+            "part_id": "body",
+            "synthetic_text_sha256": "91f3a5f26c58ea76a6b4a0934dad0520a9cd095505a2e9aaf302b380d38821ca"
+          },
+          {
+            "part_id": "club-timetable",
+            "synthetic_text_sha256": "7482ec5e91f31c49e0013f3580f39f4ecb004835adb075e1ecc7b4b053090ce3"
+          }
+        ]
+      },
+      {
+        "message_id": "mail-011",
+        "account": "source-account-a",
+        "provider_message_id": "provider-message-011",
+        "version": "v1",
+        "parts": [
+          {
+            "part_id": "body",
+            "synthetic_text_sha256": "a1e133681071b63f64a2cca3adbeeeced564b7f3a3ed9e3fad26cad075338b9a"
+          },
+          {
+            "part_id": "menu-copy",
+            "synthetic_text_sha256": "faec5c92784e37fad0c69c1e85b2edbc167bf872a57dbd5483e1afda2a9b3e1e"
+          }
+        ]
+      },
+      {
+        "message_id": "mail-012",
+        "account": "source-account-a",
+        "provider_message_id": "provider-message-012",
+        "version": "v1",
+        "parts": [
+          {
+            "part_id": "body",
+            "synthetic_text_sha256": "0b7d1b24989170556b15f1a5134800ff865c53036eba4a894849ffca7fe54401"
+          }
+        ]
+      },
+      {
+        "message_id": "mail-013",
+        "account": "source-account-a",
+        "provider_message_id": "provider-message-013",
+        "version": "v1",
+        "parts": [
+          {
+            "part_id": "body",
+            "synthetic_text_sha256": "2edac2ee191d9769b93a18e472411279a688733c143a040a80f6eaa18f4f94ba"
+          }
+        ]
+      },
+      {
+        "message_id": "mail-014",
+        "account": "source-account-a",
+        "provider_message_id": "provider-message-014",
+        "version": "v1",
+        "parts": [
+          {
+            "part_id": "body",
+            "synthetic_text_sha256": "b8126f52c746e2b917e92645729bd362a8d8d8333447043c71d94312c36b4d1e"
+          }
+        ]
+      },
+      {
+        "message_id": "mail-015",
+        "account": "source-account-b",
+        "provider_message_id": "provider-message-001",
+        "version": "v1",
+        "parts": [
+          {
+            "part_id": "body",
+            "synthetic_text_sha256": "b1bebe1ff28f43d655192fd0981b6cb14d552ca9ae992fecb3e72eb48d336868"
+          }
+        ]
+      }
+    ]
+  },
+  "limitations": [
+    "For this experiment every supplied synthetic text surrogate is assumed to be the content successfully read from its source part, including the club timetable marked unavailable. Thus the club schedule is interpreted here. In a real run an unavailable attachment would have to remain explicitly unread or unavailable until actually retrieved and read; the body alone cannot establish its schedule.",
+    "This tests one fresh Codex agent's interpretation of fictional text surrogates. It is not a named-vendor application benchmark, a connector execution, or actual PDF, image, MIME, OCR, vision, or oversized-file parsing. Declared file sizes and content hashes do not establish real document-byte coverage.",
+    "The exact input file hash and ordered message/part identities with text hashes bind this interpretation to the source that was read. The per-part hashes cover the synthetic UTF-8 text, including empty container text and HTML markup, not actual attachment bytes.",
+    "Dates without a year are interpreted as 2026 from the messages' dates and the declared processing scope. The fixture declares UTC; no separate school-local timezone is supplied. Date-only deadlines do not imply an invented end-of-day time. The garden date is when boots are needed, rather than an explicit earlier submission deadline.",
+    "Each part_ids array is local to its enclosing message. A later message may revise or repeat an earlier request; the cross_message_notes identify that context. Equivalent plain and HTML bodies are two provenance parts for one meaning, not two independent requests.",
+    "Source-local action entries do not assert that all conditions are satisfied, that a parent has authorized external task creation, or that an action is still outstanding after reconciliation. No actual parent attendance choice, child absence, or late collection is supplied. The only supplied completion evidence concerns swimming consent."
+  ],
+  "messages": [
+    {
+      "id": "mail-001",
+      "facts": [
+        {
+          "text": "Dismissal is at 3:15 p.m. from Gate B.",
+          "part_ids": [
+            "body-plain",
+            "body-html"
+          ]
+        },
+        {
+          "text": "If a child remains after 3:25 p.m., the parent must call the school office. This is a standing conditional instruction; no actual late-collection occurrence is reported.",
+          "part_ids": [
+            "body-plain",
+            "body-html"
+          ]
+        }
+      ],
+      "actions": [],
+      "corrections": []
+    },
+    {
+      "id": "mail-002",
+      "facts": [
+        {
+          "text": "Every family must submit the trip response form by January 9, 2026, answering either yes or no. Declining the trip does not remove the response requirement: a no response is still required.",
+          "part_ids": [
+            "body"
+          ]
+        },
+        {
+          "text": "The museum trip takes place on February 3, 2026.",
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "text": "Submit the trip response form with either a yes or a no answer.",
+          "part_ids": [
+            "body"
+          ],
+          "deadline": "2026-01-09",
+          "condition": "Required for every family, including families declining the trip; it is not conditional on attendance."
+        }
+      ],
+      "corrections": []
+    },
+    {
+      "id": "mail-003",
+      "facts": [
+        {
+          "text": "Families are welcome at the art exhibition, announced for January 23, 2026, from 5:00 to 6:00 p.m.",
+          "part_ids": [
+            "body"
+          ]
+        },
+        {
+          "text": "Art exhibition attendance is optional and no reply is requested.",
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "actions": [],
+      "corrections": []
+    },
+    {
+      "id": "mail-004",
+      "facts": [
+        {
+          "text": "The museum trip fee is requested by January 14, 2026.",
+          "part_ids": [
+            "body"
+          ]
+        },
+        {
+          "text": "The fee requirement applies to families attending the February 3, 2026 museum trip.",
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "text": "Pay the museum trip fee.",
+          "part_ids": [
+            "body"
+          ],
+          "deadline": "2026-01-14",
+          "condition": "Only families attending the February 3 museum trip."
+        }
+      ],
+      "corrections": []
+    },
+    {
+      "id": "mail-005",
+      "facts": [
+        {
+          "text": "The swimming consent form is due January 12, 2026.",
+          "part_ids": [
+            "body"
+          ]
+        },
+        {
+          "text": "This is a single swimming consent form for the term, not a new form for each reminder or swimming occurrence.",
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "text": "Submit the single swimming consent form for this term.",
+          "part_ids": [
+            "body"
+          ],
+          "deadline": "2026-01-12",
+          "condition": "No special eligibility condition is stated; this is the single form for the term."
+        }
+      ],
+      "corrections": []
+    },
+    {
+      "id": "mail-006",
+      "facts": [
+        {
+          "text": "The message body points to the inline image as the source of the garden morning instructions.",
+          "part_ids": [
+            "body"
+          ]
+        },
+        {
+          "text": "The garden morning is on January 16, 2026.",
+          "part_ids": [
+            "garden-image"
+          ]
+        },
+        {
+          "text": "Bring waterproof boots for the garden morning.",
+          "part_ids": [
+            "garden-image"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "text": "Ensure waterproof boots are brought for the garden morning.",
+          "part_ids": [
+            "garden-image"
+          ],
+          "deadline": "2026-01-16",
+          "condition": "For the January 16 garden morning; no further qualification or clock time is supplied."
+        }
+      ],
+      "corrections": []
+    },
+    {
+      "id": "mail-007",
+      "facts": [
+        {
+          "text": "The attached handbook contains standing rules that apply throughout the term.",
+          "part_ids": [
+            "body"
+          ]
+        },
+        {
+          "text": "Handbook page 2: all packed lunches must be nut-free. The body establishes that this rule applies throughout the term.",
+          "part_ids": [
+            "handbook",
+            "body"
+          ]
+        },
+        {
+          "text": "Handbook page 18: report each absence to the school office before 8:30 a.m. The body establishes that this rule applies throughout the term; the message does not report an actual absence.",
+          "part_ids": [
+            "handbook",
+            "body"
+          ]
+        }
+      ],
+      "actions": [],
+      "corrections": []
+    },
+    {
+      "id": "mail-008",
+      "facts": [
+        {
+          "text": "The renovated library opened on January 6, 2026.",
+          "part_ids": [
+            "body"
+          ]
+        },
+        {
+          "text": "This library bulletin contains no request for a response or action.",
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "actions": [],
+      "corrections": []
+    },
+    {
+      "id": "mail-009",
+      "facts": [
+        {
+          "text": "Two attached files are both named menu.pdf: the first is described as next week's meal menu and the second as the meal-collection procedure. Their distinct source parts must remain separately identifiable despite the shared filename.",
+          "part_ids": [
+            "body"
+          ]
+        },
+        {
+          "text": "The January 19, 2026 lunch menu is vegetable pasta.",
+          "part_ids": [
+            "menu-food"
+          ]
+        },
+        {
+          "text": "The January 20, 2026 meal is rice and beans.",
+          "part_ids": [
+            "menu-food"
+          ]
+        },
+        {
+          "text": "Children collecting a school meal should join the blue lunch line.",
+          "part_ids": [
+            "menu-procedure"
+          ]
+        },
+        {
+          "text": "Packed-lunch children should join the green lunch line.",
+          "part_ids": [
+            "menu-procedure"
+          ]
+        }
+      ],
+      "actions": [],
+      "corrections": []
+    },
+    {
+      "id": "mail-010",
+      "facts": [
+        {
+          "text": "Clubs begin in the week starting January 19, 2026.",
+          "part_ids": [
+            "body"
+          ]
+        },
+        {
+          "text": "The club timetable is attached.",
+          "part_ids": [
+            "body"
+          ]
+        },
+        {
+          "text": "Chess club meets on Tuesdays at 3:45 p.m. in Room 4. The body places the start of clubs in the week beginning January 19, 2026.",
+          "part_ids": [
+            "club-timetable",
+            "body"
+          ]
+        },
+        {
+          "text": "Robotics club meets on Thursdays at 3:45 p.m. in Room 6. The body places the start of clubs in the week beginning January 19, 2026.",
+          "part_ids": [
+            "club-timetable",
+            "body"
+          ]
+        }
+      ],
+      "actions": [],
+      "corrections": []
+    },
+    {
+      "id": "mail-011",
+      "facts": [
+        {
+          "text": "This message supplies another copy of the meal menu for convenience; it is described as next week's menu.",
+          "part_ids": [
+            "body"
+          ]
+        },
+        {
+          "text": "The January 19, 2026 lunch menu is vegetable pasta.",
+          "part_ids": [
+            "menu-copy"
+          ]
+        },
+        {
+          "text": "The January 20, 2026 meal is rice and beans.",
+          "part_ids": [
+            "menu-copy"
+          ]
+        }
+      ],
+      "actions": [],
+      "corrections": []
+    },
+    {
+      "id": "mail-012",
+      "facts": [
+        {
+          "text": "The payment deadline in the January 6 museum trip fee request is now January 20, 2026, replacing January 14.",
+          "part_ids": [
+            "body"
+          ]
+        },
+        {
+          "text": "The museum trip fee's attendance condition is unchanged from the January 6 request.",
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "text": "Pay the museum trip fee under the corrected deadline; update the existing fee request.",
+          "part_ids": [
+            "body"
+          ],
+          "deadline": "2026-01-20",
+          "condition": "The attendance condition remains unchanged: this applies to families attending the February 3 museum trip, as stated in mail-004."
+        }
+      ],
+      "corrections": [
+        {
+          "text": "Supersedes only the museum trip payment deadline from mail-004: replace January 14, 2026 with January 20, 2026. Preserve the attendance condition and the original request's provenance.",
+          "part_ids": [
+            "body"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mail-013",
+      "facts": [
+        {
+          "text": "An inline school reply corrects the art exhibition date to January 24, 2026. The time remains 5:00 to 6:00 p.m.",
+          "part_ids": [
+            "body"
+          ]
+        },
+        {
+          "text": "The school explicitly confirms that art exhibition attendance remains optional and no reply is required.",
+          "part_ids": [
+            "body"
+          ]
+        },
+        {
+          "text": "The inline quoted question and quoted previous announcement contain January 23 and 5:00 to 6:00 p.m.; January 23 is historical context that the new school reply explicitly replaces. The quoted previous announcement also described attendance as optional and requested no reply.",
+          "part_ids": [
+            "body"
+          ]
+        },
+        {
+          "text": "The quoted question about whether every family must attend or respond is answered no by the school. The question is not itself a parent-facing requirement to attend or reply.",
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "actions": [],
+      "corrections": [
+        {
+          "text": "Replace the art exhibition's January 23, 2026 date from mail-003 with January 24, 2026. Retain 5:00 to 6:00 p.m., optional attendance, and no required response; do not let the repeated old announcement restore January 23.",
+          "part_ids": [
+            "body"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mail-014",
+      "facts": [
+        {
+          "text": "The swimming consent form was due January 12, 2026. This is a reminder of the same request, not a newly announced form or an extension of its due date.",
+          "part_ids": [
+            "body"
+          ]
+        },
+        {
+          "text": "Families that have already submitted the form need take no further action.",
+          "part_ids": [
+            "body"
+          ]
+        },
+        {
+          "text": "Only families that have not submitted the swimming consent form should submit it now, on receipt of this January 13 reminder.",
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "text": "Submit the outstanding swimming consent form now.",
+          "part_ids": [
+            "body"
+          ],
+          "deadline": "Now, on January 13, 2026; the original due date remains January 12, 2026.",
+          "condition": "Only if the term swimming consent form has not already been submitted."
+        }
+      ],
+      "corrections": []
+    },
+    {
+      "id": "mail-015",
+      "facts": [
+        {
+          "text": "For the second school account, the assembly is on January 19, 2026, at 9:00 a.m.",
+          "part_ids": [
+            "body"
+          ]
+        },
+        {
+          "text": "The assembly notice asks for no parent response.",
+          "part_ids": [
+            "body"
+          ]
+        }
+      ],
+      "actions": [],
+      "corrections": []
+    }
+  ],
+  "cross_message_notes": [
+    "The finite source requests reduce to four distinct task subjects across the corpus: submit the museum trip response, pay the museum trip fee if attending, submit the single term swimming consent form, and bring waterproof boots for garden morning. The fee correction and swimming reminder update or refer to existing subjects; they are not extra tasks.",
+    "The museum response in mail-002 is required whether the family answers yes or no. The museum fee in mail-004/mail-012 is conditional on attendance. Do not incorrectly apply the fee's attendance condition to the response form. No attendance decision, trip-form submission, fee payment, or boots completion is supplied.",
+    "Mail-012 changes the existing museum fee deadline from January 14 to January 20 while preserving the attendance condition. It does not change the trip response deadline of January 9 or the museum trip date of February 3. Current task state should use January 20 and retain the older deadline as superseded history with both messages as provenance.",
+    "The supplied parent event at January 12, 2026, 17:00 UTC explicitly reports that the term swimming consent form was submitted. Match that completion to mail-005's single term form and retain completed status after mail-014. Mail-014 expressly exempts already-submitted families. Do not reopen, duplicate, or mark the completed task overdue merely because the later reminder repeats its January 12 due date.",
+    "Mail-013 is a new message in the same thread as mail-003, not a new version of the original message. Its explicit school answer establishes January 24 as the current exhibition date. Preserve January 23 as a superseded historical claim, and preserve the original time and optional/no-response qualifications. Neither the invitation, the quoted questions, nor the instruction to replace the date creates a finite parent response or attendance task.",
+    "Standing instructions remain canonical substantive knowledge even without finite tasks: dismissal time and gate, calling the office if a child remains after 3:25 p.m., nut-free packed lunches, reporting each absence before 8:30 a.m., and blue/green lunch lines. Do not fabricate dated parent tasks from those rules when no relevant occurrence is reported. A later reported absence or late collection can make the corresponding conditional instruction applicable.",
+    "No required parent task is established by the optional art exhibition, the library opening, the meal menu or collection guidance, club schedules, or the assembly notice. Optional attendance, a factual event schedule, and a lack of a requested reply should remain distinguishable from a finite required action. Absence of tasks must not discard their substantive information.",
+    "Mail-001's plain and HTML alternatives express the same meaning. Preserve both source-part links for a single interpretation. The empty root MIME containers in mail-001 and mail-006 have no substantive content; the decorative logo in mail-006 adds no operational knowledge. The garden instructions and boots requirement originate in garden-image, not in the body pointer or decorative logo.",
+    "Mail-007's term-wide qualification comes from the body, while its nut-free rule and absence-reporting instruction come from handbook pages 2 and 18 respectively. Preserve both the attachment part identity and those page references. The supplied short surrogate does not prove a real 40 MB handbook was completely processed.",
+    "Mail-010's body establishes clubs starting in the week beginning January 19. Its timetable surrogate supplies the two club names, weekdays, times, and rooms. These schedule details are accepted only under this experiment's successful-surrogate-read assumption, despite the declared unavailable read requirement. The body by itself would not justify them.",
+    "Mail-009's menu-food and menu-procedure parts share the filename menu.pdf but differ in both content and stable part identity. Keep their claims and provenance separate. The body's relative next-week wording is preserved, but the meal attachment's explicit January 19/20 dates govern those listed meals; do not replace them with dates inferred from the relative wording.",
+    "Mail-011's menu-copy repeats exactly the meal information in mail-009/menu-food. The current knowledge may represent each meal once while retaining both source occurrences. Equal bytes can allow extraction reuse; they do not collapse the two messages or their attachment provenance. A repeated source does not create a new task or signal completion.",
+    "Re-fetching the same account-qualified provider message must not duplicate its source record, facts, or tasks. A rotating retrieval token changes a locator, not the stable attachment identity. Account plus provider message identity distinguishes mail-001 from mail-015 even though their provider message IDs are equal; the second account's assembly must never overwrite the first account's dismissal information.",
+    "Shared thread IDs link distinct messages rather than identifying messages. Preserve separate sources for the fee correction, the exhibition reply, and the swimming reminder. Reconcile their meanings against the relevant prior statements and parent completion; do not derive a new deadline from a quote or a new task solely from a later received_at timestamp.",
+    "As of the end of the supplied January 13 arrivals, the swimming task is completed, the fee uses the corrected conditional January 20 deadline, the boots request concerns January 16, and the trip response still has its January 9 deadline with no supplied completion evidence. An operational system could represent that response as overdue or unresolved according to its task rules, but the text does not prove whether the parent has actually submitted it."
+  ]
+}

@@ -1,0 +1,493 @@
+{
+  "metadata": {
+    "purpose": "Completely fictional deterministic architecture simulation fixtures. No real household, provider IDs, addresses, URLs, or source content.",
+    "method": "The simulator consumes independently declared semantic expectations. This is not actual model extraction, connector execution, or a claim of semantic accuracy.",
+    "hash_scope": "Attachment content_hash values hash the short UTF-8 synthetic text surrogate, not real PDF/image bytes. size_bytes and oversized are declared scenario sizes, not measurements of these small fixture files.",
+    "processing_scope": "Historical January 5 through January 12, followed by daily arrivals January 13, 2026.",
+    "time_zone": "UTC",
+    "required_identity_rules": [
+      "Account-qualified provider message ID identifies a message, not thread ID.",
+      "Part identity is the stable source part locator within its message; retrieval tokens and filenames are not identities.",
+      "Byte equality may avoid repeated extraction but must not collapse message or attachment provenance.",
+      "MIME containers are inventoried but not substantive; equivalent plain/HTML bodies represent one meaning.",
+      "Quoted text remains source content; its historical statements do not override an explicit newer correction."
+    ]
+  },
+  "messages": [
+    {
+      "id": "mail-001",
+      "account": "source-account-a",
+      "provider_message_id": "provider-message-001",
+      "received_at": "2026-01-05T09:00:00Z",
+      "thread_id": "thread-001",
+      "version": "v1",
+      "batch": "historical",
+      "parts": [
+        {
+          "id": "root",
+          "kind": "mime_container",
+          "text": "",
+          "size_bytes": 0,
+          "read_requirement": "none",
+          "meaningful": false
+        },
+        {
+          "id": "body-plain",
+          "kind": "body",
+          "text": "Dismissal is at 3:15 p.m. from Gate B. If a child remains after 3:25 p.m., the parent must call the school office.",
+          "size_bytes": 114,
+          "read_requirement": "text",
+          "parent_part_id": "root",
+          "alternative_group": "body-equivalent",
+          "meaningful": true
+        },
+        {
+          "id": "body-html",
+          "kind": "body_alternative",
+          "text": "<p>Dismissal is at <b>3:15 p.m.</b> from Gate B. If a child remains after 3:25 p.m., the parent must call the school office.</p>",
+          "size_bytes": 128,
+          "read_requirement": "text",
+          "parent_part_id": "root",
+          "alternative_group": "body-equivalent",
+          "meaningful": true
+        }
+      ]
+    },
+    {
+      "id": "mail-002",
+      "account": "source-account-a",
+      "provider_message_id": "provider-message-002",
+      "received_at": "2026-01-05T09:00:00Z",
+      "thread_id": "thread-002",
+      "version": "v1",
+      "batch": "historical",
+      "parts": [
+        {
+          "id": "body",
+          "kind": "body",
+          "text": "Please submit the trip response form by January 9. Every family must answer either yes or no; a no response is still required. The museum trip takes place on February 3.",
+          "size_bytes": 169,
+          "read_requirement": "text"
+        }
+      ]
+    },
+    {
+      "id": "mail-003",
+      "account": "source-account-a",
+      "provider_message_id": "provider-message-003",
+      "received_at": "2026-01-06T09:00:00Z",
+      "thread_id": "thread-003",
+      "version": "v1",
+      "batch": "historical",
+      "parts": [
+        {
+          "id": "body",
+          "kind": "body",
+          "text": "Families are welcome at the optional art exhibition on January 23 from 5:00 to 6:00 p.m. Attendance is optional and no reply is requested.",
+          "size_bytes": 138,
+          "read_requirement": "text"
+        }
+      ]
+    },
+    {
+      "id": "mail-004",
+      "account": "source-account-a",
+      "provider_message_id": "provider-message-004",
+      "received_at": "2026-01-06T09:00:00Z",
+      "thread_id": "thread-004",
+      "version": "v1",
+      "batch": "historical",
+      "parts": [
+        {
+          "id": "body",
+          "kind": "body",
+          "text": "Please pay the museum trip fee by January 14. This applies to families attending the February 3 trip.",
+          "size_bytes": 101,
+          "read_requirement": "text"
+        }
+      ]
+    },
+    {
+      "id": "mail-005",
+      "account": "source-account-a",
+      "provider_message_id": "provider-message-005",
+      "received_at": "2026-01-07T09:00:00Z",
+      "thread_id": "thread-005",
+      "version": "v1",
+      "batch": "historical",
+      "parts": [
+        {
+          "id": "body",
+          "kind": "body",
+          "text": "Please submit the swimming consent form by January 12. This is a single form for this term.",
+          "size_bytes": 91,
+          "read_requirement": "text"
+        }
+      ]
+    },
+    {
+      "id": "mail-006",
+      "account": "source-account-a",
+      "provider_message_id": "provider-message-006",
+      "received_at": "2026-01-07T09:00:00Z",
+      "thread_id": "thread-006",
+      "version": "v1",
+      "batch": "historical",
+      "parts": [
+        {
+          "id": "root",
+          "kind": "mime_container",
+          "text": "",
+          "size_bytes": 0,
+          "read_requirement": "none",
+          "meaningful": false
+        },
+        {
+          "id": "body",
+          "kind": "body",
+          "text": "The garden morning instructions are shown in the image below.",
+          "size_bytes": 61,
+          "read_requirement": "text",
+          "parent_part_id": "root"
+        },
+        {
+          "id": "garden-image",
+          "kind": "inline_image",
+          "text": "Bring waterproof boots for the garden morning on January 16.",
+          "size_bytes": 220000,
+          "read_requirement": "image_vision",
+          "filename": "garden.png",
+          "parent_part_id": "root",
+          "meaningful": true,
+          "retrieval_token": "token-garden-01",
+          "content_hash": "sha256:b0f5c97b789ce604d1f84583f88ccf1baa7f610b7b506cd9dfc86ebca4cc2bd7"
+        },
+        {
+          "id": "logo-image",
+          "kind": "inline_image",
+          "text": "Decorative fictional school logo without operational information.",
+          "size_bytes": 5000,
+          "read_requirement": "none",
+          "filename": "logo.png",
+          "parent_part_id": "root",
+          "meaningful": false,
+          "retrieval_token": "token-logo-01",
+          "content_hash": "sha256:4e43ca910ddb6f1fd95d05127081f2972f4af127ea63abd9d76b18260f561268"
+        }
+      ]
+    },
+    {
+      "id": "mail-007",
+      "account": "source-account-a",
+      "provider_message_id": "provider-message-007",
+      "received_at": "2026-01-08T09:00:00Z",
+      "thread_id": "thread-007",
+      "version": "v1",
+      "batch": "historical",
+      "parts": [
+        {
+          "id": "body",
+          "kind": "body",
+          "text": "The term handbook is attached. Its standing rules apply throughout the term.",
+          "size_bytes": 76,
+          "read_requirement": "text"
+        },
+        {
+          "id": "handbook",
+          "kind": "attachment",
+          "text": "Handbook page 2: All packed lunches must be nut-free. Handbook page 18: Report each absence to the school office before 8:30 a.m.",
+          "size_bytes": 40000000,
+          "read_requirement": "chunked",
+          "filename": "handbook.pdf",
+          "retrieval_token": "token-handbook-01",
+          "oversized": true,
+          "content_hash": "sha256:bd0ef33f8d66ab7382fdd21d841a9d4d0b92116a8f33bad751d0bbb97b2c7be3"
+        }
+      ]
+    },
+    {
+      "id": "mail-008",
+      "account": "source-account-a",
+      "provider_message_id": "provider-message-008",
+      "received_at": "2026-01-08T09:00:00Z",
+      "thread_id": "thread-008",
+      "version": "v1",
+      "batch": "historical",
+      "parts": [
+        {
+          "id": "body",
+          "kind": "body",
+          "text": "The renovated library opened on January 6. This bulletin contains no request for a response or action.",
+          "size_bytes": 102,
+          "read_requirement": "text"
+        }
+      ]
+    },
+    {
+      "id": "mail-009",
+      "account": "source-account-a",
+      "provider_message_id": "provider-message-009",
+      "received_at": "2026-01-09T09:00:00Z",
+      "thread_id": "thread-009",
+      "version": "v1",
+      "batch": "historical",
+      "parts": [
+        {
+          "id": "body",
+          "kind": "body",
+          "text": "Two files share the menu.pdf name. The first is next week’s meal menu; the second is the meal-collection procedure.",
+          "size_bytes": 117,
+          "read_requirement": "text"
+        },
+        {
+          "id": "menu-food",
+          "kind": "attachment",
+          "text": "The lunch menu for January 19 is vegetable pasta. The January 20 meal is rice and beans.",
+          "size_bytes": 18000,
+          "read_requirement": "text",
+          "filename": "menu.pdf",
+          "retrieval_token": "token-menu-food-01",
+          "content_hash": "sha256:faec5c92784e37fad0c69c1e85b2edbc167bf872a57dbd5483e1afda2a9b3e1e"
+        },
+        {
+          "id": "menu-procedure",
+          "kind": "attachment",
+          "text": "Children collecting a school meal should join the blue lunch line. Packed-lunch children should join the green lunch line.",
+          "size_bytes": 17000,
+          "read_requirement": "text",
+          "filename": "menu.pdf",
+          "retrieval_token": "token-menu-procedure-01",
+          "content_hash": "sha256:82fbca3b35809ed546cca1e90797530311c2e0165bb27e48eec8cc645f652004"
+        }
+      ]
+    },
+    {
+      "id": "mail-010",
+      "account": "source-account-a",
+      "provider_message_id": "provider-message-010",
+      "received_at": "2026-01-09T09:00:00Z",
+      "thread_id": "thread-010",
+      "version": "v1",
+      "batch": "historical",
+      "parts": [
+        {
+          "id": "body",
+          "kind": "body",
+          "text": "Clubs begin in the week starting January 19. The club timetable is attached.",
+          "size_bytes": 76,
+          "read_requirement": "text"
+        },
+        {
+          "id": "club-timetable",
+          "kind": "attachment",
+          "text": "Chess club meets on Tuesdays at 3:45 p.m. in Room 4. Robotics club meets on Thursdays at 3:45 p.m. in Room 6.",
+          "size_bytes": 90000,
+          "read_requirement": "unavailable",
+          "filename": "clubs.pdf",
+          "retrieval_token": "token-clubs-01",
+          "content_hash": "sha256:7482ec5e91f31c49e0013f3580f39f4ecb004835adb075e1ecc7b4b053090ce3"
+        }
+      ]
+    },
+    {
+      "id": "mail-011",
+      "account": "source-account-a",
+      "provider_message_id": "provider-message-011",
+      "received_at": "2026-01-10T09:00:00Z",
+      "thread_id": "thread-011",
+      "version": "v1",
+      "batch": "historical",
+      "parts": [
+        {
+          "id": "body",
+          "kind": "body",
+          "text": "For convenience, here is another copy of next week’s meal menu.",
+          "size_bytes": 65,
+          "read_requirement": "text"
+        },
+        {
+          "id": "menu-copy",
+          "kind": "attachment",
+          "text": "The lunch menu for January 19 is vegetable pasta. The January 20 meal is rice and beans.",
+          "size_bytes": 18000,
+          "read_requirement": "text",
+          "filename": "menu.pdf",
+          "retrieval_token": "token-menu-copy-01",
+          "content_hash": "sha256:faec5c92784e37fad0c69c1e85b2edbc167bf872a57dbd5483e1afda2a9b3e1e"
+        }
+      ]
+    },
+    {
+      "id": "mail-012",
+      "account": "source-account-a",
+      "provider_message_id": "provider-message-012",
+      "received_at": "2026-01-12T09:00:00Z",
+      "thread_id": "thread-004",
+      "version": "v1",
+      "batch": "historical",
+      "parts": [
+        {
+          "id": "body",
+          "kind": "body",
+          "text": "Correction to the January 6 museum trip fee request: the payment deadline is now January 20, replacing January 14. The attendance condition is unchanged.",
+          "size_bytes": 153,
+          "read_requirement": "text"
+        }
+      ]
+    },
+    {
+      "id": "mail-013",
+      "account": "source-account-a",
+      "provider_message_id": "provider-message-013",
+      "received_at": "2026-01-13T09:00:00Z",
+      "thread_id": "thread-003",
+      "version": "v1",
+      "batch": "daily",
+      "parts": [
+        {
+          "id": "body",
+          "kind": "body",
+          "text": "Inline school replies below:\n> Art exhibition: January 23, 5:00–6:00 p.m. Is that date still correct?\nSchool reply: No. Please replace January 23 with January 24; the time is still 5:00–6:00 p.m.\n> Must every family attend or send a response?\nSchool reply: No. Attendance is optional and no reply is required.\n\nQuoted previous message: Families are welcome at the optional art exhibition on January 23 from 5:00 to 6:00 p.m. Attendance is optional and no reply is requested.",
+          "size_bytes": 478,
+          "read_requirement": "text"
+        }
+      ]
+    },
+    {
+      "id": "mail-014",
+      "account": "source-account-a",
+      "provider_message_id": "provider-message-014",
+      "received_at": "2026-01-13T09:00:00Z",
+      "thread_id": "thread-005",
+      "version": "v1",
+      "batch": "daily",
+      "parts": [
+        {
+          "id": "body",
+          "kind": "body",
+          "text": "Reminder: the swimming consent form was due January 12. If you already submitted it, no further action is needed. Only families who have not submitted it should do so now.",
+          "size_bytes": 171,
+          "read_requirement": "text"
+        }
+      ]
+    },
+    {
+      "id": "mail-015",
+      "account": "source-account-b",
+      "provider_message_id": "provider-message-001",
+      "received_at": "2026-01-13T09:00:00Z",
+      "thread_id": "thread-015",
+      "version": "v1",
+      "batch": "daily",
+      "parts": [
+        {
+          "id": "body",
+          "kind": "body",
+          "text": "For the second school account: the assembly is on January 19 at 9:00 a.m. This notice asks for no parent response.",
+          "size_bytes": 114,
+          "read_requirement": "text"
+        }
+      ]
+    }
+  ],
+  "identity_probes": [
+    {
+      "id": "identity-message-replay",
+      "description": "Fetch the same provider message twice; neither its source record nor its facts become duplicates.",
+      "first": {
+        "message_id": "mail-002"
+      },
+      "second": {
+        "message_id": "mail-002"
+      },
+      "expected_same_message": true
+    },
+    {
+      "id": "identity-token-rotation",
+      "description": "Attachment retrieval tokens rotate while account, message, MIME part and bytes remain unchanged.",
+      "first": {
+        "message_id": "mail-009",
+        "part_id": "menu-food",
+        "retrieval_token": "token-menu-food-01"
+      },
+      "second": {
+        "message_id": "mail-009",
+        "part_id": "menu-food",
+        "retrieval_token": "token-menu-food-rotated-02"
+      },
+      "expected_same_message": true,
+      "expected_same_part": true
+    },
+    {
+      "id": "identity-same-filename-different-content",
+      "description": "Two attachments in one message have the same filename but different MIME parts and bytes.",
+      "first": {
+        "message_id": "mail-009",
+        "part_id": "menu-food"
+      },
+      "second": {
+        "message_id": "mail-009",
+        "part_id": "menu-procedure"
+      },
+      "expected_same_message": true,
+      "expected_same_part": false
+    },
+    {
+      "id": "identity-same-bytes-different-provenance",
+      "description": "An exact byte copy in a different message remains a distinct source part even if semantic facts are deduplicated.",
+      "first": {
+        "message_id": "mail-009",
+        "part_id": "menu-food"
+      },
+      "second": {
+        "message_id": "mail-011",
+        "part_id": "menu-copy"
+      },
+      "expected_same_message": false,
+      "expected_same_part": false
+    },
+    {
+      "id": "identity-thread-reply",
+      "description": "A reply adds a new message to an existing thread; quoted prior text does not manufacture a new current deadline.",
+      "first": {
+        "message_id": "mail-003"
+      },
+      "second": {
+        "message_id": "mail-013"
+      },
+      "expected_same_message": false
+    },
+    {
+      "id": "identity-account-qualification",
+      "description": "The same provider message identifier in different accounts denotes two different messages.",
+      "first": {
+        "message_id": "mail-001"
+      },
+      "second": {
+        "message_id": "mail-015"
+      },
+      "expected_same_message": false
+    }
+  ],
+  "parent_events": [
+    {
+      "id": "parent-event-001",
+      "at": "2026-01-12T17:00:00Z",
+      "action_key": "swimming-consent",
+      "status": "completed",
+      "evidence": "Parent explicitly reports that the term swimming consent form was submitted.",
+      "origin": "synthetic-parent-instruction"
+    }
+  ],
+  "identity_semantic_probes": [
+    {
+      "id": "inline-school-answer",
+      "message_id": "mail-013",
+      "expected_current_fact_key": "art-exhibition-corrected",
+      "expected_current_date": "2026-01-24",
+      "quoted_historical_date": "2026-01-23",
+      "expected_new_actions": [],
+      "rule": "Interleaved school reply supersedes the quoted old date; quoted questions do not create a new ask."
+    }
+  ]
+}

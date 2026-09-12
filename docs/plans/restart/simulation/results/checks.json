@@ -1,0 +1,556 @@
+{
+  "actual_connector_memory_or_timing_tested": false,
+  "all_passed": true,
+  "check_count": 96,
+  "checks": [
+    {
+      "detail": "",
+      "name": "identity-message-replay:message",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "identity-token-rotation:message",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "identity-token-rotation:different-handles",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "identity-token-rotation:part",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "identity-same-filename-different-content:message",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "identity-same-filename-different-content:part",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "identity-same-bytes-different-provenance:message",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "identity-same-bytes-different-provenance:part",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "identity-thread-reply:message",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "identity-account-qualification:message",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "adapter-replacement-preserves-source-identity",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "missing-part-identity-remains-unresolved",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "thread-not-source-identity",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "half-open-scope-boundary",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "attached-email-belongs-to-outer-message",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "same-bytes-two-occurrences-stay-distinct",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "same-communication-in-two-mailboxes-keeps-two-sources",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "fixture-has-historical-and-daily",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "interrupted-temp-is-not-progress",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "fresh-session-no-old-temp",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:work-cloud-new-session:mail-001",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:work-cloud-recovery:mail-002",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "lost-write-response-no-duplicate-facts",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "bad-readback-does-not-complete-source",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "queries-do-not-publish-unverified-evidence",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:readback-recovery:mail-001",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "rescan-deduplicates-discovered-messages",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "cataloged-does-not-mean-interpreted",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "partial-update-not-published-as-task-complete",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "daily-job-bindings-cover-selected-source-accounts",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "unknown-schedule-not-falsely-enabled",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "lost-schedule-response-no-duplicate",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "blocked-all-writes-no-fake-checkpoint",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:work-cloud:mail-003",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:work-cloud:mail-004",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:work-cloud:mail-005",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:work-cloud:mail-006",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:work-cloud:mail-007",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:work-cloud:mail-008",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:work-cloud:mail-009",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:work-cloud:mail-010",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:work-cloud:mail-011",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:work-cloud:mail-012",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "unread-attachments-remain-pending",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "missed-run-catches-previous-day-sources",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "thread-results-rechecked-against-message-scope",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:work-cloud-scheduled:mail-013",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:work-cloud-scheduled:mail-014",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:work-cloud-scheduled:mail-015",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "daily-does-not-close-historical-gaps",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "parent-completion-preserved",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "parent-completion-evidence-preserved",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "standing-guideline-not-a-task",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "explicit-school-correction-applied",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "school-correction-keeps-old-fact",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:historical-rescan-after-daily:mail-004",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "old-message-replay-cannot-revert-correction",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "parent-planning-survives-source-replay",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "finite-decline-response-remains-action",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "optional-exhibition-no-invented-task",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "unread-image-cannot-supply-fact",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "oversized-handbook-pending-without-route",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "unread-club-table-cannot-supply-fact",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:qualified-reading-route-assumed:mail-006",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:qualified-reading-route-assumed:mail-007",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:qualified-reading-route-assumed:mail-010",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "modeled-transfer-quanta-bounded",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "unavailable-remains-unread-despite-large-model",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:alternative-source-reader-assumed:mail-010",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "restored-attachment-adds-fact",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "repeated-content-retains-both-provenances:menu-jan19",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "repeated-content-retains-both-provenances:menu-jan20",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readback:replacement-connector-same-account:mail-009",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "adapter-replay-keeps-catalog-and-evidence",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "no-temporary-sources-after-processing",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "query-evidence-present:query-pickup",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "query-evidence-present:query-no-response",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "query-evidence-present:query-current-fee-deadline",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "query-evidence-present:query-optional-event",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "query-evidence-present:query-image-instruction",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "query-evidence-present:query-standing-rules",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "query-evidence-present:query-club-after-read",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "query-evidence-present:query-completed-task",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "query-evidence-present:query-source-identity",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "multiple-agent-jobs-retained",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "send-without-inspection-stays-pending",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "lost-send-response-no-duplicate",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "default-change-does-not-rebind-job",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "old-output-attribution-survives-switch",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "new-output-uses-new-binding",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "adding-backup-job-keeps-existing-jobs",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "desired-status-is-not-provider-state",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "source-deletion-preserves-cataloged-knowledge",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "no-source-text-stored-in-catalog",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "final-inventory-matches-supplied-oracle",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "all-fixture-sources-complete-after-assumed-recovery",
+      "passed": true
+    }
+  ],
+  "coverage": {
+    "daily": {
+      "complete": [
+        "mail-013",
+        "mail-014",
+        "mail-015"
+      ],
+      "discovered": [
+        "mail-013",
+        "mail-014",
+        "mail-015"
+      ],
+      "enumeration_complete": true,
+      "pending": [],
+      "requested_interval": [
+        "2026-01-13T00:00:00Z",
+        "2026-01-14T00:00:00Z"
+      ],
+      "trigger_at": "2026-01-14T15:00:00Z"
+    },
+    "historical": {
+      "complete": [
+        "mail-002",
+        "mail-001",
+        "mail-003",
+        "mail-005",
+        "mail-008",
+        "mail-011",
+        "mail-012",
+        "mail-004",
+        "mail-006",
+        "mail-007",
+        "mail-010",
+        "mail-009"
+      ],
+      "discovered": [
+        "mail-001",
+        "mail-002",
+        "mail-003",
+        "mail-004",
+        "mail-005",
+        "mail-006",
+        "mail-007",
+        "mail-008",
+        "mail-009",
+        "mail-010",
+        "mail-011",
+        "mail-012"
+      ],
+      "enumeration_complete": true,
+      "pending": []
+    }
+  },
+  "expectation_hash": "46edb1594638b0248769fd8a39d2364577cbf1fc2aced86fe1fd6ba60ad4683e",
+  "final_counts": {
+    "actions": 4,
+    "facts": 21,
+    "jobs": 3,
+    "runs": 2,
+    "sources": 15
+  },
+  "fixture_hash": "467b410c6829654533a8999233dc3189e91c8009bb8b267bd21a28c7c48a9eaf",
+  "kind": "abstract-state-simulation-not-live-product-test",
+  "max_modeled_temp_quantum_bytes": 8388608,
+  "modeled_read_quanta": 44,
+  "modeled_temp_quantum_budget_bytes": 8388608,
+  "same_data_concurrent_writes_tested": false,
+  "semantic_quality_tested": false,
+  "state_steps": 60
+}
