@@ -10,6 +10,14 @@ aid, never an alternative authority for those decisions. The earlier
 simulation's provider-derived source-key rule is
 superseded by this design.
 
+**Qualification update:** the subsequent
+[raw-MIME evaluation](mime-evaluation/README.md) found false splits, an incorrect
+content association and timestamp/environment limitations in the illustrative
+matching pipeline. Its 54 observations include real synthetic MIME and binary
+payloads. The principles below remain the design direction, but the 38-case
+prepared matcher is not a qualified implementation of them. Required refinements
+and untested capabilities are recorded in that evaluation.
+
 The evidence supports two distinct conclusions. Native Gmail message IDs were
 stable in a short live test and are explicitly documented as immutable.
 Nevertheless, a universal identifier contract across mail providers, agent
@@ -207,8 +215,10 @@ are not guaranteed unique or identically exposed by every reader. A forwarded
 message has its own outer sender, time and content; imported copies may have a
 different receipt time. Missing fields require another supported evidence
 recipe or a scoped unresolved result. They must not recreate a universal
-mandatory metadata gate. The synthetic matcher below illustrates one
-conservative recipe, not a requirement that every tool expose every field.
+mandatory metadata gate. The synthetic matcher below was an initial decision
+model, not a requirement that every tool expose every field. The raw-MIME
+evaluation now demonstrates that its flat witness and incompatibility handling
+need refinement before use.
 
 ### Finding the original without its old provider ID
 
@@ -329,7 +339,11 @@ reuse its evidence. A changed locator should not trigger a release rebuild,
 fresh instance installation or complete historical requalification. Concurrent
 updates to the same Drive data remain outside current scope.
 
-## Synthetic experiment and its limits
+## Initial synthetic experiment and its limits
+
+The later [MIME evaluation](mime-evaluation/README.md) supersedes this small
+experiment as the current robustness assessment. It reports failures, not a
+qualification pass. The following describes only the original prepared cases.
 
 The executed [38-case experiment](experiment.py) and its
 [results](experiment-results.json) exercise the matching decisions independently

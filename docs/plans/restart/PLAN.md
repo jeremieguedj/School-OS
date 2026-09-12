@@ -1,8 +1,30 @@
 # School-OS restart architecture and simulation
 
-Status: original simulation and message-identity follow-up complete. The current
-identity design is [the identity report](identity/REPORT.md). Broad live
+Status: original simulation, message-identity research and raw-MIME evaluation
+complete. The [MIME evaluation](identity/mime-evaluation/README.md) finds recipe
+failures requiring refinement; it is not a qualification pass. The current
+design direction is [the identity report](identity/REPORT.md). Broad live
 application qualification remains future work.
+
+## Current raw-MIME evaluation
+
+The 38-case prepared-observation experiment did not parse raw email or establish
+false-positive/negative rates. The user explicitly requested checking the new
+recipe's robustness and determinism for threads, attachments and HTML images.
+
+- [x] Generate independently labeled fictional raw MIME with presentation
+  variants, replies, attachments, CID/data/remote images and incomplete views.
+- [x] Evaluate the existing recipe against those observations; report incorrect
+  associations, false splits and abstentions separately, with denominators.
+- [x] Check repeated execution, catalog/input order and uncertainty handling.
+- [x] Document failures, proposed mitigations and remaining live qualification;
+  validate and publish this development analysis without changing the runtime.
+
+Next: refine the comparison/coverage contract against the frozen corpus, with
+explicit compatibility and uncertainty rules, then evaluate an untouched
+challenge set. Keep the old failing matcher reproducible. Follow with the same
+synthetic journey in two managed agent apps and a fresh session; no production
+matcher or blanket portability is established by this analysis.
 
 ## Current message-identity follow-up
 

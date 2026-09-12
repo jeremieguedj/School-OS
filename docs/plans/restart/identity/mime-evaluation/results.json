@@ -1,0 +1,4329 @@
+{
+  "kind": "raw-synthetic-mime-evaluation-of-existing-recipe",
+  "bindings": {
+    "experiment_sha256": "f5c78514a4736a742186954c74381e44888c1aa23c786e99151d71499f9b9600",
+    "adapter_sha256": "c94c7f58e554f1891eccba276541343e26040932f7a677849d0c0fe823e38405",
+    "generator_sha256": "d5d6166fe65c0b4dcadad335359cc25fa21eb58509accb9eaee811ece41051b3",
+    "manifest_sha256": "75000222b9db9caaf6706c1b54f38d2201e5575a22a952daea74ae6e4a12862a",
+    "evaluator_sha256": "ec107e5e5a45d12259b60c87f1160892f9c14e588de5ceb9aa3a816ee3f7b484"
+  },
+  "observation_count": 54,
+  "unordered_pair_count": 1431,
+  "directed_comparison_count": 2862,
+  "counts": {
+    "same_occurrence": {
+      "correct_content_association_occurrence_unverified": 62,
+      "false_split": 73,
+      "positive_abstention": 157
+    },
+    "distinct_occurrence": {
+      "correct_distinction": 2172,
+      "negative_abstention": 392,
+      "incorrect_content_association": 2
+    },
+    "indistinguishable_occurrence": {
+      "association_only_cannot_identify_delivery": 4
+    }
+  },
+  "automatic_positive_association_recall": {
+    "numerator": 62,
+    "denominator": 292
+  },
+  "automatic_decision_coverage": {
+    "numerator": 2313,
+    "denominator": 2862
+  },
+  "unexpected_decisions": [
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_alternative",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_alternative",
+      "stored": "trip_plain_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_html_only",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_html_only",
+      "stored": "trip_plain_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_received_minute",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_received_minute",
+      "stored": "trip_plain_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_qp_utf8",
+      "stored": "trip_alternative",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_alternative",
+      "stored": "trip_qp_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_qp_utf8",
+      "stored": "trip_html_only",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_html_only",
+      "stored": "trip_qp_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_qp_utf8",
+      "stored": "trip_received_minute",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_received_minute",
+      "stored": "trip_qp_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_base64_utf8",
+      "stored": "trip_alternative",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_alternative",
+      "stored": "trip_base64_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_base64_utf8",
+      "stored": "trip_html_only",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_html_only",
+      "stored": "trip_base64_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_base64_utf8",
+      "stored": "trip_received_minute",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_received_minute",
+      "stored": "trip_base64_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_latin1_qp",
+      "stored": "trip_alternative",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_alternative",
+      "stored": "trip_latin1_qp",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_latin1_qp",
+      "stored": "trip_html_only",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_html_only",
+      "stored": "trip_latin1_qp",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_latin1_qp",
+      "stored": "trip_received_minute",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_received_minute",
+      "stored": "trip_latin1_qp",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_crlf",
+      "stored": "trip_alternative",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_alternative",
+      "stored": "trip_crlf",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_crlf",
+      "stored": "trip_html_only",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_html_only",
+      "stored": "trip_crlf",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_crlf",
+      "stored": "trip_received_minute",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_received_minute",
+      "stored": "trip_crlf",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_headers_folded",
+      "stored": "trip_alternative",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_alternative",
+      "stored": "trip_headers_folded",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_headers_folded",
+      "stored": "trip_html_only",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_html_only",
+      "stored": "trip_headers_folded",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_headers_folded",
+      "stored": "trip_received_minute",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_received_minute",
+      "stored": "trip_headers_folded",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_alternative",
+      "stored": "trip_html_only",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_html_only",
+      "stored": "trip_alternative",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_alternative",
+      "stored": "trip_partial_envelope",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_alternative",
+      "stored": "trip_received_timezone",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_received_timezone",
+      "stored": "trip_alternative",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_alternative",
+      "stored": "trip_received_minute",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_received_minute",
+      "stored": "trip_alternative",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_alternative",
+      "stored": "trip_missing_sender_date",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_alternative",
+      "stored": "trip_display_address_format",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_display_address_format",
+      "stored": "trip_alternative",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_alternative",
+      "stored": "trip_received_missing",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_html_only",
+      "stored": "trip_partial_envelope",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_html_only",
+      "stored": "trip_received_timezone",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_received_timezone",
+      "stored": "trip_html_only",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_html_only",
+      "stored": "trip_received_minute",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_received_minute",
+      "stored": "trip_html_only",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_html_only",
+      "stored": "trip_missing_sender_date",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_html_only",
+      "stored": "trip_display_address_format",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_display_address_format",
+      "stored": "trip_html_only",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_html_only",
+      "stored": "trip_received_missing",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_received_minute",
+      "stored": "trip_partial_envelope",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "pdf_same_name_two_payloads",
+      "stored": "pdf_two_reordered",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "pdf_two_reordered",
+      "stored": "pdf_same_name_two_payloads",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "inline_cid_red",
+      "stored": "inline_cid_token_changed",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "inline_cid_token_changed",
+      "stored": "inline_cid_red",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "inline_cid_red",
+      "stored": "inline_data_uri",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "inline_data_uri",
+      "stored": "inline_cid_red",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "inline_cid_token_changed",
+      "stored": "inline_data_uri",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "inline_data_uri",
+      "stored": "inline_cid_token_changed",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "nested_message",
+      "stored": "nested_message_reencoded",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "nested_message_reencoded",
+      "stored": "nested_message",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_received_timezone",
+      "stored": "trip_received_minute",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_received_minute",
+      "stored": "trip_received_timezone",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_received_minute",
+      "stored": "trip_missing_sender_date",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_received_minute",
+      "stored": "trip_display_address_format",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_display_address_format",
+      "stored": "trip_received_minute",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_received_minute",
+      "stored": "trip_unknown_charset",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "related_root_alpha",
+      "stored": "related_root_beta",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "content-match-occurrence-unverified",
+      "classification": "incorrect_content_association"
+    },
+    {
+      "incoming": "related_root_beta",
+      "stored": "related_root_alpha",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "content-match-occurrence-unverified",
+      "classification": "incorrect_content_association"
+    }
+  ],
+  "targeted_comparisons": [
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_qp_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "correct_content_association_occurrence_unverified"
+    },
+    {
+      "incoming": "trip_qp_utf8",
+      "stored": "trip_plain_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "correct_content_association_occurrence_unverified"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_base64_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "correct_content_association_occurrence_unverified"
+    },
+    {
+      "incoming": "trip_base64_utf8",
+      "stored": "trip_plain_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "correct_content_association_occurrence_unverified"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_latin1_qp",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "correct_content_association_occurrence_unverified"
+    },
+    {
+      "incoming": "trip_latin1_qp",
+      "stored": "trip_plain_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "correct_content_association_occurrence_unverified"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_crlf",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "correct_content_association_occurrence_unverified"
+    },
+    {
+      "incoming": "trip_crlf",
+      "stored": "trip_plain_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "correct_content_association_occurrence_unverified"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_headers_folded",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "correct_content_association_occurrence_unverified"
+    },
+    {
+      "incoming": "trip_headers_folded",
+      "stored": "trip_plain_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "correct_content_association_occurrence_unverified"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_alternative",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_alternative",
+      "stored": "trip_plain_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_html_only",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_html_only",
+      "stored": "trip_plain_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_body_only",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "needs-more-evidence",
+      "classification": "positive_abstention"
+    },
+    {
+      "incoming": "trip_body_only",
+      "stored": "trip_plain_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "needs-more-evidence",
+      "classification": "positive_abstention"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_partial_envelope",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "needs-more-evidence",
+      "classification": "positive_abstention"
+    },
+    {
+      "incoming": "trip_partial_envelope",
+      "stored": "trip_plain_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "needs-more-evidence",
+      "classification": "positive_abstention"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_snippet",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "needs-more-evidence",
+      "classification": "positive_abstention"
+    },
+    {
+      "incoming": "trip_snippet",
+      "stored": "trip_plain_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "needs-more-evidence",
+      "classification": "positive_abstention"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_body_changed",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "trip_body_changed",
+      "stored": "trip_plain_utf8",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "reply_one",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "reply_one",
+      "stored": "trip_plain_utf8",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "reply_with_quote",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "reply_with_quote",
+      "stored": "trip_plain_utf8",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "forward_inline",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "forward_inline",
+      "stored": "trip_plain_utf8",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "quote_only_delivery",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "quote_only_delivery",
+      "stored": "trip_plain_utf8",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "nested_message",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "nested_message",
+      "stored": "trip_plain_utf8",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_received_timezone",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "correct_content_association_occurrence_unverified"
+    },
+    {
+      "incoming": "trip_received_timezone",
+      "stored": "trip_plain_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "correct_content_association_occurrence_unverified"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_received_minute",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_received_minute",
+      "stored": "trip_plain_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_missing_sender_date",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "needs-more-evidence",
+      "classification": "positive_abstention"
+    },
+    {
+      "incoming": "trip_missing_sender_date",
+      "stored": "trip_plain_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "needs-more-evidence",
+      "classification": "positive_abstention"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_recipient_roles_swapped",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "trip_recipient_roles_swapped",
+      "stored": "trip_plain_utf8",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_sender_changed",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "trip_sender_changed",
+      "stored": "trip_plain_utf8",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_display_address_format",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "correct_content_association_occurrence_unverified"
+    },
+    {
+      "incoming": "trip_display_address_format",
+      "stored": "trip_plain_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "correct_content_association_occurrence_unverified"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_received_missing",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "needs-more-evidence",
+      "classification": "positive_abstention"
+    },
+    {
+      "incoming": "trip_received_missing",
+      "stored": "trip_plain_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "needs-more-evidence",
+      "classification": "positive_abstention"
+    },
+    {
+      "incoming": "trip_plain_utf8",
+      "stored": "trip_unknown_charset",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "needs-more-evidence",
+      "classification": "positive_abstention"
+    },
+    {
+      "incoming": "trip_unknown_charset",
+      "stored": "trip_plain_utf8",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "needs-more-evidence",
+      "classification": "positive_abstention"
+    },
+    {
+      "incoming": "reply_one",
+      "stored": "reply_two",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "reply_two",
+      "stored": "reply_one",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "pdf_one",
+      "stored": "pdf_one_rewrapped",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "correct_content_association_occurrence_unverified"
+    },
+    {
+      "incoming": "pdf_one_rewrapped",
+      "stored": "pdf_one",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "correct_content_association_occurrence_unverified"
+    },
+    {
+      "incoming": "pdf_one",
+      "stored": "pdf_payload_changed",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "pdf_payload_changed",
+      "stored": "pdf_one",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "pdf_one",
+      "stored": "pdf_same_name_two_payloads",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "pdf_same_name_two_payloads",
+      "stored": "pdf_one",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "pdf_one",
+      "stored": "pdf_duplicate_twice",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "pdf_duplicate_twice",
+      "stored": "pdf_one",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "pdf_one",
+      "stored": "pdf_no_attachment",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "pdf_no_attachment",
+      "stored": "pdf_one",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "pdf_one",
+      "stored": "pdf_filename_changed",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "pdf_filename_changed",
+      "stored": "pdf_one",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "pdf_one",
+      "stored": "pdf_body_only",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "needs-more-evidence",
+      "classification": "positive_abstention"
+    },
+    {
+      "incoming": "pdf_body_only",
+      "stored": "pdf_one",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "needs-more-evidence",
+      "classification": "positive_abstention"
+    },
+    {
+      "incoming": "pdf_payload_changed",
+      "stored": "pdf_body_only",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "needs-more-evidence",
+      "classification": "negative_abstention"
+    },
+    {
+      "incoming": "pdf_body_only",
+      "stored": "pdf_payload_changed",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "needs-more-evidence",
+      "classification": "negative_abstention"
+    },
+    {
+      "incoming": "pdf_same_name_two_payloads",
+      "stored": "pdf_two_reordered",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "pdf_two_reordered",
+      "stored": "pdf_same_name_two_payloads",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "inline_cid_red",
+      "stored": "inline_cid_token_changed",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "inline_cid_token_changed",
+      "stored": "inline_cid_red",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "inline_cid_red",
+      "stored": "inline_cid_payload_changed",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "inline_cid_payload_changed",
+      "stored": "inline_cid_red",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "inline_cid_red",
+      "stored": "inline_data_uri",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "inline_data_uri",
+      "stored": "inline_cid_red",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "inline_cid_red",
+      "stored": "remote_image_reference",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "remote_image_reference",
+      "stored": "inline_cid_red",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "inline_cid_red",
+      "stored": "inline_cid_position_changed",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "inline_cid_position_changed",
+      "stored": "inline_cid_red",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "inline_cid_red",
+      "stored": "inline_unresolved_cid",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "inline_unresolved_cid",
+      "stored": "inline_cid_red",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "remote_image_reference",
+      "stored": "remote_image_url_changed",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "remote_image_url_changed",
+      "stored": "remote_image_reference",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "image_only_red",
+      "stored": "image_only_red_rewrapped",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "correct_content_association_occurrence_unverified"
+    },
+    {
+      "incoming": "image_only_red_rewrapped",
+      "stored": "image_only_red",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "correct_content_association_occurrence_unverified"
+    },
+    {
+      "incoming": "image_only_red",
+      "stored": "image_only_blue",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "image_only_blue",
+      "stored": "image_only_red",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "nested_message",
+      "stored": "nested_message_reencoded",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "nested_message_reencoded",
+      "stored": "nested_message",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "false_split"
+    },
+    {
+      "incoming": "nested_message",
+      "stored": "nested_message_changed",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "nested_message_changed",
+      "stored": "nested_message",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "identical_delivery_a",
+      "stored": "identical_delivery_b",
+      "truth": "indistinguishable_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "association_only_cannot_identify_delivery"
+    },
+    {
+      "incoming": "identical_delivery_b",
+      "stored": "identical_delivery_a",
+      "truth": "indistinguishable_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "association_only_cannot_identify_delivery"
+    },
+    {
+      "incoming": "identical_delivery_a",
+      "stored": "identical_delivery_a_readback",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "correct_content_association_occurrence_unverified"
+    },
+    {
+      "incoming": "identical_delivery_a_readback",
+      "stored": "identical_delivery_a",
+      "truth": "same_occurrence",
+      "same_communication": true,
+      "status": "content-match-occurrence-unverified",
+      "classification": "correct_content_association_occurrence_unverified"
+    },
+    {
+      "incoming": "identical_delivery_a",
+      "stored": "identical_delivery_later_receipt",
+      "truth": "distinct_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "identical_delivery_later_receipt",
+      "stored": "identical_delivery_a",
+      "truth": "distinct_occurrence",
+      "same_communication": true,
+      "status": "new-observation",
+      "classification": "correct_distinction"
+    },
+    {
+      "incoming": "related_root_alpha",
+      "stored": "related_root_beta",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "content-match-occurrence-unverified",
+      "classification": "incorrect_content_association"
+    },
+    {
+      "incoming": "related_root_beta",
+      "stored": "related_root_alpha",
+      "truth": "distinct_occurrence",
+      "same_communication": false,
+      "status": "content-match-occurrence-unverified",
+      "classification": "incorrect_content_association"
+    }
+  ],
+  "determinism": {
+    "catalog_order_changes_serialized_output_for": [
+      "trip_body_only",
+      "trip_partial_envelope",
+      "trip_snippet",
+      "pdf_body_only",
+      "identical_delivery_a",
+      "identical_delivery_b",
+      "identical_delivery_a_readback",
+      "related_root_alpha",
+      "related_root_beta",
+      "trip_unknown_charset"
+    ],
+    "catalog_order_changes_status_or_candidate_set_for": [],
+    "json_roundtrip_preserves_decisions": true,
+    "external_id_mutation_checks": 2862,
+    "ingestion_grouping_and_pending_equal_in_three_orders": true,
+    "fresh_processes": [
+      {
+        "hash_seed": "0",
+        "timezone": "UTC",
+        "same_results": true
+      },
+      {
+        "hash_seed": "1",
+        "timezone": "America/Los_Angeles",
+        "same_results": true
+      },
+      {
+        "hash_seed": "17",
+        "timezone": "UTC",
+        "same_results": true
+      }
+    ]
+  },
+  "coverage": [
+    {
+      "observation_id": "trip_plain_utf8",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "trip_qp_utf8",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "trip_base64_utf8",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "trip_latin1_qp",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "trip_crlf",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "trip_headers_folded",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "trip_alternative",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "multipart/alternative",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            0
+          ],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            1
+          ],
+          "mime": "text/html",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 2,
+      "html_parts": 1,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "trip_html_only",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/html",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 1,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "trip_body_only",
+      "received_precision": "unknown",
+      "received_availability": "missing",
+      "projection": "body_only",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "trip_partial_envelope",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "trip_snippet",
+      "received_precision": "unknown",
+      "received_availability": "missing",
+      "projection": "snippet",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "trip_body_changed",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "reply_one",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "reply_two",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "reply_with_quote",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "forward_inline",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "quote_only_delivery",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "pdf_one",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "multipart/mixed",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            0
+          ],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            1
+          ],
+          "mime": "application/pdf",
+          "disposition": "attachment",
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 1
+    },
+    {
+      "observation_id": "pdf_one_rewrapped",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "multipart/mixed",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            0
+          ],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            1
+          ],
+          "mime": "application/pdf",
+          "disposition": "attachment",
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 1
+    },
+    {
+      "observation_id": "pdf_payload_changed",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "multipart/mixed",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            0
+          ],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            1
+          ],
+          "mime": "application/pdf",
+          "disposition": "attachment",
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 1
+    },
+    {
+      "observation_id": "pdf_same_name_two_payloads",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "multipart/mixed",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            0
+          ],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            1
+          ],
+          "mime": "application/pdf",
+          "disposition": "attachment",
+          "related_root": null
+        },
+        {
+          "path": [
+            2
+          ],
+          "mime": "application/pdf",
+          "disposition": "attachment",
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 2
+    },
+    {
+      "observation_id": "pdf_two_reordered",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "multipart/mixed",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            0
+          ],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            1
+          ],
+          "mime": "application/pdf",
+          "disposition": "attachment",
+          "related_root": null
+        },
+        {
+          "path": [
+            2
+          ],
+          "mime": "application/pdf",
+          "disposition": "attachment",
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 2
+    },
+    {
+      "observation_id": "pdf_duplicate_twice",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "multipart/mixed",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            0
+          ],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            1
+          ],
+          "mime": "application/pdf",
+          "disposition": "attachment",
+          "related_root": null
+        },
+        {
+          "path": [
+            2
+          ],
+          "mime": "application/pdf",
+          "disposition": "attachment",
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 2
+    },
+    {
+      "observation_id": "pdf_no_attachment",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "multipart/mixed",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            0
+          ],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "pdf_filename_changed",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "multipart/mixed",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            0
+          ],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            1
+          ],
+          "mime": "application/pdf",
+          "disposition": "attachment",
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 1
+    },
+    {
+      "observation_id": "pdf_body_only",
+      "received_precision": "unknown",
+      "received_availability": "missing",
+      "projection": "body_only",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "inline_cid_red",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [
+        {
+          "html_path": [
+            0
+          ],
+          "tag": "img",
+          "attribute": "src",
+          "kind": "cid",
+          "targets": [
+            {
+              "path": [
+                1
+              ],
+              "digest": "048828178182ffefdc96f67f36bcd71a0659c57633ffc456d5186dbe53e09d41"
+            }
+          ],
+          "status": "read"
+        }
+      ],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "multipart/related",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            0
+          ],
+          "mime": "text/html",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            1
+          ],
+          "mime": "image/png",
+          "disposition": "inline",
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 1,
+      "attachment_count": 1
+    },
+    {
+      "observation_id": "inline_cid_token_changed",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [
+        {
+          "html_path": [
+            0
+          ],
+          "tag": "img",
+          "attribute": "src",
+          "kind": "cid",
+          "targets": [
+            {
+              "path": [
+                1
+              ],
+              "digest": "048828178182ffefdc96f67f36bcd71a0659c57633ffc456d5186dbe53e09d41"
+            }
+          ],
+          "status": "read"
+        }
+      ],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "multipart/related",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            0
+          ],
+          "mime": "text/html",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            1
+          ],
+          "mime": "image/png",
+          "disposition": "inline",
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 1,
+      "attachment_count": 1
+    },
+    {
+      "observation_id": "inline_cid_payload_changed",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [
+        {
+          "html_path": [
+            0
+          ],
+          "tag": "img",
+          "attribute": "src",
+          "kind": "cid",
+          "targets": [
+            {
+              "path": [
+                1
+              ],
+              "digest": "af6d274e55a813f90b64e4a77ee870403d643f0fb2aec3a4ce90912a6caffe60"
+            }
+          ],
+          "status": "read"
+        }
+      ],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "multipart/related",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            0
+          ],
+          "mime": "text/html",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            1
+          ],
+          "mime": "image/png",
+          "disposition": "inline",
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 1,
+      "attachment_count": 1
+    },
+    {
+      "observation_id": "inline_data_uri",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [
+        {
+          "html_path": [],
+          "tag": "img",
+          "attribute": "src",
+          "kind": "data",
+          "digest": "048828178182ffefdc96f67f36bcd71a0659c57633ffc456d5186dbe53e09d41",
+          "status": "read"
+        }
+      ],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/html",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 1,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "remote_image_reference",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [
+        {
+          "html_path": [],
+          "tag": "img",
+          "attribute": "src",
+          "kind": "remote",
+          "status": "unread",
+          "locator_digest": "e7daa9b319015883b022d35955c1e325f569978b641c4213bbcebfabfd5fca72"
+        }
+      ],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/html",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 1,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "remote_image_url_changed",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [
+        {
+          "html_path": [],
+          "tag": "img",
+          "attribute": "src",
+          "kind": "remote",
+          "status": "unread",
+          "locator_digest": "cf4892c946f7360909648f14d7aab19795e0654edd72e6d0391603906dfc9e12"
+        }
+      ],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/html",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 1,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "image_only_red",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "image/png",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 0,
+      "html_parts": 0,
+      "attachment_count": 1
+    },
+    {
+      "observation_id": "image_only_red_rewrapped",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "image/png",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 0,
+      "html_parts": 0,
+      "attachment_count": 1
+    },
+    {
+      "observation_id": "image_only_blue",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "image/png",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 0,
+      "html_parts": 0,
+      "attachment_count": 1
+    },
+    {
+      "observation_id": "nested_message",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "multipart/mixed",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            0
+          ],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            1
+          ],
+          "mime": "message/rfc822",
+          "disposition": "attachment",
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 1
+    },
+    {
+      "observation_id": "nested_message_reencoded",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "multipart/mixed",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            0
+          ],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            1
+          ],
+          "mime": "message/rfc822",
+          "disposition": "attachment",
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 1
+    },
+    {
+      "observation_id": "nested_message_changed",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "multipart/mixed",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            0
+          ],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            1
+          ],
+          "mime": "message/rfc822",
+          "disposition": "attachment",
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 1
+    },
+    {
+      "observation_id": "identical_delivery_a",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "identical_delivery_b",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "identical_delivery_a_readback",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "identical_delivery_later_receipt",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "trip_received_timezone",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "trip_received_minute",
+      "received_precision": "minute",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "trip_missing_sender_date",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "trip_recipient_roles_swapped",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "trip_sender_changed",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "trip_display_address_format",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "inline_cid_position_changed",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [
+        {
+          "html_path": [
+            0
+          ],
+          "tag": "img",
+          "attribute": "src",
+          "kind": "cid",
+          "targets": [
+            {
+              "path": [
+                1
+              ],
+              "digest": "048828178182ffefdc96f67f36bcd71a0659c57633ffc456d5186dbe53e09d41"
+            }
+          ],
+          "status": "read"
+        }
+      ],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "multipart/related",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            0
+          ],
+          "mime": "text/html",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            1
+          ],
+          "mime": "image/png",
+          "disposition": "inline",
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 1,
+      "attachment_count": 1
+    },
+    {
+      "observation_id": "trip_received_missing",
+      "received_precision": "unknown",
+      "received_availability": "missing",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "related_root_alpha",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "multipart/related",
+          "disposition": null,
+          "related_root": "<root-alpha@example.org>"
+        },
+        {
+          "path": [
+            0
+          ],
+          "mime": "text/html",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            1
+          ],
+          "mime": "text/html",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 2,
+      "html_parts": 2,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "related_root_beta",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "multipart/related",
+          "disposition": null,
+          "related_root": "<root-beta@example.org>"
+        },
+        {
+          "path": [
+            0
+          ],
+          "mime": "text/html",
+          "disposition": null,
+          "related_root": null
+        },
+        {
+          "path": [
+            1
+          ],
+          "mime": "text/html",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 2,
+      "html_parts": 2,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "inline_unresolved_cid",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [],
+      "resources": [
+        {
+          "html_path": [],
+          "tag": "img",
+          "attribute": "src",
+          "kind": "cid",
+          "targets": [],
+          "status": "missing"
+        }
+      ],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/html",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 1,
+      "attachment_count": 0
+    },
+    {
+      "observation_id": "trip_unknown_charset",
+      "received_precision": "second",
+      "received_availability": "available",
+      "projection": "raw",
+      "defects": [
+        "undecodable-text"
+      ],
+      "resources": [],
+      "resource_limitations": [],
+      "topology": [
+        {
+          "path": [],
+          "mime": "text/plain",
+          "disposition": null,
+          "related_root": null
+        }
+      ],
+      "body_parts": 1,
+      "html_parts": 0,
+      "attachment_count": 0
+    }
+  ],
+  "replays": {
+    "forward": {
+      "groups_ignoring_arbitrary_own_id_assignment": [
+        [
+          "forward_inline"
+        ],
+        [
+          "identical_delivery_a",
+          "identical_delivery_a_readback",
+          "identical_delivery_b"
+        ],
+        [
+          "identical_delivery_later_receipt"
+        ],
+        [
+          "image_only_blue"
+        ],
+        [
+          "image_only_red",
+          "image_only_red_rewrapped"
+        ],
+        [
+          "inline_cid_payload_changed"
+        ],
+        [
+          "inline_cid_position_changed"
+        ],
+        [
+          "inline_cid_red"
+        ],
+        [
+          "inline_cid_token_changed"
+        ],
+        [
+          "inline_data_uri"
+        ],
+        [
+          "inline_unresolved_cid"
+        ],
+        [
+          "nested_message"
+        ],
+        [
+          "nested_message_changed"
+        ],
+        [
+          "nested_message_reencoded"
+        ],
+        [
+          "pdf_duplicate_twice"
+        ],
+        [
+          "pdf_filename_changed"
+        ],
+        [
+          "pdf_no_attachment"
+        ],
+        [
+          "pdf_one",
+          "pdf_one_rewrapped"
+        ],
+        [
+          "pdf_payload_changed"
+        ],
+        [
+          "pdf_same_name_two_payloads"
+        ],
+        [
+          "pdf_two_reordered"
+        ],
+        [
+          "quote_only_delivery"
+        ],
+        [
+          "related_root_alpha",
+          "related_root_beta"
+        ],
+        [
+          "remote_image_reference"
+        ],
+        [
+          "remote_image_url_changed"
+        ],
+        [
+          "reply_one"
+        ],
+        [
+          "reply_two"
+        ],
+        [
+          "reply_with_quote"
+        ],
+        [
+          "trip_alternative"
+        ],
+        [
+          "trip_base64_utf8",
+          "trip_crlf",
+          "trip_display_address_format",
+          "trip_headers_folded",
+          "trip_latin1_qp",
+          "trip_plain_utf8",
+          "trip_qp_utf8",
+          "trip_received_timezone"
+        ],
+        [
+          "trip_body_changed"
+        ],
+        [
+          "trip_html_only"
+        ],
+        [
+          "trip_received_minute"
+        ],
+        [
+          "trip_recipient_roles_swapped"
+        ],
+        [
+          "trip_sender_changed"
+        ]
+      ],
+      "pending": [
+        "pdf_body_only",
+        "trip_body_only",
+        "trip_missing_sender_date",
+        "trip_partial_envelope",
+        "trip_received_missing",
+        "trip_snippet",
+        "trip_unknown_charset"
+      ],
+      "history": [
+        {
+          "observation": "forward_inline",
+          "decision": "new-observation",
+          "accepted_content_records": 1,
+          "pending": 0
+        },
+        {
+          "observation": "identical_delivery_a",
+          "decision": "new-observation",
+          "accepted_content_records": 2,
+          "pending": 0
+        },
+        {
+          "observation": "identical_delivery_a_readback",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 2,
+          "pending": 0
+        },
+        {
+          "observation": "identical_delivery_b",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 2,
+          "pending": 0
+        },
+        {
+          "observation": "identical_delivery_later_receipt",
+          "decision": "new-observation",
+          "accepted_content_records": 3,
+          "pending": 0
+        },
+        {
+          "observation": "image_only_blue",
+          "decision": "new-observation",
+          "accepted_content_records": 4,
+          "pending": 0
+        },
+        {
+          "observation": "image_only_red",
+          "decision": "new-observation",
+          "accepted_content_records": 5,
+          "pending": 0
+        },
+        {
+          "observation": "image_only_red_rewrapped",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 5,
+          "pending": 0
+        },
+        {
+          "observation": "inline_cid_payload_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 6,
+          "pending": 0
+        },
+        {
+          "observation": "inline_cid_position_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 7,
+          "pending": 0
+        },
+        {
+          "observation": "inline_cid_red",
+          "decision": "new-observation",
+          "accepted_content_records": 8,
+          "pending": 0
+        },
+        {
+          "observation": "inline_cid_token_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 9,
+          "pending": 0
+        },
+        {
+          "observation": "inline_data_uri",
+          "decision": "new-observation",
+          "accepted_content_records": 10,
+          "pending": 0
+        },
+        {
+          "observation": "inline_unresolved_cid",
+          "decision": "new-observation",
+          "accepted_content_records": 11,
+          "pending": 0
+        },
+        {
+          "observation": "nested_message",
+          "decision": "new-observation",
+          "accepted_content_records": 12,
+          "pending": 0
+        },
+        {
+          "observation": "nested_message_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 13,
+          "pending": 0
+        },
+        {
+          "observation": "nested_message_reencoded",
+          "decision": "new-observation",
+          "accepted_content_records": 14,
+          "pending": 0
+        },
+        {
+          "observation": "pdf_body_only",
+          "decision": "needs-more-evidence",
+          "accepted_content_records": 14,
+          "pending": 1
+        },
+        {
+          "observation": "pdf_duplicate_twice",
+          "decision": "new-observation",
+          "accepted_content_records": 15,
+          "pending": 1
+        },
+        {
+          "observation": "pdf_filename_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 16,
+          "pending": 1
+        },
+        {
+          "observation": "pdf_no_attachment",
+          "decision": "new-observation",
+          "accepted_content_records": 17,
+          "pending": 1
+        },
+        {
+          "observation": "pdf_one",
+          "decision": "new-observation",
+          "accepted_content_records": 18,
+          "pending": 1
+        },
+        {
+          "observation": "pdf_one_rewrapped",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 18,
+          "pending": 1
+        },
+        {
+          "observation": "pdf_payload_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 19,
+          "pending": 1
+        },
+        {
+          "observation": "pdf_same_name_two_payloads",
+          "decision": "new-observation",
+          "accepted_content_records": 20,
+          "pending": 1
+        },
+        {
+          "observation": "pdf_two_reordered",
+          "decision": "new-observation",
+          "accepted_content_records": 21,
+          "pending": 1
+        },
+        {
+          "observation": "quote_only_delivery",
+          "decision": "new-observation",
+          "accepted_content_records": 22,
+          "pending": 1
+        },
+        {
+          "observation": "related_root_alpha",
+          "decision": "new-observation",
+          "accepted_content_records": 23,
+          "pending": 1
+        },
+        {
+          "observation": "related_root_beta",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 23,
+          "pending": 1
+        },
+        {
+          "observation": "remote_image_reference",
+          "decision": "new-observation",
+          "accepted_content_records": 24,
+          "pending": 1
+        },
+        {
+          "observation": "remote_image_url_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 25,
+          "pending": 1
+        },
+        {
+          "observation": "reply_one",
+          "decision": "new-observation",
+          "accepted_content_records": 26,
+          "pending": 1
+        },
+        {
+          "observation": "reply_two",
+          "decision": "new-observation",
+          "accepted_content_records": 27,
+          "pending": 1
+        },
+        {
+          "observation": "reply_with_quote",
+          "decision": "new-observation",
+          "accepted_content_records": 28,
+          "pending": 1
+        },
+        {
+          "observation": "trip_alternative",
+          "decision": "new-observation",
+          "accepted_content_records": 29,
+          "pending": 1
+        },
+        {
+          "observation": "trip_base64_utf8",
+          "decision": "new-observation",
+          "accepted_content_records": 30,
+          "pending": 1
+        },
+        {
+          "observation": "trip_body_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 31,
+          "pending": 1
+        },
+        {
+          "observation": "trip_body_only",
+          "decision": "needs-more-evidence",
+          "accepted_content_records": 31,
+          "pending": 2
+        },
+        {
+          "observation": "trip_crlf",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 31,
+          "pending": 2
+        },
+        {
+          "observation": "trip_display_address_format",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 31,
+          "pending": 2
+        },
+        {
+          "observation": "trip_headers_folded",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 31,
+          "pending": 2
+        },
+        {
+          "observation": "trip_html_only",
+          "decision": "new-observation",
+          "accepted_content_records": 32,
+          "pending": 2
+        },
+        {
+          "observation": "trip_latin1_qp",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 32,
+          "pending": 2
+        },
+        {
+          "observation": "trip_missing_sender_date",
+          "decision": "needs-more-evidence",
+          "accepted_content_records": 32,
+          "pending": 3
+        },
+        {
+          "observation": "trip_partial_envelope",
+          "decision": "needs-more-evidence",
+          "accepted_content_records": 32,
+          "pending": 4
+        },
+        {
+          "observation": "trip_plain_utf8",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 32,
+          "pending": 4
+        },
+        {
+          "observation": "trip_qp_utf8",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 32,
+          "pending": 4
+        },
+        {
+          "observation": "trip_received_minute",
+          "decision": "new-observation",
+          "accepted_content_records": 33,
+          "pending": 4
+        },
+        {
+          "observation": "trip_received_missing",
+          "decision": "needs-more-evidence",
+          "accepted_content_records": 33,
+          "pending": 5
+        },
+        {
+          "observation": "trip_received_timezone",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 33,
+          "pending": 5
+        },
+        {
+          "observation": "trip_recipient_roles_swapped",
+          "decision": "new-observation",
+          "accepted_content_records": 34,
+          "pending": 5
+        },
+        {
+          "observation": "trip_sender_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 35,
+          "pending": 5
+        },
+        {
+          "observation": "trip_snippet",
+          "decision": "needs-more-evidence",
+          "accepted_content_records": 35,
+          "pending": 6
+        },
+        {
+          "observation": "trip_unknown_charset",
+          "decision": "needs-more-evidence",
+          "accepted_content_records": 35,
+          "pending": 7
+        }
+      ]
+    },
+    "reverse": {
+      "groups_ignoring_arbitrary_own_id_assignment": [
+        [
+          "forward_inline"
+        ],
+        [
+          "identical_delivery_a",
+          "identical_delivery_a_readback",
+          "identical_delivery_b"
+        ],
+        [
+          "identical_delivery_later_receipt"
+        ],
+        [
+          "image_only_blue"
+        ],
+        [
+          "image_only_red",
+          "image_only_red_rewrapped"
+        ],
+        [
+          "inline_cid_payload_changed"
+        ],
+        [
+          "inline_cid_position_changed"
+        ],
+        [
+          "inline_cid_red"
+        ],
+        [
+          "inline_cid_token_changed"
+        ],
+        [
+          "inline_data_uri"
+        ],
+        [
+          "inline_unresolved_cid"
+        ],
+        [
+          "nested_message"
+        ],
+        [
+          "nested_message_changed"
+        ],
+        [
+          "nested_message_reencoded"
+        ],
+        [
+          "pdf_duplicate_twice"
+        ],
+        [
+          "pdf_filename_changed"
+        ],
+        [
+          "pdf_no_attachment"
+        ],
+        [
+          "pdf_one",
+          "pdf_one_rewrapped"
+        ],
+        [
+          "pdf_payload_changed"
+        ],
+        [
+          "pdf_same_name_two_payloads"
+        ],
+        [
+          "pdf_two_reordered"
+        ],
+        [
+          "quote_only_delivery"
+        ],
+        [
+          "related_root_alpha",
+          "related_root_beta"
+        ],
+        [
+          "remote_image_reference"
+        ],
+        [
+          "remote_image_url_changed"
+        ],
+        [
+          "reply_one"
+        ],
+        [
+          "reply_two"
+        ],
+        [
+          "reply_with_quote"
+        ],
+        [
+          "trip_alternative"
+        ],
+        [
+          "trip_base64_utf8",
+          "trip_crlf",
+          "trip_display_address_format",
+          "trip_headers_folded",
+          "trip_latin1_qp",
+          "trip_plain_utf8",
+          "trip_qp_utf8",
+          "trip_received_timezone"
+        ],
+        [
+          "trip_body_changed"
+        ],
+        [
+          "trip_html_only"
+        ],
+        [
+          "trip_received_minute"
+        ],
+        [
+          "trip_recipient_roles_swapped"
+        ],
+        [
+          "trip_sender_changed"
+        ]
+      ],
+      "pending": [
+        "pdf_body_only",
+        "trip_body_only",
+        "trip_missing_sender_date",
+        "trip_partial_envelope",
+        "trip_received_missing",
+        "trip_snippet",
+        "trip_unknown_charset"
+      ],
+      "history": [
+        {
+          "observation": "trip_unknown_charset",
+          "decision": "needs-more-evidence",
+          "accepted_content_records": 0,
+          "pending": 1
+        },
+        {
+          "observation": "trip_snippet",
+          "decision": "needs-more-evidence",
+          "accepted_content_records": 0,
+          "pending": 2
+        },
+        {
+          "observation": "trip_sender_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 1,
+          "pending": 2
+        },
+        {
+          "observation": "trip_recipient_roles_swapped",
+          "decision": "new-observation",
+          "accepted_content_records": 2,
+          "pending": 2
+        },
+        {
+          "observation": "trip_received_timezone",
+          "decision": "new-observation",
+          "accepted_content_records": 3,
+          "pending": 2
+        },
+        {
+          "observation": "trip_received_missing",
+          "decision": "needs-more-evidence",
+          "accepted_content_records": 3,
+          "pending": 3
+        },
+        {
+          "observation": "trip_received_minute",
+          "decision": "new-observation",
+          "accepted_content_records": 4,
+          "pending": 3
+        },
+        {
+          "observation": "trip_qp_utf8",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 4,
+          "pending": 3
+        },
+        {
+          "observation": "trip_plain_utf8",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 4,
+          "pending": 3
+        },
+        {
+          "observation": "trip_partial_envelope",
+          "decision": "needs-more-evidence",
+          "accepted_content_records": 4,
+          "pending": 4
+        },
+        {
+          "observation": "trip_missing_sender_date",
+          "decision": "needs-more-evidence",
+          "accepted_content_records": 4,
+          "pending": 5
+        },
+        {
+          "observation": "trip_latin1_qp",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 4,
+          "pending": 5
+        },
+        {
+          "observation": "trip_html_only",
+          "decision": "new-observation",
+          "accepted_content_records": 5,
+          "pending": 5
+        },
+        {
+          "observation": "trip_headers_folded",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 5,
+          "pending": 5
+        },
+        {
+          "observation": "trip_display_address_format",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 5,
+          "pending": 5
+        },
+        {
+          "observation": "trip_crlf",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 5,
+          "pending": 5
+        },
+        {
+          "observation": "trip_body_only",
+          "decision": "needs-more-evidence",
+          "accepted_content_records": 5,
+          "pending": 6
+        },
+        {
+          "observation": "trip_body_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 6,
+          "pending": 6
+        },
+        {
+          "observation": "trip_base64_utf8",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 6,
+          "pending": 6
+        },
+        {
+          "observation": "trip_alternative",
+          "decision": "new-observation",
+          "accepted_content_records": 7,
+          "pending": 6
+        },
+        {
+          "observation": "reply_with_quote",
+          "decision": "new-observation",
+          "accepted_content_records": 8,
+          "pending": 6
+        },
+        {
+          "observation": "reply_two",
+          "decision": "new-observation",
+          "accepted_content_records": 9,
+          "pending": 6
+        },
+        {
+          "observation": "reply_one",
+          "decision": "new-observation",
+          "accepted_content_records": 10,
+          "pending": 6
+        },
+        {
+          "observation": "remote_image_url_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 11,
+          "pending": 6
+        },
+        {
+          "observation": "remote_image_reference",
+          "decision": "new-observation",
+          "accepted_content_records": 12,
+          "pending": 6
+        },
+        {
+          "observation": "related_root_beta",
+          "decision": "new-observation",
+          "accepted_content_records": 13,
+          "pending": 6
+        },
+        {
+          "observation": "related_root_alpha",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 13,
+          "pending": 6
+        },
+        {
+          "observation": "quote_only_delivery",
+          "decision": "new-observation",
+          "accepted_content_records": 14,
+          "pending": 6
+        },
+        {
+          "observation": "pdf_two_reordered",
+          "decision": "new-observation",
+          "accepted_content_records": 15,
+          "pending": 6
+        },
+        {
+          "observation": "pdf_same_name_two_payloads",
+          "decision": "new-observation",
+          "accepted_content_records": 16,
+          "pending": 6
+        },
+        {
+          "observation": "pdf_payload_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 17,
+          "pending": 6
+        },
+        {
+          "observation": "pdf_one_rewrapped",
+          "decision": "new-observation",
+          "accepted_content_records": 18,
+          "pending": 6
+        },
+        {
+          "observation": "pdf_one",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 18,
+          "pending": 6
+        },
+        {
+          "observation": "pdf_no_attachment",
+          "decision": "new-observation",
+          "accepted_content_records": 19,
+          "pending": 6
+        },
+        {
+          "observation": "pdf_filename_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 20,
+          "pending": 6
+        },
+        {
+          "observation": "pdf_duplicate_twice",
+          "decision": "new-observation",
+          "accepted_content_records": 21,
+          "pending": 6
+        },
+        {
+          "observation": "pdf_body_only",
+          "decision": "needs-more-evidence",
+          "accepted_content_records": 21,
+          "pending": 7
+        },
+        {
+          "observation": "nested_message_reencoded",
+          "decision": "new-observation",
+          "accepted_content_records": 22,
+          "pending": 7
+        },
+        {
+          "observation": "nested_message_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 23,
+          "pending": 7
+        },
+        {
+          "observation": "nested_message",
+          "decision": "new-observation",
+          "accepted_content_records": 24,
+          "pending": 7
+        },
+        {
+          "observation": "inline_unresolved_cid",
+          "decision": "new-observation",
+          "accepted_content_records": 25,
+          "pending": 7
+        },
+        {
+          "observation": "inline_data_uri",
+          "decision": "new-observation",
+          "accepted_content_records": 26,
+          "pending": 7
+        },
+        {
+          "observation": "inline_cid_token_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 27,
+          "pending": 7
+        },
+        {
+          "observation": "inline_cid_red",
+          "decision": "new-observation",
+          "accepted_content_records": 28,
+          "pending": 7
+        },
+        {
+          "observation": "inline_cid_position_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 29,
+          "pending": 7
+        },
+        {
+          "observation": "inline_cid_payload_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 30,
+          "pending": 7
+        },
+        {
+          "observation": "image_only_red_rewrapped",
+          "decision": "new-observation",
+          "accepted_content_records": 31,
+          "pending": 7
+        },
+        {
+          "observation": "image_only_red",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 31,
+          "pending": 7
+        },
+        {
+          "observation": "image_only_blue",
+          "decision": "new-observation",
+          "accepted_content_records": 32,
+          "pending": 7
+        },
+        {
+          "observation": "identical_delivery_later_receipt",
+          "decision": "new-observation",
+          "accepted_content_records": 33,
+          "pending": 7
+        },
+        {
+          "observation": "identical_delivery_b",
+          "decision": "new-observation",
+          "accepted_content_records": 34,
+          "pending": 7
+        },
+        {
+          "observation": "identical_delivery_a_readback",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 34,
+          "pending": 7
+        },
+        {
+          "observation": "identical_delivery_a",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 34,
+          "pending": 7
+        },
+        {
+          "observation": "forward_inline",
+          "decision": "new-observation",
+          "accepted_content_records": 35,
+          "pending": 7
+        }
+      ]
+    },
+    "shuffled": {
+      "groups_ignoring_arbitrary_own_id_assignment": [
+        [
+          "forward_inline"
+        ],
+        [
+          "identical_delivery_a",
+          "identical_delivery_a_readback",
+          "identical_delivery_b"
+        ],
+        [
+          "identical_delivery_later_receipt"
+        ],
+        [
+          "image_only_blue"
+        ],
+        [
+          "image_only_red",
+          "image_only_red_rewrapped"
+        ],
+        [
+          "inline_cid_payload_changed"
+        ],
+        [
+          "inline_cid_position_changed"
+        ],
+        [
+          "inline_cid_red"
+        ],
+        [
+          "inline_cid_token_changed"
+        ],
+        [
+          "inline_data_uri"
+        ],
+        [
+          "inline_unresolved_cid"
+        ],
+        [
+          "nested_message"
+        ],
+        [
+          "nested_message_changed"
+        ],
+        [
+          "nested_message_reencoded"
+        ],
+        [
+          "pdf_duplicate_twice"
+        ],
+        [
+          "pdf_filename_changed"
+        ],
+        [
+          "pdf_no_attachment"
+        ],
+        [
+          "pdf_one",
+          "pdf_one_rewrapped"
+        ],
+        [
+          "pdf_payload_changed"
+        ],
+        [
+          "pdf_same_name_two_payloads"
+        ],
+        [
+          "pdf_two_reordered"
+        ],
+        [
+          "quote_only_delivery"
+        ],
+        [
+          "related_root_alpha",
+          "related_root_beta"
+        ],
+        [
+          "remote_image_reference"
+        ],
+        [
+          "remote_image_url_changed"
+        ],
+        [
+          "reply_one"
+        ],
+        [
+          "reply_two"
+        ],
+        [
+          "reply_with_quote"
+        ],
+        [
+          "trip_alternative"
+        ],
+        [
+          "trip_base64_utf8",
+          "trip_crlf",
+          "trip_display_address_format",
+          "trip_headers_folded",
+          "trip_latin1_qp",
+          "trip_plain_utf8",
+          "trip_qp_utf8",
+          "trip_received_timezone"
+        ],
+        [
+          "trip_body_changed"
+        ],
+        [
+          "trip_html_only"
+        ],
+        [
+          "trip_received_minute"
+        ],
+        [
+          "trip_recipient_roles_swapped"
+        ],
+        [
+          "trip_sender_changed"
+        ]
+      ],
+      "pending": [
+        "pdf_body_only",
+        "trip_body_only",
+        "trip_missing_sender_date",
+        "trip_partial_envelope",
+        "trip_received_missing",
+        "trip_snippet",
+        "trip_unknown_charset"
+      ],
+      "history": [
+        {
+          "observation": "inline_data_uri",
+          "decision": "new-observation",
+          "accepted_content_records": 1,
+          "pending": 0
+        },
+        {
+          "observation": "nested_message",
+          "decision": "new-observation",
+          "accepted_content_records": 2,
+          "pending": 0
+        },
+        {
+          "observation": "remote_image_reference",
+          "decision": "new-observation",
+          "accepted_content_records": 3,
+          "pending": 0
+        },
+        {
+          "observation": "trip_display_address_format",
+          "decision": "new-observation",
+          "accepted_content_records": 4,
+          "pending": 0
+        },
+        {
+          "observation": "trip_received_minute",
+          "decision": "new-observation",
+          "accepted_content_records": 5,
+          "pending": 0
+        },
+        {
+          "observation": "trip_received_missing",
+          "decision": "needs-more-evidence",
+          "accepted_content_records": 5,
+          "pending": 1
+        },
+        {
+          "observation": "forward_inline",
+          "decision": "new-observation",
+          "accepted_content_records": 6,
+          "pending": 1
+        },
+        {
+          "observation": "image_only_blue",
+          "decision": "new-observation",
+          "accepted_content_records": 7,
+          "pending": 1
+        },
+        {
+          "observation": "related_root_beta",
+          "decision": "new-observation",
+          "accepted_content_records": 8,
+          "pending": 1
+        },
+        {
+          "observation": "trip_recipient_roles_swapped",
+          "decision": "new-observation",
+          "accepted_content_records": 9,
+          "pending": 1
+        },
+        {
+          "observation": "trip_body_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 10,
+          "pending": 1
+        },
+        {
+          "observation": "trip_partial_envelope",
+          "decision": "needs-more-evidence",
+          "accepted_content_records": 10,
+          "pending": 2
+        },
+        {
+          "observation": "trip_html_only",
+          "decision": "new-observation",
+          "accepted_content_records": 11,
+          "pending": 2
+        },
+        {
+          "observation": "trip_base64_utf8",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 11,
+          "pending": 2
+        },
+        {
+          "observation": "trip_headers_folded",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 11,
+          "pending": 2
+        },
+        {
+          "observation": "inline_unresolved_cid",
+          "decision": "new-observation",
+          "accepted_content_records": 12,
+          "pending": 2
+        },
+        {
+          "observation": "inline_cid_position_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 13,
+          "pending": 2
+        },
+        {
+          "observation": "identical_delivery_a_readback",
+          "decision": "new-observation",
+          "accepted_content_records": 14,
+          "pending": 2
+        },
+        {
+          "observation": "reply_one",
+          "decision": "new-observation",
+          "accepted_content_records": 15,
+          "pending": 2
+        },
+        {
+          "observation": "trip_received_timezone",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 15,
+          "pending": 2
+        },
+        {
+          "observation": "inline_cid_red",
+          "decision": "new-observation",
+          "accepted_content_records": 16,
+          "pending": 2
+        },
+        {
+          "observation": "related_root_alpha",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 16,
+          "pending": 2
+        },
+        {
+          "observation": "pdf_one",
+          "decision": "new-observation",
+          "accepted_content_records": 17,
+          "pending": 2
+        },
+        {
+          "observation": "trip_crlf",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 17,
+          "pending": 2
+        },
+        {
+          "observation": "trip_missing_sender_date",
+          "decision": "needs-more-evidence",
+          "accepted_content_records": 17,
+          "pending": 3
+        },
+        {
+          "observation": "pdf_one_rewrapped",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 17,
+          "pending": 3
+        },
+        {
+          "observation": "remote_image_url_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 18,
+          "pending": 3
+        },
+        {
+          "observation": "image_only_red",
+          "decision": "new-observation",
+          "accepted_content_records": 19,
+          "pending": 3
+        },
+        {
+          "observation": "trip_unknown_charset",
+          "decision": "needs-more-evidence",
+          "accepted_content_records": 19,
+          "pending": 4
+        },
+        {
+          "observation": "trip_body_only",
+          "decision": "needs-more-evidence",
+          "accepted_content_records": 19,
+          "pending": 5
+        },
+        {
+          "observation": "identical_delivery_later_receipt",
+          "decision": "new-observation",
+          "accepted_content_records": 20,
+          "pending": 5
+        },
+        {
+          "observation": "identical_delivery_b",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 20,
+          "pending": 5
+        },
+        {
+          "observation": "inline_cid_payload_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 21,
+          "pending": 5
+        },
+        {
+          "observation": "pdf_two_reordered",
+          "decision": "new-observation",
+          "accepted_content_records": 22,
+          "pending": 5
+        },
+        {
+          "observation": "pdf_no_attachment",
+          "decision": "new-observation",
+          "accepted_content_records": 23,
+          "pending": 5
+        },
+        {
+          "observation": "reply_two",
+          "decision": "new-observation",
+          "accepted_content_records": 24,
+          "pending": 5
+        },
+        {
+          "observation": "nested_message_reencoded",
+          "decision": "new-observation",
+          "accepted_content_records": 25,
+          "pending": 5
+        },
+        {
+          "observation": "trip_snippet",
+          "decision": "needs-more-evidence",
+          "accepted_content_records": 25,
+          "pending": 6
+        },
+        {
+          "observation": "pdf_same_name_two_payloads",
+          "decision": "new-observation",
+          "accepted_content_records": 26,
+          "pending": 6
+        },
+        {
+          "observation": "nested_message_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 27,
+          "pending": 6
+        },
+        {
+          "observation": "identical_delivery_a",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 27,
+          "pending": 6
+        },
+        {
+          "observation": "image_only_red_rewrapped",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 27,
+          "pending": 6
+        },
+        {
+          "observation": "pdf_body_only",
+          "decision": "needs-more-evidence",
+          "accepted_content_records": 27,
+          "pending": 7
+        },
+        {
+          "observation": "trip_latin1_qp",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 27,
+          "pending": 7
+        },
+        {
+          "observation": "trip_alternative",
+          "decision": "new-observation",
+          "accepted_content_records": 28,
+          "pending": 7
+        },
+        {
+          "observation": "trip_qp_utf8",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 28,
+          "pending": 7
+        },
+        {
+          "observation": "trip_plain_utf8",
+          "decision": "content-match-occurrence-unverified",
+          "accepted_content_records": 28,
+          "pending": 7
+        },
+        {
+          "observation": "inline_cid_token_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 29,
+          "pending": 7
+        },
+        {
+          "observation": "pdf_duplicate_twice",
+          "decision": "new-observation",
+          "accepted_content_records": 30,
+          "pending": 7
+        },
+        {
+          "observation": "pdf_payload_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 31,
+          "pending": 7
+        },
+        {
+          "observation": "pdf_filename_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 32,
+          "pending": 7
+        },
+        {
+          "observation": "trip_sender_changed",
+          "decision": "new-observation",
+          "accepted_content_records": 33,
+          "pending": 7
+        },
+        {
+          "observation": "quote_only_delivery",
+          "decision": "new-observation",
+          "accepted_content_records": 34,
+          "pending": 7
+        },
+        {
+          "observation": "reply_with_quote",
+          "decision": "new-observation",
+          "accepted_content_records": 35,
+          "pending": 7
+        }
+      ]
+    }
+  },
+  "raw_bytes_retained_in_witnesses": false,
+  "remote_resources_fetched": false,
+  "pdf_or_image_semantics_extracted": false,
+  "live_agent_connector_or_drive_state_tested": false
+}

@@ -4414,3 +4414,56 @@ requirements, then read this log from top to bottom.
   is historical; no new full-runtime qualification is claimed here. Next:
   qualify the source-information recipe on one synthetic thread in two actual
   managed agent apps, including a fresh session with saved external IDs removed.
+
+## 2026-09-11 — raw-MIME identity evaluation exposes recipe failures
+
+- The user asked whether the new recipe had actually been simulated for
+  determinism, false positives/negatives, threads, attachments and HTML images.
+  The earlier 38 prepared cases did not cover that boundary. The new
+  `docs/plans/restart/identity/mime-evaluation/README.md` records a completed
+  diagnostic evaluation, explicitly not a robustness or production pass.
+- A separate agent authored 54 fictional MIME observations and delivery truth
+  without reading the matcher. The generator recreates real synthetic PDF/PNG
+  bytes and ignored raw email files; the manifest binds every file's hash.
+  The evaluator parses those files into the unchanged old flat witness, with
+  truth labels excluded from observation extraction and matching. No private
+  mailbox, Drive, source attachment or live connector was accessed.
+- Across 1,431 pairs tested in both directions, 292 same-delivery comparisons
+  yielded 62 content associations, 73 false splits and 157 abstentions. The
+  2,566 distinct-delivery comparisons yielded 2,172 distinctions, 392
+  abstentions and two wrong associations: opposite directions of one pair
+  with identical MIME child bytes but different selected HTML roots. Four
+  indistinguishable-delivery comparisons remained association-only, with no
+  physical-occurrence proof. The 98 targeted comparisons are reported
+  separately; these correlated synthetic comparisons are not real-world rates.
+- Tested distinctions include replies and quoted context, changed PDF/image
+  bytes, repeated filenames, attachment multiplicity and image placement.
+  Failed matching cases include HTML/plain views, changed CID presentation,
+  data-URI embedding, reordered attachment presentation and rounded receipt
+  time. Missing CID/remote resource coverage remains explicit. PDF semantics,
+  OCR, complex HTML resources and scoped duplicate CIDs were not graded.
+- Three fresh-process runs with different hash seeds and zoned environments
+  produced equal reports; JSON reload and all 2,862 external-ID mutation checks
+  preserved decisions. Three ingestion orders produced equal content groups
+  and seven pending items, but retained the identity mistakes. Reversed
+  catalog order changed candidate serialization, not candidate sets/statuses.
+  Separate boundary checks reproduced display-name and coarse-time false
+  splits, an unhandled malformed date, and a timezone-less timestamp that
+  matches in UTC but splits in Los Angeles.
+- Independent review verified counts, targeted cases, projection boundaries,
+  direction asymmetry and the report's limits. Requirements now call for
+  compatible observation comparisons, preserved MIME/content relationships,
+  explicit unknown date semantics, scoped unresolved work and processing
+  coverage separate from identity. These are proposed refinements; the old
+  executable matcher is unchanged so its failures remain reproducible.
+- The generator reproduced identical fixture bytes; focused evaluation and
+  fresh-process checks completed. The unchanged 38-case experiment still
+  passes its limited assertions. Schema/manifest validation, local document
+  links, privacy scanning of tracked and new files, and diff checks pass.
+  No legacy runtime, installed instance, scheduler, delivery or release was
+  modified, and no new full-runtime qualification is claimed.
+- Next: refine the comparison/coverage contract against the frozen corpus,
+  then evaluate an untouched challenge set. Only then qualify the same
+  synthetic journey in two managed agent apps, with a fresh-session recovery
+  and external IDs removed. Live enumeration, extraction quality, Drive
+  checkpoints, runtime capacity and downstream task deduplication remain open.

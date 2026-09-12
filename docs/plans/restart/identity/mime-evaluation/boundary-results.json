@@ -1,0 +1,144 @@
+{
+  "check_count": 5,
+  "checks": [
+    {
+      "baseline": {
+        "record_ids": [
+          "sos-source-a"
+        ],
+        "status": "content-match-occurrence-unverified"
+      },
+      "boundary_requirement": "Parse address roles before comparison; a display name is not a different mailbox.",
+      "case": "sender-display-name-projection",
+      "changed_presentation": {
+        "record_ids": [],
+        "status": "new-observation"
+      },
+      "decision_unchanged": false,
+      "fixture_relationship": "Same fictional sender address; only display-name presentation changes.",
+      "scope": "The original model assumes a normalized sender string; it does not implement this normalization."
+    },
+    {
+      "baseline": {
+        "record_ids": [
+          "sos-source-a"
+        ],
+        "status": "content-match-occurrence-unverified"
+      },
+      "boundary_requirement": "Preserve precision and abstain when it cannot distinguish candidates; do not fabricate zero seconds.",
+      "case": "minute-precision-projection",
+      "decision_unchanged": false,
+      "fixture_relationship": "Same fictional receipt displayed at minute precision; an adapter incorrectly represents it as a precise instant.",
+      "rounded_presentation": {
+        "record_ids": [],
+        "status": "new-observation"
+      },
+      "scope": "The original model assumes precise zoned timestamps and has no precision field."
+    },
+    {
+      "boundary_requirement": "An unknown timezone must remain unknown instead of inheriting the agent environment's timezone.",
+      "case": "timezone-less-projection-in-fresh-processes",
+      "observations": [
+        {
+          "incoming_received_at_has_timezone": false,
+          "process_timezone": "UTC",
+          "result": {
+            "record_ids": [
+              "sos-source-a"
+            ],
+            "status": "content-match-occurrence-unverified"
+          },
+          "supported": true
+        },
+        {
+          "incoming_received_at_has_timezone": false,
+          "process_timezone": "America/Los_Angeles",
+          "result": {
+            "record_ids": [],
+            "status": "new-observation"
+          },
+          "supported": true
+        }
+      ],
+      "process_timezone_independent": false,
+      "scope": "The original prepared fixtures always supply a timezone; this input is outside that contract."
+    },
+    {
+      "boundary_requirement": "Malformed source evidence must produce a scoped unresolved item instead of terminating unrelated processing.",
+      "case": "malformed-received-timestamp",
+      "observation": {
+        "raised_exception_type": "ValueError"
+      },
+      "returns_scoped_unresolved_result": false,
+      "scope": "Input validation or normalization must handle this before or within a production resolver."
+    },
+    {
+      "boundary_requirement": "Sort candidate record IDs if byte-stable serialized results are required; do not mistake this ordering difference for a changed identity decision.",
+      "case": "catalog-record-order",
+      "exact_output_equal": false,
+      "original_order": {
+        "record_ids": [
+          "sos-source-a",
+          "sos-source-b"
+        ],
+        "status": "ambiguous-occurrence"
+      },
+      "reversed_order": {
+        "record_ids": [
+          "sos-source-b",
+          "sos-source-a"
+        ],
+        "status": "ambiguous-occurrence"
+      },
+      "scope": "This distinguishes exact output determinism from semantic decision determinism.",
+      "status_and_candidate_set_equal": true
+    }
+  ],
+  "experiment_sha256": "f5c78514a4736a742186954c74381e44888c1aa23c786e99151d71499f9b9600",
+  "interpretation": "These measurements expose boundary limitations and reporting distinctions; they are not passing robustness assertions or estimates of real-world error rates.",
+  "interval_bridge_demonstration": {
+    "broad_overlaps_second": true,
+    "existing_matcher_performs_this_merge": false,
+    "first_overlaps_broad": true,
+    "first_overlaps_second": false,
+    "intervals_seconds_within_one_minute": {
+      "minute-only": [
+        0,
+        60
+      ],
+      "precise-first": [
+        2,
+        3
+      ],
+      "precise-second": [
+        48,
+        49
+      ]
+    },
+    "kind": "separate-mathematical-demonstration",
+    "overlap_is_transitive_in_this_example": false,
+    "required_policy": "Retain partial evidence without turning overlap into an equivalence or automatic merge.",
+    "risk": "Treating overlap as identity could merge two distinct precise deliveries through a partial observation."
+  },
+  "kind": "synthetic-prepared-matcher-boundary-measurements",
+  "live_connector_or_private_source_accessed": false,
+  "mime_parsing_tested_by_this_script": false,
+  "primary_source_notes": [
+    {
+      "note": "Original mixed and alternative MIME order can matter; connector listing order is a different concept.",
+      "section": "5.1.3 and 5.1.4",
+      "url": "https://www.rfc-editor.org/rfc/rfc2046.html"
+    },
+    {
+      "note": "A related multipart has an interrelated structure and a root selected by start or the first part.",
+      "section": "3",
+      "url": "https://www.rfc-editor.org/rfc/rfc2387.html"
+    },
+    {
+      "note": "Limited alternative contexts can contain duplicate Content-ID values; a global unique-ID assumption is insufficient.",
+      "section": "2",
+      "url": "https://www.rfc-editor.org/rfc/rfc2392.html"
+    }
+  ],
+  "production_recipe_repaired_by_this_script": false
+}

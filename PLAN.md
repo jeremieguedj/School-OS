@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: the previous implementation is retired as the restart foundation; message-identity research and the source-information design are complete, with cross-agent live qualification next
+Status: the previous implementation is retired as the restart foundation; raw-MIME evaluation is complete and exposes identity-recipe failures that require refinement before cross-agent live qualification
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 ## Current restart work
