@@ -1,0 +1,478 @@
+{
+  "kind": "synthetic-source-information-identity-matching",
+  "provider_rfc_thread_or_citation_ids_used_in_identity_decisions": false,
+  "cases": [
+    {
+      "case": "native-id-does-not-decide-acceptance",
+      "expected": "content-match-occurrence-unverified",
+      "actual": {
+        "status": "content-match-occurrence-unverified",
+        "record_ids": [
+          "sos-source-001"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "changed-provider-id",
+      "expected": "content-match-occurrence-unverified",
+      "actual": {
+        "status": "content-match-occurrence-unverified",
+        "record_ids": [
+          "sos-source-001"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "provider-id-absent",
+      "expected": "content-match-occurrence-unverified",
+      "actual": {
+        "status": "content-match-occurrence-unverified",
+        "record_ids": [
+          "sos-source-001"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "provider-and-rfc-ids-both-absent",
+      "expected": "content-match-occurrence-unverified",
+      "actual": {
+        "status": "content-match-occurrence-unverified",
+        "record_ids": [
+          "sos-source-001"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "connector-switched",
+      "expected": "content-match-occurrence-unverified",
+      "actual": {
+        "status": "content-match-occurrence-unverified",
+        "record_ids": [
+          "sos-source-001"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "thread-id-changed",
+      "expected": "content-match-occurrence-unverified",
+      "actual": {
+        "status": "content-match-occurrence-unverified",
+        "record_ids": [
+          "sos-source-001"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "thread-id-alone-insufficient",
+      "expected": "needs-more-evidence",
+      "actual": {
+        "status": "needs-more-evidence",
+        "record_ids": [
+          "sos-source-001"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "same-rfc-id-does-not-hide-new-body",
+      "expected": "new-observation",
+      "actual": {
+        "status": "new-observation",
+        "record_ids": []
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "same-native-id-cannot-hide-distinct-body",
+      "expected": "new-observation",
+      "actual": {
+        "status": "new-observation",
+        "record_ids": []
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "same-native-id-cannot-hide-distinct-sender",
+      "expected": "new-observation",
+      "actual": {
+        "status": "new-observation",
+        "record_ids": []
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "same-spelling-other-namespace-not-authority",
+      "expected": "new-observation",
+      "actual": {
+        "status": "new-observation",
+        "record_ids": []
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "incomplete-catalog-lookup",
+      "expected": "lookup-incomplete",
+      "actual": {
+        "status": "lookup-incomplete",
+        "record_ids": []
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "snippet-only-is-not-full-body",
+      "expected": "needs-more-evidence",
+      "actual": {
+        "status": "needs-more-evidence",
+        "record_ids": [
+          "sos-source-001"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "unknown-attachment-inventory",
+      "expected": "needs-more-evidence",
+      "actual": {
+        "status": "needs-more-evidence",
+        "record_ids": [
+          "sos-source-001"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "html-versus-plain-projection-needs-bridge",
+      "expected": "needs-more-evidence",
+      "actual": {
+        "status": "needs-more-evidence",
+        "record_ids": [
+          "sos-source-001"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "unknown-sender-date-does-not-become-empty",
+      "expected": "needs-more-evidence",
+      "actual": {
+        "status": "needs-more-evidence",
+        "record_ids": [
+          "sos-source-001"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "unknown-source-account",
+      "expected": "account-unverified",
+      "actual": {
+        "status": "account-unverified",
+        "record_ids": []
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "same-content-other-mailbox-keeps-provenance-separate",
+      "expected": "new-observation",
+      "actual": {
+        "status": "new-observation",
+        "record_ids": []
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "reply-with-parent-quote-is-new",
+      "expected": "new-observation",
+      "actual": {
+        "status": "new-observation",
+        "record_ids": []
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "identical-short-reply-later-is-new",
+      "expected": "new-observation",
+      "actual": {
+        "status": "new-observation",
+        "record_ids": []
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "quoted-history-must-not-be-stripped",
+      "expected": "new-observation",
+      "actual": {
+        "status": "new-observation",
+        "record_ids": []
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "significant-whitespace-is-not-collapsed",
+      "expected": "new-observation",
+      "actual": {
+        "status": "new-observation",
+        "record_ids": []
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "indistinguishable-copies-without-locator",
+      "expected": "ambiguous-occurrence",
+      "actual": {
+        "status": "ambiguous-occurrence",
+        "record_ids": [
+          "sos-source-001",
+          "sos-source-002"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "known-id-does-not-resolve-content-ambiguity",
+      "expected": "ambiguous-occurrence",
+      "actual": {
+        "status": "ambiguous-occurrence",
+        "record_ids": [
+          "sos-source-001",
+          "sos-source-002"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "duplicate-alias-in-index",
+      "expected": "ambiguous-occurrence",
+      "actual": {
+        "status": "ambiguous-occurrence",
+        "record_ids": [
+          "sos-source-001",
+          "sos-source-003"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "line-ending-representation-only",
+      "expected": "content-match-occurrence-unverified",
+      "actual": {
+        "status": "content-match-occurrence-unverified",
+        "record_ids": [
+          "sos-source-lines"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "same-filename-different-attachment-content",
+      "expected": "new-observation",
+      "actual": {
+        "status": "new-observation",
+        "record_ids": []
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "duplicate-attachment-multiplicity-preserved",
+      "expected": "new-observation",
+      "actual": {
+        "status": "new-observation",
+        "record_ids": []
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "unread-attachment-cannot-prove-equality",
+      "expected": "needs-more-evidence",
+      "actual": {
+        "status": "needs-more-evidence",
+        "record_ids": [
+          "sos-source-attachments"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "changed-rfc-id-does-not-decide-identity",
+      "expected": "content-match-occurrence-unverified",
+      "actual": {
+        "status": "content-match-occurrence-unverified",
+        "record_ids": [
+          "sos-source-001"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "reused-citation-cannot-decide-acceptance",
+      "expected": "needs-more-evidence",
+      "actual": {
+        "status": "needs-more-evidence",
+        "record_ids": [
+          "sos-source-citation"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "neither-stored-nor-incoming-message-ever-had-ids",
+      "expected": "content-match-occurrence-unverified",
+      "actual": {
+        "status": "content-match-occurrence-unverified",
+        "record_ids": [
+          "sos-source-no-external-ids"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "recipient-order-is-not-identity",
+      "expected": "content-match-occurrence-unverified",
+      "actual": {
+        "status": "content-match-occurrence-unverified",
+        "record_ids": [
+          "sos-source-recipients"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "attachment-source-name-preserved",
+      "expected": "new-observation",
+      "actual": {
+        "status": "new-observation",
+        "record_ids": []
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "received-date-does-not-mean-sender-date",
+      "expected": "new-observation",
+      "actual": {
+        "status": "new-observation",
+        "record_ids": []
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "timezone-presentation-is-normalized",
+      "expected": "content-match-occurrence-unverified",
+      "actual": {
+        "status": "content-match-occurrence-unverified",
+        "record_ids": [
+          "sos-source-001"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "cc-role-is-preserved",
+      "expected": "new-observation",
+      "actual": {
+        "status": "new-observation",
+        "record_ids": []
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    },
+    {
+      "case": "missing-received-time-needs-another-recipe",
+      "expected": "needs-more-evidence",
+      "actual": {
+        "status": "needs-more-evidence",
+        "record_ids": [
+          "sos-source-001"
+        ]
+      },
+      "catalog_unchanged": true,
+      "external_id_erasure_preserves_decision": true,
+      "passed": true
+    }
+  ],
+  "case_count": 38,
+  "all_passed": true,
+  "json_roundtrip_keeps_school_os_id_with_no_stored_or_incoming_message_ids": true,
+  "raw_body_retained_in_catalog": false,
+  "independent_resolver_call_succeeds_after_an_unresolved_case": true,
+  "live_source_enumeration_or_adapter_normalization_tested": false,
+  "exact_occurrence_proven_without_distinguishing_evidence": false
+}

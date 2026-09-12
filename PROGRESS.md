@@ -4359,3 +4359,58 @@ requirements, then read this log from top to bottom.
   actual managed agent apps, then an unattended schedule and a fresh different
   agent's recovery/query. Keep physical Drive layout and blanket compatibility
   claims provisional until those observations exist.
+
+## 2026-09-11 — message identity evidence and independence from provider metadata
+
+- The user requested a bounded live Gmail identity check, deep cross-agent and
+  harness research, and an identification design that works without provider
+  message IDs. During the work, the user explicitly added a product principle:
+  critical paths and recovery must not depend on API/provider-specific
+  parameters or connector metadata. `docs/product-principles.md` now makes
+  that a distinct design priority and requires source-information-based
+  identity/acceptance decisions, with technical handles confined to access.
+- The read-only sub-agent probe lasted 121.7 seconds: seven selected messages,
+  two bounded thread windows, six replies, 63 full observations and seven
+  metadata observations. Native message/thread IDs, RFC reply/identity headers,
+  and independent header/text witnesses stayed stable. All 15 populated
+  attachment-locator slots changed; 40 MIME coordinates stayed stable. No
+  attachment bytes were downloaded or compared. The 46 connector calls were
+  reads with no reported errors or mutations. Private request/raw/topology
+  receipts remain under the admitted ignored message-identity-probe run
+  directory, with files 0600 and directory 0700. Only aggregates are published.
+- `docs/plans/restart/identity/REPORT.md` documents the probe, provider/protocol
+  contracts, the five named product families, Copilot, Composio, Pipedream,
+  n8n, Zapier, LangChain, SDKs and representative MCP implementations. Native
+  Gmail IDs are documented immutable; Graph default IDs can change; RFC IDs
+  can be missing/reused; identically named fields differ between connectors.
+  Unknown closed-connector contracts are not mislabeled as observed changes.
+  This is a representative primary-source survey, not certification of every
+  marketplace integration or future version.
+- The current design assigns School-OS-owned source/attachment record IDs.
+  It reasons from original subject, actual receipt time, sender, To/Cc roles,
+  attachment names and relevant content/context. Source dates retain their
+  meaning, timezone and precision; sender date and observation time cannot
+  substitute for receipt time. These are combined evidence, not a universally
+  unique or always-present tuple. External handles and RFC IDs may accelerate
+  retrieval but cannot decide identity or acceptance. Ambiguous occurrences
+  remain explicit, and unrelated work can continue.
+- The focused synthetic experiment passes 38 cases, including removal of all
+  provider/RFC IDs from both stored and incoming observations, specific replies,
+  reused citations, changed IDs, unknown content, To/Cc roles, timezone
+  presentation and duplicate attachments/copies. Every case also erases all
+  external ID fields and requires an unchanged matching decision. Independent
+  review exposed an early alias-authority shortcut; the final matcher has no
+  alias-based identity path. It stores content digests, not raw bodies.
+- The experiment is a decision model, not an installed matcher or a vendor
+  benchmark. Its precise normalized fields and completeness claims are fixture
+  assumptions; it does not prove live normalization, indexed search, a durable
+  unresolved-work queue or physical-occurrence identity when evidence is
+  indistinguishable. The original 96-assertion lifecycle model is prominently
+  marked historical and superseded on its provider-derived source key.
+- Focused experiment, source-note/local-link checks, schema/manifest checks,
+  privacy scan and diff checks are the appropriate validation for this
+  research/documentation change. No existing runtime, private Drive instance,
+  scheduler, delivery or release was modified. The prior 442-test runtime pass
+  is historical; no new full-runtime qualification is claimed here. Next:
+  qualify the source-information recipe on one synthetic thread in two actual
+  managed agent apps, including a fresh session with saved external IDs removed.

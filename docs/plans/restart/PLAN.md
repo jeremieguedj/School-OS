@@ -1,7 +1,29 @@
 # School-OS restart architecture and simulation
 
-Status: product-principle revision and synthetic architecture simulation complete.
-Live application qualification remains future work, as detailed in `SIMULATION.md`.
+Status: original simulation and message-identity follow-up complete. The current
+identity design is [the identity report](identity/REPORT.md). Broad live
+application qualification remains future work.
+
+## Current message-identity follow-up
+
+The user challenged the assumption that a provider message ID can be the
+canonical source key and explicitly requested a quick sub-agent Gmail test,
+deep research across agent/harness surfaces, and a provider-ID-independent
+identification design wherever guarantees are absent or uncertain.
+
+- [x] Run a bounded read-only test of existing messages and individual replies,
+  preserving private receipts before interpretation and publishing only counts.
+- [x] Separate provider contracts, sender-created mail headers, connector
+  handles, thread IDs and agent-tool references in primary-source research.
+- [x] Design durable School-OS-owned identities with multiple optional matching
+  witnesses, conservative ambiguity handling and no mandatory raw archive.
+  The subsequent explicit product principle makes source information the sole
+  basis for identity/acceptance decisions; external identifiers are access aids.
+- [x] Exercise missing/changing IDs, replies, reformatting and indistinguishable
+  duplicate cases in a small synthetic experiment.
+- [x] Update design authority and continuity and validate the accepted changes.
+  Apply the repository commit/push procedure and verify the remote revision
+  before reporting the handoff complete.
 
 ## Authority and scope
 

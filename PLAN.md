@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: the previous implementation is retired as the restart foundation; the active work is the authorized product-principle revision and synthetic architecture simulation
+Status: the previous implementation is retired as the restart foundation; message-identity research and the source-information design are complete, with cross-agent live qualification next
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 ## Current restart work
@@ -12,9 +12,11 @@ knowledge and operational records, unrestricted agent choice, and no current
 solution for simultaneous same-data Drive writes. No dedicated personal machine
 or coding CLI may be required by the architecture.
 
-This work is a design/documentation change and synthetic simulation, not a
-claim that the existing runtime implements the new architecture. It authorizes
-no private-instance migration, live ingestion, schedule or delivery operation.
+This work is research, design/documentation and synthetic simulation, not a
+claim that the existing runtime implements the new architecture. The latest
+user instruction additionally authorizes a bounded read-only Gmail identity
+probe, including replies within threads. It authorizes no private-instance
+migration, live ingestion, schedule or delivery operation.
 The previous architecture may require an explicit future migration; its frozen
 release and clean-root qualification rules do not govern this design exercise.
 

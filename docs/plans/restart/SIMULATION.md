@@ -1,5 +1,12 @@
 # School-OS architecture simulation
 
+**Identity follow-up:** the provider-derived source key tested in this original
+simulation is superseded by the [message-identity research and design](identity/REPORT.md).
+That report includes a read-only Gmail probe and a separate 38-case experiment
+with School-OS-owned record IDs. The original lifecycle model and its 96
+assertions below remain historical evidence and have not been requalified as
+an implementation of the new identity boundary.
+
 Keeping original material in its source system is the right default for
 School-OS. It removes duplicate archival storage and transfer from everyday
 operation, fits replaceable managed agents, and concentrates the product on
@@ -89,7 +96,7 @@ vendor supplies those routes on the intended account.
 
 ## Message, thread and attachment identity
 
-The central rule is:
+The original model tested this rule (now superseded as the canonical key):
 
 `source message = provider + stable logical mailbox identity + provider message ID`
 
@@ -200,6 +207,7 @@ layout by itself.
 | 6. Capability-led portability | Blocked and unknown capabilities prevent modeled success; serialized Drive records permit session replacement. | This is one local analysis instrument, not execution inside five vendors' cloud products. Unattended permissions and recovery must pass there. |
 | 7. Extensibility from canonical data | Queries and multiple registered output jobs reference the same instance knowledge. | No independent task application, audio generator or third-party extension is implemented/tested here. |
 | 8. Extensible/upgradable instances | The proposed entry point pins instructions and leaves private state separate. | A pinned release string is not an upgrade test. Installation, migration and preservation of user extensions remain untested. |
+| 9. Independence from brittle technical details (added after this original run) | The subsequent [identity experiment](identity/REPORT.md) excludes provider/RFC/thread/citation IDs from identity decisions and tests erasing them. | The original lifecycle model used a provider-derived key and does not satisfy this later principle; actual source-information matching across managed apps remains unqualified. |
 
 | Core use case | Simulation coverage and limit |
 |---|---|
