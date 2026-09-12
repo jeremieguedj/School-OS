@@ -1,5 +1,11 @@
 # Raw-MIME identity evaluation
 
+**Historical evaluation:** the user subsequently chose
+[metadata-only identity](../METADATA-RECIPE.md), removing content inspection from
+matching. The MIME/content repair proposals below are superseded as an identity
+plan. These results remain evidence about the old pipeline; they do not measure
+the new recipe. Content extraction and its coverage still need separate validation.
+
 The existing email matching recipe **does not pass this evaluation**. The earlier
 38 prepared-input cases did not establish MIME handling, false-match/split
 behavior or environment-independent normalization. This larger experiment finds

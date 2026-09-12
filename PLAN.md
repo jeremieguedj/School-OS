@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: the previous implementation is retired as the restart foundation; raw-MIME evaluation is complete and exposes identity-recipe failures that require refinement before cross-agent live qualification
+Status: the previous implementation is retired as the restart foundation; metadata-only email identity and individual-message thread handling are the current design, with implementation and qualification still pending
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 ## Current restart work
@@ -11,6 +11,9 @@ chosen source-system custody with temporary processing downloads, Drive-based
 knowledge and operational records, unrestricted agent choice, and no current
 solution for simultaneous same-data Drive writes. No dedicated personal machine
 or coding CLI may be required by the architecture.
+The latest user direction removes content inspection from email identity and
+thread association. Follow the [metadata-only recipe](docs/plans/restart/identity/METADATA-RECIPE.md);
+content extraction remains a separate processing operation.
 
 This work is research, design/documentation and synthetic simulation, not a
 claim that the existing runtime implements the new architecture. The latest

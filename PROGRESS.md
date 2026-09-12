@@ -4467,3 +4467,39 @@ requirements, then read this log from top to bottom.
   synthetic journey in two managed agent apps, with a fresh-session recovery
   and external IDs removed. Live enumeration, extraction quality, Drive
   checkpoints, runtime capacity and downstream task deduplication remain open.
+
+## 2026-09-11 — metadata-only identity and individual-message thread handling
+
+- The user explicitly rejected content inspection as an identity dependency and
+  requested an updated recipe using subject, senders, sending time, filenames
+  and related source metadata, with an explanation of thread handling.
+  `docs/product-principles.md` and the new
+  `docs/plans/restart/identity/METADATA-RECIPE.md` now make that boundary explicit.
+  Bodies, quotes, HTML, MIME content structure, images, attachment bytes,
+  summaries and content fingerprints cannot decide identity or break a tie.
+- School-OS assigns and persists its own record IDs. Matching uses the logical
+  mailbox, original subject, actual sender address, sending timestamp, separately
+  understood receipt timestamp, To/Cc and comparable original attachment names.
+  Unknown fields and date precision remain explicit; generated filenames and
+  incompatible inline/attachment inventories do not become required evidence.
+  One supported candidate permits a metadata association. Visible collisions
+  stay unresolved; indistinguishable metadata can still hide a false association.
+- Every reply is an individual message with its own metadata, record and
+  processing coverage. Daily scans expand individual message metadata in returned
+  threads, including previously seen threads. There is no permanently processed
+  thread flag. Optional subject/participant grouping is inferred navigation;
+  it cannot deduplicate messages or prove exact reply parentage. Thread-only
+  summaries leave individual-message cataloging incomplete.
+- Content is still read to extract substantive school information and manage
+  its processing coverage, independently of identity. No source archive, new
+  runtime dependency or concurrent-write mechanism was introduced. The earlier
+  content-assisted proposal and MIME repair recommendations are marked
+  superseded; their original executable experiments remain unchanged as evidence.
+- This work updates design documents only. No new matcher or simulation pass,
+  private source access, installed-instance change, schedule, delivery or release
+  is claimed. Next: implement explicit metadata-only decision/acceptance rules,
+  evaluate collisions, partial dates and replies, then qualify actual managed
+  agent message-metadata access and daily discovery. Independent review found
+  no material contradiction with the requested boundary. Document links, staged
+  privacy scanning and diff checks passed; repository continuity applies to
+  publication of this documentation-only change.

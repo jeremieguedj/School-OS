@@ -4,19 +4,26 @@ School-OS should assign its own durable identifiers to source records. A
 provider message ID is a useful access aid when its meaning and scope are
 known; it must not be the primary key on which knowledge, tasks and continuity
 depend. The same applies to attachment download handles, thread IDs and agent
-citations. Critical identity and acceptance decisions use the source’s own
-information and content; even a documented stable provider ID is only an access
+citations. Under the current user-directed design, identity decisions use source
+metadata only; even a documented stable provider ID is only an access
 aid, never an alternative authority for those decisions. The earlier
 simulation's provider-derived source-key rule is
 superseded by this design.
 
-**Qualification update:** the subsequent
+**Current recipe:** [metadata-only identity and thread handling](METADATA-RECIPE.md).
+The user explicitly removed body, HTML, image, attachment-byte and fingerprint
+inspection from identity and thread matching. Content is still read to extract
+school information, with separate processing coverage. The content-assisted
+proposal below is historical and superseded, including its proposed MIME repair.
+The new metadata-only decision model has not yet been implemented or qualified.
+
+**Historical qualification evidence:** the
 [raw-MIME evaluation](mime-evaluation/README.md) found false splits, an incorrect
 content association and timestamp/environment limitations in the illustrative
 matching pipeline. Its 54 observations include real synthetic MIME and binary
-payloads. The principles below remain the design direction, but the 38-case
-prepared matcher is not a qualified implementation of them. Required refinements
-and untested capabilities are recorded in that evaluation.
+payloads. Neither that pipeline nor its 38-case prepared matcher qualifies the
+new metadata-only recipe. The evaluation remains evidence of why the previous
+proposal failed, rather than the current implementation plan.
 
 The evidence supports two distinct conclusions. Native Gmail message IDs were
 stable in a short live test and are explicitly documented as immutable.
@@ -166,7 +173,26 @@ These findings support a concrete conclusion: **there is no verified universal
 message identifier exposed consistently across this market**. They do not
 support claiming that native Gmail IDs are generally unstable.
 
-## Provider-ID-independent design
+## Current provider-independent design
+
+Follow [the metadata-only recipe](METADATA-RECIPE.md): assign a School-OS record
+ID once; match within the logical mailbox using original subject, sender,
+sending timestamp, separately understood receipt timestamp, To/Cc and comparable
+attachment filenames. Preserve unknown values and visible collisions. One
+supported match is a metadata association, not content equality or physical
+uniqueness. Do not inspect content or rely on external IDs to break a tie.
+
+Each reply has its own metadata and record. Daily discovery must enumerate
+messages inside returned threads even when those threads were seen before.
+Optional subject/participant groupings are inferred navigation, not identity or
+proof of exact reply parentage. Thread-only summaries leave message coverage
+incomplete. The linked recipe contains the current decision and coverage rules.
+
+## Historical content-assisted design — superseded
+
+The following preserves the previous proposal for understanding the failed
+experiments. Its content comparisons and fingerprints are excluded from the
+current identity recipe; do not implement them as a fallback.
 
 ### Durable records and replaceable lookup evidence
 
@@ -341,9 +367,10 @@ updates to the same Drive data remain outside current scope.
 
 ## Initial synthetic experiment and its limits
 
-The later [MIME evaluation](mime-evaluation/README.md) supersedes this small
-experiment as the current robustness assessment. It reports failures, not a
-qualification pass. The following describes only the original prepared cases.
+The later [MIME evaluation](mime-evaluation/README.md) extended this small
+experiment and reported failures, not a qualification pass. Both evaluate the
+now-superseded content-assisted route. The following describes only the original
+prepared cases, not the current metadata-only recipe.
 
 The executed [38-case experiment](experiment.py) and its
 [results](experiment-results.json) exercise the matching decisions independently
@@ -376,7 +403,11 @@ matching route, not an exhaustive production matcher or semantic-quality test.
 The earlier 96-assertion lifecycle simulation remains historical evidence;
 it has not been retrofitted and requalified with this new identity boundary.
 
-## Remaining risks and targeted validation
+## Historical risk matrix and validation proposal
+
+This matrix belongs to the earlier content-assisted proposal. Use the current
+[metadata-only recipe's validation plan](METADATA-RECIPE.md#validation-status-and-next-work)
+for identity; body and binary-reading coverage remains a separate ingestion concern.
 
 | Risk or unknown | Minimum useful validation / mitigation |
 |---|---|

@@ -1,12 +1,28 @@
 # School-OS restart architecture and simulation
 
-Status: original simulation, message-identity research and raw-MIME evaluation
-complete. The [MIME evaluation](identity/mime-evaluation/README.md) finds recipe
-failures requiring refinement; it is not a qualification pass. The current
-design direction is [the identity report](identity/REPORT.md). Broad live
-application qualification remains future work.
+Status: the user has replaced content-assisted identity with
+[metadata-only matching and thread handling](identity/METADATA-RECIPE.md).
+The original simulation, message-identity research and MIME evaluation remain
+historical evidence. A new decision model and live application qualification
+remain future work.
 
-## Current raw-MIME evaluation
+## Current metadata-only design
+
+- [x] Remove body, HTML, image, attachment-byte and fingerprint comparisons from
+  identity and thread association; retain content extraction as a separate job.
+- [x] Define source metadata, observation limits and metadata-association outcomes.
+- [x] Give each reply its own message identity and coverage; keep inferred thread
+  grouping optional and prevent a previously processed thread from hiding new replies.
+- [x] Preserve visible collisions and state the residual risk of indistinguishable
+  metadata, without a content or provider-ID fallback.
+- [x] Update product principles, design authority and continuity documentation.
+
+Next: implement and evaluate the metadata-only decision model, including explicit
+criteria for sufficient evidence and collisions, then qualify individual-message
+metadata access and daily discovery in managed agent apps. No simulation pass
+or operational support is inferred from this documentation update.
+
+## Historical raw-MIME evaluation
 
 The 38-case prepared-observation experiment did not parse raw email or establish
 false-positive/negative rates. The user explicitly requested checking the new
@@ -20,11 +36,9 @@ recipe's robustness and determinism for threads, attachments and HTML images.
 - [x] Document failures, proposed mitigations and remaining live qualification;
   validate and publish this development analysis without changing the runtime.
 
-Next: refine the comparison/coverage contract against the frozen corpus, with
-explicit compatibility and uncertainty rules, then evaluate an untouched
-challenge set. Keep the old failing matcher reproducible. Follow with the same
-synthetic journey in two managed agent apps and a fresh session; no production
-matcher or blanket portability is established by this analysis.
+The former next step of repairing content/MIME matching is superseded by the
+metadata-only design above. Keep the old failing matcher and its results
+reproducible as historical evidence.
 
 ## Current message-identity follow-up
 
