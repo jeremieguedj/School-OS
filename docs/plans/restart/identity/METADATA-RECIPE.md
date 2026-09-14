@@ -2,7 +2,9 @@
 
 Status: current user-directed design. This supersedes the content-assisted
 identity proposal in [the research report](REPORT.md) and its MIME-based repair
-recommendations. It is not yet an implemented or validated replacement matcher.
+recommendations. A development model has now been
+[stress-tested on live Gmail metadata](metadata-stress/README.md); it exposed
+collision failures and is not a qualified production replacement matcher.
 
 ## Boundary
 
@@ -68,6 +70,13 @@ or resolve a collision. No operation requires a saved external ID to remain vali
    This means one match among the candidates inspected, not a proof of unique
    physical delivery or identical content. Preserve the observed evidence and
    lookup scope, rather than claiming stronger certainty.
+   **Live-test correction:** a singleton in the saved index is insufficient if
+   the source exposes multiple indistinguishable candidates. Preserve that
+   multiplicity before sequential ingestion can collapse it. Relevant lookup
+   completeness includes available source candidates, not only existing index
+   records. Repeated listing appearances do not by themselves establish separate
+   deliveries. The exact operational acceptance policy remains unresolved;
+   the tested singleton rule failed on a real observed pair.
 4. If comparable metadata establishes a distinct message, or the completed
    relevant lookup finds no existing match with adequate metadata available,
    assign a new School-OS record. An incomplete search, an uncertain date or
@@ -155,14 +164,22 @@ semantic reconciliation of school information are separate responsibilities.
 
 ## Validation status and next work
 
-The previous 38-case matcher and 54-observation MIME evaluation are historical
-evidence for the removed content-assisted route. Their success/failure totals
-do not measure this recipe. No runtime or private instance was changed by this
-design update. No new end-to-end simulation is claimed.
+The [live metadata study](metadata-stress/README.md) covers 632 observed Gmail
+entries, including individual header reads for 92 and 17 independent repeats.
+It found one pair indistinguishable under the available permitted metadata;
+singleton reuse collapsed that pair in the daily/restart simulation. Forty-two
+messages exposed repeated nonempty attachment filenames. Later messages in
+previously seen threads generally remained separate, but the same collision
+still failed. All wrong associations in the unmodified live-metadata trials
+arise from that one pair; injected hidden-collision trials are reported separately.
 
-Next: implement a small metadata-only decision model with explicit acceptance
-rules for sufficient evidence, and evaluate missing/rounded timestamps,
-colliding headers, attachment-list differences, individual replies, recurring
-subjects and fresh-session continuity. Then qualify message-level metadata
-access and daily discovery in actual managed agent apps. Keep any unresolved
-collision visible and report it separately from a wrong association.
+This is a development model and offline replay of private live observations,
+not an installed runtime, live scheduled job, Drive recovery or managed-app
+handoff. The former 38-case content-assisted and 54-observation MIME experiments
+remain unchanged historical evidence; their totals do not qualify this recipe.
+
+Next: resolve visible-multiplicity handling and the acceptable uncertainty policy,
+qualify attachment candidate selection, then test message-level metadata access,
+complete daily discovery and Drive-backed fresh-session continuity in actual
+managed agent apps. Preserve unresolved work and report abstentions separately
+from wrong associations. No content or provider-ID fallback is introduced.

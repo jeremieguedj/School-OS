@@ -1,10 +1,32 @@
 # School-OS restart architecture and simulation
 
-Status: the user has replaced content-assisted identity with
-[metadata-only matching and thread handling](identity/METADATA-RECIPE.md).
-The original simulation, message-identity research and MIME evaluation remain
-historical evidence. A new decision model and live application qualification
-remain future work.
+Status: the bounded read-only stress test of the user's Gmail metadata is
+complete. [Findings](identity/metadata-stress/README.md) expose a real collision
+in the [metadata-only identity design](identity/METADATA-RECIPE.md).
+The original content-assisted simulations remain historical evidence. This is
+a development analysis, not private-instance ingestion or product qualification.
+
+## Current live metadata stress test
+
+- [x] Collect bounded recent and targeted email metadata with private raw
+  receipts; include individual replies and exposed attachment/inline filenames.
+- [x] Define an executable development-only interpretation of the recipe,
+  excluding content and external IDs from identity inputs.
+- [x] Measure field availability, duplicate metadata, repeated reads, timestamp
+  precision changes, collisions, individual replies and optional grouping.
+- [x] Separate observed live behavior, injected degradations, grading-reference
+  assumptions and unknown cross-agent behavior in an aggregate findings report.
+- [x] Review findings independently and prepare reusable analysis and aggregate
+  results. Validate privacy and publish through repository continuity; verify
+  the remote revision before reporting the handoff complete.
+
+Observed scope: 127 read-only calls, 632 separately addressable entries, 92
+individual header-read entries plus 17 repeat reads. One observed metadata
+collision caused the same entry to be incorrectly associated during holdout,
+daily ingestion and restart tests. Forty-two messages had repeated nonempty
+attachment filenames. Address presentation handling was corrected from private
+evidence; unknown search timestamp semantics and filename inventory scope remain
+explicit. No content, provider-ID matching, Drive ingestion or schedule was used.
 
 ## Current metadata-only design
 
@@ -17,10 +39,11 @@ remain future work.
   metadata, without a content or provider-ID fallback.
 - [x] Update product principles, design authority and continuity documentation.
 
-Next: implement and evaluate the metadata-only decision model, including explicit
-criteria for sufficient evidence and collisions, then qualify individual-message
-metadata access and daily discovery in managed agent apps. No simulation pass
-or operational support is inferred from this documentation update.
+Next: settle the treatment of indistinguishable occurrences and preserve visible
+source-candidate multiplicity before sequential reuse. Qualify attachment
+candidate selection, individual-message metadata access and daily discovery in
+managed agent apps, then actual Drive checkpoint/restart behavior. Successful
+policy checks do not close the observed identity failure or qualify production.
 
 ## Historical raw-MIME evaluation
 

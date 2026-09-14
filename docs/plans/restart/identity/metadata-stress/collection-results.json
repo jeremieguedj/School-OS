@@ -1,0 +1,221 @@
+{
+  "account_verified": true,
+  "bounds": {
+    "complete_mailbox": false,
+    "max_targeted_results_each": 20,
+    "older_query_after": "2025-09-13",
+    "older_school_query_before": "2026-06-15",
+    "other_search_requested_page_size": 100,
+    "query_before": "2026-09-14",
+    "recent_initial_pages": 4,
+    "recent_query_after": "2026-06-15",
+    "recent_repeat_pages": 1,
+    "targeted_subject_searches": 8
+  },
+  "cohorts": {
+    "attachment_cohort": {
+      "calls": 1,
+      "calls_with_next_page": 1,
+      "distinct_observed_handles": 96,
+      "observations": 96,
+      "requested_limits": [
+        100
+      ]
+    },
+    "recent_four_pages": {
+      "calls": 4,
+      "calls_with_next_page": 4,
+      "distinct_observed_handles": 388,
+      "observations": 388,
+      "requested_limits": [
+        100,
+        100,
+        100,
+        100
+      ]
+    },
+    "recent_repeat": {
+      "calls": 1,
+      "calls_with_next_page": 1,
+      "distinct_observed_handles": 97,
+      "observations": 97,
+      "requested_limits": [
+        100
+      ]
+    },
+    "reply_subject_cohort": {
+      "calls": 1,
+      "calls_with_next_page": 1,
+      "distinct_observed_handles": 93,
+      "observations": 93,
+      "requested_limits": [
+        100
+      ]
+    },
+    "school_older_subject_cohort": {
+      "calls": 1,
+      "calls_with_next_page": 0,
+      "distinct_observed_handles": 53,
+      "observations": 53,
+      "requested_limits": [
+        100
+      ]
+    },
+    "school_subject_cohort": {
+      "calls": 1,
+      "calls_with_next_page": 1,
+      "distinct_observed_handles": 100,
+      "observations": 100,
+      "requested_limits": [
+        100
+      ]
+    },
+    "targeted_reply_subject": {
+      "calls": 8,
+      "calls_with_next_page": 0,
+      "distinct_observed_handles": 42,
+      "observations": 44,
+      "requested_limits": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ]
+    }
+  },
+  "collision_extension": {
+    "between_handle_same_fields": {
+      "decoded_subject": true,
+      "normalized_Cc_values_equal_including_unknown": true,
+      "normalized_To": true,
+      "normalized_sender": true,
+      "source_Date_instant": true
+    },
+    "both_Cc_unknown": true,
+    "distinct_observed_handles": 2,
+    "metadata_reads": 4,
+    "provider_thread_group_same_limited_oracle": true,
+    "same_handle_repeat_metadata_stable": 2,
+    "search_attachment_lists_equal": true,
+    "search_inline_lists_equal": true,
+    "search_named_attachment_list_lengths": [
+      0,
+      0
+    ]
+  },
+  "connector_error_count": 0,
+  "duplicate_entry_audit": {
+    "attachments": {
+      "duplicate_name_groups": 42,
+      "entries_in_duplicate_name_groups": 84,
+      "groups_all_ids_absent_or_empty": 0,
+      "groups_all_ids_nonempty": 42,
+      "groups_exact_duplicate_entry_present": 0,
+      "groups_mime_type_all_known_equal": 0,
+      "groups_mime_type_known_different": 42,
+      "groups_mime_type_unknown_present": 0,
+      "groups_multiple_nonempty_ids": 42,
+      "groups_one_unique_nonempty_id": 0,
+      "groups_size_bytes_all_known_equal": 42,
+      "groups_size_bytes_known_different": 0,
+      "groups_size_bytes_unknown_present": 0,
+      "groups_some_ids_missing": 0,
+      "lists_exposed": 632,
+      "lists_nonempty": 101,
+      "messages_any_blank_names": 0,
+      "messages_duplicate_blank_names": 0,
+      "messages_duplicate_missing_names": 0,
+      "messages_duplicate_name_groups": 42,
+      "messages_duplicate_nonempty_names": 42,
+      "pairs_distinct_nonempty_attachment_ids": 42,
+      "pairs_full_entry_different": 42
+    },
+    "inline_images": {
+      "duplicate_name_groups": 1,
+      "entries_in_duplicate_name_groups": 5,
+      "groups_all_ids_absent_or_empty": 0,
+      "groups_all_ids_nonempty": 1,
+      "groups_exact_duplicate_entry_present": 0,
+      "groups_mime_type_all_known_equal": 0,
+      "groups_mime_type_known_different": 1,
+      "groups_mime_type_unknown_present": 0,
+      "groups_multiple_nonempty_ids": 1,
+      "groups_one_unique_nonempty_id": 0,
+      "groups_size_bytes_all_known_equal": 0,
+      "groups_size_bytes_known_different": 1,
+      "groups_size_bytes_unknown_present": 0,
+      "groups_some_ids_missing": 0,
+      "lists_exposed": 632,
+      "lists_nonempty": 36,
+      "messages_any_blank_names": 6,
+      "messages_duplicate_blank_names": 0,
+      "messages_duplicate_missing_names": 0,
+      "messages_duplicate_name_groups": 1,
+      "messages_duplicate_nonempty_names": 1,
+      "pairs_distinct_nonempty_attachment_ids": 10,
+      "pairs_full_entry_different": 10
+    }
+  },
+  "duplicate_header_conflict_observations": 0,
+  "limitations": [
+    "A bounded convenience sample of one logically verified Gmail mailbox, not a complete mailbox or representative error-rate estimate.",
+    "Search query timestamp bounds use provider search behavior; sending versus receipt semantics for search email_ts are unestablished.",
+    "Search email_ts agrees with observed source Date and internal_date where all three coincide; this cannot establish email_ts semantics.",
+    "Provider internal_date is retained only as diagnostic provider metadata and is not asserted as a source receipt timestamp.",
+    "School cohort is selected by school-related subject terms, with no body-based relevance classification.",
+    "All search observations with a next page are capped; short pages do not imply complete scopes when a pagination token remains.",
+    "Named attachment and inline image names are exposed connector lists; their original-name provenance and inventory completeness are not independently proved.",
+    "Metadata reads expose no comparable attachment inventory; omitted lists are unknown, never empty.",
+    "Provider handles and thread IDs are restricted to private test construction, observation pairing and grading, not physical-delivery truth or matcher input.",
+    "Complete raw receipts incidentally contain connector-supplied snippets and headers; no snippet, body, HTML, MIME structure, attachment bytes or content fingerprint was used for selection, matching or grouping.",
+    "An identical hidden physical delivery cannot be established or ruled out under metadata-only identity."
+  ],
+  "live_read_calls": 127,
+  "offline_presentation_audit": {
+    "after_observed_address_presentation_handling": {
+      "cc_equal": 16,
+      "cc_incomparable": 76,
+      "to_equal": 91,
+      "to_incomparable": 1
+    },
+    "first_search_header_pairs": 92,
+    "subject_interiors_equal_in_different_pairs": 2,
+    "subject_outer_ascii_spaces_omitted_in_search": 2,
+    "subject_whitespace_trimmed_by_evaluator": false
+  },
+  "schema_topology_differences": {
+    "search_receipt_structuredContent_direct_result": true,
+    "search_sender_actual_from_": 871,
+    "search_sender_documented_from": 0,
+    "search_transport_display_title": 871,
+    "search_transport_display_url": 871,
+    "transport_content_text_not_provider_result": true
+  },
+  "search_sender_presentation": {
+    "address_only": 2,
+    "contains_exact_header_address": 92,
+    "display_name_space_address": 80,
+    "first_search_header_pairs": 92,
+    "naive_getaddresses_first_pair_equal_before_format_specific_handling": 2,
+    "naive_getaddresses_first_pair_unequal_before_format_specific_handling": 90,
+    "quoted_display_name_space_address": 10
+  },
+  "time_delta_diagnostic": {
+    "Date_minus_internal_date_seconds": {
+      "nonzero": 0,
+      "unknown": 0,
+      "zero": 109
+    },
+    "received_time_semantics_established": false,
+    "search_email_ts_minus_Date_seconds": {
+      "nonzero": 0,
+      "unknown": 0,
+      "zero": 223
+    },
+    "search_timestamp_meaning": "unestablished_because_Date_and_internal_date_coincide_in_all_observed_pairs"
+  }
+}

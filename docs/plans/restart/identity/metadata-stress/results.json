@@ -1,0 +1,177 @@
+{
+  "attachment_metadata": {
+    "inline_name_entries": 69,
+    "messages_with_exposed_named_attachment_list": 632,
+    "messages_with_inline_names": 36,
+    "messages_with_named_attachments": 101,
+    "messages_with_repeated_attachment_names": 42,
+    "messages_with_repeated_inline_names": 1,
+    "named_attachment_entries": 155
+  },
+  "bindings": {
+    "evaluator_sha256": "d74c3be8e616eb76eabce543146012f6d9c74c2a74957f5bbe84ab88dd9372a0",
+    "model_sha256": "c1f70437e0a794394e694a33ca76dd13c2f62c157b38b33b3d5b45b583ec9cad",
+    "observations_sha256": "a55ed3261bc1fefcf0b8b4feeb8f1457af056ef2515cdb8c2fb3a1841ff2e19e",
+    "oracle_sha256": "0431a57ff8be81714b7d2479499fb20ab7e9606eda8947595ab410215c6a00fc"
+  },
+  "body_or_attachment_bytes_used": false,
+  "collision_profiles": {
+    "search_subject_sender_untyped_timestamp": {
+      "distinct_message_pairs_in_collision_groups": 1,
+      "groups_with_multiple_reference_messages": 1,
+      "reference_messages_in_collision_groups": 2
+    },
+    "subject_sender_only": {
+      "distinct_message_pairs_in_collision_groups": 23,
+      "groups_with_multiple_reference_messages": 9,
+      "reference_messages_in_collision_groups": 23
+    },
+    "subject_sender_sent_day_utc": {
+      "distinct_message_pairs_in_collision_groups": 17,
+      "groups_with_multiple_reference_messages": 6,
+      "reference_messages_in_collision_groups": 16
+    },
+    "subject_sender_sent_minute": {
+      "distinct_message_pairs_in_collision_groups": 1,
+      "groups_with_multiple_reference_messages": 1,
+      "reference_messages_in_collision_groups": 2
+    },
+    "subject_sender_sent_second": {
+      "distinct_message_pairs_in_collision_groups": 1,
+      "groups_with_multiple_reference_messages": 1,
+      "reference_messages_in_collision_groups": 2
+    }
+  },
+  "cross_route_metadata": {
+    "cc_equal": 16,
+    "cc_incomparable": 76,
+    "sender_equal": 92,
+    "subject_different": 2,
+    "subject_equal": 90,
+    "to_equal": 91,
+    "to_incomparable": 1
+  },
+  "cross_vendor_agents_qualified": false,
+  "date_header_availability": {
+    "cc_present": 16,
+    "metadata_rows": 92,
+    "sender_present": 92,
+    "sent_present": 92,
+    "subject_present": 92,
+    "sufficient_for_automatic_route": 92,
+    "to_present": 91
+  },
+  "historical_daily_simulation": {
+    "daily_in_previously_seen_threads": {},
+    "daily_json_restart_replay": {
+      "correct_association": 45,
+      "wrong_association": 1
+    },
+    "daily_messages": 46,
+    "daily_results": {
+      "correct_distinct": 45,
+      "wrong_association": 1
+    },
+    "historical_messages": 46,
+    "saved_catalog_record_count": 91
+  },
+  "identity_trials": {
+    "injected_hidden_collision_singleton": {
+      "wrong_association": 92
+    },
+    "injected_incomplete_lookup": {
+      "abstention": 92
+    },
+    "injected_malformed_time": {
+      "abstention": 92
+    },
+    "injected_optional_fields_absent": {
+      "abstention": 2,
+      "correct_association": 90
+    },
+    "injected_recipient_order": {
+      "abstention": 2,
+      "correct_association": 90
+    },
+    "injected_sent_rounded_day": {
+      "abstention": 92
+    },
+    "injected_sent_rounded_minute": {
+      "abstention": 92
+    },
+    "injected_unknown_time_meaning": {
+      "abstention": 92
+    },
+    "injected_unknown_zone": {
+      "abstention": 92
+    },
+    "injected_visible_collision": {
+      "abstention": 92
+    },
+    "live_distinct_message_leave_one_out": {
+      "correct_distinct": 90,
+      "wrong_association": 2
+    },
+    "live_first_metadata_self_replay": {
+      "abstention": 2,
+      "correct_association": 90
+    },
+    "live_repeat_metadata_read": {
+      "abstention": 2,
+      "correct_association": 15
+    },
+    "live_search_against_header_catalog": {
+      "abstention": 189
+    }
+  },
+  "invariance": {
+    "catalog_order": true,
+    "external_ids_irrelevant": true,
+    "json_roundtrip": true
+  },
+  "kind": "live-metadata-only-development-stress-test",
+  "live_scheduled_job_or_drive_instance_used": false,
+  "live_whole_mailbox_discovery_qualified": false,
+  "negative_pairs": {
+    "correct_distinct": 4185,
+    "wrong_association": 1
+  },
+  "provider_ids_used_by_matcher": false,
+  "provider_snapshot_ids_used_for_private_test_construction_pairing_and_grading": true,
+  "repeated_attachment_list_observations": {
+    "comparisons": 239,
+    "inline_comparable_pairs": 239,
+    "inline_multiset_equal": 239,
+    "named_comparable_pairs": 239,
+    "named_multiset_equal": 239
+  },
+  "same_subject_sender_negative_pairs": {
+    "correct_distinct": 22,
+    "wrong_association": 1
+  },
+  "sample": {
+    "distinct_header_read_messages": 92,
+    "distinct_reference_messages": 632,
+    "metadata_observations": 109,
+    "observations": 980,
+    "paired_search_observations": 189,
+    "search_observations": 871
+  },
+  "targeted_existing_thread_replay": {
+    "correct_distinct": 19,
+    "previously_seen_threads": 9,
+    "wrong_association": 1
+  },
+  "thread_grouping_snapshot_comparison": {
+    "not_suggested_same_provider_thread": 39,
+    "suggested_different_provider_threads": 57,
+    "suggested_same_provider_thread": 310
+  },
+  "timestamp_diagnostics_only": {
+    "paired": 92,
+    "search_equal_internal_date": 92,
+    "search_equal_source_date": 92,
+    "source_date_equal_internal_date": 92
+  },
+  "untyped_search_time_used_as_sent_or_received": false
+}

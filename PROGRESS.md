@@ -4503,3 +4503,61 @@ requirements, then read this log from top to bottom.
   no material contradiction with the requested boundary. Document links, staged
   privacy scanning and diff checks passed; repository continuity applies to
   publication of this documentation-only change.
+
+## 2026-09-13 — live metadata stress test exposes collision and filename limits
+
+- The user requested stressing the metadata-only design with their own emails.
+  A collecting sub-agent made 127 read-only Gmail calls: 632 separately
+  addressable entries, 871 search observations and 109 individual metadata
+  observations covering 92 entries plus 17 independent repeat reads. Complete
+  receipts were preserved before normalization in the gitignored private
+  `private/mvp-recovery/runs/metadata-stress-2026-09-13/` directory with mode-0700
+  directories and mode-0600 files. No source values are published.
+- Added the development-only model, evaluator, independent fictional checks,
+  aggregate results, protocol and findings under
+  `docs/plans/restart/identity/metadata-stress/`. Identity and grouping inspect
+  no bodies, HTML, MIME content structure, images, attachment bytes or content
+  fingerprints. Provider snapshot references support private test construction,
+  pairing and grading only; they never enter matcher evidence or saved records.
+  This is consistency with observed Gmail entries, not independent proof of
+  physical delivery identity or identifier permanence.
+- One pair shared all available permitted comparison fields, including the
+  same second-resolution source Date. Both records present caused abstention;
+  a singleton catalog incorrectly associated the other entry. Holdout, negative
+  pair, daily ingestion and JSON restart failures all reproduce this one pair.
+  The 46-historical/46-daily replay persisted 91 records, then repeated the same
+  mistake after reload. A targeted replay across nine previously seen threads
+  correctly retained 19 later entries separately; the same pair still collided.
+- Of 101 entries exposing named attachments, 42 contained repeated nonempty
+  filenames with distinct exposed retrieval candidates. Physical-file equality
+  was not established. Of 36 entries exposing inline names, six had blank names
+  and one had repeated nonempty names. These are filename-selection limits, not
+  complete HTML/image processing tests. Live inventories have unverified original
+  and complete scope and are excluded from automatic identity comparison.
+- Private evidence exposed `from_` versus declared `from`, flattened address
+  presentation in search sender/recipient lists, explicit empty recipient groups
+  and two outer-whitespace subject differences. Small observation handlers and
+  fictional regression cases fix the observed address presentation; subject
+  differences remain explicit. Search timestamp semantics cannot be inferred
+  because source Date and internal timestamp coincide in every compared sample.
+  Under the conservative policy all 189 search/header-catalog trials abstain.
+- Independent review passed after narrowing the one-pair statement to unmodified
+  live-metadata trials; 92 injected hidden occurrences separately reproduce the
+  information limit. All 38 fictional policy checks pass with two reproduced
+  limitations reported separately. Catalog order, JSON round trip and irrelevant
+  external-ID changes preserve decisions. Fresh-process Python 3.9.6/3.12.14 runs
+  with different timezones/hash seeds reproduce saved evaluation and checks;
+  all code and private dataset SHA-256 bindings verify.
+- Current recipe and plans now link the findings and require addressing visible
+  source-candidate multiplicity before sequential reuse can erase it. No content
+  fallback, provider-ID authority, source archive or concurrent-write mechanism
+  was introduced. No installed runtime, private Drive instance, schedule, task,
+  email or release was changed. The older content/MIME experiments are unchanged.
+- Next: agree acceptable uncertainty for indistinguishable occurrences, qualify
+  attachment candidate selection, then test individual-message discovery and
+  Drive-backed daily/restart work in actual managed agent apps. This local study
+  qualifies neither complete mailbox discovery nor cross-agent production use.
+  Privacy scanning of tracked and new public files, local document links, private
+  permission/ignore checks and diff validation pass. Publish only the accepted
+  public files through the existing recovery branch; verify its remote revision
+  before handoff.

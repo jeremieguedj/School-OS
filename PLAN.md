@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: the previous implementation is retired as the restart foundation; metadata-only email identity and individual-message thread handling are the current design, with implementation and qualification still pending
+Status: the previous implementation is retired as the restart foundation; the live metadata stress test is complete and exposed unresolved collision and attachment-selection risks
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 ## Current restart work
@@ -14,6 +14,11 @@ or coding CLI may be required by the architecture.
 The latest user direction removes content inspection from email identity and
 thread association. Follow the [metadata-only recipe](docs/plans/restart/identity/METADATA-RECIPE.md);
 content extraction remains a separate processing operation.
+The [live stress-test findings](docs/plans/restart/identity/metadata-stress/README.md)
+cover 632 observed Gmail entries and individual header reads for 92. A real
+metadata collision defeats singleton reuse during daily ingestion and restart;
+the current design is not qualified for automatic deduplication. Resolve visible
+candidate multiplicity and the acceptable uncertainty policy before implementation.
 
 This work is research, design/documentation and synthetic simulation, not a
 claim that the existing runtime implements the new architecture. The latest

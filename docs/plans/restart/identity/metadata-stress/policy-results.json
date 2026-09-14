@@ -1,0 +1,238 @@
+{
+  "checks": [
+    {
+      "actual": "metadata_association",
+      "case": "repeat-exact-observation",
+      "expected": "metadata_association",
+      "passed": true
+    },
+    {
+      "actual": "metadata_association",
+      "case": "equivalent-zoned-timestamp",
+      "expected": "metadata_association",
+      "passed": true
+    },
+    {
+      "actual": "metadata_association",
+      "case": "recipient-and-filename-order",
+      "expected": "metadata_association",
+      "passed": true
+    },
+    {
+      "actual": "metadata_association",
+      "case": "optional-fields-unknown",
+      "expected": "metadata_association",
+      "passed": true
+    },
+    {
+      "actual": "metadata_association",
+      "case": "unknown-inventory-is-not-empty",
+      "expected": "metadata_association",
+      "passed": true
+    },
+    {
+      "actual": "new_observation",
+      "case": "recipient-roles-remain-distinct",
+      "expected": "new_observation",
+      "passed": true
+    },
+    {
+      "actual": "new_observation",
+      "case": "filename-multiplicity-preserved",
+      "expected": "new_observation",
+      "passed": true
+    },
+    {
+      "actual": "metadata_association",
+      "case": "incompatible-inventory-scope",
+      "expected": "metadata_association",
+      "passed": true
+    },
+    {
+      "actual": "metadata_association",
+      "case": "generated-names-are-not-identity-evidence",
+      "expected": "metadata_association",
+      "passed": true
+    },
+    {
+      "actual": "needs_metadata",
+      "case": "missing-zone-is-unknown",
+      "expected": "needs_metadata",
+      "passed": true
+    },
+    {
+      "actual": "needs_metadata",
+      "case": "invalid-date-is-unknown",
+      "expected": "needs_metadata",
+      "passed": true
+    },
+    {
+      "actual": "needs_metadata",
+      "case": "minute-overlap-is-not-exact",
+      "expected": "needs_metadata",
+      "passed": true
+    },
+    {
+      "actual": "needs_metadata",
+      "case": "utc-day-overlap-is-not-exact",
+      "expected": "needs_metadata",
+      "passed": true
+    },
+    {
+      "actual": "needs_metadata",
+      "case": "all-times-unavailable",
+      "expected": "needs_metadata",
+      "passed": true
+    },
+    {
+      "actual": "metadata_association",
+      "case": "receipt-to-receipt-alternative",
+      "expected": "metadata_association",
+      "passed": true
+    },
+    {
+      "actual": "new_observation",
+      "case": "sent-never-substitutes-for-receipt",
+      "expected": "new_observation",
+      "passed": true
+    },
+    {
+      "actual": "needs_metadata",
+      "case": "incorrect-timestamp-meaning-is-unknown",
+      "expected": "needs_metadata",
+      "passed": true
+    },
+    {
+      "actual": "ambiguous_metadata",
+      "case": "visible-two-record-collision",
+      "expected": "ambiguous_metadata",
+      "passed": true
+    },
+    {
+      "case": "catalog-order-does-not-select-a-winner",
+      "passed": true
+    },
+    {
+      "actual": "new_observation",
+      "case": "sender-plus-tag-is-preserved",
+      "expected": "new_observation",
+      "passed": true
+    },
+    {
+      "actual": "new_observation",
+      "case": "reply-is-an-individual-message",
+      "expected": "new_observation",
+      "passed": true
+    },
+    {
+      "actual": "new_observation",
+      "case": "original-reply-prefix-is-not-stripped-for-identity",
+      "expected": "new_observation",
+      "passed": true
+    },
+    {
+      "actual": "lookup_incomplete",
+      "case": "incomplete-lookup-cannot-associate",
+      "expected": "lookup_incomplete",
+      "passed": true
+    },
+    {
+      "actual": "lookup_incomplete",
+      "case": "incomplete-lookup-cannot-create",
+      "expected": "lookup_incomplete",
+      "passed": true
+    },
+    {
+      "case": "coarse-overlap-cannot-merge-exact-endpoints",
+      "passed": true
+    },
+    {
+      "case": "external-ids-content-and-input-mutation",
+      "passed": true
+    },
+    {
+      "case": "fresh-json-session-preserves-association",
+      "passed": true
+    },
+    {
+      "case": "address-presentation-preserves-meaning",
+      "passed": true
+    },
+    {
+      "case": "flattened-unquoted-school-label",
+      "passed": true
+    },
+    {
+      "case": "flattened-quoted-dotted-label",
+      "passed": true
+    },
+    {
+      "case": "flattened-quoted-parenthesized-label",
+      "passed": true
+    },
+    {
+      "case": "flattened-label-containing-an-address",
+      "passed": true
+    },
+    {
+      "case": "flattened-recipient-list-matches-rfc-header",
+      "passed": true
+    },
+    {
+      "case": "flattened-recipient-label-containing-comma",
+      "passed": true
+    },
+    {
+      "case": "flattened-recipient-label-containing-address",
+      "passed": true
+    },
+    {
+      "case": "empty-recipient-field-preserves-unknown-versus-empty",
+      "passed": true
+    },
+    {
+      "case": "explicit-empty-rfc-recipient-groups",
+      "passed": true
+    },
+    {
+      "case": "malformed-recipient-text-does-not-become-empty",
+      "passed": true
+    }
+  ],
+  "known_limitations": [
+    {
+      "case": "distinct-hidden-occurrence-with-identical-metadata",
+      "observed": "metadata_association",
+      "reproduced": true,
+      "risk": "false association if this observation is another physical delivery"
+    },
+    {
+      "case": "sequential-import-hides-visible-batch-multiplicity",
+      "forward_groups": [
+        [
+          "occurrence-a",
+          "occurrence-b"
+        ]
+      ],
+      "reproduced": true,
+      "reverse_groups": [
+        [
+          "occurrence-a",
+          "occurrence-b"
+        ]
+      ],
+      "risk": "first record absorbs the second; later multi-candidate detection cannot recover multiplicity"
+    }
+  ],
+  "limitations_reproduced": 2,
+  "policy_checks": 38,
+  "policy_failed": 0,
+  "policy_passed": 38,
+  "scope": "fictional metadata-only policy checks, not live accuracy rates",
+  "unqualified": [
+    "partial recipient lists",
+    "local-calendar-day intervals across DST",
+    "actual cross-provider metadata access",
+    "complete mailbox discovery"
+  ]
+}

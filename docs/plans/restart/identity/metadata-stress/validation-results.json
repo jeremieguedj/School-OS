@@ -1,0 +1,25 @@
+{
+  "code_and_private_dataset_bindings_valid": {
+    "evaluator_sha256": true,
+    "model_sha256": true,
+    "observations_sha256": true,
+    "oracle_sha256": true
+  },
+  "fresh_process_replays": [
+    {
+      "evaluation_matches_saved_result": true,
+      "hash_seed": "1",
+      "policy_matches_saved_result": true,
+      "runtime": "Python 3.9.6",
+      "timezone": "UTC"
+    },
+    {
+      "evaluation_matches_saved_result": true,
+      "hash_seed": "731",
+      "policy_matches_saved_result": true,
+      "runtime": "Python 3.12.14",
+      "timezone": "America/Los_Angeles"
+    }
+  ],
+  "scope": "development evaluator reproducibility; not managed-agent or Drive recovery qualification"
+}
