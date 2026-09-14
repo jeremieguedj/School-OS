@@ -1,0 +1,408 @@
+{
+  "artifact": "School-OS restart fictional scenario inventory",
+  "status": "PREPARED — NOT RUN",
+  "purpose": "Scenario descriptions and independent expectations only; not a canonical schema, adapter contract, native document fixture, executable harness or qualification result.",
+  "authority": "Current product principles, restart plan and metadata-only recipe. Every new architecture decision requires explicit user approval.",
+  "fictional_notice": "Every person, institution, mailbox, communication, job, output and event below is invented. example.org is used only for fictional addresses. Source-card labels are test references, not canonical record IDs or provider handles.",
+  "separation_rules": [
+    "Keep logical labels, expectations and scenario explanations hidden from any later blind interpreting agent.",
+    "Supply only source metadata to an identity operation. Source-content surrogates and semantic expectations cannot resolve identity or thread association.",
+    "Keep access aids outside allowed identity evidence; varying or removing them must not alter an otherwise supported logical association.",
+    "A future semantic trial must bind independently retained expectations to the exact input packet and ordered content segments before use. No hashes or bindings have been computed here.",
+    "No executable tests, simulations, scripts, builds, probes, scheduled jobs, live source reads or external effects were performed to prepare this inventory."
+  ],
+  "fictional_context": {
+    "school": "Lantern Grove School",
+    "child": "Robin Vale",
+    "class": "Cedar class",
+    "mailboxes": [
+      {"label": "mailbox-alex", "address": "alex.vale@example.org", "meaning": "Fictional parent Alex's source account; independent of connection choice."},
+      {"label": "mailbox-sam", "address": "sam.vale@example.org", "meaning": "Fictional parent Sam's separate source account."}
+    ],
+    "scenario_timezone": "America/Los_Angeles",
+    "initial_history_scope": "Configured school communications dated September 1 through September 3, 2031, with precise search-boundary meaning to be supplied by the approved adapter contract.",
+    "daily_scope": "Later configured windows beginning September 4, 2031; historical content gaps stay independent."
+  },
+  "source_cards": [
+    {
+      "label": "mail-handbook",
+      "logical_label": "logical-handbook",
+      "metadata": {"mailbox": "mailbox-alex", "subject": "Term handbook", "sender": "Lantern Grove office <office@example.org>", "original_date": "01 Sep 2031 09:00:00 -0700", "date_meaning": "Original email Date", "date_precision": "second", "to": ["Alex Vale <alex.vale@example.org>"], "cc": [], "attachment_names": ["handbook.pdf"], "attachment_inventory": "Original named attachments, complete"},
+      "body_surrogate": "The attached handbook applies to Cedar class throughout the autumn term. It explains absence reporting on page 2 and pickup arrangements on page 4.",
+      "content_surrogates": [{"label": "handbook-pages", "original_filename": "handbook.pdf", "text": "Page 2: Report an absence to the school office before 08:30 on each day absent. Page 4: Collect Cedar pupils from the north gate at 15:20. If a substitute adult will collect a pupil, tell the office before 14:00 that day. These rules apply throughout the autumn term."}]
+    },
+    {
+      "label": "mail-trip",
+      "logical_label": "logical-trip-original",
+      "metadata": {"mailbox": "mailbox-alex", "subject": "Cedar museum visit", "sender": "Ms Brook <cedar.teacher@example.org>", "original_date": "02 Sep 2031 10:00:00 -0700", "date_meaning": "Original email Date", "date_precision": "second", "to": ["alex.vale@example.org", "helper@example.org"], "cc": ["sam.vale@example.org"], "attachment_names": ["consent.pdf"], "attachment_inventory": "Original named attachments, complete"},
+      "body_surrogate": "Cedar class will visit the museum on September 18. Return the consent form by September 8 at 17:00 school time. The school will provide lunch; children who need a special diet should bring their usual packed lunch. Families do not need to pay a fee.",
+      "content_surrogates": [{"label": "consent-form", "original_filename": "consent.pdf", "text": "Consent for the September 18 Cedar museum visit. Parent or guardian: sign and return to the school office. The return deadline is September 8 at 17:00 school time."}]
+    },
+    {
+      "label": "mail-trip-correction",
+      "logical_label": "logical-trip-correction",
+      "metadata": {"mailbox": "mailbox-alex", "subject": "Re: Cedar museum visit", "sender": "Ms Brook <cedar.teacher@example.org>", "original_date": "04 Sep 2031 11:20:00 -0700", "date_meaning": "Original email Date", "date_precision": "second", "to": ["alex.vale@example.org"], "cc": ["sam.vale@example.org"], "attachment_names": [], "attachment_inventory": "Original named attachments, complete"},
+      "body_surrogate": "Correction to my September 2 message: the visit is now September 19 and the consent return deadline is September 10 at 17:00 school time. All other arrangements are unchanged. Earlier quoted message: Cedar class will visit on September 18. Return consent by September 8 at 17:00."
+    },
+    {
+      "label": "mail-trip-reminder",
+      "logical_label": "logical-trip-reminder",
+      "metadata": {"mailbox": "mailbox-alex", "subject": "Re: Cedar museum visit", "sender": "Ms Brook <cedar.teacher@example.org>", "original_date": "06 Sep 2031 08:15:00 -0700", "date_meaning": "Original email Date", "date_precision": "second", "to": ["alex.vale@example.org"], "cc": ["sam.vale@example.org"], "attachment_names": [], "attachment_inventory": "Original named attachments, complete"},
+      "body_surrogate": "Reminder: if you have not returned the museum consent, return it by September 10 at 17:00 school time. Thank you to families who have already returned it."
+    },
+    {
+      "label": "mail-club",
+      "logical_label": "logical-club",
+      "metadata": {"mailbox": "mailbox-alex", "subject": "Cedar clubs", "sender": "Clubs office <clubs@example.org>", "original_date": "03 Sep 2031 13:00:00 -0700", "date_meaning": "Original email Date", "date_precision": "second", "to": ["alex.vale@example.org"], "cc": [], "attachment_names": ["clubs.pdf"], "attachment_inventory": "Original named attachments, complete"},
+      "body_surrogate": "The attached timetable lists Cedar club times and collection points. Robotics places are already assigned; there is no registration or payment to complete.",
+      "content_surrogates": [{"label": "club-timetable", "original_filename": "clubs.pdf", "text": "Cedar robotics: September 12, 16:00–17:00; collect at the east entrance. Cedar choir: September 13, 15:30–16:15; collect at the music room."}]
+    },
+    {
+      "label": "mail-menu-a",
+      "logical_label": "logical-menu-a",
+      "metadata": {"mailbox": "mailbox-alex", "subject": "Cedar lunch information", "sender": "Lunch office <lunch@example.org>", "original_date": "03 Sep 2031 09:30:00 -0700", "date_meaning": "Original email Date", "date_precision": "second", "to": ["alex.vale@example.org"], "cc": [], "attachment_names": ["menu.pdf", "menu.pdf"], "attachment_inventory": "Original named attachments exposed; distinct-original relationship unknown"},
+      "body_surrogate": "Lunch menu and collection arrangements are attached.",
+      "content_surrogates": [
+        {"label": "menu-candidate-a", "original_filename": "menu.pdf", "text": "September 9 lunch: vegetable pasta. A dairy-free option is available on request to lunch staff."},
+        {"label": "menu-candidate-b", "original_filename": "menu.pdf", "text": "Lunch collection: Cedar pupils use the garden-side door during the September 9 building works."}
+      ],
+      "candidate_note": "These labels track prepared content stimuli, not permanent positions or proof of distinct physical documents. The runtime must preserve the observed candidate group and coverage uncertainty."
+    },
+    {
+      "label": "mail-menu-b",
+      "logical_label": "logical-menu-b",
+      "metadata": {"mailbox": "mailbox-alex", "subject": "Next lunch information", "sender": "Lunch office <lunch@example.org>", "original_date": "05 Sep 2031 09:30:00 -0700", "date_meaning": "Original email Date", "date_precision": "second", "to": ["alex.vale@example.org"], "cc": [], "attachment_names": ["menu.pdf"], "attachment_inventory": "Original named attachments, complete"},
+      "body_surrogate": "The September 10 lunch menu is attached.",
+      "content_surrogates": [{"label": "next-menu", "original_filename": "menu.pdf", "text": "September 10 lunch: bean stew. Lunch collection returns to the usual dining-room door."}]
+    },
+    {
+      "label": "mail-image",
+      "logical_label": "logical-image-notice",
+      "metadata": {"mailbox": "mailbox-alex", "subject": "Sports afternoon", "sender": "School office <office@example.org>", "original_date": "03 Sep 2031 14:00:00 -0700", "date_meaning": "Original email Date", "date_precision": "second", "to": ["alex.vale@example.org"], "cc": [], "attachment_names": null, "attachment_inventory": "One unnamed inline candidate exposed; total scope unknown"},
+      "body_surrogate": "Please see the image for the sports-afternoon arrangements.",
+      "content_surrogates": [{"label": "sports-visual-surrogate", "original_filename": null, "text": "On September 16 bring a labeled water bottle and a sun hat. Pupils may wear their usual PE kit. Visitors should enter through the south gate from 13:15."}],
+      "native_artifact_status": "Text description only; no actual visual artifact or bytes prepared."
+    },
+    {
+      "label": "mail-news",
+      "logical_label": "logical-news",
+      "metadata": {"mailbox": "mailbox-alex", "subject": "Library news", "sender": "Library <library@example.org>", "original_date": "05 Sep 2031 12:00:00 -0700", "date_meaning": "Original email Date", "date_precision": "second", "to": ["alex.vale@example.org"], "cc": [], "attachment_names": [], "attachment_inventory": "Original named attachments, complete"},
+      "body_surrogate": "The library has added a shelf of astronomy books for Cedar class. Books can be borrowed during normal library sessions. This is an information notice; no reply or registration is required."
+    },
+    {
+      "label": "mail-empty-meaning",
+      "logical_label": "logical-signoff",
+      "metadata": {"mailbox": "mailbox-alex", "subject": "Re: Library news", "sender": "Library <library@example.org>", "original_date": "05 Sep 2031 12:05:00 -0700", "date_meaning": "Original email Date", "date_precision": "second", "to": ["alex.vale@example.org"], "cc": [], "attachment_names": [], "attachment_inventory": "Original named attachments, complete"},
+      "body_surrogate": "Kind regards, The Library Team."
+    },
+    {
+      "label": "mail-finite-response",
+      "logical_label": "logical-survey",
+      "metadata": {"mailbox": "mailbox-alex", "subject": "Cedar pickup survey", "sender": "School office <office@example.org>", "original_date": "06 Sep 2031 09:00:00 -0700", "date_meaning": "Original email Date", "date_precision": "second", "to": ["alex.vale@example.org"], "cc": [], "attachment_names": [], "attachment_inventory": "Original named attachments, complete"},
+      "body_surrogate": "Please reply by September 11 at 12:00 school time to tell us whether Robin will use the late pickup room on September 20. Reply yes or no; both responses are needed for staffing."
+    },
+    {
+      "label": "mail-weekly-kit",
+      "logical_label": "logical-weekly-swimming-kit",
+      "metadata": {"mailbox": "mailbox-alex", "subject": "Cedar swimming kit each Wednesday", "sender": "PE office <pe@example.org>", "original_date": "01 Sep 2031 10:20:00 -0700", "date_meaning": "Original email Date", "date_precision": "second", "to": ["alex.vale@example.org"], "cc": [], "attachment_names": [], "attachment_inventory": "Original named attachments, complete"},
+      "body_surrogate": "For Cedar class, swimming kit and a towel are required at morning drop-off, 08:45 school time, every Wednesday from September 10 through December 10 inclusive. There is no swimming on October 29, so no kit is needed that day. A lightweight bag is recommended for comfort; no particular bag color is required."
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "S01",
+      "title": "Install a supplied package and start from Drive",
+      "areas": ["installation", "configuration", "capabilities", "portability"],
+      "given": ["A wholly fictional empty private instance and a user-supplied packaged release.", "Two separately verified logical mailboxes and the school/date scope chosen by the fictional parent.", "A managed agent with temporary resources and no dedicated personal machine, daemon or coding CLI."],
+      "events": ["Read the approved package instructions and discover actual capabilities.", "Create the approved instance entry point and configuration only if authorized and supported.", "End the session, then start a new capable agent from the durable Drive entry point."],
+      "independent_expectations": ["The fresh agent finds the pinned instructions, configured scope, selected operation and unfinished work from Drive.", "Private configuration stays separate from reusable package content and raw email/attachments remain at source.", "No provider handle, previous conversation or local file is required for canonical startup.", "A registered connection is not sufficient evidence of an actually verified capability."],
+      "approval_dependencies": ["Drive layout, canonical startup/configuration schema, package admission and installation contract, runtime dependencies"]
+    },
+    {
+      "id": "S02",
+      "title": "Capabilities are incomplete or approval-dependent",
+      "areas": ["capabilities", "tools", "portability"],
+      "given": ["Reader A can read Drive knowledge and list message summaries but cannot obtain an individual original Date.", "Reader B can access individual metadata but cannot read meaningful images.", "Writer C exposes Drive writes that require a human approval unavailable to a scheduled run."],
+      "events": ["Each agent selects an operation and inspects its available capabilities.", "Attempt only operations whose actual capabilities and authorization suffice."],
+      "independent_expectations": ["Reader A can answer supported knowledge queries but keeps insufficient source associations pending.", "Reader B retains visual-content gaps while making useful supported progress.", "Writer C never claims it saved a Drive checkpoint when the write was unavailable.", "Capability status and verification freshness are scoped to the exact runtime/connection/surface, not inferred from vendor names."],
+      "approval_dependencies": ["Capability vocabulary, adapter contracts and approved handling when canonical writes are unavailable"]
+    },
+    {
+      "id": "S03",
+      "title": "One logical email has repeated normalizable observations",
+      "areas": ["email identity", "normalization", "adapter replacement"],
+      "given": ["Two observations are independently labeled as the same logical museum email in mailbox-alex.", "A completed relevant metadata lookup finds exactly its existing School-OS record."],
+      "observations": [
+        {"test_label": "trip-view-a", "logical_label": "logical-trip-original", "mailbox": "mailbox-alex", "subject": "  Cedar museum visit  ", "sender": "Ms Brook cedar.teacher@EXAMPLE.ORG", "original_date": "02 Sep 2031 10:00:00 -0700", "to": ["Alex Vale alex.vale@EXAMPLE.ORG", "helper@example.org"], "cc": ["sam.vale@example.org"], "attachment_names": ["consent.pdf"]},
+        {"test_label": "trip-view-b", "logical_label": "logical-trip-original", "mailbox": "mailbox-alex", "subject": "Cedar museum visit", "sender": "Ms Brook <cedar.teacher@example.org>", "original_date": "02 Sep 2031 17:00:00 +0000", "to": ["helper@example.org", "alex.vale@example.org"], "cc": ["Sam Vale <sam.vale@EXAMPLE.ORG>"], "attachment_names": ["consent.pdf"]}
+      ],
+      "events": ["Observe A, then B through a replacement access route, then A again.", "Change or omit every optional access handle without changing source metadata."],
+      "independent_expectations": ["Reuse one School-OS logical email record without renaming it.", "Preserve the original observed subject, sender presentation and Date meaning/zone/precision alongside comparison values.", "Address presentation, domain case, recipient ordering, subject outer whitespace and equivalent known zones are normalized as approved.", "The observation count is not the canonical-email count, and association does not mark any newly exposed content processed."]
+    },
+    {
+      "id": "S04",
+      "title": "Comparable metadata distinguishes near neighbors",
+      "areas": ["email identity", "normalization"],
+      "given": ["The source card mail-trip supplies the baseline and the relevant index lookup is complete.", "Each listed variant is a separately labeled fictional logical email; only the stated field changes."],
+      "variants": [
+        {"label": "different-source-date", "change": "Original Date is 02 Sep 2031 10:00:01 -0700 rather than 10:00:00."},
+        {"label": "different-local-part-case", "change": "Sender local part is Cedar.Teacher rather than cedar.teacher; no alias-equivalence evidence exists."},
+        {"label": "different-plus-tag", "change": "Sender address is cedar.teacher+trip@example.org."},
+        {"label": "different-recipient-role", "change": "alex.vale@example.org moves from To to Cc and sam.vale@example.org moves from Cc to To; complete lists are exposed."},
+        {"label": "different-subject-prefix", "change": "The original subject is Re: Cedar museum visit."},
+        {"label": "different-subject-interior", "change": "The original subject contains two spaces between museum and visit."},
+        {"label": "different-mailbox", "change": "The original is received in separately verified mailbox-sam with otherwise agreeing metadata."}
+      ],
+      "independent_expectations": ["Do not associate a contradicted variant with the baseline logical record merely because other fields agree.", "Do not lowercase local parts, erase plus tags/dots, collapse meaningful subject text, exchange recipient roles or combine source accounts.", "A new School-OS record requires adequate metadata and the completed relevant lookup; a variant label itself is not matcher evidence.", "Keep each source's provenance without deciding cross-mailbox canonical-task equivalence from metadata alone."]
+    },
+    {
+      "id": "S05",
+      "title": "Indistinguishable metadata is an explicit information limit",
+      "areas": ["email identity", "uncertainty", "grading"],
+      "given": ["World R contains two observations of one logical email.", "World D stipulates two genuinely different logical emails whose permitted source metadata is exactly the same as World R.", "Each world's second observation faces one supported existing record and no contradictory source metadata; no existing duplicate catalog record is seeded."],
+      "events": ["Apply the same approved metadata-only recipe in both worlds."],
+      "independent_expectations": ["The indistinguishable metadata produces the same association policy outcome in both worlds.", "World R should reuse its logical record. World D illustrates the accepted residual limitation rather than a reason to inspect content or promote access handles to identity.", "Do not promise zero identity errors or score the policy by the number of provider entries.", "Do not transfer content-processing completion solely because metadata matches.", "Do not cite this fictional World D as evidence that the live Gmail study observed distinct logical-email loss."],
+      "grading_disposition": "Report policy behavior and stipulated indistinguishability separately; no impossible disambiguation pass criterion."
+    },
+    {
+      "id": "S06",
+      "title": "Existing duplicates and incomplete candidate lookup stay unresolved",
+      "areas": ["email identity", "uncertainty", "bounded lookup"],
+      "given": ["Two existing School-OS records each have knowledge and supported metadata compatible with a new observation.", "In a separate branch of the scenario, the relevant candidate lookup stops early because of its budget."],
+      "events": ["Present candidate records in opposite orders.", "Attempt association after the incomplete lookup."],
+      "independent_expectations": ["Do not select the first compatible existing record, silently merge/delete either record or erase their prior knowledge.", "Persist a scoped unresolved association using the approved representation.", "An incomplete lookup cannot establish absence and cannot by itself justify a new logical email.", "Continue unrelated supported work within the run budget."]
+    },
+    {
+      "id": "S07",
+      "title": "Date meaning and optional empty fields survive incomplete views",
+      "areas": ["email identity", "normalization", "date semantics"],
+      "given": ["A search result shows September 2, 2031 at 10:04 but its timestamp meaning is unknown.", "A richer individual-message view exposes original Date 02 Sep 2031 10:00:00 -0700 and separately identified received time 02 Sep 2031 10:04:00 -0700."],
+      "variants": [
+        {"label": "encoded-unfolded-subject", "subject_observation": "=?UTF-8?Q?Cedar_museum?=\r\n visit", "comparison_expectation": "Cedar museum visit, when the supported header-decoding/unfolding route establishes that result."},
+        {"label": "date-minute-only", "original_date": "02 Sep 2031 10:00 -0700", "note": "Precision is one minute; no seconds may be invented."},
+        {"label": "date-no-zone", "original_date": "02 Sep 2031 10:00:00", "note": "Timezone is unknown; machine timezone cannot supply it."},
+        {"label": "dst-clock-repeat", "original_dates": ["02 Nov 2031 01:30:00 -0700", "02 Nov 2031 01:30:00 -0800"], "note": "Distinct explicitly zoned instants despite equal displayed clock time."},
+        {"label": "explicit-empty-recipients", "cc_observation": "Undisclosed recipients:;", "meaning": "Explicit empty address group, when recognized by the supported parser."},
+        {"label": "unknown-recipients", "cc_observation": null, "meaning": "Missing or unexposed, not a proven empty list."},
+        {"label": "partial-recipients", "to_observation": ["alex.vale@example.org"], "meaning": "Tool declares truncation; this is not a complete recipient set."},
+        {"label": "unknown-attachments", "attachment_names": null, "meaning": "No inventory is exposed; not zero attachments."}
+      ],
+      "independent_expectations": ["Use the richer original Date with its own meaning, timezone and precision; preserve received time separately.", "Do not assign the unclear search timestamp a meaning merely because a sample happens to agree.", "Date overlap narrows candidates but does not prove exact instant equality; unsupported evidence stays pending without repeated automatic reads.", "Explicit empty, partial and missing metadata remain distinguishable.", "Generated download filenames and incompatible inline/named inventories do not manufacture contradictions."],
+      "approval_dependencies": ["Any new generalized acceptance thresholds beyond the current metadata recipe; supported parsing routes are an adapter-contract matter."]
+    },
+    {
+      "id": "S08",
+      "title": "Later replies remain individual messages",
+      "areas": ["replies", "daily ingestion", "thread navigation"],
+      "source_refs": ["mail-trip", "mail-trip-correction", "mail-trip-reminder"],
+      "given": ["The original message was processed historically.", "A later daily listing returns a previously seen conversation containing all three messages.", "A separate later reply changes its subject to Museum transport update while retaining its own adequate source metadata."],
+      "events": ["Read individual metadata for messages exposed by the thread route.", "Repeat the scan after optional navigation grouping changes or is absent."],
+      "independent_expectations": ["The original, correction and reminder retain three individual identities with their own original Dates and coverage.", "No permanently processed-thread flag hides either later reply.", "A changed-subject reply may remain ungrouped without losing its message or substantive information.", "Optional grouping cannot deduplicate, establish exact reply parentage or complete processing.", "A thread-only summary that cannot expose individuals leaves individual-message discovery incomplete."]
+    },
+    {
+      "id": "S09",
+      "title": "Same-parent attachment candidates retain separate coverage uncertainty",
+      "areas": ["attachment association", "content coverage"],
+      "source_refs": ["mail-menu-a", "mail-menu-b", "mail-image"],
+      "events": ["Catalog both lunch emails.", "Read only menu-candidate-a, then interrupt.", "A replacement adapter reorders the two same-parent menu.pdf candidates and changes their access aids.", "Later, a supported route provides the menu-candidate-b content stimulus."],
+      "independent_expectations": ["The menu.pdf attachment under mail-menu-b cannot inherit an association or processing status from mail-menu-a.", "Within mail-menu-a, preserve the menu.pdf candidate group; list position, MIME type and access-handle difference do not prove permanent file identity or document multiplicity.", "Reading one candidate does not mark the other read. Reordered candidates require honest association/coverage uncertainty.", "When the authorized content read is available, preserve both the pasta/dairy qualification and garden-side collection information with supported provenance.", "An unnamed inline candidate stays incomplete for name-based association without invalidating its parent.", "Do not inspect bytes, HTML/MIME structure or image contents to settle identity; later content reading serves extraction only."]
+    },
+    {
+      "id": "S10",
+      "title": "Short listing pages must continue",
+      "areas": ["enumeration", "bounded work", "coverage"],
+      "given": ["A fictional complete listing route offers at most three results per page within a configured bounded window."],
+      "listing_story": [
+        {"page_label": "first", "source_refs": ["mail-handbook", "mail-trip"], "continuation_available": true},
+        {"page_label": "second", "source_refs": ["mail-club"], "continuation_available": true},
+        {"page_label": "third", "source_refs": ["mail-menu-a", "mail-image"], "continuation_available": false, "route_establishes_exhaustion": true}
+      ],
+      "independent_expectations": ["Follow continuation after both short pages.", "A content budget stop can leave the window unfinished, with durable progress on Drive.", "Mark enumeration complete only after the route establishes exhaustion; each unread content item retains its own incomplete status.", "The declared page size is a scenario input, not a production batch-size decision."]
+    },
+    {
+      "id": "S11",
+      "title": "Lose a pagination token, miss a daily run, and retain capped coverage",
+      "areas": ["enumeration", "recovery", "missed work"],
+      "given": ["September 1–3 enumeration is durably complete; September 4 is unfinished with some accepted logical messages.", "An old attachment from September 3 remains unread.", "The prior temporary page token and conversation are lost, and the next daily invocation was missed."],
+      "events": ["A fresh agent reads the recorded mailbox, scope, date-boundary meaning and unfinished window from Drive.", "Repeat the unfinished window and then handle the recorded missed interval within the budget.", "In a separate branch, the only available listing route reports a silent-cap possibility and cannot prove exhaustion.", "A late-indexed message with an older original Date appears in a later bounded discovery operation."],
+      "independent_expectations": ["Recognize repeated logical observations through metadata, without requiring the old token or creating records for repeated rows.", "Preserve remaining windows on Drive when the budget ends.", "Daily completion does not close the historical attachment gap.", "A maximum source Date and a shorter search window do not prove complete discovery of late-indexed or silently capped material.", "The capped branch remains explicitly incomplete until a supported exhaustion-establishing route is available."],
+      "approval_dependencies": ["Any exact overlap/catch-up schedule or temporal search contract beyond the approved window procedure"]
+    },
+    {
+      "id": "S12",
+      "title": "Temporary source custody ends after verified persistence",
+      "areas": ["canonical data", "source custody", "coverage"],
+      "source_refs": ["mail-handbook"],
+      "events": ["Obtain a temporary body/attachment copy for authorized substantive processing.", "Persist the source reference, handbook facts, coverage and remaining work using the approved Drive contract.", "Read back each required result, then discard accessible temporary source material.", "In another branch, one required knowledge write cannot be verified before the temporary environment disappears."],
+      "independent_expectations": ["The body establishes term-wide applicability and page references; the attachment supplies the actual absence/pickup rules.", "Verified canonical knowledge remains available without maintaining a raw-source archive on Drive.", "Do not intentionally discard the only processing copy on a successful path before required persistence is verified.", "If the environment loses the copy early, do not claim completion; retain durable known unfinished work and refetch from source when supported.", "Cleanup refers to accessible working copies, not unsupported guarantees about external histories or backups."]
+    },
+    {
+      "id": "S13",
+      "title": "Interrupt every relevant persistence boundary",
+      "areas": ["recovery", "canonical persistence", "coverage"],
+      "source_refs": ["mail-trip", "mail-club"],
+      "interruptions": ["Before any canonical write", "After the source index but before substantive knowledge", "After some knowledge but before canonical task work", "After task content but before coverage/unfinished-work confirmation", "After a provider accepted a write but before its response reached the agent", "After readback exposes a contradictory or missing value"],
+      "independent_expectations": ["A fresh agent determines accepted and unfinished work from the approved Drive records.", "Index presence does not imply full knowledge, task or attachment completion.", "A missing response remains unknown until the approved reconciliation procedure supplies evidence; do not blindly duplicate effects.", "Mismatched readback is not accepted as verified persistence.", "Source, knowledge, task, coverage and unfinished-work boundaries each receive evidence; one source readback cannot stand in for all of them.", "No local journal, provider token or previous conversation is required for critical instance recovery."],
+      "approval_dependencies": ["Exact canonical persistence ordering, verification and recovery contract"]
+    },
+    {
+      "id": "S14",
+      "title": "Unread visuals and oversized material stay visible",
+      "areas": ["content extraction", "capabilities", "bounded processing"],
+      "source_refs": ["mail-image", "mail-handbook", "mail-club"],
+      "given": ["The initial reader supports body text, cannot read the meaningful sports image, cannot access the club attachment, and cannot process the whole handbook within its temporary budget."],
+      "events": ["Process available supported material in authorized bounded units.", "Later, a different capable reader is explicitly made available for the remaining material."],
+      "independent_expectations": ["Initially retain the sports-image, handbook remainder and club timetable as separate explicit gaps.", "Do not invent the sports instructions or club times from the email body or scenario oracle.", "After supported actual content reads, preserve water-bottle, sun-hat, PE-kit permission and visitor-entry time/place with provenance.", "The parent email association survives incomplete attachment work.", "A declared text surrogate and declared size cannot qualify image parsing, streaming, memory usage or complete attachment discovery."],
+      "native_artifact_status": "Actual visual/table/large document fixtures remain to be prepared against approved readers; no parsing trial performed."
+    },
+    {
+      "id": "S15",
+      "title": "Preserve substantive facts and qualifications rather than a summary",
+      "areas": ["knowledge", "provenance", "semantic extraction"],
+      "source_refs": ["mail-handbook", "mail-trip", "mail-club", "mail-news", "mail-finite-response"],
+      "independent_expectations": [
+        {"source": "mail-handbook body", "fact": "The handbook rules apply to Cedar class throughout the autumn term; absence reporting is on page 2 and pickup on page 4.", "action_disposition": "Preserve action-relevant standing conditions; do not assume Robin is absent or has a substitute collector. Current applicability follows evidence and the approved task policy, not a blanket rule that standing requirements are non-actionable."},
+        {"source": "handbook-pages", "fact": "Report each day's absence to the school office before 08:30; normal collection is north gate at 15:20; notify the office before 14:00 on a substitute-collector day.", "action_disposition": "Preserve conditions and times; current events must supply any task applicability."},
+        {"source": "mail-trip and consent-form", "fact": "Museum visit September 18; return signed consent to the office by September 8 at 17:00 school time.", "action_disposition": "One finite consent-return request with supporting body/form provenance, not two tasks for two representations."},
+        {"source": "mail-trip", "fact": "School provides lunch except children needing a special diet should bring their usual packed lunch; no family fee is due.", "action_disposition": "Preserve the conditional lunch instruction; do not create a fee-payment task or assert the diet condition applies without configuration/evidence."},
+        {"source": "club-timetable", "fact": "Robotics is September 12, 16:00–17:00, east-entrance collection; choir is September 13, 15:30–16:15, music-room collection.", "action_disposition": "Informational times and places; body explicitly says no registration or payment is required."},
+        {"source": "mail-news", "fact": "Astronomy books are available to Cedar class during normal library sessions; no reply or registration is required.", "action_disposition": "No finite action request."},
+        {"source": "mail-finite-response", "fact": "Reply yes or no by September 11 at 12:00 school time about Robin's September 20 late-room use; either response is required for staffing.", "action_disposition": "Finite action request even if the answer is no."}
+      ],
+      "grading_note": "Grade each qualification, action disposition and supporting source against actual processed evidence; no required schema field names or semantic merge engine are defined here."
+    },
+    {
+      "id": "S16",
+      "title": "An explicit correction survives replay of the original",
+      "areas": ["knowledge", "tasks", "corrections", "provenance"],
+      "source_refs": ["mail-trip", "mail-trip-correction"],
+      "events": ["Process the original, then its explicit correction.", "Replay the original after the correction has been accepted."],
+      "independent_expectations": ["Current visit date is September 19 and the current school consent deadline is September 10 at 17:00 school time.", "Retain the original September 18/September 8 assertions as historical source-linked information and preserve the explicit correction relationship.", "Keep unchanged lunch/diet/no-fee arrangements supported by the original and the correction's unchanged-arrangements statement.", "Replaying the old source does not reverse the explicit correction or duplicate the request.", "Quoted earlier prose does not become a second current deadline merely because it appears later in the thread."],
+      "approval_dependencies": ["Exact canonical correction/task relationship schema and semantic reconciliation procedure; this explicit case does not approve latest-timestamp-wins."]
+    },
+    {
+      "id": "S17",
+      "title": "Parent completion and planning state belong to the intended task",
+      "areas": ["canonical tasks", "parent state", "source replay"],
+      "source_refs": ["mail-trip-correction", "mail-trip-reminder", "mail-finite-response"],
+      "events": ["Alex explicitly records museum consent returned on September 5 at 18:00 school time with a fictional receipt note.", "Alex separately chooses September 7 at 19:00 as a personal planning time for the pickup survey.", "Process the museum reminder and replay the survey source."],
+      "independent_expectations": ["The named museum-consent task retains parent completion and its evidence after the conditional reminder.", "Completion of museum consent cannot complete the pickup survey or the first arbitrary task in a list.", "The survey retains its September 11 at 12:00 school deadline separately from the parent's September 7 planning time.", "Old source replay does not erase the parent's planning choice or completion evidence.", "A fresh query distinguishes school requirements from parent actions and plans."],
+      "approval_dependencies": ["Canonical task/parent-state schema and approved two-way reconciliation semantics"]
+    },
+    {
+      "id": "S18",
+      "title": "A completely read informational day has zero actions",
+      "areas": ["semantic extraction", "tasks", "briefs"],
+      "source_refs": ["mail-news", "mail-empty-meaning"],
+      "given": ["The selected snapshot is completely read and contains only these sources and no applicable outstanding tasks in its approved scope."],
+      "independent_expectations": ["Preserve the astronomy information; the signoff may independently justify zero new substantive facts.", "Create no invented finite tasks from thanks, greetings or the explicit no-reply notice.", "A zero-action aggregate is justified against the complete snapshot rather than assumed by default.", "Advance to the brief boundary without trying to authorize a nonexistent task-provider action.", "Zero actions does not mean zero school information or automatically mean every source packet has zero Facts."]
+    },
+    {
+      "id": "S19",
+      "title": "Unknown task-app write and provider-equivalent empty readback",
+      "areas": ["task synchronization", "recovery", "adapter boundary"],
+      "source_refs": ["mail-finite-response"],
+      "given": ["The fictional parent selected Task Board A for this operation and the pickup survey is a verified canonical task.", "A create request was dispatched; its response is unavailable.", "Later native readback either provides supported matching evidence, exposes a conflicting task, or remains inaccessible."],
+      "readback_variants": ["An optional blank note is omitted.", "An optional blank note is null.", "An optional blank note is an empty string.", "A populated due value contradicts a duplicated due value in the connector envelope."],
+      "independent_expectations": ["Retain canonical task and parent state independently of the external app.", "Do not claim create success, failure or safe retry from the absent response.", "Use the explicitly approved reconciliation contract; when evidence is insufficient retain the unknown outcome and continue unrelated work.", "Normalize omitted/null/empty only where the approved provider contract establishes equivalence; do not use a write-request echo as provider-readback proof.", "Reject conflicting duplicate values and unknown surplus at the adapter boundary without promoting transport metadata to canonical facts.", "No specific external field layout, matching key or effect engine is chosen by this scenario."],
+      "approval_dependencies": ["Task adapter contract, native readback scope, durable unknown-effect/reconciliation behavior"]
+    },
+    {
+      "id": "S20",
+      "title": "Daily brief recency, delivery uncertainty and historical attribution",
+      "areas": ["briefs", "delivery", "attribution"],
+      "source_refs": ["mail-trip-correction", "mail-trip-reminder", "mail-news"],
+      "given": ["A fictional registered daily job runs as Agent Pine through Scheduler Meadow and sends using School Updates <updates@example.org>.", "Canonical knowledge contains the museum correction, old trip facts and current parent completion.", "The selected recent-update scope is explicit and a historical image gap remains open."],
+      "events": ["Compose the authorized brief from relevant canonical knowledge and tasks.", "In the unknown-response branch, a send response is lost; later inspection is either sufficient or unavailable.", "After that run, the default sending account changes to recap@example.org."],
+      "independent_expectations": ["The brief reflects the corrected date, current consent status and selected recent updates with source support; it does not promote quoted old facts or all history into new updates.", "Disclose any relevant unread gap without claiming it was processed.", "Keep the actual run/job/generating agent/sending service-account/delivery reference attributable in the approved durable records.", "A later default sender change does not rewrite the historical output's sender or rebind its existing job.", "A lost send response remains unknown until supported reconciliation evidence exists; do not blindly send again or claim delivery from composition alone."],
+      "approval_dependencies": ["Brief recency/configuration contract, delivery/recovery contract and run/output schema"]
+    },
+    {
+      "id": "S21",
+      "title": "Optional audio depends on observed support",
+      "areas": ["audio", "capabilities", "briefs", "attribution"],
+      "given": ["The fictional parent has selected an optional audio recap.", "Branch A has a capable authorized audio service; branch B lacks generation or artifact delivery; branch C loses the generation response."],
+      "independent_expectations": ["Use the same accepted canonical facts/tasks and current correction semantics as the selected brief scope.", "Record generating agent/service and supported artifact or delivery attribution when evidence exists.", "State audio unavailability or unresolved outcome when capability/effect evidence is missing; text knowledge queries remain usable.", "Do not infer an audio artifact exists from a request, configuration record or fictional fixture.", "Actual audio content, pronunciation and audibility require an authorized native-artifact trial."],
+      "approval_dependencies": ["Audio adapter, supported degradation and output/recovery contract"]
+    },
+    {
+      "id": "S22",
+      "title": "A fresh second agent queries and resumes without predecessor state",
+      "areas": ["queries", "agent replacement", "recovery", "registry"],
+      "given": ["Only the approved Drive entry point is supplied to a fresh capable Agent Birch.", "No predecessor conversation, local files, pagination token or permanent provider handle is available.", "Known facts and jobs are persisted; the club timetable remains unread in the first branch."],
+      "questions": [
+        {"question": "Where and when do I collect Robin after robotics?", "before_read": "The timetable is unread/unavailable, so no robotics time or collection place may be asserted.", "after_supported_read": "September 12, 17:00, east entrance, linked to the processed club timetable."},
+        {"question": "What is the current museum consent deadline, and have I done it?", "expected": "September 10 at 17:00 school time; Alex recorded consent returned September 5 at 18:00, with separate school and parent provenance."},
+        {"question": "What are the known jobs, who runs them, and where are they managed?", "expected": "Report the durable known register, job bindings, observed status and verification time; disclose freshness/access limits."},
+        {"question": "Who sent the earlier daily brief?", "expected": "Use the stored output's job/generator/sender attribution, not today's defaults."}
+      ],
+      "events": ["Answer using bounded relevant records.", "Resume the recorded unfinished window and later process an individually dated reply through a supported replacement adapter."],
+      "independent_expectations": ["Keep School-OS record references and known job bindings unchanged.", "Do not claim knowledge from a hidden oracle, unread source or predecessor memory.", "The agent can make supported progress without loading the whole history.", "Multiple agents may be registered; this sequence does not authorize concurrent same-data writes."]
+    },
+    {
+      "id": "S23",
+      "title": "Growing history does not make startup or work unbounded",
+      "areas": ["bounded storage", "efficiency", "portability"],
+      "given": ["The conceptual history has many school years; the selected operation concerns a small date/school scope.", "The later authorized trial will set explicit read, transfer, processing and elapsed-work budgets."],
+      "events": ["Start a routine operation and a targeted handbook query.", "Exhaust a chosen work budget with one source and one discovery window unfinished."],
+      "independent_expectations": ["Read only the relevant approved indexes/instructions/records in manageable units.", "Do not require all history, a whole oversized source, a permanent daemon or a coding CLI in the agent's environment.", "Leave bounded resumable unfinished work on Drive and stop within the authorized budget.", "Measure actual calls, bytes, tokens and elapsed work during authorized trials; no declared fixture quantity counts as observed capacity."],
+      "approval_dependencies": ["Approved physical layout, bounded lookup contract and any runtime limit policy"]
+    },
+    {
+      "id": "S24",
+      "title": "A supplied upgrade preserves private data and compatible extensions",
+      "areas": ["package updates", "extensions", "configuration"],
+      "given": ["A fictional installed release contains processed knowledge, parent task state, configured adapters and unfinished work.", "The parent added a compatible term-cost-view application and a conformant alternate task adapter using the canonical layer.", "A user-supplied newer package is available; a separate branch contains an incompatible change whose treatment is not already approved."],
+      "events": ["Inspect package compatibility and apply only the approved update procedure.", "Resume from the instance after the update or a budget interruption."],
+      "independent_expectations": ["Preserve private data, configuration, parent state, unfinished work and compatible custom additions.", "Keep a pinned installed version and do not make routine operation depend on a live GitHub branch.", "The custom application consumes accepted canonical knowledge rather than maintaining an incompatible parallel truth source.", "Surface an incompatible change for approval before adoption; do not overwrite the existing instance or silently discard extensions.", "A version string in a fixture is not proof of installation, migration or compatibility."],
+      "approval_dependencies": ["Package/install/update contract, compatibility criteria and interruption recovery mechanism"]
+    },
+    {
+      "id": "S25",
+      "title": "Known jobs retain bindings, desired/observed status and provenance",
+      "areas": ["registry", "schedules", "selected adapters", "attribution"],
+      "given": ["Daily catalog job: Agent Pine, Scheduler Meadow, school scope in mailbox-alex and mailbox-sam, configured daily trigger in America/Los_Angeles, Source Adapter A, Task Board A, email output.", "Weekly recap job: Agent Birch, Scheduler Ridge, canonical knowledge input, optional Audio Service B.", "A third backup recap is separately registered; any further number of jobs is allowed."],
+      "events": ["Record last observed enabled status and verification time for the first two schedules.", "Change the instance's default source adapter without editing those jobs.", "Record the parent's desired pause for the weekly job while external scheduler access is unavailable.", "In a separate branch, external schedule creation loses its response and later inspection is either sufficient or unavailable.", "Query the register from a reader that cannot access either scheduler."],
+      "independent_expectations": ["The register distinguishes available/configured adapters from each job's selected bindings.", "Changing a default does not silently rebind existing jobs or rewrite historical output attribution.", "Desired pause does not imply observed disabled status; retain the observation and its verification age.", "A register edit is not proof that an external schedule was created, changed or stopped.", "Report known jobs with management locations, purposes, agents, triggers/timezones, scopes, selected adapters and output destinations; do not claim to enumerate unregistered jobs.", "Unknown creation outcomes require approved reconciliation rather than duplicate creation.", "Credentials stay in their authorized credential store; no global active-agent restriction or concurrent-write machinery is introduced."],
+      "approval_dependencies": ["Register schema, scheduler contract, schedule creation/recovery procedure"]
+    },
+    {
+      "id": "S26",
+      "title": "Deleted originals retain known information and honest verification limits",
+      "areas": ["queries", "source custody", "provenance"],
+      "source_refs": ["mail-handbook", "mail-club"],
+      "events": ["After verified handbook processing, the source original becomes inaccessible.", "The club attachment becomes inaccessible before its contents were processed.", "Ask about absence reporting and robotics collection."],
+      "independent_expectations": ["Answer the known absence rule from preserved source-linked canonical knowledge while disclosing that new original verification is unavailable.", "Retain source references and the handbook's term/class applicability; do not erase accepted knowledge.", "Report the club gap and do not reconstruct its unread details from the source-card oracle.", "Do not create a raw-source archive or promise preservation of deleted originals as a repair."]
+    },
+    {
+      "id": "S27",
+      "title": "Independent semantic oracles cannot validate another packet",
+      "areas": ["semantic extraction", "testing integrity", "tasks"],
+      "source_refs": ["mail-empty-meaning", "mail-finite-response", "mail-trip", "mail-trip-correction"],
+      "given": ["A future authorized trial has independently bound a zero-Fact expectation to the exact signoff packet.", "Another independently bound packet contains the pickup survey's finite yes-or-no response requirement.", "The assembled inventory also includes the original museum request and its explicit correction."],
+      "events": ["Attempt to apply the signoff expectation to the survey packet.", "Attempt an expectation binding with changed ordered content segments.", "Compare the final assembled inventory to the independently bound sources, including action disposition."],
+      "independent_expectations": ["Reject both cross-packet and changed-content expectation reuse.", "Retain the survey's response deadline and action requirement even though the answer may be no.", "Preserve the corrected museum requirement without treating quoted old deadlines as separate current actions.", "Per-packet audit success cannot self-certify an aggregate derived from the same generated output.", "Explain any zero-action aggregate from complete source expectations; do not reuse an empty candidate list as a default."],
+      "binding_status": "NOT PREPARED FOR EXECUTION: no exact runtime packet, ordered-segment binding or hash has been generated.",
+      "approval_dependencies": ["Any new runtime packet/semantic contract; existing developer evidence discipline remains applicable without importing the retired engine."]
+    },
+    {
+      "id": "S28",
+      "title": "A connector failure is diagnosed from complete private evidence",
+      "areas": ["adapter contracts", "privacy", "failure diagnosis"],
+      "given": ["A future authorized connector trial may fail at local validation, dispatch, transport/no response, provider error response or normalization.", "One fictional error has no upstream status or reason; another normalized-view proposal conflicts with duplicated declared values."],
+      "independent_expectations": ["Preserve the complete raw result or exception before normalization in an admitted ignored private mode-0600 development receipt when the existing developer discipline applies.", "Keep provider IDs, URLs, content, request arguments and unsanitized errors out of Git, patches, terminal output and chat.", "Classify only the evidence-supported boundary and record missing status/reason as absent; a generic error is not evidence of rate limiting, authorization failure, timeout or success.", "Inspect the full nesting/key/type/duplicate topology before a repair and derive a privacy-safe synthetic fixture covering relevant envelope fields.", "Require declared duplicates to agree, validate recognized finite transport annotations, and reject conflicts or unknown surplus; display metadata is not canonical content.", "A future repair's exact private replay and focused tests remain subject to the user's testing authorization.", "Developer receipts must not become a parent instance's critical recovery dependency."],
+      "receipt_status": "No live call, private receipt, connector envelope or executable repair fixture was produced.",
+      "approval_dependencies": ["Any new adapter/envelope contract or failure-evidence mechanism beyond existing safeguards"]
+    },
+    {
+      "id": "S29",
+      "title": "Recurring required kit differs from an advisory bag guideline",
+      "areas": ["semantic extraction", "canonical tasks", "recurrence", "applicability"],
+      "source_refs": ["mail-weekly-kit"],
+      "given": ["The configured fictional child Robin is in Cedar class.", "The source explicitly makes swimming kit and a towel required on a recurring schedule, while recommending a lightweight bag without making its weight or color compulsory."],
+      "events": ["Process the source and ask what Robin needs for the next applicable swimming day.", "Ask separately about October 29 and a date after December 10.", "Record that the parent supplied kit for one applicable Wednesday, then ask about the next one."],
+      "independent_expectations": ["Preserve the required kit and towel, Cedar applicability, Wednesday recurrence, 08:45 school-time due point, inclusive September 10–December 10 bounds and October 29 exception.", "Retain the recurring requirement as action-relevant; the absence of a one-time reply deadline does not make it merely informational.", "Do not require kit on October 29 or extend the supplied term rule beyond December 10 without new evidence.", "Preserve the lightweight-bag recommendation and no-color restriction as guidelines without inventing a recurring bag-purchase or color-selection obligation.", "One Wednesday's parent completion does not establish that every later applicable occurrence has been completed.", "Use the approved task recurrence and parent-state contract; these expected semantic outcomes do not choose one task with recurrence versus separate occurrences or a materialization horizon."],
+      "approval_dependencies": ["Canonical representation of recurrence/applicability/exceptions, bounded task occurrence generation if any, parent completion semantics for occurrences, and task-app recurrence projection"]
+    }
+  ]
+}

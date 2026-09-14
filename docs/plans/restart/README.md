@@ -5,6 +5,15 @@ documented; a production replacement and cross-agent handoff are not yet
 implemented or qualified. Earlier experiments and the retired runtime are
 evidence, not an instruction to rebuild their architecture.
 
+The coordinator is now working on `codex/restart-school-os`. The
+[whole-project coverage map](implementation/COVERAGE.md) is complete;
+[architecture decisions D1–D8](implementation/ARCHITECTURE-PROPOSAL.md) await
+explicit approval. [Fictional scenarios and proposed tests](implementation/TESTING-PROPOSAL.md)
+are preparation only. This is an architecture checkpoint, not the whole-code
+handoff or the start of testing.
+The [new isolated development model](identity/revised-model/README.md) and its
+fictional checks are also authored but unexecuted; frozen studies stay unchanged.
+
 The [product principles](../../product-principles.md#decision-authority) are the
 source of truth and grounding for uncovered decisions. Every new or changed
 architecture decision requires explicit user approval before adoption or

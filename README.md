@@ -1,5 +1,13 @@
 # School-OS
 
+**Restart in progress.** Follow [START-HERE.md](START-HERE.md), the current
+[product principles](docs/product-principles.md) and
+[restart plan](docs/plans/restart/PLAN.md). The implementation and operational
+claims below describe the retired baseline, preserved by tag
+`restart-baseline-2026-09-14`; they are historical evidence, not instructions to
+install or run the restart. The new production architecture awaits the explicit
+approvals recorded in the active plan. No restart qualification is claimed.
+
 School-OS is a reusable, agent-operated system for turning school or family communications into a private, source-linked knowledge base, task register, and daily brief.
 
 The canonical knowledge layer is the foundation of the product. Daily email, task synchronization, and optional audio briefs are applications built on it, and users can add other applications and workflows without replacing the underlying source-linked data. See [Product principles](docs/product-principles.md) for the intended users, use cases, and design priorities.

@@ -4682,3 +4682,80 @@ requirements, then read this log from top to bottom.
 - Publication checks: tracked-file privacy, local document links and diff checks
   pass for the six changed documents. Commit and publish only this documentation
   correction on the existing recovery branch, then verify the remote revision.
+
+## 2026-09-14 — restart coordinator preparation and architecture checkpoint
+
+- Resumed in the existing repository directory. Inspected `START-HERE.md`,
+  `AGENTS.md`, product principles, current/root plans, latest progress, the
+  current metadata recipe, corrected live-study README/protocol, lifecycle
+  simulation, actual branch/tree/history and publication hooks/CI. The tree was
+  clean at `39d752c364a1cf404e5a6fc5739148b7d35a6b35` on
+  `codex/mvp-recovery`, matching its remote-tracking revision.
+- Created dedicated branch `codex/restart-school-os` and annotated baseline tag
+  `restart-baseline-2026-09-14` at that exact commit before any legacy cleanup.
+  The old runtime remains physically present and explicitly retired as the new
+  foundation; no production replacement or private-instance migration is claimed.
+- Used three bounded workers for read-only scope review, read-only legacy and
+  publication review, and fictional scenario preparation. The coordinator owns
+  integration and all Git mutations. Workers share the architecture-approval and
+  no-testing boundaries. The scope reviewer subsequently prepared only a new,
+  isolated development model of the current metadata procedure.
+- Added `docs/plans/restart/implementation/COVERAGE.md`, mapping all nine design
+  priorities, seven core use cases, other mandatory principle sections and ten
+  whole-project delivery areas to existing design, deliverables and approval
+  dependencies. No required project area is removed or silently deferred.
+- Added `ARCHITECTURE-PROPOSAL.md` in that directory, revision 2 after independent
+  document review. D1–D8 recommend physical Drive layout, records/write recovery,
+  execution/adapters, precise ingestion/coverage, knowledge/tasks, outputs/effects,
+  tools/schedules and packaged upgrades. Each includes alternatives, tradeoffs
+  and unknowns. All eight remain **pending explicit user approval**. The user
+  was asked to approve all or selected decisions, or request revisions; no
+  dependent production architecture has been adopted or implemented.
+- Document review made lost-first-write discovery, pending verification during
+  partial updates, UTC-month routing, replay progress limits, recurring required
+  actions, developer-only raw receipt custody and the future nonempty CI entry
+  point explicit in the proposal. Private receipt and packet-expectation hashes
+  remain developer evidence, never canonical source identity. This review is
+  not a functional test or qualification result.
+- Prepared `implementation/TESTING-PROPOSAL.md` and
+  `implementation/fixtures/scenarios.json`: 12 wholly fictional source cards and
+  29 scenarios spanning the complete lifecycle, with independent logical and
+  semantic expectations. They are scenario data, not canonical schemas or
+  adapter contracts. Proposed testing stages remain for the user to direct.
+- Prepared `identity/revised-model/README.md`, `model.py` and `test_model.py`
+  under the restart plan. The standalone in-memory examples cover normalized
+  logical-email reuse, contradictory evidence, individual replies, attachment
+  groups with separate read coverage and abstract window continuation/replay.
+  Independent fictional story labels expose residual indistinguishability.
+  Its exact-zoned-Date fixture domain is explicitly limited and does not adopt
+  D4's production threshold. No Drive storage, full-catalog recovery, installed
+  adapter or production schema is implemented by this development model.
+  Code and checks are authored only; no execution or passing result is claimed.
+- Identified retired instruction conflicts: raw-source archival, MIME/content
+  identity, immutable generation machinery, exact provider-reference dependence,
+  conditional-write coordination and automatic validation/pilot sequencing.
+  Preserved applicable privacy and continuity safeguards, frozen studies and
+  original results. Root README now marks its implementation claims historical.
+- Publication inspection found no configured custom hooks and only inactive
+  samples. The tracked workflow tests pull requests, pushes to `main` and manual
+  dispatch. Its validator also builds/verifies packages. None is run. A read-only
+  remote check found no open PR for the restart branch and no repository
+  rulesets. The intended branch/tag were absent remotely before publication.
+  Publish the preparation only to this dedicated branch and preservation tag;
+  do not create a PR, dispatch CI or silently disable checks.
+- This is an architecture/preparation checkpoint, **not the whole-project code
+  handoff**. Production T1–T10 work remains pending. Exact next action: obtain
+  the user's explicit D1–D8 decisions, record them in the active plan, implement
+  all approved deliverables and prepare their tests, then commit/push/verify the
+  whole implementation and stop for the user's subsequent testing direction.
+  No tests, simulations, model replays, smoke runs, package builds, connector
+  probes, ingestion, scheduled jobs, deliveries or managed-agent pilots have
+  been executed in this session.
+- Publication hygiene for this preparation: tracked-file privacy scan has zero
+  findings; all 87 local file-link targets in the nine changed/new Markdown
+  documents exist; staged diff whitespace checks pass. Frozen study/model/result
+  trees and the CI workflow have no changes from the baseline. Hooks remain
+  unconfigured apart from inactive samples. These are publication checks only,
+  not functional validation. Commit the twelve in-scope files, push this branch
+  and the baseline tag, and verify both remote targets before reporting the
+  preparation checkpoint published.

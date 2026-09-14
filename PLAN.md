@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: the restart plan incorporates the approved logical-email identity, normalization, parent-bound attachment and resumable enumeration decisions; implementation and managed-agent qualification remain pending
+Status: restart preparation is active on `codex/restart-school-os`; whole-project requirements are mapped and concrete architecture decisions D1–D8 await explicit approval. Production implementation and managed-agent qualification remain pending.
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 Decision authority: [product principles](docs/product-principles.md#decision-authority)
@@ -15,6 +15,18 @@ Publication hygiene remains required. Use the updated
 [Astra coordinator prompt](docs/plans/restart/ASTRA-HANDOFF.md).
 
 ## Current restart work
+
+The current coordinator has inspected the clean baseline, created the dedicated
+restart branch and preserved baseline commit
+`39d752c364a1cf404e5a6fc5739148b7d35a6b35` with annotated tag
+`restart-baseline-2026-09-14` before cleanup. See the
+[coverage map](docs/plans/restart/implementation/COVERAGE.md) and
+[pending architecture proposal](docs/plans/restart/implementation/ARCHITECTURE-PROPOSAL.md).
+The active restart plan records the approval ledger. Prepared fictional fixtures,
+test proposals and a separate development model do not establish production
+implementation or test results. Exact next action is explicit architecture
+approval, followed by the full approved implementation and publication handoff;
+testing remains reserved to the user.
 
 Follow [the restart architecture and simulation plan](docs/plans/restart/PLAN.md)
 and the updated [product principles](docs/product-principles.md). The user has
@@ -43,8 +55,9 @@ The work completed so far is research, design/documentation and historical
 experiments, not a claim that the existing runtime implements the new
 architecture. Prior authorization for the completed bounded read-only Gmail
 probe does not authorize repeating it in the next implementation phase. This
-prompt update performs no implementation, private-instance migration, live
-ingestion, schedule or delivery operation.
+preparation checkpoint performs no private-instance migration, live ingestion,
+schedule or delivery operation. Dependent production coding awaits the recorded
+architecture approvals.
 The previous architecture may require an explicit future migration; its frozen
 release and clean-root qualification rules do not govern this design exercise.
 

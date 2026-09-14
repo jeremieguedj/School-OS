@@ -7,6 +7,48 @@ search-window recovery. Implementation and managed-agent qualification remain
 pending. The [artifact guide](README.md) separates current authority from frozen
 experiments and historical proposals.
 
+## Current coordinator checkpoint — architecture approval pending
+
+The 2026-09-14 implementation session remains in the existing repository directory
+on `codex/restart-school-os`. Its clean starting revision was
+`39d752c364a1cf404e5a6fc5739148b7d35a6b35`. The annotated preservation tag
+`restart-baseline-2026-09-14` targets that committed pre-cleanup baseline.
+The old runtime has not been adopted as the new foundation or removed yet.
+
+The [whole-project coverage map](implementation/COVERAGE.md) reconciles all nine
+design priorities, seven core use cases, other mandatory principle sections and
+ten implementation areas. Requirements are already established; the remaining
+blocker is approval of concrete architecture, not renewed product discovery.
+
+The [architecture proposal, revision 2](implementation/ARCHITECTURE-PROPOSAL.md)
+contains recommendations, alternatives, tradeoffs and unknowns. The coordinator
+has requested the user's decision. **None of D1–D8 is approved yet.** They must
+not be implemented as production architecture until explicit approval is recorded
+here. Approval of only some decisions releases only independent dependent work.
+
+| Decision | Proposal subject | Approval status |
+|---|---|---|
+| D1 | Physical Drive layout, bounded pages and directories | Pending |
+| D2 | Canonical records and verified write recovery | Pending |
+| D3 | Agent execution, optional helpers and supplied adapter routes | Pending |
+| D4 | Precise association threshold, discovery budgets and content coverage | Pending |
+| D5 | Knowledge relationships, recurring/finite tasks and parent synchronization | Pending |
+| D6 | Brief selection, audio artifacts and external-effect recovery | Pending |
+| D7 | Capabilities, known tools/jobs and scheduler management | Pending |
+| D8 | Packaged installation, compatibility, upgrades and retirement | Pending |
+
+Independent approved preparation includes fictional lifecycle scenarios, a
+[proposed testing sequence](implementation/TESTING-PROPOSAL.md), and a new
+[development-only metadata model](identity/revised-model/README.md) in a separate
+directory. Its code and fictional checks are authored, not executed. These are not a
+replacement runtime, canonical schema or managed-agent qualification. Every
+functional test, model run, simulation, build and live operation remains stopped.
+
+Exact next action: obtain and record explicit architecture decisions, then
+implement the full approved T1–T10 scope and prepare its tests. Publish the whole
+implementation, verify the remote commit and stop for the user's testing direction.
+Publishing this preparation checkpoint alone does not satisfy that code handoff.
+
 ## Decision authority and user checkpoints
 
 The [product principles](../../product-principles.md#decision-authority) are the
@@ -144,16 +186,18 @@ report before interpreting `wrong_association` or the earlier pass/failure total
 
 - [x] Reconcile product principles, current recipe, test interpretation and
   artifact authority with the approved decisions.
-- [ ] Reconcile the whole-project delivery checklist above against every product
+- [x] Reconcile the whole-project delivery checklist above against every product
   principle and core use case, retaining existing approvals and identifying
   precise unresolved architecture choices for the user.
-- [ ] Update a small development model in a new revision, preserving the frozen
+- [x] Prepare a [small development model in a new revision](identity/revised-model/README.md), preserving the frozen
   study. Cover repeated observations of one logical email, contradictory source
   metadata, normalizable subjects/addresses, each reply's own Date, same-parent
   attachment groups and interrupted window replay. Supply independent logical
   labels for fictional cases; leave unknown live logical relationships ungraded
   rather than assuming provider-entry differences are product errors. Report
   residual indistinguishability honestly without adding content-based identity.
+  Code/checks are authored only; no model or test execution occurred. Its limited
+  Date fixture domain does not approve the production threshold in D4.
 - [ ] Implement the whole-project delivery scope above under the approved
   architecture. Obtain approval for unresolved architectural choices before
   their dependent code; do not silently decide the Drive file/table layout.
