@@ -4561,3 +4561,54 @@ requirements, then read this log from top to bottom.
   permission/ignore checks and diff validation pass. Publish only the accepted
   public files through the existing recovery branch; verify its remote revision
   before handoff.
+
+## 2026-09-14 — approved logical-email plan and corrected evidence interpretation
+
+- The user approved the point-by-point corrections and requested updating the
+  plan and summarizing its artifacts. Reconciled `docs/product-principles.md`,
+  root `PLAN.md`, `docs/plans/restart/PLAN.md` and the metadata recipe. School-OS
+  reuses logical-email records on sufficiently supported normalized metadata
+  agreement without contradictory evidence. A different provider handle alone
+  neither proves a different logical email nor requires another canonical record.
+  The residual indistinguishability risk remains explicit; no content or provider
+  identity fallback is introduced and existing catalog records are not silently
+  destructively merged.
+- Corrected the live-study report and protocol throughout. The original
+  `wrong_association` scoring uses distinct Gmail entries as its reference; the
+  observed 92-entry/91-record replay did not establish distinct logical-email or
+  school-information loss. All unmodified-live mismatches concern the same pair.
+  Repeated filenames were within parent emails and may include representations
+  of one file; timestamp changes were not observed. Thread grouping disagreements
+  do not determine ingestion correctness. The earlier progress entry preserves
+  its original interpretation and is superseded by this correction.
+- The current recipe now specifies address presentation/domain normalization,
+  preserved local-part spelling and recipient roles, decoded/unfolded subjects
+  with outer whitespace trimmed, each individual message/reply's original Date,
+  and parent-email-plus-original-filename attachment candidate groups. Source
+  association, content processing and attachment coverage remain separate.
+- Added durable enumeration choices: bounded windows, all available continuation
+  pages even after short pages, completed/unfinished windows and scope on Drive,
+  and replay of an unfinished window when a pagination token is unavailable.
+  Incomplete or silently capped listing routes cannot claim complete coverage.
+- Added `docs/plans/restart/README.md` as the current artifact guide, with reading
+  order, authority, evidence and limitations. Marked `docs/architecture.md` as
+  retired implementation reference; updated the older lifecycle simulation and
+  identity research entry points to direct readers to the current plan/recipe.
+- The work plan proceeds through one small revised development model, a bounded
+  managed-agent/Drive historical-to-daily slice, interruption recovery, registered
+  daily scheduling and a fresh session in a second managed agent. Exact Drive
+  layout is chosen from the pilot, with measured operational cost. Any number
+  of agents/jobs remains allowed; concurrent same-data writes and a dedicated
+  personal CLI remain outside the target architecture.
+- Original executable experiments, JSON results, private data and code/data
+  bindings remain unchanged. The frozen metadata evaluator does not implement
+  every newly approved rule, including subject trimming and durable-window
+  recovery. No new live source read, private-instance write, runtime change,
+  migration, schedule, delivery or release occurred.
+- Validation: independent consistency review, document links, tracked/new-file
+  privacy scan and diff checks pass. All 25 tracked experiment Python/JSON files
+  are unchanged, and saved model/evaluator SHA-256 bindings still match. Commit
+  only the accepted documentation and verify the published recovery branch
+  revision. Next implementation action is the small revised model and
+  meaningful logical-email tests recorded in the restart plan; it is not started
+  by this documentation update.

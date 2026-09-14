@@ -15,7 +15,11 @@ The user explicitly removed body, HTML, image, attachment-byte and fingerprint
 inspection from identity and thread matching. Content is still read to extract
 school information, with separate processing coverage. The content-assisted
 proposal below is historical and superseded, including its proposed MIME repair.
-The new metadata-only decision model has not yet been implemented or qualified.
+The [live metadata study](metadata-stress/README.md) evaluated a development
+baseline. Its provider-entry scoring does not establish loss of distinct school
+information. The approved logical-email and normalization revisions are defined
+in the current recipe; the frozen evaluator does not yet implement them, and
+managed-agent qualification remains pending.
 
 **Historical qualification evidence:** the
 [raw-MIME evaluation](mime-evaluation/README.md) found false splits, an incorrect

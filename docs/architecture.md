@@ -1,5 +1,11 @@
 # Architecture
 
+Status: reference architecture for the retired implementation. The current
+restart direction and artifact authority are in the
+[restart guide](plans/restart/README.md), [restart plan](plans/restart/PLAN.md)
+and [product principles](product-principles.md). The layout and implementation
+details below are not an acceptance gate or a prescribed layout for the restart.
+
 ## Separation boundary
 
 School-OS has two layers.

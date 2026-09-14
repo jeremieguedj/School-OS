@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: the previous implementation is retired as the restart foundation; the live metadata stress test is complete and exposed unresolved collision and attachment-selection risks
+Status: the restart plan incorporates the approved logical-email identity, normalization, parent-bound attachment and resumable enumeration decisions; implementation and managed-agent qualification remain pending
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 ## Current restart work
@@ -14,11 +14,15 @@ or coding CLI may be required by the architecture.
 The latest user direction removes content inspection from email identity and
 thread association. Follow the [metadata-only recipe](docs/plans/restart/identity/METADATA-RECIPE.md);
 content extraction remains a separate processing operation.
-The [live stress-test findings](docs/plans/restart/identity/metadata-stress/README.md)
-cover 632 observed Gmail entries and individual header reads for 92. A real
-metadata collision defeats singleton reuse during daily ingestion and restart;
-the current design is not qualified for automatic deduplication. Resolve visible
-candidate multiplicity and the acceptable uncertainty policy before implementation.
+The [artifact guide](docs/plans/restart/README.md) identifies the current design
+documents and historical experiments. The corrected
+[live stress-test findings](docs/plans/restart/identity/metadata-stress/README.md)
+cover 632 observed Gmail entries and individual header reads for 92. The one
+matching pair may represent the same logical email; different provider entries
+do not prove lost school information or require different School-OS records.
+The plan now specifies routine normalization, attachment lookup under the
+parent email, each reply's own source Date, and Drive checkpoints of completed
+and unfinished search windows. No provider token is required to resume a window.
 
 This work is research, design/documentation and synthetic simulation, not a
 claim that the existing runtime implements the new architecture. The latest

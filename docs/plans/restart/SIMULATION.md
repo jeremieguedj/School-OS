@@ -1,11 +1,12 @@
 # School-OS architecture simulation
 
-**Identity follow-up:** the provider-derived source key tested in this original
-simulation is superseded by the [message-identity research and design](identity/REPORT.md).
-That report includes a read-only Gmail probe and a separate 38-case experiment
-with School-OS-owned record IDs. The original lifecycle model and its 96
-assertions below remain historical evidence and have not been requalified as
-an implementation of the new identity boundary.
+**Status: historical lifecycle simulation.** The provider-derived source key
+tested here is superseded by the current
+[logical-email metadata recipe](identity/METADATA-RECIPE.md). Start with the
+[restart plan](PLAN.md) and [artifact guide](README.md). The message-identity
+research and its content-assisted experiments are historical as well. This
+original lifecycle model and its 96 assertions remain useful scenario evidence
+and have not been requalified under the approved identity and normalization rules.
 
 Keeping original material in its source system is the right default for
 School-OS. It removes duplicate archival storage and transfer from everyday
