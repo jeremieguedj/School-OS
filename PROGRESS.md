@@ -4818,3 +4818,39 @@ requirements, then read this log from top to bottom.
   anchors in the changed current documents resolve, and diff whitespace checks
   pass. Hooks remain inactive samples; CI triggers are unchanged and the restart
   branch has no open PR. These checks do not establish functional validation.
+
+## 2026-09-14 — Query coverage and incomplete answers approved
+
+- During D2 review, the user explicitly said "Okay, make it so" after the
+  recommendation to check processing coverage alongside verified knowledge and
+  either complete missing processing within authorized scope or answer with the
+  limitation. Recorded this specific approval in the active plan. It does not
+  approve the rest of D2 or D3–D8; D1 remains approved unchanged.
+- Architecture proposal revision 3 adds the approved query-coverage rule and
+  cross-references it from query behavior. Completed writes do not establish
+  discovery/content completeness. Unread material cannot be assumed irrelevant;
+  neither an empty result nor an unfinished coverage lookup supports exhaustive
+  lists, counts or absence claims. Coverage inspection and processing stay
+  bounded, and a useful source-linked answer may disclose the remaining gap.
+- Corrected the conversational implication that every user question would clear
+  the pending-work backlog. The accepted rule applies to answering with known
+  coverage; exact daily/import/resume recovery triggers and ordering remain
+  separate pending operation-recipe choices.
+- Updated root/restart continuity, coverage mapping and the HTML guide. One
+  bounded worker owned only the prepared testing proposal and fictional fixture
+  inventory: S30 covers a hidden unread email with tomorrow's required action;
+  S31 covers incomplete bounded coverage lookup without inventing hidden gaps.
+  The inventory now has 13 source cards and 31 scenarios. The coordinator owns
+  integration, publication and the existing private guide.
+- No tests, simulations, model replays, builds, probes, ingestion, schedules or
+  live School-OS effects were executed. Fictional cases are authored only;
+  production code and remaining architecture dependencies are still pending.
+- Exact next action: obtain explicit decisions for remaining D2 and D3–D8,
+  implement all approved T1–T10 deliverables, publish/verify the complete new
+  project, and stop for the user's testing direction. This approval/document
+  publication is not the completed whole-project implementation handoff.
+- Publication hygiene: privacy scan found no issues; all 112 local document
+  links/section anchors resolve and diff whitespace checks pass. Hooks remain
+  inactive samples, CI triggers are unchanged, and the restart branch has no
+  open PR. Frozen evidence and the retired implementation have no changes in
+  this unit. These checks are publication hygiene, not functional validation.

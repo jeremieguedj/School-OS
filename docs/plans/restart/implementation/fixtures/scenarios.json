@@ -106,6 +106,13 @@
       "logical_label": "logical-weekly-swimming-kit",
       "metadata": {"mailbox": "mailbox-alex", "subject": "Cedar swimming kit each Wednesday", "sender": "PE office <pe@example.org>", "original_date": "01 Sep 2031 10:20:00 -0700", "date_meaning": "Original email Date", "date_precision": "second", "to": ["alex.vale@example.org"], "cc": [], "attachment_names": [], "attachment_inventory": "Original named attachments, complete"},
       "body_surrogate": "For Cedar class, swimming kit and a towel are required at morning drop-off, 08:45 school time, every Wednesday from September 10 through December 10 inclusive. There is no swimming on October 29, so no kit is needed that day. A lightweight bag is recommended for comfort; no particular bag color is required."
+    },
+    {
+      "label": "mail-tomorrow-unread",
+      "logical_label": "logical-practice-trip-contact",
+      "metadata": {"mailbox": "mailbox-alex", "subject": "Cedar update", "sender": "School office <office@example.org>", "original_date": "06 Sep 2031 15:45:00 -0700", "date_meaning": "Original email Date", "date_precision": "second", "to": ["alex.vale@example.org"], "cc": [], "attachment_names": [], "attachment_inventory": "Original named attachments, complete"},
+      "body_surrogate": "For Cedar's practice trip tomorrow, September 7, please reply to the office with a phone number where Robin's parent can be reached. Reply by 08:30 school time on September 7. A reply is required even if the contact number is unchanged.",
+      "fixture_access_note": "This content is deliberately hidden from the answering agent until the scenario explicitly supplies an authorized processing read. Its neutral subject does not prove it irrelevant to a tomorrow-task query."
     }
   ],
   "scenarios": [
@@ -403,6 +410,28 @@
       "events": ["Process the source and ask what Robin needs for the next applicable swimming day.", "Ask separately about October 29 and a date after December 10.", "Record that the parent supplied kit for one applicable Wednesday, then ask about the next one."],
       "independent_expectations": ["Preserve the required kit and towel, Cedar applicability, Wednesday recurrence, 08:45 school-time due point, inclusive September 10–December 10 bounds and October 29 exception.", "Retain the recurring requirement as action-relevant; the absence of a one-time reply deadline does not make it merely informational.", "Do not require kit on October 29 or extend the supplied term rule beyond December 10 without new evidence.", "Preserve the lightweight-bag recommendation and no-color restriction as guidelines without inventing a recurring bag-purchase or color-selection obligation.", "One Wednesday's parent completion does not establish that every later applicable occurrence has been completed.", "Use the approved task recurrence and parent-state contract; these expected semantic outcomes do not choose one task with recurrence versus separate occurrences or a materialization horizon."],
       "approval_dependencies": ["Canonical representation of recurrence/applicability/exceptions, bounded task occurrence generation if any, parent completion semantics for occurrences, and task-app recurrence projection"]
+    },
+    {
+      "id": "S30",
+      "title": "An unread email may contain tomorrow's required action",
+      "areas": ["queries", "discovery coverage", "processing coverage", "canonical tasks"],
+      "source_refs": ["mail-news", "mail-tomorrow-unread"],
+      "given": ["The query occurs on September 6, 2031 in America/Los_Angeles: What do I need to do for school tomorrow, September 7?", "Verified processed knowledge contains the informational library notice and no known September 7 action.", "Discovery coverage exposes mail-tomorrow-unread within the configured school scope, but its body has not been processed. The answering agent can see its neutral subject and unread status, not its source-card content."],
+      "events": ["Read verified knowledge and the relevant discovery/processing coverage before answering.", "In branch A, authorization or the available budget does not permit completing the missing processing.", "In branch B, the existing authorized scope, capabilities and budget permit processing that email, persisting its substantive information and checking the remaining query-scope coverage."],
+      "independent_expectations": ["Do not conclude there are no school tasks tomorrow from the empty known-task result.", "Do not assume the unread email is irrelevant from its neutral subject or its absence from the knowledge query hits.", "In branch A, explain that no September 7 action is currently verified in the processed knowledge and that the unread school email prevents a complete answer; do not reveal the hidden contact request as known.", "In branch B, after verified authorized processing, identify the required phone-number reply to the school office by 08:30 school time on September 7, including that a reply is required even when the number is unchanged, with source provenance.", "An exhaustive answer in branch B additionally requires established discovery and processing completeness for the declared query scope; processing this single email alone does not establish that.", "Do not exceed authorized scope/budgets, send the reply, or perform another external effect merely to answer the query."],
+      "approval_basis": "The user explicitly approved checking discovery/processing coverage alongside knowledge, bounded authorized completion of missing processing, and limited answers when coverage is incomplete.",
+      "approval_dependencies": ["The accepted query rule does not approve remaining canonical schema, persistence, adapter or lookup mechanisms; the remainder of D2 and D3–D8 stays pending."]
+    },
+    {
+      "id": "S31",
+      "title": "A bounded coverage lookup cannot establish query completeness",
+      "areas": ["queries", "bounded storage access", "discovery coverage", "processing coverage"],
+      "source_refs": ["mail-trip-correction", "mail-finite-response", "mail-tomorrow-unread"],
+      "given": ["A fresh capable agent is asked on September 6, 2031: List all remaining school actions due September 7; if there are none, say so.", "The bounded verified-knowledge read returns museum consent due September 10 and the pickup survey due September 11, and no September 7 action.", "The approved bounded coverage access route reaches its authorized budget before it can establish discovery and processing completeness for the question's scope. The returned portion has no known gaps, but additional relevant coverage remains unexamined.", "The independent fixture includes the unprocessed contact-request email; its presence/content is not exposed to the answering agent by the unfinished coverage lookup."],
+      "events": ["Inspect the returned knowledge and coverage without extending the budget.", "Answer at that boundary, retaining only the knowledge and coverage claims actually established.", "A later separately authorized continuation may finish the bounded lookup and supported processing, after which the answer must be reassessed from the resulting evidence."],
+      "independent_expectations": ["An absence of gaps in the retrieved portion is not proof that the complete applicable coverage has no gaps.", "An empty September 7 task result does not justify saying no actions are due, no relevant emails exist, or the returned list is exhaustive.", "State that the bounded lookup could not establish complete discovery/processing coverage, so the answer is limited to verified knowledge examined so far.", "Do not invent the hidden email, its action or its exact count to explain the limitation; distinguish unknown completeness from an actually observed unread item.", "Stop within the authorized budget and leave or report the remaining coverage work through the approved procedure; do not require an unbounded history scan.", "After a later authorized continuation, claim completeness only if the evidence for the declared scope establishes it, and otherwise preserve the limitation."],
+      "approval_basis": "The user explicitly approved limited answers when discovery/processing coverage cannot establish completeness, including bounded lookup limits.",
+      "approval_dependencies": ["No new completeness flag, coverage-index schema, lookup algorithm, budget value or continuation-persistence contract is adopted; D1 remains approved and the remainder of D2 and D3–D8 stays pending."]
     }
   ]
 }

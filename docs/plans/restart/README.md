@@ -7,8 +7,9 @@ evidence, not an instruction to rebuild their architecture.
 
 The coordinator is now working on `codex/restart-school-os`. The
 [whole-project coverage map](implementation/COVERAGE.md) is complete;
-[D1 is approved; D2–D8 remain pending](implementation/ARCHITECTURE-PROPOSAL.md)
-explicit approval. [Fictional scenarios and proposed tests](implementation/TESTING-PROPOSAL.md)
+[D1 and the query-coverage rule are approved](implementation/ARCHITECTURE-PROPOSAL.md);
+remaining D2 and D3–D8 await explicit approval.
+[Fictional scenarios and proposed tests](implementation/TESTING-PROPOSAL.md)
 are preparation only. This is an architecture checkpoint, not the whole-code
 handoff or the start of testing.
 The [new isolated development model](identity/revised-model/README.md) and its

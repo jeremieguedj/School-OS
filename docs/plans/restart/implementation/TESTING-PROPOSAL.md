@@ -16,8 +16,8 @@ and its [protocol](../identity/metadata-stress/PROTOCOL.md) remain unchanged.
 
 ## Prepared material and its limits
 
-[Fictional scenarios](fixtures/scenarios.json) contain 12 fictional source cards
-and 29 scenarios with independently authored
+[Fictional scenarios](fixtures/scenarios.json) contain 13 fictional source cards
+and 31 scenarios with independently authored
 logical labels, metadata observations, short source-content surrogates,
 substantive expectations and lifecycle events. All people, institutions,
 mailboxes, messages, outputs, agents and schedules are fictional. These are
@@ -72,8 +72,14 @@ individual packets.
   Preserve the earlier claim when a later source explicitly corrects it; do not
   infer an unapproved universal latest-timestamp-wins rule.
 - Grade a query by the evidence and parent state it actually reads, its answer,
-  its source links and the limits it discloses. Source deletion cannot erase
-  accepted knowledge or authorize invented missing details.
+  its source links and the discovery/processing coverage it checks alongside
+  verified knowledge. Under the explicitly approved query-coverage rule, unread
+  material cannot be assumed irrelevant to the question. Complete missing
+  processing only within authorized scope and budgets; otherwise answer with
+  the coverage limitation. Neither an empty knowledge result nor a bounded
+  coverage lookup that cannot establish completeness justifies an exhaustive
+  list or an absence claim. Source deletion cannot erase accepted knowledge or
+  authorize invented missing details.
 - Inspect every relevant durable write and readback in authorized recovery
   trials. A source-index readback does not prove that knowledge, tasks, coverage
   and unfinished work were persisted. A lost response or generic error does not
@@ -94,7 +100,7 @@ this table is a proposed testing map and does not mark implementation complete.
 | Installation, startup and capability discovery | S01 package/startup; S02 incomplete capability; S24 extension upgrade |
 | Canonical data, source custody and bounded access | S12 temporary content and readback; S13 interrupted persistence; S23 bounded history; S26 source unavailable |
 | Historical/daily ingestion, identities and coverage | S03–S11 metadata/replies/attachment groups/window recovery; S14 visual and large-content gaps; S15 substantive extraction |
-| Knowledge, queries and provenance | S15 facts and qualifications; S16 explicit corrections; S22 fresh-agent queries; S26 unavailable original; S27 semantic-oracle integrity |
+| Knowledge, queries and provenance | S15 facts and qualifications; S16 explicit corrections; S22 fresh-agent queries; S26 unavailable original; S27 semantic-oracle integrity; S30 unread task; S31 incomplete coverage lookup |
 | Canonical tasks, parent state and task-app sync | S16 correction; S17 parent state; S18 no-action work; S19 unknown task write; S29 recurring requirement |
 | Recent/daily email briefs and optional audio | S20 brief/delivery attribution; S21 capability-dependent audio |
 | Tools, selected adapters and schedules | S02 capability discovery; S20 historical sender; S25 known-job visibility and bindings |
@@ -104,17 +110,17 @@ this table is a proposed testing map and does not mark implementation complete.
 
 | Product principle or core use case | Proposed acceptance evidence |
 |---|---|
-| Losslessness and provenance | S12–S17, S22, S26–S27, S29: complete available substantive information, recurring requirements, source support and explicit remaining gaps |
+| Losslessness and provenance | S12–S17, S22, S26–S27, S29–S31: complete available substantive information, recurring requirements, source support and explicit remaining gaps |
 | Deterministic behavior | S03–S11, S13, S16–S19: explicit procedures, stable School-OS references and honest unknown outcomes |
 | Simplicity | S01–S02, S22–S25: one-household serial operations, replaceable adapters, no locks or mandatory local daemon |
-| Efficient execution | S10–S14, S23: bounded reads and temporary work, narrow startup, durable remaining work |
+| Efficient execution | S10–S14, S23, S30–S31: bounded reads and temporary work, narrow startup, durable remaining work, limited answers when completeness cannot be established |
 | Tool agnosticism | S03, S08–S09, S19, S21–S22, S25: connection changes preserve canonical meaning and job bindings |
 | Capability-led portability | S02, S14, S21–S23: capability evidence, supported degradation and fresh managed-agent operation |
 | Extensibility from canonical data | S24–S25: additional applications/jobs consume the same accepted knowledge and tasks |
 | Extensible and upgradable instances | S01, S24: supplied package, preserved private data/configuration and compatible extensions |
 | Independence from brittle technical details | S03–S13, S19, S22, S25: optional access handles and tokens never establish identity, completion or recovery |
 | Catalog substantive communications | S03–S16 and S27 |
-| Query any cataloged school information | S15–S17, S22 and S26 |
+| Query school information with discovery/processing coverage | S15–S17, S22, S26 and S30–S31 |
 | List known jobs and identify a brief's responsible job/sender | S20, S22 and S25 |
 | Reconcile actions and sync a selected task application | S16–S19 and S29 |
 | Produce recent email and optional audio briefs | S20–S21 |
@@ -141,10 +147,12 @@ mechanisms cannot be selected through a test harness or pilot.
    versus unknown fields, source Date semantics, a later reply and short pages.
    Report distinguishable results separately from the S05 information limit.
 3. **Direct substantive extraction and canonical recovery.** Exercise S12–S17,
-   S22–S23 and S26–S29 on wholly fictional material. Include actual visual/table
+   S22–S23 and S26–S31 on wholly fictional material. Include actual visual/table
    artifacts when authorized, budget interruptions before/after each relevant
    durable write, mismatched readback, and properly input-bound independent
    expectations. Inspect assembled action flags and zero-action progression.
+   Exercise task queries before and after authorized processing of an unread
+   email, and when bounded coverage lookup cannot establish completeness.
 4. **Direct one bounded managed-agent/Drive journey.** Use the approved layout
    and contracts to install a fictional instance, enumerate a small historical
    window, process a daily reply and preserve an unread attachment gap. Verify
@@ -171,10 +179,12 @@ mechanisms cannot be selected through a test harness or pilot.
 
 ## Approval dependencies and remaining unknowns
 
-The exact Drive file/table layout, canonical schemas and record relationships,
-persistence/recovery behavior, adapter contracts, runtime dependencies,
-scheduling design and upgrade compatibility mechanism need the approval status
-recorded in the active plan. These scenarios do not decide them. In particular:
+D1's Drive layout remains approved. The user has also explicitly approved the
+query-coverage rule represented by S30–S31; it does not approve the remainder of
+D2 or D3–D8. Canonical schemas and record relationships, persistence/recovery
+behavior, adapter contracts, runtime dependencies, scheduling design and upgrade
+compatibility mechanisms retain the approval status recorded in the active
+plan. These scenarios do not decide them. In particular:
 
 - Date precision, partial recipient and attachment inventory observations are
   supplied without inventing a generalized acceptance policy beyond the current
@@ -193,6 +203,10 @@ recorded in the active plan. These scenarios do not decide them. In particular:
 - Native attachment reading, complete enumeration, exact provider empty-value
   equivalence, actual permissions and operational cost require real evidence
   in an authorized phase. Fictional observations cannot qualify connectors.
+- Query coverage must be checked, but these cases do not choose a canonical
+  completeness flag, a physical coverage-index schema, a lookup algorithm or
+  authority to extend processing scope/budgets. A bounded lookup that cannot
+  establish completeness must produce a correspondingly limited answer.
 - Failure-evidence storage must honor the existing developer privacy boundary
   without making local receipts a parent-instance recovery dependency. Any new
   mechanism still requires architectural approval.

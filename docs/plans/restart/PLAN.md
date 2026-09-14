@@ -20,9 +20,10 @@ design priorities, seven core use cases, other mandatory principle sections and
 ten implementation areas. Requirements are already established; the remaining
 blocker is approval of concrete architecture, not renewed product discovery.
 
-The [architecture proposal, revision 2](implementation/ARCHITECTURE-PROPOSAL.md)
-contains recommendations, alternatives, tradeoffs and unknowns. **D1 is approved;
-D2–D8 remain pending.** On 2026-09-14 the user explicitly replied "D1 approved"
+The [architecture proposal, revision 3](implementation/ARCHITECTURE-PROPOSAL.md)
+contains recommendations, alternatives, tradeoffs and unknowns. **D1 and the
+D2 query-coverage rule are approved; remaining D2 and D3–D8 are pending.**
+On 2026-09-14 the user explicitly replied "D1 approved"
 after the explanation of multiple JSON pages and per-page capacity limits.
 Approval releases only work whose architecture dependencies are also approved.
 The [HTML decision guide](implementation/architecture-guide.html) provides a
@@ -32,7 +33,7 @@ ledger here remains authoritative.
 | Decision | Proposal subject | Approval status |
 |---|---|---|
 | D1 | Physical Drive layout, bounded pages and directories | Approved explicitly, 2026-09-14 |
-| D2 | Canonical records and verified write recovery | Pending |
+| D2 | Canonical records and verified write recovery | Query-coverage rule approved explicitly, 2026-09-14; remaining D2 pending |
 | D3 | Agent execution, optional helpers and supplied adapter routes | Pending |
 | D4 | Precise association threshold, discovery budgets and content coverage | Pending |
 | D5 | Knowledge relationships, recurring/finite tasks and parent synchronization | Pending |
@@ -51,6 +52,19 @@ cost remain constraints to qualify later. Exact record meanings, recovery,
 adapter contracts and the other D2–D8 mechanisms are not approved by D1.
 No production implementation or qualification is claimed by this approval.
 
+**Query-coverage approval scope:** on 2026-09-14 the user explicitly said
+"Okay, make it so" in response to the proposed rule to check processing coverage
+alongside saved knowledge, complete missing processing only within authorized
+scope, or disclose the gap in the answer. Adopt the
+[query-coverage rule](implementation/ARCHITECTURE-PROPOSAL.md#approved-query-coverage-rule):
+check discovery and content coverage as well as verified records; never assume
+unread material is irrelevant; respect capability and work bounds; qualify
+answers when processing or coverage lookup is incomplete. A verified fact may
+be reported, but exhaustive lists, counts and absence claims require supporting
+coverage. This does not require clearing all pending work before answering.
+It does not approve the remaining D2 mechanisms, D3–D8, or any daily-run recovery
+trigger/ordering rule. Required record and adapter contracts remain pending.
+
 Independent approved preparation includes fictional lifecycle scenarios, a
 [proposed testing sequence](implementation/TESTING-PROPOSAL.md), and a new
 [development-only metadata model](identity/revised-model/README.md) in a separate
@@ -58,7 +72,8 @@ directory. Its code and fictional checks are authored, not executed. These are n
 replacement runtime, canonical schema or managed-agent qualification. Every
 functional test, model run, simulation, build and live operation remains stopped.
 
-Exact next action: obtain and record explicit approval or revisions for D2–D8, then
+Exact next action: obtain and record approval or revisions for remaining D2 and
+D3–D8 without reopening the accepted query-coverage rule, then
 implement the full approved T1–T10 scope and prepare its tests. Publish the whole
 implementation, verify the remote commit and stop for the user's testing direction.
 Publishing this preparation checkpoint alone does not satisfy that code handoff.

@@ -6,8 +6,9 @@ Prepared 2026-09-14 from the [product principles](../../../product-principles.md
 mechanisms and old runtime do not supply missing architecture approvals.
 
 Status: requirements mapped; [D1](ARCHITECTURE-PROPOSAL.md) **approved explicitly
-on 2026-09-14; D2–D8 remain pending**. Dependency columns retain all relevant
-decisions, including approved D1. No replacement production capability is claimed implemented or
+on 2026-09-14**. The [query-coverage rule](ARCHITECTURE-PROPOSAL.md#approved-query-coverage-rule)
+is also explicitly approved; remaining D2 and D3–D8 are pending. Dependency columns
+retain all relevant decisions, including approved choices. No replacement production capability is claimed implemented or
 tested. Test scenarios may be prepared without execution. No required area has
 been removed or deferred from the whole-project implementation handoff.
 
@@ -22,7 +23,7 @@ any new canonical meaning, dependency or runtime behavior still needs approval.
 | T1 Installation/startup | Supplied pinned package; Drive startup/configuration; actual capability discovery | Release manifest; `operations/install.md`, `startup.md`; configuration contract; installation and selection helpers | D1–D3, D7–D8 | Pending / not run |
 | T2 Canonical data/custody | Drive knowledge/tasks/indexes/coverage/work; originals at source; bounded access and verified persistence | Record contracts; Drive adapter; bounded directories; record preparation/write-recovery helpers; temporary processing procedure | D1–D3 | Pending / not run |
 | T3 Historical/daily ingestion | Current logical-email recipe; individual replies; parent-bound attachments; separate windows and processing coverage | New isolated development model; metadata normalizer; `operations/import.md`, `daily.md`, `process-content.md`; source adapter and window/coverage helpers | D1–D4 | Development model prepared; production pending / not run |
-| T4 Knowledge/queries | Substantive facts, qualifications, instructions, corrections, deadlines, source provenance and honest gaps | Knowledge/relationship contract; extraction/query recipes; bounded query planning and source-reference helpers | D1–D5 | Pending / not run |
+| T4 Knowledge/queries | Substantive facts and provenance; approved checks of discovery/content coverage; scoped completion or explicit answer limitations | Knowledge/relationship contract; extraction/query recipes; bounded query planning, coverage checks and source-reference helpers | D1–D5; query-coverage rule approved | Pending / not run |
 | T5 Tasks/synchronization | Canonical actionable requests; parent state; selected task application | Task/parent-state contract; reconciliation and synchronization recipes/helpers; task adapter routes | D2–D3, D5–D6 | Pending / not run |
 | T6 Briefs/delivery | Recent/daily email; supported optional audio; canonical inputs and attribution | Brief selection/composition; email/audio adapters; effect recovery and output records | D2–D3, D5–D6 | Pending / not run |
 | T7 Tools/schedules | Any number of agents/jobs; management locations; operation/job bindings; desired versus observed settings | Register/capability/job contracts; discovery, binding, schedule-management and known-job/sender query recipes | D1–D3, D6–D7 | Pending / not run |
@@ -49,7 +50,7 @@ any new canonical meaning, dependency or runtime behavior still needs approval.
 | Use case | Implementation coverage | Evidence to prepare for later user-directed testing |
 |---|---|---|
 | U1 Catalog communications and substantive information | T2–T3, T8 | Historical/daily messages, replies, metadata presentation, attachments/images, qualifications, incomplete work and verified cleanup |
-| U2 Query school information across history | T2, T4, T8 | Current and superseded facts; guidelines/deadlines; source access lost; question needing unread attachment; interrupted bounded search |
+| U2 Query school information across history | T2, T4, T8 | Current/superseded facts; guidelines/deadlines; source access lost; unread material could matter; incomplete coverage lookup; scoped completion or qualified answer without false exhaustive/absence claims |
 | U3 Query known jobs, agents, locations and brief sender | T4, T6–T7 | Multiple jobs/runtimes; stale observed status; inaccessible scheduler; attribution preserved after defaults change |
 | U4 Reconcile canonical tasks and synchronize selected app | T2, T5, T8 | Finite actions versus guidelines; source corrections; parent completion/plans; conflicts; missing projection; unknown write and replacement adapter |
 | U5 Recent/daily email and optional audio briefs | T4–T8 | Late-processed information; no new actions; stale task sync; unsupported audio; lost delivery response; output attribution |

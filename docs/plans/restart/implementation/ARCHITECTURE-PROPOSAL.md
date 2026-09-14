@@ -1,6 +1,7 @@
 # Restart implementation decisions for approval
 
-Prepared 2026-09-14, revision 2 after document review. **D1 approved explicitly on 2026-09-14; D2–D8 pending user approval.** No
+Updated 2026-09-14, revision 3: adds the explicitly approved query-coverage rule.
+**D1 approved; D2 query-coverage rule approved; remaining D2 and D3–D8 pending.** No
 production code depends on these choices yet. Approval of requirements in the
 [active plan](../PLAN.md) does not approve these mechanisms. Approval of this
 document would authorize the choices stated here, not unspecified later changes.
@@ -15,7 +16,7 @@ to an identity model, a local CLI, or a single managed-agent demonstration.
 | Decision | Recommendation | Main alternative | Approval |
 |---|---|---|---|
 | D1 Storage | Small JSON record pages and paged directories in Drive, with a readable bootstrap | Native Sheets tables, with separately bounded long text | Approved, 2026-09-14 |
-| D2 Records and persistence | School-OS IDs, typed records, verified small write intents, independent coverage | Immutable whole-instance generations or an event engine | Pending |
+| D2 Records and persistence | School-OS IDs, typed records, verified small write intents, independent coverage | Immutable whole-instance generations or an event engine | Query-coverage rule approved, 2026-09-14; remaining D2 pending |
 | D3 Execution and adapters | Agent operation recipes plus optional Python standard-library helpers; capability-declared adapters | Mandatory executable runtime | Pending |
 | D4 Ingestion | Exact zoned original Date for automatic association; bounded received-time discovery where supported; process appearances independently | Admit coarser Dates automatically; reuse content coverage from metadata alone | Pending |
 | D5 Knowledge and tasks | Source-supported claims and explicit relationships; parent fields separate; three-way task-field reconciliation | Mutable summaries and one-way task export | Pending |
@@ -150,6 +151,46 @@ of replay/index maintenance. This proposal has simpler local repairs but more
 partial states. Cross-record recovery and actual Drive consistency are unknown
 until user-directed testing; no atomicity is assumed.
 
+### Approved query-coverage rule
+
+On 2026-09-14 the user explicitly said "Okay, make it so" after the recommendation
+to check coverage alongside knowledge, finish missing processing only within
+authorized scope, or answer with the limitation. This approves this rule only;
+the remaining D2 record and recovery mechanisms still need approval.
+
+1. A question is answered from verified knowledge together with discovery and
+   content-processing coverage for the source scope needed to support the answer.
+   A completed write proves that its records saved; it does not prove that all
+   potentially relevant emails or attachments were discovered and processed.
+2. Unread or undiscovered material may contain relevant information. Do not
+   exclude it merely because current knowledge, a subject, or an incomplete
+   search does not show a connection to the question. A deadline tomorrow may
+   have been communicated earlier; the deadline is not the email discovery date.
+3. When missing processing could affect the answer, complete it only within the
+   current authorization, available capabilities and operation budget. Otherwise
+   answer from the verified information with an explicit account of the gap.
+   A question does not authorize clearing the entire unrelated backlog or
+   expanding processing beyond its authorized scope.
+4. Do not claim a complete list, an exhaustive count, or absence of information
+   when coverage does not support that claim. If a bounded coverage lookup itself
+   remains unfinished or coverage is unknown, disclose that limit too. Preserve
+   continuation on Drive; lack of a discovered pending item is not proof that
+   none exists. Individual verified facts remain usable with source attribution.
+
+Example: "What is due tomorrow?" finds two verified tasks, but yesterday's
+processing is incomplete. If the missing processing cannot be completed within
+scope, answer: "I found these two tasks in the processed information. Yesterday's
+processing is incomplete, so this list may be missing something."
+
+This rule serves P1 losslessness/provenance, P2 explicit reliable state and P4
+bounded execution, especially U2 historical and current school queries. Requiring
+all processing to finish before any answer is a credible alternative, but delays
+useful answers when sources are unavailable or the budget is exhausted. The
+approved rule permits useful qualified answers at the cost of coverage reads
+and sometimes an incomplete result. Exact bounded coverage access still depends
+on the pending record/adapter/query contracts. Daily/import/resume triggers and
+work ordering are separate operation-recipe choices, not approved by this rule.
+
 ## D3 — Runtime, adapter contracts and first supplied routes
 
 Recommend authoritative Markdown operation recipes and JSON contracts/examples,
@@ -277,6 +318,9 @@ source metadata and disclose unavailable originals, uncertain attachment mapping
 or incomplete search. No source access is needed merely to repeat already saved
 verified knowledge. If a question needs uncataloged detail, use an authorized
 content route or explain the gap; do not invent it.
+Apply the [approved query-coverage rule](#approved-query-coverage-rule) when
+deciding whether the answer can claim completeness. Its approval does not
+approve the other D5 knowledge/task mechanisms.
 
 Finite actionable requests create canonical tasks. Non-actionable guidelines do
 not. A recurring required action remains an actionable canonical task with its
@@ -441,8 +485,10 @@ builder and upgrade procedures does not qualify or execute them.
 **D1 is approved.** The user explicitly replied "D1 approved" on 2026-09-14
 after clarification that its JSON and directory limits apply per page, with
 additional pages available as history grows. The [active plan](../PLAN.md)
-records the full D1 approval scope. **D2–D8 remain pending** explicit approval
-or revision before their dependent implementation. A partial approval releases
-only its independent scope. Any new
-choice not covered above returns for approval rather than being labeled an
+records the full D1 approval scope. The user separately approved the
+[query-coverage rule](#approved-query-coverage-rule) with "Okay, make it so";
+this is not blanket approval of D2. **Remaining D2 and D3–D8 stay pending**
+explicit approval or revision before their dependent implementation. A partial
+approval releases only its independent scope. Any new choice not covered above
+returns for approval rather than being labeled an
 implementation detail. No testing permission is requested by this proposal.

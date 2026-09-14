@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: restart preparation is active on `codex/restart-school-os`; whole-project requirements are mapped and D1 (physical Drive layout) is explicitly approved; D2–D8 await explicit approval. Production implementation and managed-agent qualification remain pending.
+Status: restart preparation is active on `codex/restart-school-os`; whole-project requirements are mapped. D1 and the D2 query-coverage rule are explicitly approved; remaining D2 and D3–D8 await approval. Production implementation and managed-agent qualification remain pending.
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 Decision authority: [product principles](docs/product-principles.md#decision-authority)
@@ -25,9 +25,10 @@ restart branch and preserved baseline commit
 The active restart plan records the approval ledger. Prepared fictional fixtures,
 test proposals and a separate development model do not establish production
 implementation or test results. Exact next action is explicit approval or
-revision of D2–D8, followed by the full approved implementation and publication
-handoff;
-testing remains reserved to the user.
+revision of remaining D2 and D3–D8, followed by the full approved implementation
+and publication handoff; testing remains reserved to the user. The accepted
+query-coverage rule requires coverage checks alongside verified knowledge and
+explicit limitations when missing processing cannot be completed within scope.
 
 Follow [the restart architecture and simulation plan](docs/plans/restart/PLAN.md)
 and the updated [product principles](docs/product-principles.md). The user has

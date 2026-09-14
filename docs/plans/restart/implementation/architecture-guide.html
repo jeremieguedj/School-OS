@@ -655,14 +655,14 @@
 
   <header class="masthead">
     <div class="masthead-inner">
-      <p class="eyebrow">Based on architecture proposal revision 2 • D1 approved • D2–D8 pending</p>
-      <h1>Architecture decisions: one approved, seven open</h1>
+      <p class="eyebrow">Based on architecture proposal revision 3 • D1 and query rule approved • remaining decisions open</p>
+      <h1>Architecture decisions for School-OS</h1>
       <p class="lede">
         The product direction is settled. The remaining job is to choose the concrete mechanisms that will store, process, synchronize, deliver, and upgrade School-OS.
       </p>
       <div class="status-line" aria-label="Review status">
-        <span class="status">D1 approved · D2–D8 pending</span>
-        <span class="source-link">Authoritative source: <a href="ARCHITECTURE-PROPOSAL.md">Architecture Proposal, revision 2</a></span>
+        <span class="status">D1 approved · query rule approved · other choices open</span>
+        <span class="source-link">Authoritative source: <a href="ARCHITECTURE-PROPOSAL.md">Architecture Proposal, revision 3</a></span>
       </div>
     </div>
   </header>
@@ -685,7 +685,7 @@
         <p class="eyebrow">Orientation</p>
         <h2 id="read-first-title">What is settled, and what is still open</h2>
         <p>
-          This review does not reopen School-OS’s purpose or narrow its scope. D1 is approved: Drive will hold multiple bounded JSON pages. D2–D8 still need your decision. All eight mechanisms remain unimplemented and unqualified.
+          This review does not reopen School-OS’s purpose or narrow its scope. D1 is approved: Drive will hold multiple bounded JSON pages. The query-coverage rule is also approved. The rest of D2 and D3–D8 still need your decision. These mechanisms remain unimplemented and unqualified.
         </p>
 
         <div class="boundary">
@@ -698,6 +698,7 @@
               <li>Work stays bounded and resumable from Drive. Any number of agents and known jobs may participate.</li>
               <li>Concurrent writes to the same canonical data are outside the present household scope.</li>
               <li>D1: multiple JSON pages on Drive, with bounded directories and transfers.</li>
+              <li>Answers check coverage as well as saved knowledge, and explain any gap that cannot be resolved within scope.</li>
             </ul>
           </article>
           <article class="pending">
@@ -774,7 +775,7 @@
         <p class="eyebrow">Approval packet</p>
         <h2 id="decisions-title">Decisions D1–D8</h2>
         <p>
-          Read the recommendation first. Open the details when you want to inspect authorization scope, alternatives, unknowns, and dependencies. D1 records your explicit approval; D2–D8 remain open.
+          Read the recommendation first. Open the details when you want to inspect authorization scope, alternatives, unknowns, and dependencies. D1 is approved; D2 has one approved query rule. The other choices remain open.
         </p>
 
         <article class="decision" id="d1">
@@ -814,9 +815,11 @@
           <div class="decision-head">
             <div class="decision-title-row">
               <h3><span class="d-label">D2</span> How should interrupted writes recover?</h3>
-              <span class="pending-pill">Pending</span>
+              <span class="pending-pill">One rule approved</span>
             </div>
             <p class="recommendation"><strong>Recommendation:</strong> give each item its own School-OS ID, save the intended change before writing, and verify what was saved so a fresh agent can finish interrupted work.</p>
+            <p><strong>Approved query rule:</strong> check coverage alongside saved knowledge. An unread email might contain exactly what the parent needs. Finish missing processing only within authorized scope and work limits; otherwise make the answer's limitation clear.</p>
+            <p>For example: “I found these two tasks due tomorrow, but yesterday’s processing is incomplete, so this list may be missing something.” The remaining D2 record and recovery mechanisms still need approval.</p>
           </div>
           <details>
             <summary>Approval scope, alternatives, and unknowns</summary>
@@ -837,6 +840,15 @@
                 <div><strong>Dependencies</strong>D1 discoverable storage; D3 adapter outcomes; D5 relationship/task semantics; D6 external effects.</div>
               </div>
               <p>No atomicity, lock, lease, conditional-write coordination, generation chain, or content-based identity is assumed.</p>
+              <h4>Approved: answering while work is incomplete</h4>
+              <ol>
+                <li>Read verified knowledge and check discovery and content-processing coverage for the source scope needed by the question.</li>
+                <li>Do not assume unread material is irrelevant because its subject or current saved knowledge shows no match.</li>
+                <li>Complete missing processing only within existing authorization, capabilities, and budgets; otherwise answer with the gap.</li>
+                <li>Never claim a complete list, exhaustive count, or absence without supporting coverage. If the coverage lookup itself is unfinished, say so.</li>
+              </ol>
+              <p>A question does not require clearing the entire backlog. The timing and ordering of recovery in daily/import/resume operations remain separate pending choices.</p>
+              <a class="source-anchor" href="ARCHITECTURE-PROPOSAL.md#approved-query-coverage-rule">Read the approved query-coverage rule →</a>
               <a class="source-anchor" href="ARCHITECTURE-PROPOSAL.md#d2--canonical-record-meanings-and-write-recovery">Read D2 in the authoritative proposal →</a>
             </div>
           </details>
@@ -1087,7 +1099,7 @@
       <section id="recap" aria-labelledby="recap-title">
         <p class="eyebrow">Decision recap</p>
         <h2 id="recap-title">What remains to decide</h2>
-        <p>D1 is approved. The seven remaining rows need an explicit approve/revise decision. Partial approval can release only work whose dependencies are also approved.</p>
+        <p>D1 and the query-coverage rule are approved. The rest of D2 and D3–D8 need an explicit approve/revise decision. Partial approval can release only work whose dependencies are also approved.</p>
 
         <table class="recap">
           <thead>
@@ -1099,7 +1111,7 @@
           </thead>
           <tbody>
             <tr><td>D1 · Approved</td><td>Paged JSON records and directories in Drive.</td><td>Managed-app file and folder operations.</td></tr>
-            <tr><td>D2</td><td>Typed School-OS records and verified small write intents.</td><td>Drive consistency and cross-record recovery.</td></tr>
+            <tr><td>D2 · Query rule approved</td><td>Record types and small write intents still proposed; coverage-aware answers approved.</td><td>Drive consistency and cross-record recovery.</td></tr>
             <tr><td>D3</td><td>Native-tool recipes, JSON contracts, optional helpers, initial routes.</td><td>Exact provider/runtime capability.</td></tr>
             <tr><td>D4</td><td>Exact zoned original-Date threshold; bounded independent appearance processing.</td><td>Metadata/listing fidelity and real limits.</td></tr>
             <tr><td>D5</td><td>Claim relationships, explicit recurring/finite tasks, three-way sync.</td><td>Semantic and provider-field behavior.</td></tr>
@@ -1124,7 +1136,7 @@ This approval does not authorize testing.</div>
 
         <h3>What happens after architecture approval</h3>
         <div class="timeline" aria-label="Next-step timeline">
-          <div>D1 approved; user decides D2–D8</div>
+          <div>D1 and query rule approved; decide remaining choices</div>
           <div>Full approved T1–T10 implementation</div>
           <div>Commit, push, and remote revision verification</div>
           <div class="stop">STOP and check in</div>
@@ -1141,7 +1153,7 @@ This approval does not authorize testing.</div>
   </div>
 
   <footer class="site-footer">
-    <p><strong>Document status:</strong> explanatory review artifact for Architecture Proposal revision 2, prepared 2026-09-14. D1 was explicitly approved on 2026-09-14; D2–D8 remain pending. The proposal, product principles, active plan, and coverage map remain authoritative; this guide creates no architecture decision.</p>
+    <p><strong>Document status:</strong> explanatory review artifact for Architecture Proposal revision 3, prepared 2026-09-14. D1 and the query-coverage rule were explicitly approved on 2026-09-14; remaining D2 and D3–D8 are pending. The proposal, product principles, active plan, and coverage map remain authoritative; this guide creates no architecture decision.</p>
     <p>
       Sources: <a href="ARCHITECTURE-PROPOSAL.md">Architecture Proposal</a> ·
       <a href="COVERAGE.md">Whole-project coverage</a> ·
