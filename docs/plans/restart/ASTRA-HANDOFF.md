@@ -21,6 +21,8 @@ Read first:
 - docs/plans/restart/README.md and docs/plans/restart/PLAN.md.
 - docs/plans/restart/identity/METADATA-RECIPE.md.
 - docs/plans/restart/identity/metadata-stress/README.md and PROTOCOL.md.
+- docs/plans/restart/SIMULATION.md for lifecycle scenarios and their stated
+  limitations; its superseded identity mechanisms are not the current design.
 - The current section of PLAN.md and the latest PROGRESS.md entries.
 Inspect the actual branch, working tree and history before changing anything.
 Treat frozen studies and retired architecture documents as historical evidence.
@@ -90,10 +92,33 @@ useful evidence and continuity documents; protect unrelated or uncommitted work.
 Identify legacy instruction conflicts explicitly. Propose any architectural
 replacement for approval; retain applicable privacy and continuity safeguards.
 
-Implement the agreed initial project-code scope, including the revised small
-development model called for in the plan. Resolve missing architecture approvals
-before dependent implementation. Prepare meaningful fictional fixtures and a
-proposed testing sequence, preserving the frozen studies, without executing tests.
+Your assignment covers the whole reusable School-OS project, as enumerated in
+the plan's whole-project implementation scope:
+- Installation, Drive startup/configuration and capability discovery.
+- Canonical knowledge/tasks, source indexes, coverage and bounded storage access.
+- Historical and daily ingestion, email/reply/attachment identity, temporary
+  content processing, substantive extraction and explicit incomplete work.
+- Knowledge queries and source-linked answers from any capable fresh agent.
+- Canonical tasks, parent task state and configured task-app synchronization.
+- Recent/daily email briefs, supported optional audio and output attribution.
+- Tools, connections, selected adapters, schedules and known-job/sender queries.
+- Interruption recovery, missed work and replacement of a session or agent.
+- Packaged installation/updates and preservation of compatible extensions.
+- Clear operating instructions and simple code/adapters for managed/cloud agents.
+
+Map every product principle and core use case to its existing design, concrete
+deliverables and any unresolved architecture approvals before dependent coding.
+The broader requirements and lifecycle design already exist; do not restart
+their discovery or treat only email identity as defined. The revised small
+development model is one component and cannot satisfy the whole assignment.
+Do not silently defer required areas or declare a partial implementation complete.
+Bring blockers and any proposed scope reduction to me explicitly. This checklist
+does not approve new architecture; resolve missing approvals before implementing
+their dependent parts. Keep implementation and later qualification status separate.
+
+Prepare meaningful fictional fixtures and a proposed testing sequence, preserving
+the frozen studies, without executing tests. Testing a capability later does not
+remove its required instructions/code from the project implementation scope.
 
 Use at most three worker agents, within available capacity, for independent
 bounded tasks with clear file ownership. You own integration and Git mutations.
@@ -119,7 +144,8 @@ indirectly or silently disable checks. Bring any conflict between publication
 and my reserved testing phase to me before proceeding.
 
 At the checkpoint, report what is implemented, the branch and exact published
-commit, key artifacts, approvals still pending, known risks, tests not run and
+commit, coverage of every principle/use case and deliverable, key artifacts,
+approvals still pending, known risks, tests not run and
 a concise proposed testing sequence for me to direct. Update PLAN.md and
 PROGRESS.md to make the stop and exact next action clear. If publication is
 blocked, preserve the work and report the blocker; do not proceed into testing.

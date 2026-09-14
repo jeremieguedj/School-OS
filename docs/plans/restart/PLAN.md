@@ -80,6 +80,46 @@ managed-agent pilots or release qualification. The
   Drive can answer which known jobs exist and who generated a brief. Concurrent
   updates to the same Drive data remain outside scope.
 
+## Whole-project implementation scope
+
+The restart covers the complete reusable School-OS project described by the
+product principles and core use cases. Email identity is one component, with the
+most recently refined procedure; completing its development model alone does
+not complete the restart. The earlier wording "agreed initial project-code
+scope" did not enumerate that full scope and must not be used to narrow it.
+
+The following is a delivery checklist drawn from existing requirements, not
+approval of new schemas, storage layouts, contracts or runtime mechanisms.
+
+| Area | Required coverage in the new project |
+|---|---|
+| Installation and startup | User-supplied package, Drive entry point, instance configuration, source/scope selection and discovery of the current agent's capabilities. |
+| Canonical data and source custody | Processed knowledge, tasks, source/attachment references, coverage and unfinished work on Drive; bounded access and temporary raw processing with verified persistence before cleanup. |
+| Historical and daily ingestion | Bounded enumeration and continuation, the current logical-email/attachment recipe, individual replies, content extraction, explicit unread/unsupported material, and independent historical/daily progress. |
+| Knowledge and queries | Substantive facts, qualifications, instructions, corrections, deadlines and provenance; queries from a fresh capable agent with honest missing-evidence and source-access limits. |
+| Tasks and synchronization | Canonical actionable requests and parent task state, with synchronization to the selected task application when configured. |
+| Briefs and delivery | Recent-update and daily email briefs, optional audio when supported, and run/output attribution using the canonical knowledge and tasks. |
+| Tools, adapters and schedules | Known connections and capabilities, selected adapters per operation/job, scheduler locations, desired versus observed settings, verification freshness, and known-job/sender queries. |
+| Recovery and agent replacement | Durable progress that another session or agent can resume without the previous conversation, local files or mandatory provider token; missing capabilities and unfinished work remain explicit. |
+| Extensions and upgrades | New applications and compatible adapters can use the canonical data layer; package/update procedures preserve private data, configuration and compatible customizations. |
+| Development and portability | Clear agent instructions and simple supporting code/adapters for limited managed/cloud environments; useful failure evidence retained without rebuilding the retired machinery by default. |
+
+Before dependent implementation, reconcile every product principle and core use
+case with its existing design, intended deliverables and any unresolved
+architectural approval. Record implemented/prepared status and later testing
+status separately. The historical lifecycle simulation supplies scenarios and
+evidence; its superseded identity rules and unapproved mechanisms are not a
+production specification.
+
+Bring missing architecture decisions to the user rather than guessing. Report
+any capability blocker or proposed scope reduction explicitly; do not silently
+defer a core use case or present an isolated model as the finished project.
+An intermediate implementation slice may support development velocity, but it
+does not redefine the final code handoff unless the user explicitly agrees.
+All test execution remains in the user-directed phase. Placing live scheduling,
+Drive operations or upgrade checks there does not defer their required project
+instructions/code out of the implementation scope.
+
 ## Corrected interpretation of the live study
 
 The [study](identity/metadata-stress/README.md) made 127 read-only calls covering
@@ -104,6 +144,9 @@ report before interpreting `wrong_association` or the earlier pass/failure total
 
 - [x] Reconcile product principles, current recipe, test interpretation and
   artifact authority with the approved decisions.
+- [ ] Reconcile the whole-project delivery checklist above against every product
+  principle and core use case, retaining existing approvals and identifying
+  precise unresolved architecture choices for the user.
 - [ ] Update a small development model in a new revision, preserving the frozen
   study. Cover repeated observations of one logical email, contradictory source
   metadata, normalizable subjects/addresses, each reply's own Date, same-parent
@@ -111,12 +154,12 @@ report before interpreting `wrong_association` or the earlier pass/failure total
   labels for fictional cases; leave unknown live logical relationships ungraded
   rather than assuming provider-entry differences are product errors. Report
   residual indistinguishability honestly without adding content-based identity.
-- [ ] Implement the agreed initial project-code scope under the approved
+- [ ] Implement the whole-project delivery scope above under the approved
   architecture. Obtain approval for unresolved architectural choices before
   their dependent code; do not silently decide the Drive file/table layout.
   Prepare a proposed test inventory and fixtures without running them.
 - [ ] Publish the agreed code and updated continuity documents. Report the
-  exact revision, implemented scope, pending decisions, known risks, tests not
+  exact revision, coverage of every deliverable, pending decisions, known risks, tests not
   run and proposed testing sequence. Stop and await the user's direction.
 
 ## User-directed testing phase: not authorized to start automatically

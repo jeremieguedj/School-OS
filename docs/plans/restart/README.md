@@ -13,6 +13,13 @@ project code; the user personally manages and oversees testing. No tests or
 pilots start automatically. The [Astra handoff](ASTRA-HANDOFF.md) is the copyable
 prompt for that session.
 
+The assignment covers the [whole project](PLAN.md#whole-project-implementation-scope):
+installation, ingestion, knowledge, tasks, queries, briefs, tools/schedules,
+recovery, agent replacement and extensible upgrades. Email identity is one
+component with a detailed revised recipe. Requirements and lifecycle design
+exist across these areas; exact architecture choices, implementation and real
+agent qualification are distinct remaining work.
+
 ## Current direction
 
 Google Drive is the durable home for processed school knowledge, source and
@@ -74,9 +81,10 @@ was already implemented in the experiment; subject trimming is now approved for
 the next revision. Timestamp changes were not observed. Thread grouping is
 optional, and short pages with continuation require continued enumeration.
 
-The next implementation includes a revised small development model and the
-agreed initial project code, with new architecture decisions approved before
-implementation. Publish that work and stop for the user to direct testing.
+The next implementation covers the whole-project checklist, including a revised
+small development model, with new architecture decisions approved before
+implementation. A finished identity model alone is not the completed project.
+Publish the agreed project code and stop for the user to direct testing.
 Actual file/table layout, attachment-group processing, complete discovery,
 scheduling, fresh-session handoff and execution cost remain qualification work;
 the proposed managed-agent/Drive pilot is not authorized to start automatically.

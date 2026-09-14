@@ -22,6 +22,10 @@ chosen source-system custody with temporary processing downloads, Drive-based
 knowledge and operational records, unrestricted agent choice, and no current
 solution for simultaneous same-data Drive writes. No dedicated personal machine
 or coding CLI may be required by the architecture.
+The assignment covers the [whole-project implementation checklist](docs/plans/restart/PLAN.md#whole-project-implementation-scope),
+including installation, ingestion, knowledge/tasks, queries, briefs, tools/jobs,
+recovery, agent replacement and extensible upgrades. The detailed email recipe
+and its development model are one component, not the entire restart deliverable.
 The latest user direction removes content inspection from email identity and
 thread association. Follow the [metadata-only recipe](docs/plans/restart/identity/METADATA-RECIPE.md);
 content extraction remains a separate processing operation.

@@ -4651,3 +4651,34 @@ requirements, then read this log from top to bottom.
   local document links and diff checks pass. Publish only these eight documents
   through the current recovery branch and verify its remote revision; no new
   restart branch or baseline tag is created by this prompt update.
+
+## 2026-09-14 — clarify whole-project scope beyond email identity
+
+- The user challenged the impression that only email identity had been defined.
+  Inspection confirms that the product principles, restart design and historical
+  lifecycle simulation cover setup, ingestion, knowledge, tasks, queries, briefs,
+  tools/schedules, recovery, agent replacement, extensions and upgrades at
+  differing levels of detail. Identity has the most detailed recently revised
+  procedure; that does not define the boundary of the project.
+- The prior handoff's "agreed initial project-code scope" was too vague and its
+  implementation checklist overemphasized the email model. Added an explicit
+  whole-project delivery checklist to the restart plan and full lifecycle scope
+  to the Astra prompt. Updated root routing, the artifact guide and identity
+  recipe so completion of an isolated model cannot be reported as completion of
+  the restart. Every principle/use case must map to design, deliverables, pending
+  approvals and implementation status; any proposed reduction must be explicit.
+- This consolidates existing requirements without approving new architecture.
+  Exact Drive layout, schemas, adapter contracts and other unresolved choices
+  still require explicit user approval before implementation. Historical model
+  mechanisms are not an approved production specification. Implementation and
+  actual managed-agent qualification remain separate, and the user retains
+  control of all test execution after the required publication handoff.
+- Independent read-only review found the corrected scope consistent with the
+  existing principles and approval/testing boundaries. Only documentation was
+  changed; no runtime, experiment, source access, live operation or functional
+  test was performed. Next: the fresh coordinator reconciles the complete
+  checklist, obtains missing architectural approvals, implements the agreed
+  project, publishes it and stops for user-directed testing.
+- Publication checks: tracked-file privacy, local document links and diff checks
+  pass for the six changed documents. Commit and publish only this documentation
+  correction on the existing recovery branch, then verify the remote revision.

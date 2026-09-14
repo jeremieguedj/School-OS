@@ -189,7 +189,8 @@ experiments are historical and do not qualify these rules.
 Next: implement the approved decision policy in a small development model and
 prepare meaningful tests without executing them. Any new or changed architecture
 decision requires explicit user approval, grounded in the product principles.
-Publish the agreed initial project code and stop for the user to direct testing,
+This identity work is one component of the whole-project implementation.
+Publish the agreed project code and stop for the user to direct testing,
 as required by the [restart plan](../PLAN.md#decision-authority-and-user-checkpoints).
 A bounded slice in managed agent apps, Drive checkpoints, daily scheduling and
 a second agent's handoff remain proposed user-directed qualification work.
