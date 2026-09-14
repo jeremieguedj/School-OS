@@ -25,6 +25,9 @@ contains recommendations, alternatives, tradeoffs and unknowns. The coordinator
 has requested the user's decision. **None of D1–D8 is approved yet.** They must
 not be implemented as production architecture until explicit approval is recorded
 here. Approval of only some decisions releases only independent dependent work.
+The [HTML decision guide](implementation/architecture-guide.html) provides a
+readable walkthrough of the same pending proposal; it introduces no decisions
+and does not record approval.
 
 | Decision | Proposal subject | Approval status |
 |---|---|---|

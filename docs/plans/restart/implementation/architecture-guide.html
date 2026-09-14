@@ -1,0 +1,1147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>School-OS architecture guide — decisions D1–D8</title>
+  <style>
+    :root {
+      --ink: #18241f;
+      --muted: #56645e;
+      --paper: #fbfcfa;
+      --surface: #ffffff;
+      --line: #d7ded9;
+      --soft: #eef4f0;
+      --green: #1e5c43;
+      --green-dark: #164532;
+      --amber: #845b13;
+      --amber-soft: #fff6dc;
+      --blue: #245b73;
+      --blue-soft: #edf6fa;
+      --red: #8a3c34;
+      --red-soft: #fff1ee;
+      --shadow: 0 10px 28px rgba(25, 45, 36, 0.07);
+      --radius: 14px;
+      --measure: 72ch;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--paper);
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, #edf5f0 0, var(--paper) 30rem);
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 17px;
+      line-height: 1.62;
+      text-rendering: optimizeLegibility;
+    }
+
+    a {
+      color: var(--green);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.16em;
+    }
+
+    a:hover { color: var(--green-dark); }
+
+    a:focus-visible,
+    summary:focus-visible {
+      outline: 3px solid #77a891;
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+
+    h1, h2, h3 {
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #13231c;
+    }
+
+    h1 {
+      max-width: 18ch;
+      margin: 0.4rem 0 1rem;
+      font-size: clamp(2.35rem, 7vw, 4.7rem);
+      line-height: 0.98;
+    }
+
+    h2 {
+      margin: 0 0 1rem;
+      font-size: clamp(1.75rem, 4vw, 2.55rem);
+    }
+
+    h3 {
+      margin: 1.5rem 0 0.55rem;
+      font-size: 1.12rem;
+      letter-spacing: -0.01em;
+    }
+
+    p { margin: 0.65rem 0 1rem; }
+
+    ul, ol {
+      margin: 0.6rem 0 1rem;
+      padding-left: 1.35rem;
+    }
+
+    li + li { margin-top: 0.42rem; }
+
+    code {
+      padding: 0.12em 0.34em;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: #f5f7f5;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.88em;
+    }
+
+    .skip-link {
+      position: absolute;
+      top: -5rem;
+      left: 1rem;
+      z-index: 20;
+      padding: 0.7rem 1rem;
+      color: white;
+      background: var(--green-dark);
+      border-radius: 8px;
+    }
+
+    .skip-link:focus { top: 1rem; }
+
+    .masthead {
+      padding: clamp(3.5rem, 9vw, 7rem) 1.25rem 3rem;
+    }
+
+    .masthead-inner,
+    .page,
+    .site-footer {
+      width: min(100%, 1120px);
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--green);
+      font-size: 0.76rem;
+      font-weight: 780;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .lede {
+      max-width: 60ch;
+      margin: 1rem 0 1.5rem;
+      color: #31423a;
+      font-size: clamp(1.08rem, 2.5vw, 1.28rem);
+      line-height: 1.55;
+    }
+
+    .status-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      align-items: center;
+      margin-top: 1.4rem;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.42rem;
+      padding: 0.38rem 0.68rem;
+      border: 1px solid #e2c57c;
+      border-radius: 999px;
+      color: #68450a;
+      background: var(--amber-soft);
+      font-size: 0.82rem;
+      font-weight: 760;
+      letter-spacing: 0.035em;
+      text-transform: uppercase;
+    }
+
+    .status::before {
+      width: 0.52rem;
+      height: 0.52rem;
+      border-radius: 50%;
+      background: #c18b20;
+      content: "";
+    }
+
+    .source-link { font-size: 0.93rem; }
+
+    .page {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: clamp(2rem, 6vw, 5rem);
+      padding: 0 1.25rem 5rem;
+      align-items: start;
+    }
+
+    .toc {
+      position: sticky;
+      top: 1.25rem;
+      padding: 1rem 0;
+      color: var(--muted);
+      font-size: 0.89rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.55rem;
+      color: var(--ink);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .toc a {
+      display: block;
+      padding: 0.28rem 0;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--green); }
+
+    main { min-width: 0; }
+
+    section {
+      max-width: var(--measure);
+      margin-bottom: clamp(4rem, 8vw, 6.8rem);
+      scroll-margin-top: 2rem;
+    }
+
+    .callout {
+      margin: 1.5rem 0;
+      padding: 1rem 1.15rem;
+      border-left: 4px solid var(--green);
+      border-radius: 0 10px 10px 0;
+      background: var(--soft);
+    }
+
+    .callout p:last-child { margin-bottom: 0; }
+
+    .callout.caution {
+      border-left-color: var(--amber);
+      background: var(--amber-soft);
+    }
+
+    .boundary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.4rem 0;
+    }
+
+    .boundary article {
+      padding: 1.1rem 1.15rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .boundary article.pending {
+      border-top: 4px solid #c18b20;
+    }
+
+    .boundary article.approved {
+      border-top: 4px solid var(--green);
+    }
+
+    .boundary h3 { margin-top: 0; }
+
+    .boundary ul {
+      margin-bottom: 0;
+      font-size: 0.95rem;
+    }
+
+    .flow {
+      display: grid;
+      gap: 0.55rem;
+      margin: 1.5rem 0 1rem;
+    }
+
+    .flow-row {
+      display: grid;
+      grid-template-columns: minmax(12rem, 0.75fr) minmax(0, 1.4fr);
+      gap: 0.8rem;
+      align-items: stretch;
+    }
+
+    .flow-label,
+    .flow-body {
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface);
+    }
+
+    .flow-label {
+      display: flex;
+      align-items: center;
+      color: var(--green-dark);
+      background: var(--soft);
+      font-weight: 760;
+    }
+
+    .flow-body { color: #35443d; }
+
+    .flow-arrow {
+      margin-left: calc(18% - 0.5rem);
+      color: #708078;
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+
+    .caption {
+      color: var(--muted);
+      font-size: 0.87rem;
+    }
+
+    .decision-map {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.85rem;
+      margin: 1.4rem 0;
+    }
+
+    .decision-map article {
+      padding: 1rem;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
+    }
+
+    .decision-map h3 {
+      margin: 0 0 0.35rem;
+      font-size: 1rem;
+    }
+
+    .decision-map p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .decision {
+      margin: 1.25rem 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      scroll-margin-top: 1.5rem;
+      overflow: clip;
+    }
+
+    .decision-head {
+      padding: 1.25rem 1.3rem 1rem;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(105deg, #f6faf7, #ffffff 72%);
+    }
+
+    .decision-title-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    .decision h3 {
+      margin: 0;
+      font-size: 1.28rem;
+    }
+
+    .d-label {
+      display: inline-block;
+      margin-right: 0.42rem;
+      color: var(--green);
+      font-size: 0.78em;
+      font-weight: 840;
+      letter-spacing: 0.055em;
+      vertical-align: 0.08em;
+    }
+
+    .pending-pill {
+      flex: 0 0 auto;
+      padding: 0.24rem 0.54rem;
+      border-radius: 999px;
+      color: #6c490c;
+      background: var(--amber-soft);
+      font-size: 0.72rem;
+      font-weight: 780;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .recommendation {
+      margin: 0.7rem 0 0;
+      color: #283a32;
+      font-size: 1.02rem;
+    }
+
+    .decision details {
+      border-top: 1px solid var(--line);
+    }
+
+    .decision details:first-of-type { border-top: 0; }
+
+    .decision summary {
+      padding: 0.85rem 1.3rem;
+      color: var(--green-dark);
+      cursor: pointer;
+      font-weight: 730;
+      list-style-position: outside;
+    }
+
+    .decision summary:hover { background: #f8faf8; }
+
+    .detail-body {
+      padding: 0 1.3rem 1.1rem;
+      color: #33423b;
+    }
+
+    .detail-body > :last-child { margin-bottom: 0; }
+
+    .fact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.7rem 1.1rem;
+      margin: 0.4rem 0 0.7rem;
+    }
+
+    .fact-grid div {
+      padding: 0.75rem 0.85rem;
+      border-radius: 9px;
+      background: #f6f8f6;
+    }
+
+    .fact-grid strong {
+      display: block;
+      margin-bottom: 0.12rem;
+      color: var(--muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .source-anchor {
+      display: inline-block;
+      margin-top: 0.3rem;
+      font-size: 0.86rem;
+    }
+
+    .out-of-bounds {
+      padding: 0.75rem 0.85rem;
+      border-left: 3px solid var(--red);
+      border-radius: 0 8px 8px 0;
+      color: #5d302b;
+      background: var(--red-soft);
+    }
+
+    .walkthrough {
+      margin-top: 1.5rem;
+      counter-reset: walk;
+    }
+
+    .walk-step {
+      position: relative;
+      margin-left: 1rem;
+      padding: 0.15rem 0 1.25rem 2.2rem;
+      border-left: 2px solid #b7c8be;
+      counter-increment: walk;
+    }
+
+    .walk-step:last-child {
+      padding-bottom: 0.2rem;
+      border-left-color: transparent;
+    }
+
+    .walk-step::before {
+      position: absolute;
+      top: 0;
+      left: -1rem;
+      display: grid;
+      width: 1.85rem;
+      height: 1.85rem;
+      place-items: center;
+      border: 3px solid var(--paper);
+      border-radius: 50%;
+      color: white;
+      background: var(--green);
+      content: counter(walk);
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .walk-step h3 { margin: 0 0 0.25rem; }
+
+    .walk-step p { margin: 0; }
+
+    .recap {
+      width: 100%;
+      margin: 1.25rem 0;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+
+    .recap th,
+    .recap td {
+      padding: 0.72rem 0.68rem;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .recap th {
+      color: var(--muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.055em;
+      text-transform: uppercase;
+    }
+
+    .recap td:first-child {
+      color: var(--green-dark);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .approval-example {
+      margin: 1rem 0;
+      padding: 1rem;
+      border: 1px dashed #aab8b0;
+      border-radius: 10px;
+      background: #f7f9f7;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0.35rem;
+      margin: 1.4rem 0;
+    }
+
+    .timeline div {
+      position: relative;
+      padding: 0.8rem 0.68rem;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--surface);
+      font-size: 0.82rem;
+      line-height: 1.35;
+      text-align: center;
+    }
+
+    .timeline div + div::before {
+      position: absolute;
+      top: 50%;
+      left: -0.42rem;
+      z-index: 2;
+      width: 0.48rem;
+      height: 0.48rem;
+      border-top: 2px solid var(--muted);
+      border-right: 2px solid var(--muted);
+      background: var(--paper);
+      content: "";
+      transform: translateY(-50%) rotate(45deg);
+    }
+
+    .timeline .stop {
+      color: #6b4105;
+      border-color: #d9b45a;
+      background: var(--amber-soft);
+      font-weight: 760;
+    }
+
+    .site-footer {
+      padding: 2rem 1.25rem 4rem;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .site-footer p { max-width: var(--measure); }
+
+    @media (max-width: 840px) {
+      .page { grid-template-columns: 1fr; }
+      .toc {
+        position: static;
+        padding: 0.8rem 1rem;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: rgba(255,255,255,0.82);
+      }
+      .toc nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.18rem 1rem;
+      }
+      .toc strong { width: 100%; }
+      .toc a { display: inline-block; }
+      .decision-map { grid-template-columns: 1fr; }
+      section { margin-bottom: 4.5rem; }
+    }
+
+    @media (max-width: 620px) {
+      body { font-size: 16.5px; }
+      .masthead { padding-top: 3.3rem; }
+      .boundary,
+      .fact-grid { grid-template-columns: 1fr; }
+      .flow-row { grid-template-columns: 1fr; gap: 0.35rem; }
+      .flow-arrow { margin-left: 1rem; }
+      .decision-head,
+      .decision summary,
+      .detail-body { padding-left: 1rem; padding-right: 1rem; }
+      .timeline { grid-template-columns: 1fr; }
+      .timeline div + div::before {
+        top: -0.38rem;
+        left: 50%;
+        transform: translateX(-50%) rotate(135deg);
+      }
+      .recap { font-size: 1rem; }
+      .recap, .recap tbody, .recap tr, .recap td { display: block; }
+      .recap thead { display: none; }
+      .recap tbody tr { margin-bottom: 1rem; border-top: 1px solid var(--line); }
+      .recap td { width: auto; border: 0; padding: 0.35rem 0; }
+      .recap td:first-child { font-weight: 750; }
+      .recap td:nth-child(2)::before { content: "Proposed choice: "; font-weight: 700; }
+      .recap td:nth-child(3)::before { content: "Main uncertainty: "; font-weight: 700; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+
+    @media print {
+      :root { --paper: #fff; --shadow: none; }
+      body { background: #fff; font-size: 11pt; }
+      .masthead { padding: 1.2rem 0 1.5rem; }
+      .page { display: block; padding: 0; }
+      .toc { display: none; }
+      section { max-width: none; margin-bottom: 2rem; }
+      .decision, .boundary article { break-inside: avoid; box-shadow: none; }
+      .decision details > *:not(summary) { display: block; }
+      .decision summary { list-style: none; }
+      .timeline { break-inside: avoid; }
+      a { color: inherit; }
+      a[href]::after {
+        content: " (" attr(href) ")";
+        color: var(--muted);
+        font-size: 0.78em;
+        font-weight: 400;
+        word-break: break-all;
+      }
+      .source-link a[href]::after,
+      .source-anchor[href]::after { content: ""; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to the guide</a>
+
+  <header class="masthead">
+    <div class="masthead-inner">
+      <p class="eyebrow">Based on architecture proposal revision 2 • all D1–D8 pending</p>
+      <h1>Eight decisions before implementation</h1>
+      <p class="lede">
+        The product direction is settled. The remaining job is to choose the concrete mechanisms that will store, process, synchronize, deliver, and upgrade School-OS.
+      </p>
+      <div class="status-line" aria-label="Review status">
+        <span class="status">D1–D8 all pending</span>
+        <span class="source-link">Authoritative source: <a href="ARCHITECTURE-PROPOSAL.md">Architecture Proposal, revision 2</a></span>
+      </div>
+    </div>
+  </header>
+
+  <div class="page">
+    <aside class="toc" aria-label="On this page">
+      <nav>
+        <strong>On this page</strong>
+        <a href="#read-first">Read this first</a>
+        <a href="#shape">System shape</a>
+        <a href="#decisions">D1–D8 decisions</a>
+        <a href="#walkthrough">Parent walkthrough</a>
+        <a href="#recap">Decision recap</a>
+        <a href="#approve">How to reply</a>
+      </nav>
+    </aside>
+
+    <main id="main">
+      <section id="read-first" aria-labelledby="read-first-title">
+        <p class="eyebrow">Orientation</p>
+        <h2 id="read-first-title">What is settled, and what is still open</h2>
+        <p>
+          This review does not reopen School-OS’s purpose or narrow its scope. It asks for explicit approval of eight architecture mechanisms. Every recommendation below is still a proposal: it is unimplemented and unqualified.
+        </p>
+
+        <div class="boundary">
+          <article class="approved">
+            <h3>Already approved product direction</h3>
+            <ul>
+              <li>Google Drive is the canonical home for processed knowledge, indexes, configuration, work, and history.</li>
+              <li>Raw email and attachments remain in their source systems; temporary copies are discarded after verified persistence.</li>
+              <li>Email identity uses source metadata only. Provider IDs are access aids; content is read separately to extract school information.</li>
+              <li>Work stays bounded and resumable from Drive. Any number of agents and known jobs may participate.</li>
+              <li>Concurrent writes to the same canonical data are outside the present household scope.</li>
+            </ul>
+          </article>
+          <article class="pending">
+            <h3>Pending architecture mechanisms</h3>
+            <ul>
+              <li>Physical storage pages, directories, and transfer limits.</li>
+              <li>Record families, persistence, and interrupted-write recovery.</li>
+              <li>Runtime recipes, adapter contracts, and the initial adapter set.</li>
+              <li>Exact automatic-association threshold and processing budgets.</li>
+              <li>Knowledge/task semantics, briefs, effects, schedules, and upgrades.</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="callout caution">
+          <p><strong>Approval boundary.</strong> Approving D1–D8 authorizes these architecture choices for implementation. It does not authorize tests, simulations, model runs, connector probes, builds, ingestion, schedules, or live effects. Testing remains a later, user-directed phase.</p>
+        </div>
+      </section>
+
+      <section id="shape" aria-labelledby="shape-title">
+        <p class="eyebrow">Mental model</p>
+        <h2 id="shape-title">The proposed system in one view</h2>
+        <p>
+          School-OS turns source material into durable, source-linked knowledge and tasks. Applications consume that canonical data through replaceable adapters; they do not become competing sources of truth.
+        </p>
+
+        <div class="flow" role="img" aria-label="School sources flow through bounded discovery and processing into canonical Drive records, then through replaceable adapters into parent-facing applications, with durable recovery and package lifecycle surrounding the process.">
+          <div class="flow-row">
+            <div class="flow-label">1 · Source systems</div>
+            <div class="flow-body">Email and attachments stay at their source. School-OS reads only what the current bounded operation needs.</div>
+          </div>
+          <div class="flow-arrow" aria-hidden="true">↓</div>
+          <div class="flow-row">
+            <div class="flow-label">2 · Discover &amp; process</div>
+            <div class="flow-body">Enumerate durable windows, apply metadata-only identity, read appearances and attachment candidates, and preserve explicit gaps.</div>
+          </div>
+          <div class="flow-arrow" aria-hidden="true">↓</div>
+          <div class="flow-row">
+            <div class="flow-label">3 · Canonical Drive layer</div>
+            <div class="flow-body">Paged JSON records hold claims, tasks, provenance, coverage, unfinished work, capabilities, jobs, runs, and outputs.</div>
+          </div>
+          <div class="flow-arrow" aria-hidden="true">↓</div>
+          <div class="flow-row">
+            <div class="flow-label">4 · Applications &amp; effects</div>
+            <div class="flow-body">Task apps, email briefs, audio, schedules, queries, and future extensions use contracts and reconcile uncertain external outcomes.</div>
+          </div>
+          <div class="flow-arrow" aria-hidden="true">↕</div>
+          <div class="flow-row">
+            <div class="flow-label">5 · Recovery &amp; lifecycle</div>
+            <div class="flow-body">Durable intents let a fresh agent resume work. Versioned packages and staged pin changes preserve private instance data and extensions.</div>
+          </div>
+        </div>
+        <p class="caption">This is an explanatory view of the proposal, not a simulation, implementation diagram, or qualification claim.</p>
+
+        <div class="decision-map" aria-label="Decision groups">
+          <article>
+            <h3>Foundation · D1–D3</h3>
+            <p>Where data lives, what records mean, and how agents reach providers.</p>
+          </article>
+          <article>
+            <h3>Information flow · D4–D6</h3>
+            <p>How material is associated, interpreted, synchronized, and delivered.</p>
+          </article>
+          <article>
+            <h3>Operations · D7–D8</h3>
+            <p>How capabilities, jobs, packages, upgrades, and extensions remain visible.</p>
+          </article>
+        </div>
+        <div class="callout">
+          <p><strong>Four watchpoints across the packet:</strong> repeat appearances may require repeat reading; incomplete date evidence stays pending; replay preserves parent completion and plans; and an unknown write or send is reconciled before any retry.</p>
+        </div>
+      </section>
+
+      <section id="decisions" aria-labelledby="decisions-title">
+        <p class="eyebrow">Approval packet</p>
+        <h2 id="decisions-title">Decisions D1–D8</h2>
+        <p>
+          Read the recommendation first. Open the details when you want to inspect authorization scope, alternatives, unknowns, and dependencies. None is preselected.
+        </p>
+
+        <article class="decision" id="d1">
+          <div class="decision-head">
+            <div class="decision-title-row">
+              <h3><span class="d-label">D1</span> How should Drive hold the data?</h3>
+              <span class="pending-pill">Pending</span>
+            </div>
+            <p class="recommendation"><strong>Recommendation:</strong> use small structured text files (JSON) on Drive, with directories that let an agent find and read a little at a time.</p>
+          </div>
+          <details>
+            <summary>Approval scope, alternatives, and unknowns</summary>
+            <div class="detail-body">
+              <h4>What approval authorizes</h4>
+              <ul>
+                <li>A short human-readable bootstrap that names the instance, installed release, logical directories, and how to locate them.</li>
+                <li>One record family per UTF-8 JSON page; at most 100 directory entries per page and a default 64 KiB encoded JSON page limit.</li>
+                <li>Source directories routed by logical mailbox and the UTC month of the original-Date instant, while preserving its original zone and precision.</li>
+                <li>Active-task, knowledge, work, and output directories with explicit continuations. Work stops at the operation budget and persists its next position.</li>
+                <li>Long text split into numbered segments without truncation; startup reads only its narrow bootstrap/configuration/operation/binding/work set.</li>
+              </ul>
+              <h4>Alternatives, tradeoffs, unknowns, and dependencies</h4>
+              <div class="fact-grid">
+                <div><strong>Credible alternative</strong>Native Google Sheets tables, with a separately bounded representation for long text.</div>
+                <div><strong>Tradeoff</strong>JSON keeps nested evidence and unknowns together; Sheets may offer easier bounded reads in some managed connectors. JSON directories add reads and writes.</div>
+                <div><strong>Key unknown</strong>Whether actual target apps can reliably read/write file contents and list folders within these bounds.</div>
+                <div><strong>Dependencies</strong>D2 record shapes, D3 storage adapters, D4 ingestion budgets, D8 package boundaries.</div>
+              </div>
+              <p>A current Drive URL or ID only helps locate data. Retrieved School-OS instance and role identifiers establish that the correct logical records were reached; duplicates or conflicts remain unresolved.</p>
+              <a class="source-anchor" href="ARCHITECTURE-PROPOSAL.md#d1--physical-drive-layout-and-bounded-access">Read D1 in the authoritative proposal →</a>
+            </div>
+          </details>
+        </article>
+
+        <article class="decision" id="d2">
+          <div class="decision-head">
+            <div class="decision-title-row">
+              <h3><span class="d-label">D2</span> How should interrupted writes recover?</h3>
+              <span class="pending-pill">Pending</span>
+            </div>
+            <p class="recommendation"><strong>Recommendation:</strong> give each item its own School-OS ID, save the intended change before writing, and verify what was saved so a fresh agent can finish interrupted work.</p>
+          </div>
+          <details>
+            <summary>Approval scope, alternatives, and unknowns</summary>
+            <div class="detail-body">
+              <h4>What approval authorizes</h4>
+              <ul>
+                <li>Typed families for configuration, email, attachment, knowledge claims, tasks, discovery windows, coverage, work, tools/adapters, jobs, and runs/outputs/effects.</li>
+                <li>School-OS identities generated once and never derived from content or provider IDs; adapter-owned provider locators stay replaceable.</li>
+                <li>A five-stage write procedure: persist and verify intent; apply and read back targets; expose relationships/lookups; mark coverage verified; complete work only after every target is verified.</li>
+                <li>Pending work IDs and verification state travel with changed values. Lost responses are found through known work/family locations and reconciled before another effect.</li>
+                <li>Temporary raw material is discarded only after persistence is verified. Conflicts and incomplete lookups remain explicit.</li>
+              </ul>
+              <h4>Alternatives, tradeoffs, unknowns, and dependencies</h4>
+              <div class="fact-grid">
+                <div><strong>Credible alternatives</strong>Immutable whole-instance generations, or a full event/replay engine.</div>
+                <div><strong>Tradeoff</strong>Small intents make local repair simpler and avoid repackaging all state, but expose more partial states that readers must understand.</div>
+                <div><strong>Key unknown</strong>Cross-record recovery and the observed consistency behavior of real Drive adapters.</div>
+                <div><strong>Dependencies</strong>D1 discoverable storage; D3 adapter outcomes; D5 relationship/task semantics; D6 external effects.</div>
+              </div>
+              <p>No atomicity, lock, lease, conditional-write coordination, generation chain, or content-based identity is assumed.</p>
+              <a class="source-anchor" href="ARCHITECTURE-PROPOSAL.md#d2--canonical-record-meanings-and-write-recovery">Read D2 in the authoritative proposal →</a>
+            </div>
+          </details>
+        </article>
+
+        <article class="decision" id="d3">
+          <div class="decision-head">
+            <div class="decision-title-row">
+              <h3><span class="d-label">D3</span> Must an agent be able to run code?</h3>
+              <span class="pending-pill">Pending</span>
+            </div>
+            <p class="recommendation"><strong>Recommendation:</strong> let agents follow complete operating instructions with their available tools. Keep Python helpers optional, and define what each tool connection must provide.</p>
+          </div>
+          <details>
+            <summary>Approval scope, alternatives, and unknowns</summary>
+            <div class="detail-body">
+              <h4>What approval authorizes</h4>
+              <ul>
+                <li>Agents can follow complete native-tool recipes; Python helpers support normalization, record preparation, bounded planning, and reconciliation when available.</li>
+                <li>No daemon, shell, coding CLI, third-party Python packages, or network SDK is required for household operation.</li>
+                <li>Generic contracts for storage; source enumeration/content/attachments; task read/apply/readback; email; audio; and scheduler management.</li>
+                <li>Initial procedures/mappings for Drive JSON storage, Gmail source/email, Google Sheets and Todoist task projections, a generic managed scheduler, ChatGPT Work and Claude runtime profiles, and optional ElevenLabs audio.</li>
+                <li>Adapter boundaries project provider envelopes into small contracts and reject conflicting duplicate fields. Unknown capability, no transport response, and provider error remain different states.</li>
+              </ul>
+              <h4>Alternatives, tradeoffs, unknowns, and dependencies</h4>
+              <div class="fact-grid">
+                <div><strong>Credible alternative</strong>Require one executable runtime/service to enforce procedures uniformly.</div>
+                <div><strong>Tradeoff</strong>Recipes reach limited managed agents but increase the risk of procedural mistakes; a mandatory service is more uniform but excludes capable no-code runtimes.</div>
+                <div><strong>Key unknown</strong>Actual operation coverage, envelope shapes, and limits of each named runtime/provider route.</div>
+                <div><strong>Dependencies</strong>D1/D2 contracts and storage; D6 effect reconciliation; D7 capability records; D8 package contents.</div>
+              </div>
+              <p>Named vendors are proposed starting routes, not compatibility promises. Local Codex remains a development surface, not a household prerequisite. Live connector evidence would follow the repository’s private-evidence rules.</p>
+              <a class="source-anchor" href="ARCHITECTURE-PROPOSAL.md#d3--runtime-adapter-contracts-and-first-supplied-routes">Read D3 in the authoritative proposal →</a>
+            </div>
+          </details>
+        </article>
+
+        <article class="decision" id="d4">
+          <div class="decision-head">
+            <div class="decision-title-row">
+              <h3><span class="d-label">D4</span> When is email metadata sufficient?</h3>
+              <span class="pending-pill">Pending</span>
+            </div>
+            <p class="recommendation"><strong>Recommendation:</strong> automatically associate only with a verified mailbox, subject, sender, and original Date whose timezone and second-or-finer precision are known; keep discovery and content processing independently bounded.</p>
+          </div>
+          <details>
+            <summary>Approval scope, alternatives, and unknowns</summary>
+            <div class="detail-body">
+              <h4>What approval authorizes</h4>
+              <ul>
+                <li>Equivalent zoned original-Date instants agree. Missing timezone, unclear meaning, or minute/day precision stays pending after one available richer metadata read; seconds are never invented.</li>
+                <li>Separate historical and daily half-open discovery windows, preferably using documented received-time listing for arrival discovery. Original Date still controls identity.</li>
+                <li>Defaults of seven-day historical windows, seven-day daily overlap, 25 processed appearances, 100 listing entries, and 8 MiB per content transfer. These are configurable ceilings, not throughput claims.</li>
+                <li>Every continuation page is followed, even after a short page. Lost tokens cause durable window replay.</li>
+                <li>Each admitted appearance is processed independently, even if its metadata reuses a logical email. Same-parent/same-name attachment candidates are all read within the bounded inventory pass when available.</li>
+                <li>Incomplete, unsupported, oversized, unnamed, or ambiguous content remains visible work with precise coverage.</li>
+              </ul>
+              <h4>Alternatives, tradeoffs, unknowns, and dependencies</h4>
+              <div class="fact-grid">
+                <div><strong>Credible alternative</strong>Admit agreeing minute-precision Dates, or allow source-grounded agent judgment under an explicit sufficiency table.</div>
+                <div><strong>Tradeoff</strong>The strict threshold produces more pending associations. Processing repeat appearances costs more, but avoids treating unread material as already covered.</div>
+                <div><strong>Key unknown</strong>Real metadata precision, source listing-time semantics, delayed indexing, candidate-read support, and practical transfer limits.</div>
+                <div><strong>Dependencies</strong>D1 pages/budgets; D2 discovery and coverage records; D3 source adapter contract; D5 semantic reconciliation.</div>
+              </div>
+              <p class="out-of-bounds"><strong>Already outside the approved direction:</strong> using metadata agreement to inherit prior content coverage, or adding body hashes/provider IDs to avoid processing an admitted appearance. Metadata identity does not prove equal content or that new material was read.</p>
+              <p>The historical second-resolution evaluator does not prove this threshold universally. Newly imported old mail also needs a supported change route or an explicitly requested rescan; overlap alone cannot promise discovery.</p>
+              <a class="source-anchor" href="ARCHITECTURE-PROPOSAL.md#d4--production-association-discovery-and-content-coverage">Read D4 in the authoritative proposal →</a>
+            </div>
+          </details>
+        </article>
+
+        <article class="decision" id="d5">
+          <div class="decision-head">
+            <div class="decision-title-row">
+              <h3><span class="d-label">D5</span> How should school requests and parent edits interact?</h3>
+              <span class="pending-pill">Pending</span>
+            </div>
+            <p class="recommendation"><strong>Recommendation:</strong> preserve school information with its evidence, turn required actions into tasks, and keep parent plans and completion separate from school deadlines. Compare both sides before accepting conflicting task-app edits.</p>
+          </div>
+          <details>
+            <summary>Approval scope, alternatives, and unknowns</summary>
+            <div class="detail-body">
+              <h4>What approval authorizes</h4>
+              <ul>
+                <li>Claim-level facts keep instructions, conditions, exceptions, dates, applicability, qualifications, provenance, and finite <code>is_action</code> disposition.</li>
+                <li>Corrections, support, and conflicts need evidence-linked relationships. Later dates and repeated wording do not silently overwrite prior claims.</li>
+                <li>Finite requests become canonical tasks. Required recurring actions keep recurrence, applicability, and occurrence/completion history; if native recurrence is unavailable, project explicit occurrences within a default 14-day horizon.</li>
+                <li>Parent owner, planned date, progress, completion, and notes stay separate from school-supported action, context, and deadline. Parent-origin tasks remain visibly parent-originated.</li>
+                <li>Three-way task synchronization compares canonical, remote, and last verified shared values. Divergent edits await review; remote deletion creates a missing projection rather than deleting the canonical task.</li>
+                <li>Replay does not reset a parent’s completion or planned date. Reopening requires explicit parent or source evidence.</li>
+              </ul>
+              <h4>Alternatives, tradeoffs, unknowns, and dependencies</h4>
+              <div class="fact-grid">
+                <div><strong>Credible alternatives</strong>One-way task export; more compact mutable summaries; another explicit recurrence projection policy.</div>
+                <div><strong>Tradeoff</strong>Three-way sync supports parent interaction but adds conflict handling. Claim-level records preserve provenance and correction history but require careful semantic judgment.</div>
+                <div><strong>Key unknown</strong>Semantic extraction quality, provider support for managed identity fields/recurrence, and how much review divergent edits create.</div>
+                <div><strong>Dependencies</strong>D2 claims/tasks/relationships; D3 task adapters; D4 coverage; D6 external-effect recovery.</div>
+              </div>
+              <p>Title similarity never establishes task identity. Independent developer expectations must be bound to the exact source packet and must separately check action disposition; an empty action set requires source-supported justification. These safeguards do not authorize an audit run.</p>
+              <a class="source-anchor" href="ARCHITECTURE-PROPOSAL.md#d5--substantive-knowledge-queries-and-task-reconciliation">Read D5 in the authoritative proposal →</a>
+            </div>
+          </details>
+        </article>
+
+        <article class="decision" id="d6">
+          <div class="decision-head">
+            <div class="decision-title-row">
+              <h3><span class="d-label">D6</span> What belongs in a brief, and when can a send retry?</h3>
+              <span class="pending-pill">Pending</span>
+            </div>
+            <p class="recommendation"><strong>Recommendation:</strong> select briefs by when knowledge was newly verified or substantively corrected, retain generated audio on Drive until parent deletion, and reconcile uncertain effects before any retry.</p>
+          </div>
+          <details>
+            <summary>Approval scope, alternatives, and unknowns</summary>
+            <div class="detail-body">
+              <h4>What approval authorizes</h4>
+              <ul>
+                <li>Daily/recent updates use the Drive verification/correction interval and display original school dates separately; late-processed historical information is labeled.</li>
+                <li>Briefs include relevant tasks and disclose incomplete ingestion or task-sync failure. A fully read action-free snapshot goes directly to brief composition.</li>
+                <li>Historical import does not automatically send a backlog. Manual recent briefs require an explicit interval.</li>
+                <li>Optional audio narrates the same selected canonical information and is retained as a derived Drive artifact, with inputs and attribution, until the parent explicitly deletes it.</li>
+                <li>Before task writes, schedule changes, email, or audio requests: persist and verify the exact intent, mark outcome unknown, dispatch, then reconcile a complete relevant provider read.</li>
+                <li>Unresolved outcomes remain unknown and stop that effect. Retry requires evidence of non-application, or an explicit parent decision after duplicate risk is explained.</li>
+              </ul>
+              <h4>Alternatives, tradeoffs, unknowns, and dependencies</h4>
+              <div class="fact-grid">
+                <div><strong>Credible alternative</strong>Use source Date alone for brief recency, or adopt a different explicit audio retention rule.</div>
+                <div><strong>Tradeoff</strong>Verification-time selection surfaces newly processed old facts but must label them clearly. Retained audio improves history and attribution but consumes storage and needs parent-led deletion.</div>
+                <div><strong>Key unknown</strong>Searchable provider evidence, eventual visibility, unattended authorization, and the usable form/lifetime of audio artifacts.</div>
+                <div><strong>Dependencies</strong>D2 intents/runs/outputs; D3 effect adapters; D5 knowledge/tasks; D7 scheduler observation.</div>
+              </div>
+              <p class="out-of-bounds"><strong>Already outside the approved direction:</strong> blind resend after a timeout, transport failure, or empty search. Unknown writes and sends must be reconciled; a provider receipt alone is not canonical verification.</p>
+              <p>No procedure promises exactly-once external effects.</p>
+              <a class="source-anchor" href="ARCHITECTURE-PROPOSAL.md#d6--brief-selection-delivery-audio-and-unknown-effects">Read D6 in the authoritative proposal →</a>
+            </div>
+          </details>
+        </article>
+
+        <article class="decision" id="d7">
+          <div class="decision-head">
+            <div class="decision-title-row">
+              <h3><span class="d-label">D7</span> How should jobs and their status be tracked?</h3>
+              <span class="pending-pill">Pending</span>
+            </div>
+            <p class="recommendation"><strong>Recommendation:</strong> record which agent runs each known job, where it is managed, which tools it uses, and when its actual settings were last checked. Keep requested changes separate from confirmed changes.</p>
+          </div>
+          <details>
+            <summary>Approval scope, alternatives, and unknowns</summary>
+            <div class="detail-body">
+              <h4>What approval authorizes</h4>
+              <ul>
+                <li>Capability records use supported/unsupported/unknown states, observed limits, authorization location, and verification time. Declared tools begin discovery; testing them is separately authorized later.</li>
+                <li>Operation defaults and each job’s pinned bindings remain separate. Changing a default does not silently rebind a job.</li>
+                <li>Job creation/change/pause follows D6’s unknown-effect procedure. Desired settings remain pending until externally inspected and recorded.</li>
+                <li>Each scheduled prompt names the Drive bootstrap, operation, scope, budget, bindings, and destinations. Missed jobs recover from durable Drive windows.</li>
+                <li>A fresh reader can explain known jobs, runtimes, management locations, triggers, outputs, recorded generator/sender, and freshness without claiming unseen jobs or live status.</li>
+              </ul>
+              <h4>Alternatives, tradeoffs, unknowns, and dependencies</h4>
+              <div class="fact-grid">
+                <div><strong>Credible alternatives</strong>Different register granularity, freshness policy, or job-binding workflow that still preserves multiple agents/jobs and desired-versus-observed state.</div>
+                <div><strong>Tradeoff</strong>Per-combination records and pinned jobs cost maintenance, but prevent vendor-name assumptions and accidental rebinding.</div>
+                <div><strong>Key unknown</strong>Actual schedule control, readback detail, and unattended permissions for each runtime.</div>
+                <div><strong>Dependencies</strong>D2 tool/job/run records; D3 scheduler contracts; D6 effect recovery; D8 installed operation recipes.</div>
+              </div>
+              <p class="out-of-bounds"><strong>Already outside the approved direction:</strong> one fixed scheduler/runtime or a single active-agent slot. The approved product supports the parent’s choice of multiple agents and registered jobs.</p>
+              <a class="source-anchor" href="ARCHITECTURE-PROPOSAL.md#d7--register-capability-discovery-and-schedules">Read D7 in the authoritative proposal →</a>
+            </div>
+          </details>
+        </article>
+
+        <article class="decision" id="d8">
+          <div class="decision-head">
+            <div class="decision-title-row">
+              <h3><span class="d-label">D8</span> How should updates preserve your instance?</h3>
+              <span class="pending-pill">Pending</span>
+            </div>
+            <p class="recommendation"><strong>Recommendation:</strong> install from a versioned ZIP, keep official files separate from private data and additions, and verify an update before switching to it. Preserve the old project in Git history.</p>
+          </div>
+          <details>
+            <summary>Approval scope, alternatives, and unknowns</summary>
+            <div class="detail-body">
+              <h4>What approval authorizes</h4>
+              <ul>
+                <li>A ZIP containing a manifest, entry point, recipes, versioned record/adapter contracts, defaults, optional helpers, reference mappings, extension guide, and license.</li>
+                <li>Semantic package/contract versions. Meaning or required-field changes need a major version and separately approved migration; additive optional fields may be compatible.</li>
+                <li>Compatible extensions own namespaces and inventories under <code>extensions</code>; upgrades preserve private data, configuration, and extensions.</li>
+                <li>Upgrades stage a new official version, persist intent, check compatibility, verify files, then change the bootstrap pin. The prior package remains available.</li>
+                <li>No implicit migration of retired instances. Fresh-install and “migration not yet authorized” guidance make the boundary explicit.</li>
+                <li>Retire old active runtime/instruction/schema/template/adapter/test trees after the preserved baseline, while keeping principles, restart design, frozen studies, history, continuity, and privacy safeguards.</li>
+              </ul>
+              <h4>Alternatives, tradeoffs, unknowns, and dependencies</h4>
+              <div class="fact-grid">
+                <div><strong>Credible alternatives</strong>In-place replacement, or migration on every update.</div>
+                <div><strong>Tradeoff</strong>Staging and isolated areas cost storage and procedure steps but improve recovery and protect extensions. In-place overwrite is smaller but harder to recover.</div>
+                <div><strong>Key unknown</strong>Archive handling and compatibility behavior in actual managed applications.</div>
+                <div><strong>Dependencies</strong>D1 area boundaries; D2 upgrade intent; D3 packaged recipes/helpers; D7 registered bindings/jobs.</div>
+              </div>
+              <p>The initial restart remains explicitly unqualified. The optional standard-library archive builder and replacement validation entry point would be prepared during implementation but not run before user-directed testing. Package hashes check official package integrity; they never become source identity.</p>
+              <a class="source-anchor" href="ARCHITECTURE-PROPOSAL.md#d8--package-format-upgrades-extensions-and-legacy-retirement">Read D8 in the authoritative proposal →</a>
+            </div>
+          </details>
+        </article>
+      </section>
+
+      <section id="walkthrough" aria-labelledby="walkthrough-title">
+        <p class="eyebrow">Illustrative use case</p>
+        <h2 id="walkthrough-title">A parent gets a late field-trip update</h2>
+        <div class="callout">
+          <p><strong>Fictional illustration only.</strong> This walkthrough explains the proposed flow. It is not a simulation, test result, connector observation, or implemented behavior.</p>
+        </div>
+
+        <div class="walkthrough">
+          <div class="walk-step">
+            <h3>A school email appears</h3>
+            <p>A teacher sends “Field trip update” with a permission deadline and two attachments named <code>trip.pdf</code>. The originals remain in email.</p>
+          </div>
+          <div class="walk-step">
+            <h3>Discovery records its own progress</h3>
+            <p>The daily window follows every listing page within its configured budget. It stores the window and admitted appearances separately from content-processing completion. <a href="#d4">D4</a></p>
+          </div>
+          <div class="walk-step">
+            <h3>Identity stays conservative</h3>
+            <p>The mailbox, subject, sender, and exact zoned original Date support a logical email association. If the Date were only minute-precision, the recommendation would leave it pending after a richer read rather than invent seconds. <a href="#d4">D4</a></p>
+          </div>
+          <div class="walk-step">
+            <h3>Both same-name candidates are processed</h3>
+            <p>The two attachments remain a parent-bound candidate group. Available candidates are read within the bounded pass, and any uncertain attribution stays visible. A prior matching email cannot make this material “already read.” <a href="#d1">D1</a> · <a href="#d4">D4</a></p>
+          </div>
+          <div class="walk-step">
+            <h3>Claims and a task remain distinct</h3>
+            <p>“The bus leaves at 09:00” is saved as a fact; “return permission form by Friday” becomes a finite task. Each keeps source support. The parent’s Tuesday plan is stored separately from Friday’s school deadline. <a href="#d5">D5</a></p>
+          </div>
+          <div class="walk-step">
+            <h3>A lost task-app response is not blindly repeated</h3>
+            <p>School-OS has already saved the intended projection and marked its outcome unknown. It reads the app to find a matching School-OS task marker. If the outcome remains unknowable, it stops that effect and surfaces the uncertainty. <a href="#d2">D2</a> · <a href="#d6">D6</a></p>
+          </div>
+          <div class="walk-step">
+            <h3>The brief explains what changed</h3>
+            <p>The update appears because it was newly verified today, with the original school date shown separately. The brief names incomplete processing or task-sync limits. Optional audio contains the same selected information and remains a derived Drive artifact until the parent deletes it. <a href="#d6">D6</a></p>
+          </div>
+          <div class="walk-step">
+            <h3>A fresh agent can continue</h3>
+            <p>It reads the bootstrap, pending work, job binding, and last observed status from Drive. It does not need the previous chat, a local process, or a remembered provider token. <a href="#d3">D3</a> · <a href="#d7">D7</a> · <a href="#d8">D8</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section id="recap" aria-labelledby="recap-title">
+        <p class="eyebrow">Decision recap</p>
+        <h2 id="recap-title">What remains to decide</h2>
+        <p>All eight rows need an explicit approve/revise decision. Partial approval can release only work whose dependencies are also approved.</p>
+
+        <table class="recap">
+          <thead>
+            <tr>
+              <th>Decision</th>
+              <th>Proposed choice</th>
+              <th>Main uncertainty</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>D1</td><td>Paged JSON records and directories in Drive.</td><td>Managed-app file and folder operations.</td></tr>
+            <tr><td>D2</td><td>Typed School-OS records and verified small write intents.</td><td>Drive consistency and cross-record recovery.</td></tr>
+            <tr><td>D3</td><td>Native-tool recipes, JSON contracts, optional helpers, initial routes.</td><td>Exact provider/runtime capability.</td></tr>
+            <tr><td>D4</td><td>Exact zoned original-Date threshold; bounded independent appearance processing.</td><td>Metadata/listing fidelity and real limits.</td></tr>
+            <tr><td>D5</td><td>Claim relationships, explicit recurring/finite tasks, three-way sync.</td><td>Semantic and provider-field behavior.</td></tr>
+            <tr><td>D6</td><td>Verification-time briefs; retained audio; reconcile unknown effects.</td><td>External observability and authorization.</td></tr>
+            <tr><td>D7</td><td>Per-combination capabilities and desired/observed job state.</td><td>Scheduler control and unattended access.</td></tr>
+            <tr><td>D8</td><td>Versioned ZIP, staged pin changes, preserved extensions, explicit migration boundary.</td><td>Managed-app archive and upgrade behavior.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="approve" aria-labelledby="approve-title">
+        <p class="eyebrow">Your response</p>
+        <h2 id="approve-title">Reply in the conversation</h2>
+        <p>
+          This page intentionally has no approval buttons, checkboxes, or saved state. Canonical approval is your explicit reply in the conversation and its later record in the active plan.
+        </p>
+        <p>You can approve the packet, revise individual decisions, or approve a subset. For example:</p>
+        <div class="approval-example" aria-label="Example approval reply">Approve D1, D2, D3, D5, D6, D7, and D8 as proposed.
+Revise D4: [state the threshold or policy you want].
+This approval does not authorize testing.</div>
+        <p>Useful points to call out if you want a revision: JSON versus Sheets; the original-Date precision threshold; the initial adapter set; recurrence horizon; one-way versus three-way task synchronization; audio retention; and package, extension, or migration boundaries.</p>
+
+        <h3>What happens after architecture approval</h3>
+        <div class="timeline" aria-label="Next-step timeline">
+          <div>User approves or revises D1–D8</div>
+          <div>Full approved T1–T10 implementation</div>
+          <div>Commit, push, and remote revision verification</div>
+          <div class="stop">STOP and check in</div>
+          <div>User directs any tests</div>
+        </div>
+        <div class="callout caution">
+          <p>The implementation handoff must be reported as <strong>implemented but untested</strong>. No test, build, simulation, model replay, connector probe, ingestion, schedule, or live effect begins from architecture approval alone.</p>
+        </div>
+        <p>
+          For the complete wording, grounding, and limits, read the <a href="ARCHITECTURE-PROPOSAL.md#approval-record-and-next-action">authoritative approval record and next action</a>. The <a href="../PLAN.md#current-coordinator-checkpoint--architecture-approval-pending">active plan</a> is where explicit decisions are recorded.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <p><strong>Document status:</strong> explanatory review artifact for Architecture Proposal revision 2, prepared 2026-09-14. D1–D8 remain pending. The proposal, product principles, active plan, and coverage map remain authoritative; this guide creates no architecture decision.</p>
+    <p>
+      Sources: <a href="ARCHITECTURE-PROPOSAL.md">Architecture Proposal</a> ·
+      <a href="COVERAGE.md">Whole-project coverage</a> ·
+      <a href="../PLAN.md">Active restart plan</a> ·
+      <a href="../../../product-principles.md">Product principles</a>
+    </p>
+  </footer>
+</body>
+</html>

@@ -14,6 +14,10 @@ handoff or the start of testing.
 The [new isolated development model](identity/revised-model/README.md) and its
 fictional checks are also authored but unexecuted; frozen studies stay unchanged.
 
+For a guided review, open the [HTML architecture decision guide](implementation/architecture-guide.html).
+It explains the proposal with an overview, examples and expandable detail.
+The written proposal remains authoritative; the guide records no approvals.
+
 The [product principles](../../product-principles.md#decision-authority) are the
 source of truth and grounding for uncovered decisions. Every new or changed
 architecture decision requires explicit user approval before adoption or

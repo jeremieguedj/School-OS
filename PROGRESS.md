@@ -4759,3 +4759,33 @@ requirements, then read this log from top to bottom.
   not functional validation. Commit the twelve in-scope files, push this branch
   and the baseline tag, and verify both remote targets before reporting the
   preparation checkpoint published.
+
+## 2026-09-14 — Sol-authored architecture decision guide
+
+- The user requested a Sol agent to prepare an HTML walkthrough of the
+  architecture proposal, optimized for reading ease and cognitive processing.
+  Delegated one bounded artifact to GPT-5.6 Sol; the coordinator retained
+  integration, continuity and Git control in the same repository/branch.
+- Added `docs/plans/restart/implementation/architecture-guide.html`, a standalone
+  document with inline styling, no external assets or JavaScript, a short
+  orientation, approved/pending distinction, system flow, plain-language D1–D8
+  summaries, expandable approval scope/tradeoffs/unknowns, an explicitly fictional
+  parent walkthrough, decision recap and source links. It includes responsive
+  layout and print styling, without claiming rendered-layout verification.
+- Linked the guide from the active restart plan and artifact guide. The written
+  architecture proposal revision 2 remains authoritative; all D1–D8 approvals
+  remain pending. The guide records no approval, introduces no architectural
+  decision and does not start production implementation or testing.
+- Source-text review corrected the distinction between provider access aids and
+  content extraction, kept the example's informational fact separate from its
+  actionable request, and simplified visible decision wording. Publication
+  hygiene is limited to privacy, document links, diff and Git/remote checks.
+  No tests, simulations, model replays, builds, probes or live operations run.
+- Exact next action remains the user's explicit architectural decisions, recorded
+  in the active plan before dependent code. Publish this guide on the existing
+  restart branch and verify the remote revision; keep the later whole-project
+  implementation/publication/testing stop unchanged.
+- Publication hygiene: privacy scan has no findings; all 33 HTML links and
+  source-section anchors resolve, including the two new guide links from the
+  plan/README. Diff checks pass. No browser rendering or functional verification
+  was performed. Hooks remain inactive samples and CI triggers are unchanged.
