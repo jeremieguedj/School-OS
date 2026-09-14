@@ -7,12 +7,46 @@ search-window recovery. Implementation and managed-agent qualification remain
 pending. The [artifact guide](README.md) separates current authority from frozen
 experiments and historical proposals.
 
+## Decision authority and user checkpoints
+
+The [product principles](../../product-principles.md#decision-authority) are the
+source of truth for product/design decisions and the grounding for any decision
+not explicitly covered by an approved specification. Direct user instructions
+take precedence. Old code, historical plans and tool defaults are evidence, not
+authority to fill a gap with a new requirement.
+
+Every new or changed architecture decision requires explicit user approval
+before adoption or implementation. Present a concrete proposal with its
+principle/use-case grounding, alternatives, tradeoffs and unknowns, then record
+the decision and the user's explicit approval in this plan. Principles compliance
+does not itself grant approval. Existing explicit approvals remain valid;
+routine nonarchitectural implementation choices may proceed within their scope.
+Continue independent approved work while an architectural choice is pending.
+
+The next coordinator's implementation phase ends when the agreed new project
+code and continuity documents are committed, pushed and the remote revision
+verified. **Stop there and check in with the user.** The user personally manages
+and oversees the testing phase. Do not execute tests, simulations, replay
+experiments, connector probes, pilots, ingestion or schedules before the user's
+subsequent direction. Preparing test code, fictional fixtures and a proposed
+testing sequence is allowed; executing them is not. Publication hygiene (diff,
+privacy, document-link, Git status and remote-revision checks) remains required.
+Report the code as implemented but untested, with no qualification claim.
+Inspect applicable hooks and CI before publishing the new code. Do not trigger
+testing indirectly or silently disable checks; bring any conflict between
+publication and the reserved testing phase to the user before proceeding.
+
+These checkpoints supersede older automatic transitions into experiments,
+managed-agent pilots or release qualification. The
+[copyable Astra handoff](ASTRA-HANDOFF.md) carries the same boundaries.
+
 ## Approved architecture and operating choices
 
 - Google Drive holds the instance's instructions/configuration, processed
   knowledge and tasks, source/attachment index and coverage, unfinished work,
   and tools/jobs/runs register. These are logical areas; exact file/table layout
-  will be selected through a small managed-agent read/write pilot.
+  requires an explicit user-approved proposal before implementation. Any pilot
+  that informs the choice belongs to the user-directed testing phase.
 - Raw emails and attachments remain in their source systems. Temporary downloads
   support processing and are discarded after verified persistence. Startup and
   routine work read relevant records in bounded units as history grows.
@@ -66,7 +100,7 @@ the concrete enumeration lesson.
 The original code, receipts and JSON counts remain unchanged. Read the corrected
 report before interpreting `wrong_association` or the earlier pass/failure totals.
 
-## Next implementation and qualification sequence
+## Implementation phase: stop before testing
 
 - [x] Reconcile product principles, current recipe, test interpretation and
   artifact authority with the approved decisions.
@@ -77,12 +111,28 @@ report before interpreting `wrong_association` or the earlier pass/failure total
   labels for fictional cases; leave unknown live logical relationships ungraded
   rather than assuming provider-entry differences are product errors. Report
   residual indistinguishability honestly without adding content-based identity.
+- [ ] Implement the agreed initial project-code scope under the approved
+  architecture. Obtain approval for unresolved architectural choices before
+  their dependent code; do not silently decide the Drive file/table layout.
+  Prepare a proposed test inventory and fixtures without running them.
+- [ ] Publish the agreed code and updated continuity documents. Report the
+  exact revision, implemented scope, pending decisions, known risks, tests not
+  run and proposed testing sequence. Stop and await the user's direction.
+
+## User-directed testing phase: not authorized to start automatically
+
+The following is a proposed qualification backlog, not permission to execute it.
+The user selects the scope, order, environment and timing. Include the revised
+model's fictional cases above in that testing plan. Test evidence may motivate
+architecture changes, but those changes still require explicit user approval.
+
 - [ ] Prove one bounded historical-to-daily slice in an actual managed agent:
   discover individual messages and original Dates, normalize/index them, read
   source content and relevant attachments temporarily, persist knowledge/tasks
-  and coverage to Drive, verify readback and discard temporary material. Choose
-  the simplest usable Drive layout from that pilot, with measured startup/read/
-  write cost. Explicitly retain unsupported or incomplete items.
+  and coverage to Drive, verify readback and discard temporary material. Measure
+  startup/read/write cost for the user-approved layout; propose any architectural
+  revision for approval before changing it. Explicitly retain unsupported or
+  incomplete items.
 - [ ] Exercise interruption and continuation through Drive: completed windows,
   unfinished enumeration, pending content, and a lost/expired pagination token.
   Repeat the unfinished window without duplicating already associated logical
@@ -98,7 +148,8 @@ report before interpreting `wrong_association` or the earlier pass/failure total
   expand supported adapters from observed capabilities. Qualify task-sync/brief
   applications on the same canonical state; record unsupported routes and limits.
 
-Advance through one reviewable slice at a time. Reuse evidence, fix demonstrated
+Within the phase the user has authorized, advance through one reviewable slice
+at a time. Reuse evidence, fix demonstrated
 problems at the smallest responsible boundary, and measure tool calls, approvals,
 elapsed work and recovery effort. Do not rebuild the retired runtime, develop
 parallel storage engines or require every vendor to pass before learning from the

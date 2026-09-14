@@ -4,6 +4,12 @@
 
 School-OS gives parents a lossless, source-linked, efficient way to preserve and retrieve substantive information received from their children's schools across a school year and beyond. Google Drive is the source of truth for an instance's processed knowledge, source index, configuration, and operating history. School-OS provides a canonical data layer on which useful applications and workflows can be built; it is not limited to any one brief, task manager, or delivery channel.
 
+## Decision authority
+
+This document is the source of truth for product and design decisions. When a decision is not explicitly covered by an approved plan or specification, ground it in these principles and the core use cases below. Historical implementations, experiments, agent preferences and tool defaults do not supply missing product requirements. Direct user instructions take precedence; surface conflicts and update the relevant documents rather than silently changing the principles. Google Drive remains the separate source of truth for each instance's data and operating state.
+
+Every new or changed architecture decision requires explicit user approval before adoption or implementation, including decisions presented as compatible extensions or implementation details that actually change system structure or behavior. Explain the concrete proposal, relevant principles, alternatives, tradeoffs and remaining unknowns, and record the user's decision in the active plan. Do not infer approval from silence, a general request to implement, or compliance with these principles. Already explicitly approved decisions may be implemented without asking again. Routine nonarchitectural implementation choices may proceed within approved scope, grounded in this document.
+
 ## People and agent roles
 
 The primary human users are usually one or two parents or guardians managing school information for one or more children. Users choose how many agents they use: one agent, a replacement or backup, or several agents with different jobs. School-OS does not restrict that number. This is a small-household system; concurrent updates by multiple agents to the same canonical Drive data are explicitly outside the current scope. Do not build locks, leases, fencing, or concurrent-write conflict resolution for that edge case.
@@ -80,7 +86,7 @@ GitHub is the authoritative source for the official School-OS system and its lat
 
 The private instance is expected to evolve. A parent may work with an agent to add support for another task manager, delivery service, analysis, application, or workflow. An addition that follows the canonical data model, invariants, and applicable contracts is compatible system expansion and should not by itself prevent future system upgrades.
 
-Changing a core invariant, redefining canonical data meaning, changing a generic contract incompatibly, or altering release/upgrade behavior is different from adding a conformant extension. Before making such an architectural change, an agent must warn the user that it may impair compatibility with future official releases, explain the consequence, and obtain explicit approval.
+All new or changed architecture decisions require explicit approval under the decision authority above. Changing a core invariant, redefining canonical data meaning, changing a generic contract incompatibly, or altering release/upgrade behavior additionally requires explaining the consequence and warning that it may impair compatibility with future official releases. A conformant extension remains compatible expansion, but that classification does not waive approval for any new architecture decision it contains.
 
 ## Compatibility posture
 

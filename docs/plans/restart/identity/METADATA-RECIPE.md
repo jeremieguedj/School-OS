@@ -186,7 +186,11 @@ parent-group processing or durable window recovery. Original code and results
 remain unchanged to preserve reproducibility. Older provider-ID and content/MIME
 experiments are historical and do not qualify these rules.
 
-Next: update a small development model with this decision policy and meaningful
-tests, then qualify a bounded end-to-end slice in actual managed agent apps,
-including Drive checkpoints, daily scheduling and a second agent's handoff.
+Next: implement the approved decision policy in a small development model and
+prepare meaningful tests without executing them. Any new or changed architecture
+decision requires explicit user approval, grounded in the product principles.
+Publish the agreed initial project code and stop for the user to direct testing,
+as required by the [restart plan](../PLAN.md#decision-authority-and-user-checkpoints).
+A bounded slice in managed agent apps, Drive checkpoints, daily scheduling and
+a second agent's handoff remain proposed user-directed qualification work.
 No installed runtime, private-instance migration or live scheduled run is claimed.

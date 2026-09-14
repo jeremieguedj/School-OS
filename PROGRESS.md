@@ -4612,3 +4612,42 @@ requirements, then read this log from top to bottom.
   revision. Next implementation action is the small revised model and
   meaningful logical-email tests recorded in the restart plan; it is not started
   by this documentation update.
+
+## 2026-09-14 — architecture approval and user-directed testing handoff
+
+- The user made the product principles document the source of truth and grounding
+  for decisions not explicitly covered by an approved plan or specification.
+  Updated its decision authority and the repository entry point accordingly.
+  Every new or changed architecture decision now requires explicit user approval
+  before adoption or implementation, including compatible architectural additions.
+  Prior explicit approvals remain valid; routine nonarchitectural implementation
+  may proceed within approved scope. Principles compliance alone is not approval.
+- Added `docs/plans/restart/ASTRA-HANDOFF.md` with the full copyable prompt for a
+  fresh Astra High coordinator session in this directory. It carries the current
+  design/evidence, bounded delegation and the same approval limits for all agents.
+  The unresolved Drive layout must be proposed and approved before implementation;
+  a pilot cannot select a new architecture autonomously.
+- Updated the root plan, restart plan, artifact guide and metadata recipe to end
+  the next implementation phase after the agreed new project code and continuity
+  documents are committed, pushed and the remote revision verified. The agent
+  must stop and check in; the user personally manages and oversees testing.
+  No tests, simulations, replay experiments, probes, pilots, ingestion or schedules
+  may start without the user's subsequent direction. Test code and fictional
+  fixtures may be prepared without execution. Older automatic transitions into
+  model evaluation or managed-agent qualification are superseded.
+- Publication hygiene is distinct from functional testing: diff, privacy,
+  document-link, Git status and remote-revision checks remain required. The
+  implementation handoff must explicitly report untested code, known risks,
+  pending approvals and a proposed testing sequence for the user to direct.
+  Check publication hooks/CI before publishing new code; do not trigger tests
+  indirectly or silently disable checks to bypass this boundary.
+- This work changes documentation only. No new implementation session, product
+  code, executable experiment, private source read, live operation or test run
+  was started. The frozen experiments and their saved results remain unchanged.
+  Next: give the saved prompt to the fresh coordinator; resolve any new
+  architecture choices explicitly, implement the agreed code, publish and stop
+  before user-directed testing.
+- Documentation checks: independent consistency review, tracked/new-file privacy,
+  local document links and diff checks pass. Publish only these eight documents
+  through the current recovery branch and verify its remote revision; no new
+  restart branch or baseline tag is created by this prompt update.

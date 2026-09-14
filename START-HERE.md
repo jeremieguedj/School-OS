@@ -21,7 +21,27 @@ Before changing an installed instance or this reusable system, classify the requ
 2. **Compatible expansion** adds a conformant adapter, tool, application, analysis, automation, or workflow while preserving core invariants and contracts. It is normal School-OS evolution and does not make an instance a fork.
 3. **Core architectural change** alters an invariant, canonical data meaning, a generic contract incompatibly, or release/upgrade behavior.
 
-Proceed with the first two categories under the selected operation and ordinary user authorization. Before the third, explain why compatible expansion is insufficient, explicitly warn that the change may impair future official updates, and obtain the user's approval. Do not treat a user-created adapter as a core change merely because its provider is not included in the official release.
+Proceed with nonarchitectural work in the first two categories under the selected operation and ordinary user authorization. Every new or changed architecture decision, including one within a compatible expansion, requires explicit user approval under the [product decision authority](docs/product-principles.md#decision-authority). Before the third category, also explain why compatible expansion is insufficient and warn that the change may impair future official updates. Do not treat a user-created adapter as a core change merely because its provider is not included in the official release.
+
+## Restart development and testing boundary
+
+The [product principles](docs/product-principles.md) are the source of truth and
+grounding for decisions not explicitly covered by approved plans. Follow the
+[current restart plan](docs/plans/restart/PLAN.md) and its
+[Astra handoff](docs/plans/restart/ASTRA-HANDOFF.md). Implement existing explicit
+architecture approvals; obtain the user's approval before adopting any new or
+changed architecture decision.
+
+For the next implementation handoff, publish the agreed new project code, then
+stop and check in with the user. The user personally manages and oversees the
+testing phase. Do not start tests, simulations, replay experiments, connector
+probes, managed-agent pilots, ingestion or scheduled jobs without the user's
+subsequent testing direction. Test code and a proposed testing sequence may be
+prepared without execution. This explicit boundary supersedes older instructions
+to proceed autonomously through validation or live qualification.
+Inspect applicable hooks and CI before publishing the new code; do not trigger
+testing indirectly or silently disable checks. Surface any publication conflict
+with the user before proceeding.
 
 ## Instruction hierarchy
 
@@ -67,6 +87,11 @@ When maintaining this repository:
    accepted in-scope files; push the descriptive commit to the intended GitHub
    branch; and verify that the remote branch resolves to that commit before
    reporting the work complete.
+
+When the user reserves the testing phase, step 4 permits publication hygiene
+(diff, privacy, document-link, Git status and remote-revision checks), not
+functional test execution. Record the delivered code as untested and stop at the
+agreed handoff; publishing implementation does not establish product qualification.
 
 Never leave accepted work only in a local working tree or unpushed commit. Never
 publish private-instance data, credentials, or unrelated user changes. If

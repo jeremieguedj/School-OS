@@ -3,6 +3,17 @@
 Status: the restart plan incorporates the approved logical-email identity, normalization, parent-bound attachment and resumable enumeration decisions; implementation and managed-agent qualification remain pending
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
+Decision authority: [product principles](docs/product-principles.md#decision-authority)
+are the source of truth and grounding for uncovered decisions. Every new or
+changed architecture decision requires explicit user approval before adoption
+or implementation. Existing explicit approvals remain valid.
+
+Next-session boundary: implement and publish the agreed new project code, then
+stop and check in. The user personally manages and oversees testing; no tests,
+simulations, probes or pilots start without the user's subsequent direction.
+Publication hygiene remains required. Use the updated
+[Astra coordinator prompt](docs/plans/restart/ASTRA-HANDOFF.md).
+
 ## Current restart work
 
 Follow [the restart architecture and simulation plan](docs/plans/restart/PLAN.md)
@@ -24,11 +35,12 @@ The plan now specifies routine normalization, attachment lookup under the
 parent email, each reply's own source Date, and Drive checkpoints of completed
 and unfinished search windows. No provider token is required to resume a window.
 
-This work is research, design/documentation and synthetic simulation, not a
-claim that the existing runtime implements the new architecture. The latest
-user instruction additionally authorizes a bounded read-only Gmail identity
-probe, including replies within threads. It authorizes no private-instance
-migration, live ingestion, schedule or delivery operation.
+The work completed so far is research, design/documentation and historical
+experiments, not a claim that the existing runtime implements the new
+architecture. Prior authorization for the completed bounded read-only Gmail
+probe does not authorize repeating it in the next implementation phase. This
+prompt update performs no implementation, private-instance migration, live
+ingestion, schedule or delivery operation.
 The previous architecture may require an explicit future migration; its frozen
 release and clean-root qualification rules do not govern this design exercise.
 

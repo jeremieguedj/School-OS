@@ -5,6 +5,14 @@ documented; a production replacement and cross-agent handoff are not yet
 implemented or qualified. Earlier experiments and the retired runtime are
 evidence, not an instruction to rebuild their architecture.
 
+The [product principles](../../product-principles.md#decision-authority) are the
+source of truth and grounding for uncovered decisions. Every new or changed
+architecture decision requires explicit user approval before adoption or
+implementation. The next coordinator must stop after publishing the agreed new
+project code; the user personally manages and oversees testing. No tests or
+pilots start automatically. The [Astra handoff](ASTRA-HANDOFF.md) is the copyable
+prompt for that session.
+
 ## Current direction
 
 Google Drive is the durable home for processed school knowledge, source and
@@ -32,6 +40,7 @@ personal computer or coding CLI is required by the target architecture.
 |---|---|---|
 | [Product principles](../../product-principles.md) | Product purpose, core use cases, source custody, portable agents, metadata-only identity, processing coverage and job visibility | Current product authority; updated with approved clarifications |
 | [Restart plan](PLAN.md) | Approved architecture choices, development sequence, qualification milestones and remaining limits | Current work plan; implementation milestones remain open |
+| [Astra coordinator handoff](ASTRA-HANDOFF.md) | Reading order, delegation, architecture approval and mandatory code-to-testing handoff | Current next-session prompt; no testing authorization |
 | [Metadata and ingestion recipe](identity/METADATA-RECIPE.md) | Logical-email reuse, address/subject normalization, original Date, parent-bound attachment groups, replies and window-based recovery | Current detailed design; not a claim of implemented behavior |
 | [Corrected live-email findings](identity/metadata-stress/README.md) | Actual Gmail observations, original experiment results and the corrected interpretation of their product significance | Empirical evidence with explicit limitations |
 | [Root plan](../../../PLAN.md) and [progress log](../../../PROGRESS.md) | Active-plan routing, decisions, completed work and exact next actions | Repository continuity; older log entries preserve their historical interpretation |
@@ -65,7 +74,9 @@ was already implemented in the experiment; subject trimming is now approved for
 the next revision. Timestamp changes were not observed. Thread grouping is
 optional, and short pages with continuation require continued enumeration.
 
-The immediate next artifact is a revised small development model implementing
-the approved rules, followed by one bounded managed-agent/Drive pilot. Actual
-file/table layout, attachment-group processing, complete discovery, scheduling,
-fresh-session handoff and execution cost must be demonstrated in those steps.
+The next implementation includes a revised small development model and the
+agreed initial project code, with new architecture decisions approved before
+implementation. Publish that work and stop for the user to direct testing.
+Actual file/table layout, attachment-group processing, complete discovery,
+scheduling, fresh-session handoff and execution cost remain qualification work;
+the proposed managed-agent/Drive pilot is not authorized to start automatically.
