@@ -1,6 +1,6 @@
 # Restart implementation decisions for approval
 
-Prepared 2026-09-14, revision 2 after document review. **Proposal only; D1–D8 are pending user approval.** No
+Prepared 2026-09-14, revision 2 after document review. **D1 approved explicitly on 2026-09-14; D2–D8 pending user approval.** No
 production code depends on these choices yet. Approval of requirements in the
 [active plan](../PLAN.md) does not approve these mechanisms. Approval of this
 document would authorize the choices stated here, not unspecified later changes.
@@ -14,7 +14,7 @@ to an identity model, a local CLI, or a single managed-agent demonstration.
 
 | Decision | Recommendation | Main alternative | Approval |
 |---|---|---|---|
-| D1 Storage | Small JSON record pages and paged directories in Drive, with a readable bootstrap | Native Sheets tables, with separately bounded long text | Pending |
+| D1 Storage | Small JSON record pages and paged directories in Drive, with a readable bootstrap | Native Sheets tables, with separately bounded long text | Approved, 2026-09-14 |
 | D2 Records and persistence | School-OS IDs, typed records, verified small write intents, independent coverage | Immutable whole-instance generations or an event engine | Pending |
 | D3 Execution and adapters | Agent operation recipes plus optional Python standard-library helpers; capability-declared adapters | Mandatory executable runtime | Pending |
 | D4 Ingestion | Exact zoned original Date for automatic association; bounded received-time discovery where supported; process appearances independently | Admit coarser Dates automatically; reuse content coverage from metadata alone | Pending |
@@ -438,8 +438,11 @@ builder and upgrade procedures does not qualify or execute them.
 
 ## Approval record and next action
 
-All decisions are **pending**. Ask the user to approve D1–D8 explicitly, or name
-revisions. Record exact approved choices in the active plan before dependent
-implementation. A partial approval releases only its independent scope. Any new
+**D1 is approved.** The user explicitly replied "D1 approved" on 2026-09-14
+after clarification that its JSON and directory limits apply per page, with
+additional pages available as history grows. The [active plan](../PLAN.md)
+records the full D1 approval scope. **D2–D8 remain pending** explicit approval
+or revision before their dependent implementation. A partial approval releases
+only its independent scope. Any new
 choice not covered above returns for approval rather than being labeled an
 implementation detail. No testing permission is requested by this proposal.

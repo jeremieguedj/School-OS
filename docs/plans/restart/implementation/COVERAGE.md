@@ -5,8 +5,9 @@ Prepared 2026-09-14 from the [product principles](../../../product-principles.md
 [historical lifecycle scenarios](../SIMULATION.md). The lifecycle model's
 mechanisms and old runtime do not supply missing architecture approvals.
 
-Status: requirements mapped; [D1–D8](ARCHITECTURE-PROPOSAL.md) proposed, **not
-approved**. No replacement production capability is claimed implemented or
+Status: requirements mapped; [D1](ARCHITECTURE-PROPOSAL.md) **approved explicitly
+on 2026-09-14; D2–D8 remain pending**. Dependency columns retain all relevant
+decisions, including approved D1. No replacement production capability is claimed implemented or
 tested. Test scenarios may be prepared without execution. No required area has
 been removed or deferred from the whole-project implementation handoff.
 

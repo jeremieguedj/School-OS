@@ -4789,3 +4789,32 @@ requirements, then read this log from top to bottom.
   source-section anchors resolve, including the two new guide links from the
   plan/README. Diff checks pass. No browser rendering or functional verification
   was performed. Hooks remain inactive samples and CI triggers are unchanged.
+
+
+## 2026-09-14 — D1 physical Drive layout approved
+
+- The user explicitly replied "D1 approved" after clarification that the design
+  uses multiple JSON pages, with a default 64 KiB limit per encoded JSON page
+  and at most 100 entries per directory page. More pages can be added; these
+  limits do not cap total instance history. Practical Drive capacity and access
+  cost remain unqualified.
+- Recorded approval of revision 2 D1 in full in the active restart plan and
+  proposal ledger. Updated the root plan, restart artifact guide, coverage map
+  and HTML guide to distinguish approved D1 from pending D2–D8. D1 includes the
+  bootstrap, system/instance/extensions areas, page headers/routing, durable
+  directory continuations, bounded access and lossless long-text segmentation.
+- D1 does not approve record meanings, write recovery, adapter contracts or any
+  other D2–D8 mechanism. Production implementation remains pending their relevant
+  dependencies. Frozen studies and the retired runtime are unchanged.
+- Exact next action: obtain explicit decisions on D2–D8, record them, and
+  implement the complete approved T1–T10 scope. The later whole-project
+  commit/push/remote-verification checkpoint and mandatory stop before testing
+  remain unchanged. No tests, simulations, replays, probes or live School-OS
+  operations were executed. Publication hygiene only is permitted for this update.
+- Publish the approval record on the existing restart branch and refresh the
+  existing private architecture guide. This documentation checkpoint is not
+  the completed whole-project implementation handoff.
+- Publication hygiene found no privacy issues; all 100 local links and section
+  anchors in the changed current documents resolve, and diff whitespace checks
+  pass. Hooks remain inactive samples; CI triggers are unchanged and the restart
+  branch has no open PR. These checks do not establish functional validation.

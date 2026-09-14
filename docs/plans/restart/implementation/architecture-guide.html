@@ -380,6 +380,11 @@
       text-transform: uppercase;
     }
 
+    .pending-pill.approved-pill {
+      color: var(--green);
+      background: var(--soft);
+    }
+
     .recommendation {
       margin: 0.7rem 0 0;
       color: #283a32;
@@ -650,13 +655,13 @@
 
   <header class="masthead">
     <div class="masthead-inner">
-      <p class="eyebrow">Based on architecture proposal revision 2 • all D1–D8 pending</p>
-      <h1>Eight decisions before implementation</h1>
+      <p class="eyebrow">Based on architecture proposal revision 2 • D1 approved • D2–D8 pending</p>
+      <h1>Architecture decisions: one approved, seven open</h1>
       <p class="lede">
         The product direction is settled. The remaining job is to choose the concrete mechanisms that will store, process, synchronize, deliver, and upgrade School-OS.
       </p>
       <div class="status-line" aria-label="Review status">
-        <span class="status">D1–D8 all pending</span>
+        <span class="status">D1 approved · D2–D8 pending</span>
         <span class="source-link">Authoritative source: <a href="ARCHITECTURE-PROPOSAL.md">Architecture Proposal, revision 2</a></span>
       </div>
     </div>
@@ -680,24 +685,24 @@
         <p class="eyebrow">Orientation</p>
         <h2 id="read-first-title">What is settled, and what is still open</h2>
         <p>
-          This review does not reopen School-OS’s purpose or narrow its scope. It asks for explicit approval of eight architecture mechanisms. Every recommendation below is still a proposal: it is unimplemented and unqualified.
+          This review does not reopen School-OS’s purpose or narrow its scope. D1 is approved: Drive will hold multiple bounded JSON pages. D2–D8 still need your decision. All eight mechanisms remain unimplemented and unqualified.
         </p>
 
         <div class="boundary">
           <article class="approved">
-            <h3>Already approved product direction</h3>
+            <h3>Already approved direction and storage</h3>
             <ul>
               <li>Google Drive is the canonical home for processed knowledge, indexes, configuration, work, and history.</li>
               <li>Raw email and attachments remain in their source systems; temporary copies are discarded after verified persistence.</li>
               <li>Email identity uses source metadata only. Provider IDs are access aids; content is read separately to extract school information.</li>
               <li>Work stays bounded and resumable from Drive. Any number of agents and known jobs may participate.</li>
               <li>Concurrent writes to the same canonical data are outside the present household scope.</li>
+              <li>D1: multiple JSON pages on Drive, with bounded directories and transfers.</li>
             </ul>
           </article>
           <article class="pending">
             <h3>Pending architecture mechanisms</h3>
             <ul>
-              <li>Physical storage pages, directories, and transfer limits.</li>
               <li>Record families, persistence, and interrupted-write recovery.</li>
               <li>Runtime recipes, adapter contracts, and the initial adapter set.</li>
               <li>Exact automatic-association threshold and processing budgets.</li>
@@ -769,16 +774,17 @@
         <p class="eyebrow">Approval packet</p>
         <h2 id="decisions-title">Decisions D1–D8</h2>
         <p>
-          Read the recommendation first. Open the details when you want to inspect authorization scope, alternatives, unknowns, and dependencies. None is preselected.
+          Read the recommendation first. Open the details when you want to inspect authorization scope, alternatives, unknowns, and dependencies. D1 records your explicit approval; D2–D8 remain open.
         </p>
 
         <article class="decision" id="d1">
           <div class="decision-head">
             <div class="decision-title-row">
               <h3><span class="d-label">D1</span> How should Drive hold the data?</h3>
-              <span class="pending-pill">Pending</span>
+              <span class="pending-pill approved-pill">Approved</span>
             </div>
-            <p class="recommendation"><strong>Recommendation:</strong> use small structured text files (JSON) on Drive, with directories that let an agent find and read a little at a time.</p>
+            <p class="recommendation"><strong>Approved:</strong> use multiple small structured text files (JSON) on Drive, with directories that let an agent find and read a little at a time.</p>
+            <p>The 64 KiB default is a limit per JSON page; 100 entries is the limit per directory page. Add more pages as history grows. Neither limit caps the whole app. Actual Drive capacity and access costs still need qualification.</p>
           </div>
           <details>
             <summary>Approval scope, alternatives, and unknowns</summary>
@@ -1081,7 +1087,7 @@
       <section id="recap" aria-labelledby="recap-title">
         <p class="eyebrow">Decision recap</p>
         <h2 id="recap-title">What remains to decide</h2>
-        <p>All eight rows need an explicit approve/revise decision. Partial approval can release only work whose dependencies are also approved.</p>
+        <p>D1 is approved. The seven remaining rows need an explicit approve/revise decision. Partial approval can release only work whose dependencies are also approved.</p>
 
         <table class="recap">
           <thead>
@@ -1092,7 +1098,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td>D1</td><td>Paged JSON records and directories in Drive.</td><td>Managed-app file and folder operations.</td></tr>
+            <tr><td>D1 · Approved</td><td>Paged JSON records and directories in Drive.</td><td>Managed-app file and folder operations.</td></tr>
             <tr><td>D2</td><td>Typed School-OS records and verified small write intents.</td><td>Drive consistency and cross-record recovery.</td></tr>
             <tr><td>D3</td><td>Native-tool recipes, JSON contracts, optional helpers, initial routes.</td><td>Exact provider/runtime capability.</td></tr>
             <tr><td>D4</td><td>Exact zoned original-Date threshold; bounded independent appearance processing.</td><td>Metadata/listing fidelity and real limits.</td></tr>
@@ -1111,14 +1117,14 @@
           This page intentionally has no approval buttons, checkboxes, or saved state. Canonical approval is your explicit reply in the conversation and its later record in the active plan.
         </p>
         <p>You can approve the packet, revise individual decisions, or approve a subset. For example:</p>
-        <div class="approval-example" aria-label="Example approval reply">Approve D1, D2, D3, D5, D6, D7, and D8 as proposed.
+        <div class="approval-example" aria-label="Example approval reply">Approve D2, D3, D5, D6, D7, and D8 as proposed.
 Revise D4: [state the threshold or policy you want].
 This approval does not authorize testing.</div>
-        <p>Useful points to call out if you want a revision: JSON versus Sheets; the original-Date precision threshold; the initial adapter set; recurrence horizon; one-way versus three-way task synchronization; audio retention; and package, extension, or migration boundaries.</p>
+        <p>Useful points to call out for the remaining decisions: the original-Date precision threshold; the initial adapter set; recurrence horizon; one-way versus three-way task synchronization; audio retention; and package, extension, or migration boundaries.</p>
 
         <h3>What happens after architecture approval</h3>
         <div class="timeline" aria-label="Next-step timeline">
-          <div>User approves or revises D1–D8</div>
+          <div>D1 approved; user decides D2–D8</div>
           <div>Full approved T1–T10 implementation</div>
           <div>Commit, push, and remote revision verification</div>
           <div class="stop">STOP and check in</div>
@@ -1135,7 +1141,7 @@ This approval does not authorize testing.</div>
   </div>
 
   <footer class="site-footer">
-    <p><strong>Document status:</strong> explanatory review artifact for Architecture Proposal revision 2, prepared 2026-09-14. D1–D8 remain pending. The proposal, product principles, active plan, and coverage map remain authoritative; this guide creates no architecture decision.</p>
+    <p><strong>Document status:</strong> explanatory review artifact for Architecture Proposal revision 2, prepared 2026-09-14. D1 was explicitly approved on 2026-09-14; D2–D8 remain pending. The proposal, product principles, active plan, and coverage map remain authoritative; this guide creates no architecture decision.</p>
     <p>
       Sources: <a href="ARCHITECTURE-PROPOSAL.md">Architecture Proposal</a> ·
       <a href="COVERAGE.md">Whole-project coverage</a> ·

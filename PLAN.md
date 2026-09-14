@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: restart preparation is active on `codex/restart-school-os`; whole-project requirements are mapped and concrete architecture decisions D1–D8 await explicit approval. Production implementation and managed-agent qualification remain pending.
+Status: restart preparation is active on `codex/restart-school-os`; whole-project requirements are mapped and D1 (physical Drive layout) is explicitly approved; D2–D8 await explicit approval. Production implementation and managed-agent qualification remain pending.
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 Decision authority: [product principles](docs/product-principles.md#decision-authority)
@@ -21,11 +21,12 @@ restart branch and preserved baseline commit
 `39d752c364a1cf404e5a6fc5739148b7d35a6b35` with annotated tag
 `restart-baseline-2026-09-14` before cleanup. See the
 [coverage map](docs/plans/restart/implementation/COVERAGE.md) and
-[pending architecture proposal](docs/plans/restart/implementation/ARCHITECTURE-PROPOSAL.md).
+[architecture decisions and approval status](docs/plans/restart/implementation/ARCHITECTURE-PROPOSAL.md).
 The active restart plan records the approval ledger. Prepared fictional fixtures,
 test proposals and a separate development model do not establish production
-implementation or test results. Exact next action is explicit architecture
-approval, followed by the full approved implementation and publication handoff;
+implementation or test results. Exact next action is explicit approval or
+revision of D2–D8, followed by the full approved implementation and publication
+handoff;
 testing remains reserved to the user.
 
 Follow [the restart architecture and simulation plan](docs/plans/restart/PLAN.md)

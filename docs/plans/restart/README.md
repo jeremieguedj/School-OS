@@ -7,7 +7,7 @@ evidence, not an instruction to rebuild their architecture.
 
 The coordinator is now working on `codex/restart-school-os`. The
 [whole-project coverage map](implementation/COVERAGE.md) is complete;
-[architecture decisions D1–D8](implementation/ARCHITECTURE-PROPOSAL.md) await
+[D1 is approved; D2–D8 remain pending](implementation/ARCHITECTURE-PROPOSAL.md)
 explicit approval. [Fictional scenarios and proposed tests](implementation/TESTING-PROPOSAL.md)
 are preparation only. This is an architecture checkpoint, not the whole-code
 handoff or the start of testing.
@@ -16,7 +16,8 @@ fictional checks are also authored but unexecuted; frozen studies stay unchanged
 
 For a guided review, open the [HTML architecture decision guide](implementation/architecture-guide.html).
 It explains the proposal with an overview, examples and expandable detail.
-The written proposal remains authoritative; the guide records no approvals.
+The guide mirrors the approval status; the written proposal and active-plan
+approval ledger remain authoritative.
 
 The [product principles](../../product-principles.md#decision-authority) are the
 source of truth and grounding for uncovered decisions. Every new or changed

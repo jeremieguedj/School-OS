@@ -21,17 +21,17 @@ ten implementation areas. Requirements are already established; the remaining
 blocker is approval of concrete architecture, not renewed product discovery.
 
 The [architecture proposal, revision 2](implementation/ARCHITECTURE-PROPOSAL.md)
-contains recommendations, alternatives, tradeoffs and unknowns. The coordinator
-has requested the user's decision. **None of D1–D8 is approved yet.** They must
-not be implemented as production architecture until explicit approval is recorded
-here. Approval of only some decisions releases only independent dependent work.
+contains recommendations, alternatives, tradeoffs and unknowns. **D1 is approved;
+D2–D8 remain pending.** On 2026-09-14 the user explicitly replied "D1 approved"
+after the explanation of multiple JSON pages and per-page capacity limits.
+Approval releases only work whose architecture dependencies are also approved.
 The [HTML decision guide](implementation/architecture-guide.html) provides a
-readable walkthrough of the same pending proposal; it introduces no decisions
-and does not record approval.
+readable walkthrough of the decisions and mirrors this approval ledger; the
+ledger here remains authoritative.
 
 | Decision | Proposal subject | Approval status |
 |---|---|---|
-| D1 | Physical Drive layout, bounded pages and directories | Pending |
+| D1 | Physical Drive layout, bounded pages and directories | Approved explicitly, 2026-09-14 |
 | D2 | Canonical records and verified write recovery | Pending |
 | D3 | Agent execution, optional helpers and supplied adapter routes | Pending |
 | D4 | Precise association threshold, discovery budgets and content coverage | Pending |
@@ -40,6 +40,17 @@ and does not record approval.
 | D7 | Capabilities, known tools/jobs and scheduler management | Pending |
 | D8 | Packaged installation, compatibility, upgrades and retirement | Pending |
 
+**D1 approval scope:** adopt revision 2 D1 in full: a readable Drive bootstrap;
+`system`, `instance`, and `extensions` areas; multiple UTF-8 JSON record pages
+with the specified headers and routing; paged directories with explicit
+continuations; a default 64 KiB encoded-JSON limit per page and at most 100
+entries per directory page; lossless long-text segmentation; bounded startup,
+traversal and writes. These are per-page limits, not a fixed cap on total
+instance history: more pages can be added. Drive capacity and practical access
+cost remain constraints to qualify later. Exact record meanings, recovery,
+adapter contracts and the other D2–D8 mechanisms are not approved by D1.
+No production implementation or qualification is claimed by this approval.
+
 Independent approved preparation includes fictional lifecycle scenarios, a
 [proposed testing sequence](implementation/TESTING-PROPOSAL.md), and a new
 [development-only metadata model](identity/revised-model/README.md) in a separate
@@ -47,7 +58,7 @@ directory. Its code and fictional checks are authored, not executed. These are n
 replacement runtime, canonical schema or managed-agent qualification. Every
 functional test, model run, simulation, build and live operation remains stopped.
 
-Exact next action: obtain and record explicit architecture decisions, then
+Exact next action: obtain and record explicit approval or revisions for D2–D8, then
 implement the full approved T1–T10 scope and prepare its tests. Publish the whole
 implementation, verify the remote commit and stop for the user's testing direction.
 Publishing this preparation checkpoint alone does not satisfy that code handoff.
@@ -89,9 +100,11 @@ managed-agent pilots or release qualification. The
 
 - Google Drive holds the instance's instructions/configuration, processed
   knowledge and tasks, source/attachment index and coverage, unfinished work,
-  and tools/jobs/runs register. These are logical areas; exact file/table layout
-  requires an explicit user-approved proposal before implementation. Any pilot
-  that informs the choice belongs to the user-directed testing phase.
+  and tools/jobs/runs register. The physical layout is now approved in
+  [D1](implementation/ARCHITECTURE-PROPOSAL.md#d1--physical-drive-layout-and-bounded-access):
+  multiple bounded JSON pages and paged directories under a readable bootstrap
+  and the `system`, `instance`, and `extensions` areas. Qualification of actual
+  storage adapters belongs to the user-directed testing phase.
 - Raw emails and attachments remain in their source systems. Temporary downloads
   support processing and are discarded after verified persistence. Startup and
   routine work read relevant records in bounded units as history grows.
