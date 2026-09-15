@@ -24,8 +24,11 @@ restart branch and preserved baseline commit
 [architecture decisions and approval status](docs/plans/restart/implementation/ARCHITECTURE-PROPOSAL.md).
 The active restart plan records the approval ledger. Prepared fictional fixtures,
 test proposals and a separate development model do not establish production
-implementation or test results. Exact next action is D4 explanation/review,
-followed by D5–D8; remaining D3 runtime/adapter choices and minimum record and
+implementation or test results. The [expanded decision briefs](docs/plans/restart/implementation/decision-briefs/README.md)
+now explain all remaining decisions through fictional email flows; none were
+executed. Exact next action is their review, starting with D4's per-run bounds
+and unresolved continuation/daily-completion policy, followed by D5–D8; remaining
+D3 runtime/adapter choices and minimum record and
 ordinary-write choices must be presented separately before
 dependent coding. The implementation/publication handoff follows the explicit
 MVP exception recorded in the active plan; testing remains reserved to the user. The accepted

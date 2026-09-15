@@ -20,7 +20,7 @@ design priorities, seven core use cases, other mandatory principle sections and
 ten implementation areas. Requirements are already established; the remaining
 blocker is approval of concrete architecture, not renewed product discovery.
 
-The [architecture proposal, revision 5](implementation/ARCHITECTURE-PROPOSAL.md)
+The [architecture proposal, revision 6](implementation/ARCHITECTURE-PROPOSAL.md)
 contains recommendations, alternatives, tradeoffs and unknowns. **D1 and the
 D2 query-coverage rule and D3 code-execution requirement are approved; D2 review
 is deferred, and remaining D3 and D4–D8 are pending.**
@@ -107,7 +107,19 @@ directory. Its code and fictional checks are authored, not executed. These are n
 replacement runtime, canonical schema or managed-agent qualification. Every
 functional test, model run, simulation, build and live operation remains stopped.
 
-Exact next action: explain and review D4, then D5–D8. Resolve remaining D3 and
+On 2026-09-15 the user requested detailed, concrete explanations of D4 and all
+remaining decisions. The [detailed briefs](implementation/decision-briefs/README.md)
+now explain fictional emails, flows, parent-visible results, implications and
+alternatives. No new architecture approval was supplied. D4's per-run limits do
+not cap total history or guarantee daily completion. Its automatic continuation
+trigger, aggregate catch-up budget, freshness target and partial-versus-complete
+brief timing are unresolved D4/D6/D7 choices. D6's email/audio order and effect
+persistence, and D8's interruption boundary, also need explicit decisions;
+neither can assume deferred D2 repair. Record/ordinary-write structure remains
+an undecided dependency, explained separately without reopening D2 recovery.
+
+Exact next action: review the expanded D4 brief, then D5–D8 and their named open
+choices with the user. Resolve remaining D3 and
 the minimum record/ordinary-write decisions before their dependent code.
 Implement the approved T1–T10 scope with the explicit MVP exception and prepare
 its in-scope tests. Publish the whole

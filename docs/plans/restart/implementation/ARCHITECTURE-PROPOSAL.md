@@ -1,6 +1,7 @@
 # Restart implementation decisions for approval
 
-Updated 2026-09-14, revision 5: records the required code-execution capability.
+Updated 2026-09-15, revision 6: adds detailed decision walkthroughs and identifies
+unresolved completion, scheduling and MVP recovery dependencies. No new approval.
 **D1, query-coverage rule and D3 code-execution requirement approved; D2 skipped;
 remaining D3 and D4–D8 pending.** No
 production code depends on these choices yet. Approval of requirements in the
@@ -11,6 +12,11 @@ Testing remains reserved to the user after publication of the implementation.
 The [coverage map](COVERAGE.md) maps the complete product to deliverables. The
 recommendations below serve that whole scope. They do not propose reducing it
 to an identity model, a local CLI, or a single managed-agent demonstration.
+
+The [detailed decision briefs](decision-briefs/README.md) explain remaining D3
+and D4–D8 through fictional emails, flows, parent-visible results, alternatives
+and implications. Their additional recommendations are explicitly unapproved.
+Written examples are not executed simulations or qualification evidence.
 
 ## Decision summary
 
@@ -351,6 +357,18 @@ Grounding: P1–P6/P9; catalog, historical/daily processing and recovery. Remain
 unknowns: available metadata precision, complete listing bases, delayed indexing,
 candidate reading and real transfer limits. The fictional model will illustrate
 these decisions separately from frozen studies; it cannot qualify adapters.
+
+### Open completion and continuation choices
+
+D4's proposed limits apply per execution/transfer, not to total stored history
+or a guaranteed daily completion quota. A run can end with successfully saved
+unfinished work. A saved backlog does not launch another execution. The current
+proposal does not select an automatic continuation trigger, daily aggregate
+budget, freshness target, no-progress escalation or brief timing policy.
+Resolve these with D6/D7 before promising a daily service outcome. The
+[D4 brief](decision-briefs/D4-INGESTION.md) explains the 40-admitted/25-read/15-unread
+case and alternatives. Its added policy directions remain proposals, not a
+change to the existing 25-per-run draft or an approval of deferred D2 repair.
 
 ## D5 — Substantive knowledge, queries and task reconciliation
 

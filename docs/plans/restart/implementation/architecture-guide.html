@@ -655,14 +655,14 @@
 
   <header class="masthead">
     <div class="masthead-inner">
-      <p class="eyebrow">Based on architecture proposal revision 5 • D1, query rule and code capability approved • D2 deferred</p>
+      <p class="eyebrow">Based on architecture proposal revision 6 • D1, query rule and code capability approved • D2 deferred</p>
       <h1>Architecture decisions for School-OS</h1>
       <p class="lede">
         The product direction is settled. The remaining job is to choose the concrete mechanisms that will store, process, synchronize, deliver, and upgrade School-OS.
       </p>
       <div class="status-line" aria-label="Review status">
         <span class="status">Code-capable agents required · D2 recovery deferred</span>
-        <span class="source-link">Authoritative source: <a href="ARCHITECTURE-PROPOSAL.md">Architecture Proposal, revision 5</a></span>
+        <span class="source-link">Authoritative source: <a href="ARCHITECTURE-PROPOSAL.md">Architecture Proposal, revision 6</a></span>
       </div>
     </div>
   </header>
@@ -671,6 +671,7 @@
     <aside class="toc" aria-label="On this page">
       <nav>
         <strong>On this page</strong>
+        <a href="#detailed-briefs">Detailed decision briefs</a>
         <a href="#read-first">Read this first</a>
         <a href="#shape">System shape</a>
         <a href="#decisions">D1–D8 decisions</a>
@@ -681,6 +682,7 @@
     </aside>
 
     <main id="main">
+<section id="detailed-briefs" aria-labelledby="detailed-title"><p class="eyebrow">Expanded review · 15 September 2026</p><h2 id="detailed-title">See what each decision would actually do</h2><p>Each brief explains the proposal with fictional emails, steps, parent-visible results, alternatives and open questions. Read one decision at a time. These are written examples, not executed simulations.</p><div class="callout caution"><p><strong>D4: yes, a run can end while the daily task is unfinished.</strong> If a complete inventory has 40 admitted appearances and a run reads 25, 15 remain unread. The limits are per run, not a total-history cap. What triggers continuation, and whether the brief waits, still need decisions.</p><p><a href="decision-briefs/D4-INGESTION.html">Start with the detailed D4 brief →</a></p></div><div class="decision-map"><article><h3>D4 · Finding and reading school mail</h3><p>Yes: a run can stop while the daily task is still unfinished.</p><a href="decision-briefs/D4-INGESTION.html">Read the example and flow →</a></article><article><h3>D5 · Knowledge, tasks and parent edits</h3><p>Preserve what the school said and what the parent chose.</p><a href="decision-briefs/D5-KNOWLEDGE-TASKS.html">Read the example and flow →</a></article><article><h3>D6 · Briefs, audio and delivery</h3><p>Choose useful updates, then be honest about whether they were sent.</p><a href="decision-briefs/D6-BRIEFS-EFFECTS.html">Read the example and flow →</a></article><article><h3>D7 · Tools, agents and scheduled jobs</h3><p>Keep an understandable register of who does what, where and when.</p><a href="decision-briefs/D7-TOOLS-JOBS.html">Read the example and flow →</a></article><article><h3>D8 · Installation and upgrades</h3><p>Update official software while preserving household data and additions.</p><a href="decision-briefs/D8-INSTALL-UPGRADES.html">Read the example and flow →</a></article><article><h3>Remaining D3 · Code and connected tools</h3><p>Code execution is approved. The executable contracts are still open.</p><a href="decision-briefs/D3-EXECUTION-ADAPTERS.html">Read the example and flow →</a></article><article><h3>Open dependency · Records and ordinary saves</h3><p>Choosing JSON pages does not yet define the records inside them.</p><a href="decision-briefs/RECORDS-AND-NORMAL-WRITES.html">Read the example and flow →</a></article></div><p>Unresolved links are explicit: D6 delivery and D8 upgrades cannot assume the D2 recovery you excluded. The minimum record design is also still open. Preparing this explanation approves none of these choices.</p></section>
       <section id="read-first" aria-labelledby="read-first-title">
         <p class="eyebrow">Orientation</p>
         <h2 id="read-first-title">What is settled, and what is still open</h2>
@@ -695,7 +697,7 @@
               <li>Google Drive is the canonical home for processed knowledge, indexes, configuration, work, and history.</li>
               <li>Raw email and attachments remain in their source systems; temporary copies are discarded after verified persistence.</li>
               <li>Email identity uses source metadata only. Provider IDs are access aids; content is read separately to extract school information.</li>
-              <li>Work stays bounded and resumable from Drive. Any number of agents and known jobs may participate.</li>
+              <li>Work stays bounded; saved discovery windows can be continued from Drive. Any number of agents and known jobs may participate.</li>
               <li>Concurrent writes to the same canonical data are outside the present household scope.</li>
               <li>D1: multiple JSON pages on Drive, with bounded directories and transfers.</li>
               <li>Answers check coverage as well as saved knowledge, and explain any gap that cannot be resolved within scope.</li>
@@ -714,7 +716,7 @@
         </div>
 
         <div class="callout caution">
-          <p><strong>Approval boundary.</strong> Approving D1–D8 authorizes these architecture choices for implementation. It does not authorize tests, simulations, model runs, connector probes, builds, ingestion, schedules, or live effects. Testing remains a later, user-directed phase.</p>
+          <p><strong>Approval boundary.</strong> Explicit approval of remaining proposed choices authorizes only the stated mechanisms whose dependencies are also approved. D1 is already approved; D2 interrupted-write recovery remains excluded. It does not authorize tests, simulations, model runs, connector probes, builds, ingestion, schedules, or live effects. Testing remains a later, user-directed phase.</p>
         </div>
       </section>
 
@@ -857,6 +859,7 @@
         </article>
 
         <article class="decision" id="d3">
+          <p style="padding: 18px 24px 0"><a href="decision-briefs/D3-EXECUTION-ADAPTERS.html"><strong>Detailed D3 brief: examples, flow and implications →</strong></a></p>
           <div class="decision-head">
             <div class="decision-title-row">
               <h3><span class="d-label">D3</span> Must an agent be able to run code?</h3>
@@ -893,6 +896,7 @@
         </article>
 
         <article class="decision" id="d4">
+          <p style="padding: 18px 24px 0"><a href="decision-briefs/D4-INGESTION.html"><strong>Detailed D4 brief: examples, flow and implications →</strong></a></p>
           <div class="decision-head">
             <div class="decision-title-row">
               <h3><span class="d-label">D4</span> How should School-OS find and process email?</h3>
@@ -902,7 +906,7 @@
             <ol>
               <li><strong>Identify:</strong> require mailbox, subject, sender and the email’s original Date with timezone and seconds before automatic association. If a tool shows only a minute, try a richer metadata view once; otherwise leave the association unresolved.</li>
               <li><strong>Search:</strong> work through history in seven-day windows; daily runs look back seven days to catch late discovery. Use arrival time for discovery where its meaning is documented, while keeping original sending Date for identity.</li>
-              <li><strong>Bound the work:</strong> propose up to 100 listing entries and 25 message appearances processed per run, with at most 8 MiB per content transfer. Save normal progress and continue later; never infer exhaustion from a short page.</li>
+              <li><strong>Bound the work:</strong> propose up to 100 listing entries and 25 message appearances processed per run, with at most 8 MiB per content transfer. Save normal progress; a run can end with the daily task unfinished. The trigger for another run is not yet chosen. Never infer exhaustion from a short page.</li>
               <li><strong>Read separately:</strong> matching metadata can reuse an email record, but does not prove the newly encountered content was read. Each admitted appearance is read; same-parent attachments sharing a filename remain a group whose available candidates are processed separately.</li>
             </ol>
             <p><strong>Main cost:</strong> conservative matching leaves more unresolved items, and the seven-day overlap can cause repeat reading. These defaults remain proposals, not measured capacity or approved D4 policy.</p>
@@ -934,6 +938,7 @@
         </article>
 
         <article class="decision" id="d5">
+          <p style="padding: 18px 24px 0"><a href="decision-briefs/D5-KNOWLEDGE-TASKS.html"><strong>Detailed D5 brief: examples, flow and implications →</strong></a></p>
           <div class="decision-head">
             <div class="decision-title-row">
               <h3><span class="d-label">D5</span> How should school requests and parent edits interact?</h3>
@@ -967,6 +972,7 @@
         </article>
 
         <article class="decision" id="d6">
+          <p style="padding: 18px 24px 0"><a href="decision-briefs/D6-BRIEFS-EFFECTS.html"><strong>Detailed D6 brief: examples, flow and implications →</strong></a></p>
           <div class="decision-head">
             <div class="decision-title-row">
               <h3><span class="d-label">D6</span> What belongs in a brief, and when can a send retry?</h3>
@@ -991,16 +997,17 @@
                 <div><strong>Credible alternative</strong>Use source Date alone for brief recency, or adopt a different explicit audio retention rule.</div>
                 <div><strong>Tradeoff</strong>Verification-time selection surfaces newly processed old facts but must label them clearly. Retained audio improves history and attribution but consumes storage and needs parent-led deletion.</div>
                 <div><strong>Key unknown</strong>Searchable provider evidence, eventual visibility, unattended authorization, and the usable form/lifetime of audio artifacts.</div>
-                <div><strong>Dependencies</strong>D2 intents/runs/outputs; D3 effect adapters; D5 knowledge/tasks; D7 scheduler observation.</div>
+                <div><strong>Dependencies</strong>Unapproved minimum effect/run/output records and ordinary writes; D3 effect adapters; D5 knowledge/tasks; D7 scheduler observation.</div>
               </div>
               <p class="out-of-bounds"><strong>Already outside the approved direction:</strong> blind resend after a timeout, transport failure, or empty search. Unknown writes and sends must be reconciled; a provider receipt alone is not canonical verification.</p>
-              <p>No procedure promises exactly-once external effects.</p>
+              <p><strong>Unresolved MVP dependency:</strong> the intent procedure above cannot assume deferred D2 discovery or partial-write repair. Approve a concrete narrower effect-persistence boundary or explicit limitation before implementation. Email/audio ordering also remains undecided. No procedure promises exactly-once external effects.</p>
               <a class="source-anchor" href="ARCHITECTURE-PROPOSAL.md#d6--brief-selection-delivery-audio-and-unknown-effects">Read D6 in the authoritative proposal →</a>
             </div>
           </details>
         </article>
 
         <article class="decision" id="d7">
+          <p style="padding: 18px 24px 0"><a href="decision-briefs/D7-TOOLS-JOBS.html"><strong>Detailed D7 brief: examples, flow and implications →</strong></a></p>
           <div class="decision-head">
             <div class="decision-title-row">
               <h3><span class="d-label">D7</span> How should jobs and their status be tracked?</h3>
@@ -1016,7 +1023,7 @@
                 <li>Capability records use supported/unsupported/unknown states, observed limits, authorization location, and verification time. Declared tools begin discovery; testing them is separately authorized later.</li>
                 <li>Operation defaults and each job’s pinned bindings remain separate. Changing a default does not silently rebind a job.</li>
                 <li>Job creation/change/pause follows D6’s unknown-effect procedure. Desired settings remain pending until externally inspected and recorded.</li>
-                <li>Each scheduled prompt names the Drive bootstrap, operation, scope, budget, bindings, and destinations. Missed jobs recover from durable Drive windows.</li>
+                <li>Each scheduled prompt names the Drive bootstrap, operation, scope, budget, bindings, and destinations. Successfully saved unfinished windows remain discoverable; continuation timing and ordering still need approval.</li>
                 <li>A fresh reader can explain known jobs, runtimes, management locations, triggers, outputs, recorded generator/sender, and freshness without claiming unseen jobs or live status.</li>
               </ul>
               <h4>Alternatives, tradeoffs, unknowns, and dependencies</h4>
@@ -1033,6 +1040,7 @@
         </article>
 
         <article class="decision" id="d8">
+          <p style="padding: 18px 24px 0"><a href="decision-briefs/D8-INSTALL-UPGRADES.html"><strong>Detailed D8 brief: examples, flow and implications →</strong></a></p>
           <div class="decision-head">
             <div class="decision-title-row">
               <h3><span class="d-label">D8</span> How should updates preserve your instance?</h3>
@@ -1057,8 +1065,9 @@
                 <div><strong>Credible alternatives</strong>In-place replacement, or migration on every update.</div>
                 <div><strong>Tradeoff</strong>Staging and isolated areas cost storage and procedure steps but improve recovery and protect extensions. In-place overwrite is smaller but harder to recover.</div>
                 <div><strong>Key unknown</strong>Archive handling and compatibility behavior in actual managed applications.</div>
-                <div><strong>Dependencies</strong>D1 area boundaries; D2 upgrade intent; D3 packaged recipes/helpers; D7 registered bindings/jobs.</div>
+                <div><strong>Dependencies</strong>Approved D1 areas; unapproved upgrade intent/interruption boundary; D3 packaged recipes/helpers; D7 registered bindings/jobs.</div>
               </div>
+              <p><strong>Unresolved MVP dependency:</strong> staged copying is not a guarantee of recovery from an interrupted upgrade or unknown activation. D2 repair is excluded; the upgrade-intent and interruption boundary need explicit resolution.</p>
               <p>The initial restart remains explicitly unqualified. The optional standard-library archive builder and replacement validation entry point would be prepared during implementation but not run before user-directed testing. Package hashes check official package integrity; they never become source identity.</p>
               <a class="source-anchor" href="ARCHITECTURE-PROPOSAL.md#d8--package-format-upgrades-extensions-and-legacy-retirement">Read D8 in the authoritative proposal →</a>
             </div>
@@ -1142,8 +1151,9 @@
           This page intentionally has no approval buttons, checkboxes, or saved state. Canonical approval is your explicit reply in the conversation and its later record in the active plan.
         </p>
         <p>You can approve the packet, revise individual decisions, or approve a subset. For example:</p>
-        <div class="approval-example" aria-label="Example approval reply">Approve D3, D5, D6, D7, and D8 as proposed, subject to the recorded MVP exception.
-Revise D4: [state the threshold or policy you want].
+        <div class="approval-example" aria-label="Example approval reply">D4 processing limits: [approve or revise the proposed values].
+Continuation and brief timing: [state the policy you want reviewed].
+Other decisions: [name any specific approvals or revisions].
 This approval does not authorize testing.</div>
         <p>Useful points to call out for the remaining decisions: the original-Date precision threshold; the initial adapter set; recurrence horizon; one-way versus three-way task synchronization; audio retention; and package, extension, or migration boundaries.</p>
 
@@ -1166,7 +1176,7 @@ This approval does not authorize testing.</div>
   </div>
 
   <footer class="site-footer">
-    <p><strong>Document status:</strong> explanatory review artifact for Architecture Proposal revision 5, prepared 2026-09-14. D1 and the query-coverage rule were explicitly approved on 2026-09-14; D2 review is deferred and interrupted-write recovery is outside the MVP; D3 code capability is approved; remaining D3 and D4–D8 are pending. The proposal, product principles, active plan, and coverage map remain authoritative; this guide creates no architecture decision.</p>
+    <p><strong>Document status:</strong> explanatory review artifact for Architecture Proposal revision 6, expanded 2026-09-15. D1 and the query-coverage rule were explicitly approved on 2026-09-14; D2 review is deferred and interrupted-write recovery is outside the MVP; D3 code capability is approved; remaining D3 and D4–D8 are pending. The proposal, product principles, active plan, and coverage map remain authoritative; this guide creates no architecture decision.</p>
     <p>
       Sources: <a href="ARCHITECTURE-PROPOSAL.md">Architecture Proposal</a> ·
       <a href="COVERAGE.md">Whole-project coverage</a> ·

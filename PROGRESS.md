@@ -4930,3 +4930,43 @@ requirements, then read this log from top to bottom.
   section anchors resolve; diff whitespace checks pass. Hooks remain inactive
   samples, CI triggers are unchanged, and the restart branch has no open PR.
   These checks provide no functional validation or product qualification.
+
+## 2026-09-15 — Expanded architecture decision walkthroughs
+
+- The user requested a clearer D4 explanation, especially whether bounded work
+  can end a run before its daily task is complete, and equivalent detail for all
+  remaining decisions. Added seven linked Markdown/HTML briefs under
+  `docs/plans/restart/implementation/decision-briefs/`, with fictional emails,
+  step-by-step flows, parent-visible results, alternatives and open choices.
+  Updated the existing viewable architecture guide to lead with these briefs.
+- The D4 example distinguishes an execution from the daily task: a completely
+  enumerated pass of 40 admitted appearances with 25 read leaves 15 known unread.
+  These are not necessarily 40 logical emails, and incomplete discovery may hide
+  more work. Per-run/transfer ceilings do not cap total history or guarantee
+  throughput. An unread correction illustrates why a partial answer is limited.
+- Recorded missing D4/D6/D7 decisions: continuation trigger/owner, total catch-up
+  budget, freshness target, escalation and brief timing. D6 also exposes pending
+  email/audio order and effect-record persistence after D2's exclusion; D8 exposes
+  its interruption boundary. These are unapproved choices, not adopted policy.
+  Revision 6 adds this review context without changing existing approvals.
+- Remaining D3 and the minimum record/ordinary-write dependency have separate
+  briefs. D1, approved query coverage and required code capability stay approved;
+  D2 interrupted canonical-write repair stays outside MVP. No production runtime,
+  schema, dependency, schedule or recovery mechanism was implemented by this work.
+- Three bounded workers owned separate explanatory Markdown files. The
+  coordinator reviewed and integrated all content, authored the additional
+  foundation briefs and HTML presentation, and owns repository/Site publication.
+- Publication hygiene found no privacy issues; 268 local document links/anchors
+  resolve and diff whitespace checks pass. Hooks remain inactive samples. CI
+  still runs on main pushes, pull requests or manual dispatch; this restart branch
+  has no open PR. No CI settings or checks were disabled. Frozen studies and the
+  retired runtime remain unchanged. These checks are not functional validation.
+- No tests, simulations, replays, application builds, connector probes, ingestion,
+  schedules or live School-OS operations ran. Fictional examples are written
+  illustrations only. Publishing the static review artifact is not application
+  qualification or the completed whole-project implementation checkpoint.
+- Exact next action: review the expanded D4 brief and its open completion policy
+  with the user, then resolve D5–D8, remaining D3 and minimum record/ordinary-write
+  dependencies explicitly before dependent coding. After agreed MVP implementation,
+  commit/push, verify the exact remote revision and stop for the user's testing
+  direction. This documentation publication preserves that mandatory stop.
