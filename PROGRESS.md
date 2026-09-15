@@ -4894,3 +4894,39 @@ requirements, then read this log from top to bottom.
   section anchors resolve; diff whitespace checks pass. Hooks remain inactive
   samples, CI triggers are unchanged, and the restart branch has no open PR.
   These are publication checks only, not functional validation.
+
+## 2026-09-14 — D3 code-execution capability required
+
+- The user explicitly decided that a School-OS agent must be able to execute
+  code and reports confirming that capability with all major personal-agent
+  suppliers. Recorded this as an approved capability requirement, with the
+  supplier availability attributed to the user. No independent runtime/adapter
+  qualification or capability probe is claimed.
+- Architecture proposal revision 5 supersedes the earlier requirement to support
+  agents without code execution. Language/version, dependencies, SDKs, code entry
+  points and exact adapter contracts remain undecided; this is not approval of
+  all D3. Code execution does not imply a personal computer, persistent process,
+  coding CLI, or that every operation must execute code. Product principles
+  remain unchanged; the requirement is compatible with their managed/cloud and
+  capability-led direction.
+- Updated the entry point, active/root plans, next-coordinator handoff, coverage
+  map and guide. D1 and the query-coverage rule remain approved. D2 interrupted
+  canonical-write recovery remains outside MVP and its record structures remain
+  undecided. No production runtime or dependency was adopted by this update.
+- One bounded worker updated only the testing proposal and fictional inventory:
+  S01/S22 assume code-capable agents; S02 adds one absent-code branch. Counts
+  remain 13 fictional source cards and 31 prepared scenarios. D4 expectations
+  and frozen studies are unchanged; no case was executed.
+- The user requested a clearer D4 explanation after recording D3. The HTML
+  guide now separates its unchanged proposal into metadata sufficiency, search
+  windows, work/transfer limits and reading repeated appearances/attachments.
+  D4 is not approved or qualified by this explanatory change.
+- Exact next action: explain/review D4, then D5–D8; resolve remaining D3 and the
+  minimum record/ordinary-write design before dependent code. The agreed MVP
+  implementation/publication checkpoint and mandatory stop before testing remain
+  unchanged. No tests, simulations, model replays, builds, connector probes,
+  ingestion, schedules or live School-OS operations ran.
+- Publication hygiene: no privacy findings; all 119 local document links and
+  section anchors resolve; diff whitespace checks pass. Hooks remain inactive
+  samples, CI triggers are unchanged, and the restart branch has no open PR.
+  These checks provide no functional validation or product qualification.

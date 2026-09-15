@@ -655,14 +655,14 @@
 
   <header class="masthead">
     <div class="masthead-inner">
-      <p class="eyebrow">Based on architecture proposal revision 4 • D1 and query rule approved • D2 deferred</p>
+      <p class="eyebrow">Based on architecture proposal revision 5 • D1, query rule and code capability approved • D2 deferred</p>
       <h1>Architecture decisions for School-OS</h1>
       <p class="lede">
         The product direction is settled. The remaining job is to choose the concrete mechanisms that will store, process, synchronize, deliver, and upgrade School-OS.
       </p>
       <div class="status-line" aria-label="Review status">
-        <span class="status">D1 approved · query rule approved · D2 deferred</span>
-        <span class="source-link">Authoritative source: <a href="ARCHITECTURE-PROPOSAL.md">Architecture Proposal, revision 4</a></span>
+        <span class="status">Code-capable agents required · D2 recovery deferred</span>
+        <span class="source-link">Authoritative source: <a href="ARCHITECTURE-PROPOSAL.md">Architecture Proposal, revision 5</a></span>
       </div>
     </div>
   </header>
@@ -685,7 +685,7 @@
         <p class="eyebrow">Orientation</p>
         <h2 id="read-first-title">What is settled, and what is still open</h2>
         <p>
-          D1 and the query-coverage rule are approved. You have skipped D2 for now and excluded interrupted-write recovery from the MVP. D3–D8 remain open. These mechanisms remain unimplemented and unqualified.
+          D1 and the query-coverage rule are approved. You have skipped D2 for now and excluded interrupted-write recovery from the MVP. D3 now requires agents to execute code. Its other choices and D4–D8 remain open. These mechanisms remain unimplemented and unqualified.
         </p>
 
         <div class="boundary">
@@ -699,13 +699,14 @@
               <li>Concurrent writes to the same canonical data are outside the present household scope.</li>
               <li>D1: multiple JSON pages on Drive, with bounded directories and transfers.</li>
               <li>Answers check coverage as well as saved knowledge, and explain any gap that cannot be resolved within scope.</li>
+              <li>D3: the agent must be able to execute code in its available environment.</li>
             </ul>
           </article>
           <article class="pending">
             <h3>Pending architecture mechanisms</h3>
             <ul>
               <li>Minimum record structures and ordinary-write behavior remain undecided; interrupted-write recovery is outside the MVP.</li>
-              <li>Runtime recipes, adapter contracts, and the initial adapter set.</li>
+              <li>Language, code/runtime contracts, and the initial adapter set; code-execution capability is already required.</li>
               <li>Exact automatic-association threshold and processing budgets.</li>
               <li>Knowledge/task semantics, briefs, effects, schedules, and upgrades.</li>
             </ul>
@@ -775,7 +776,7 @@
         <p class="eyebrow">Approval packet</p>
         <h2 id="decisions-title">Decisions D1–D8</h2>
         <p>
-          Read the recommendation first. Open the details when you want to inspect authorization scope, alternatives, unknowns, and dependencies. D1 and the query rule are approved; D2 review is deferred. Continue with D3. Record structures still need a separate decision before coding.
+          Read the recommendation first. Open the details when you want to inspect authorization scope, alternatives, unknowns, and dependencies. D1, the query rule and D3 code capability are approved; D2 review is deferred. D4 is next. Record structures and remaining D3 contracts still need decisions before dependent coding.
         </p>
 
         <article class="decision" id="d1">
@@ -859,29 +860,33 @@
           <div class="decision-head">
             <div class="decision-title-row">
               <h3><span class="d-label">D3</span> Must an agent be able to run code?</h3>
-              <span class="pending-pill">Pending</span>
+              <span class="pending-pill approved-pill">Yes — approved</span>
             </div>
-            <p class="recommendation"><strong>Recommendation:</strong> let agents follow complete operating instructions with their available tools. Keep Python helpers optional, and define what each tool connection must provide.</p>
+            <p class="recommendation"><strong>Your decision:</strong> a School-OS agent must be able to execute code. You have confirmed this capability with the major personal-agent suppliers.</p>
+            <p>The earlier proposal to support agents without code execution is superseded. A programming language, dependencies, and exact code/adapter contracts still need approval.</p>
           </div>
           <details>
-            <summary>Approval scope, alternatives, and unknowns</summary>
+            <summary>Approved requirement and remaining choices</summary>
             <div class="detail-body">
-              <h4>What approval authorizes</h4>
+              <h4>What is approved</h4>
               <ul>
-                <li>Agents can follow complete native-tool recipes; Python helpers support normalization, record preparation, bounded planning, and reconciliation when available.</li>
-                <li>No daemon, shell, coding CLI, third-party Python packages, or network SDK is required for household operation.</li>
-                <li>Generic contracts for storage; source enumeration/content/attachments; task read/apply/readback; email; audio; and scheduler management.</li>
-                <li>Initial procedures/mappings for Drive JSON storage, Gmail source/email, Google Sheets and Todoist task projections, a generic managed scheduler, ChatGPT Work and Claude runtime profiles, and optional ElevenLabs audio.</li>
-                <li>Adapter boundaries project provider envelopes into small contracts and reject conflicting duplicate fields. Unknown capability, no transport response, and provider error remain different states.</li>
+                <li>Code execution is a required agent capability. The supplier confirmation is user-reported; it is not an independently observed School-OS qualification result.</li>
+                <li>This does not require a personal computer, persistent process, or coding CLI, or mean every operation must run code.</li>
+                <li>Agents continue to reason over explicit procedures and use replaceable adapters. No tests or supplier probes are authorized.</li>
               </ul>
-              <h4>Alternatives, tradeoffs, unknowns, and dependencies</h4>
+              <h4>What still needs a decision</h4>
+              <ul>
+                <li>Language/version, libraries, code entry points, and the boundary between code and agent reasoning. Python standard-library helpers remain a proposal.</li>
+                <li>Contracts for storage, source reading, task apps, email delivery, audio, and scheduling, including incomplete capabilities and unknown outcomes.</li>
+                <li>Initial routes: Drive JSON, Gmail, Sheets/Todoist tasks, managed scheduling/runtime profiles, and optional ElevenLabs audio remain proposed.</li>
+              </ul>
               <div class="fact-grid">
-                <div><strong>Credible alternative</strong>Require one executable runtime/service to enforce procedures uniformly.</div>
-                <div><strong>Tradeoff</strong>Recipes reach limited managed agents but increase the risk of procedural mistakes; a mandatory service is more uniform but excludes capable no-code runtimes.</div>
-                <div><strong>Key unknown</strong>Actual operation coverage, envelope shapes, and limits of each named runtime/provider route.</div>
-                <div><strong>Dependencies</strong>D1/D2 contracts and storage; D6 effect reconciliation; D7 capability records; D8 package contents.</div>
+                <div><strong>Earlier alternative</strong>Support agents entirely through native-tool instructions without requiring code execution. That option is superseded.</div>
+                <div><strong>Tradeoff</strong>Code supports repeatable mechanical work, with an execution capability prerequisite. Its exact language and operating limits remain undecided.</div>
+                <div><strong>Key unknown</strong>Exact file/network access, libraries, limits, and provider-adapter behavior in each target environment.</div>
+                <div><strong>Dependencies</strong>D1 storage; minimum record/ordinary-write design; remaining D3 contracts; D6 effects; D7 capability records; D8 packages.</div>
               </div>
-              <p>Named vendors are proposed starting routes, not compatibility promises. Local Codex remains a development surface, not a household prerequisite. Live connector evidence would follow the repository’s private-evidence rules.</p>
+              <p>Local Codex remains a development surface. A vendor name or reported code capability does not establish that every required adapter operation works. D2 interrupted-write recovery remains outside the MVP.</p>
               <a class="source-anchor" href="ARCHITECTURE-PROPOSAL.md#d3--runtime-adapter-contracts-and-first-supplied-routes">Read D3 in the authoritative proposal →</a>
             </div>
           </details>
@@ -890,10 +895,17 @@
         <article class="decision" id="d4">
           <div class="decision-head">
             <div class="decision-title-row">
-              <h3><span class="d-label">D4</span> When is email metadata sufficient?</h3>
+              <h3><span class="d-label">D4</span> How should School-OS find and process email?</h3>
               <span class="pending-pill">Pending</span>
             </div>
-            <p class="recommendation"><strong>Recommendation:</strong> automatically associate only with a verified mailbox, subject, sender, and original Date whose timezone and second-or-finer precision are known; keep discovery and content processing independently bounded.</p>
+            <p class="recommendation"><strong>D4 contains four choices:</strong> enough metadata to identify an email; search windows; processing limits; and reading repeated appearances or attachment candidates.</p>
+            <ol>
+              <li><strong>Identify:</strong> require mailbox, subject, sender and the email’s original Date with timezone and seconds before automatic association. If a tool shows only a minute, try a richer metadata view once; otherwise leave the association unresolved.</li>
+              <li><strong>Search:</strong> work through history in seven-day windows; daily runs look back seven days to catch late discovery. Use arrival time for discovery where its meaning is documented, while keeping original sending Date for identity.</li>
+              <li><strong>Bound the work:</strong> propose up to 100 listing entries and 25 message appearances processed per run, with at most 8 MiB per content transfer. Save normal progress and continue later; never infer exhaustion from a short page.</li>
+              <li><strong>Read separately:</strong> matching metadata can reuse an email record, but does not prove the newly encountered content was read. Each admitted appearance is read; same-parent attachments sharing a filename remain a group whose available candidates are processed separately.</li>
+            </ol>
+            <p><strong>Main cost:</strong> conservative matching leaves more unresolved items, and the seven-day overlap can cause repeat reading. These defaults remain proposals, not measured capacity or approved D4 policy.</p>
           </div>
           <details>
             <summary>Approval scope, alternatives, and unknowns</summary>
@@ -1033,7 +1045,7 @@
             <div class="detail-body">
               <h4>What approval authorizes</h4>
               <ul>
-                <li>A ZIP containing a manifest, entry point, recipes, versioned record/adapter contracts, defaults, optional helpers, reference mappings, extension guide, and license.</li>
+                <li>A ZIP containing a manifest, entry point, recipes, versioned record/adapter contracts, defaults, code artifacts subject to remaining D3 decisions, reference mappings, extension guide, and license.</li>
                 <li>Semantic package/contract versions. Meaning or required-field changes need a major version and separately approved migration; additive optional fields may be compatible.</li>
                 <li>Compatible extensions own namespaces and inventories under <code>extensions</code>; upgrades preserve private data, configuration, and extensions.</li>
                 <li>Upgrades stage a new official version, persist intent, check compatibility, verify files, then change the bootstrap pin. The prior package remains available.</li>
@@ -1100,7 +1112,7 @@
       <section id="recap" aria-labelledby="recap-title">
         <p class="eyebrow">Decision recap</p>
         <h2 id="recap-title">What remains to decide</h2>
-        <p>D1 and the query-coverage rule are approved. D2 is deferred; interrupted-write recovery is outside the MVP. D3–D8 remain open. Minimum record and ordinary-write choices will need a separate proposal before dependent code.</p>
+        <p>D1 and the query-coverage rule are approved. D2 is deferred; interrupted-write recovery is outside the MVP. D3 code capability is approved; its remaining contracts and D4–D8 remain open. Minimum record and ordinary-write choices need a separate proposal before dependent code.</p>
 
         <table class="recap">
           <thead>
@@ -1113,7 +1125,7 @@
           <tbody>
             <tr><td>D1 · Approved</td><td>Paged JSON records and directories in Drive.</td><td>Managed-app file and folder operations.</td></tr>
             <tr><td>D2 · Deferred</td><td>Interrupted-write recovery outside MVP; query rule still approved.</td><td>Minimum record and ordinary-write design remains undecided.</td></tr>
-            <tr><td>D3</td><td>Native-tool recipes, JSON contracts, optional helpers, initial routes.</td><td>Exact provider/runtime capability.</td></tr>
+            <tr><td>D3 · Code capability approved</td><td>Agent must execute code; language, contracts and adapter set remain undecided.</td><td>Exact environment and adapter behavior.</td></tr>
             <tr><td>D4</td><td>Exact zoned original-Date threshold; bounded independent appearance processing.</td><td>Metadata/listing fidelity and real limits.</td></tr>
             <tr><td>D5</td><td>Claim relationships, explicit recurring/finite tasks, three-way sync.</td><td>Semantic and provider-field behavior.</td></tr>
             <tr><td>D6</td><td>Verification-time briefs; retained audio; reconcile unknown effects.</td><td>External observability and authorization.</td></tr>
@@ -1137,7 +1149,7 @@ This approval does not authorize testing.</div>
 
         <h3>What happens after architecture approval</h3>
         <div class="timeline" aria-label="Next-step timeline">
-          <div>D2 deferred; review D3–D8 and minimum record design</div>
+          <div>Review D4–D8, remaining D3 and minimum record design</div>
           <div>Approved T1–T10 implementation with MVP exception</div>
           <div>Commit, push, and remote revision verification</div>
           <div class="stop">STOP and check in</div>
@@ -1154,7 +1166,7 @@ This approval does not authorize testing.</div>
   </div>
 
   <footer class="site-footer">
-    <p><strong>Document status:</strong> explanatory review artifact for Architecture Proposal revision 4, prepared 2026-09-14. D1 and the query-coverage rule were explicitly approved on 2026-09-14; D2 review is deferred and interrupted-write recovery is outside the MVP; D3–D8 remain pending. The proposal, product principles, active plan, and coverage map remain authoritative; this guide creates no architecture decision.</p>
+    <p><strong>Document status:</strong> explanatory review artifact for Architecture Proposal revision 5, prepared 2026-09-14. D1 and the query-coverage rule were explicitly approved on 2026-09-14; D2 review is deferred and interrupted-write recovery is outside the MVP; D3 code capability is approved; remaining D3 and D4–D8 are pending. The proposal, product principles, active plan, and coverage map remain authoritative; this guide creates no architecture decision.</p>
     <p>
       Sources: <a href="ARCHITECTURE-PROPOSAL.md">Architecture Proposal</a> ·
       <a href="COVERAGE.md">Whole-project coverage</a> ·

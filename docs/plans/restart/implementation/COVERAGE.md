@@ -8,7 +8,10 @@ mechanisms and old runtime do not supply missing architecture approvals.
 Status: requirements mapped; [D1](ARCHITECTURE-PROPOSAL.md) **approved explicitly
 on 2026-09-14**. The [query-coverage rule](ARCHITECTURE-PROPOSAL.md#approved-query-coverage-rule)
 is also explicitly approved. D2 review is deferred and interrupted canonical-write
-recovery is outside the MVP by explicit user direction; D3–D8 remain pending.
+recovery is outside the MVP by explicit user direction. D3's code-execution
+capability requirement is approved; remaining D3 and D4–D8 are pending. The user
+reports supplier confirmation of code capability; no independent qualification
+is claimed and no exact language/runtime/adapter contract is selected.
 Dependency columns retain the original decision references without approving
 their mechanisms. No replacement production capability is claimed implemented or
 tested. Test scenarios may be prepared without execution.
@@ -45,7 +48,7 @@ any new canonical meaning, dependency or runtime behavior still needs approval.
 | T7 Tools/schedules | Any number of agents/jobs; management locations; operation/job bindings; desired versus observed settings | Register/capability/job contracts; discovery, binding, schedule-management and known-job/sender query recipes | D1–D3, D6–D7 | Pending / not run |
 | T8 Continuation/replacement | Drive-only bounded window continuation and fresh-agent access; no prior conversation/local file/provider token prerequisite | Window continuation/missed-window procedures; explicit incomplete coverage; fresh-agent startup; review D6/D8 dependencies separately | D1, undecided record design, D3–D4, D6–D8 | Pending; interrupted canonical-write recovery deferred outside MVP / not run |
 | T9 Extensions/upgrades | Canonical-data applications; private data/configuration/compatible extensions survive updates | Extension manifest/guide; version compatibility rules; staged upgrade/recovery recipes; package builder | D1–D3, D8 | Pending / not run |
-| T10 Development/portability | Simple instructions/code/adapters; limited managed environments; useful private failure evidence | Generic entry point; optional helper package; adapter templates; prepared tests/fixtures; qualification limitations and repository continuity | D3, D8; other decisions for their dependent components | Preparation in progress / not run |
+| T10 Development/portability | Code-capable agents required; simple instructions/code/adapters; limited managed environments; useful private failure evidence | Generic entry point; callable code with language/dependencies awaiting approval; adapter templates; prepared tests/fixtures; qualification limits and continuity | D3 code capability approved; remaining D3, D8 and dependent decisions pending | Preparation in progress / not run |
 
 ## Every design priority
 
@@ -56,7 +59,7 @@ any new canonical meaning, dependency or runtime behavior still needs approval.
 | P3 Simplicity | T1–T3, T7–T10 | Small records and adapters; ordinary household operation; no locks, leases, global agent singleton or concurrency engine | D1–D3, D7–D8 |
 | P4 Efficient execution | T1–T4, T6, T8 | Narrow startup; bounded record/content transfers, lookups and work; history may be traversed over several runs | D1–D4, D6 |
 | P5 Tool agnosticism | T2, T5–T7, T9–T10 | Stable canonical meaning; replaceable access aids and adapters; per-operation/job selection | D1–D3, D5–D8 |
-| P6 Capability-led portability | T1, T3, T5–T8, T10 | Discover actual operations/limits; scoped unsupported states; no required personal computer, persistent process or coding CLI | D1, D3–D4, D6–D8 |
+| P6 Capability-led portability | T1, T3, T5–T8, T10 | Require code-execution capability; discover exact operations/limits; scoped unsupported states; no required personal computer, persistent process or coding CLI | D1, D3–D4, D6–D8; D3 code capability approved |
 | P7 Extensibility from canonical data | T2, T4–T7, T9 | Applications consume the same claims/tasks/source links; no parallel incompatible authority | D1–D3, D5–D8 |
 | P8 Extensible/upgradable instances | T1, T7, T9–T10 | Preserve private data/configuration and compatible additions across versioned installation updates | D1–D3, D7–D8 |
 | P9 Independence from brittle technical details | T1–T3, T5–T8 | Source-metadata identity, owned IDs, durable windows, replaceable handles; no content/provider identity fallback | D1–D8 |

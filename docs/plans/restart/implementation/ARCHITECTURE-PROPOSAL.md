@@ -1,7 +1,8 @@
 # Restart implementation decisions for approval
 
-Updated 2026-09-14, revision 4: records the user's MVP recovery exclusion.
-**D1 and query-coverage rule approved; D2 skipped for now; D3–D8 pending.** No
+Updated 2026-09-14, revision 5: records the required code-execution capability.
+**D1, query-coverage rule and D3 code-execution requirement approved; D2 skipped;
+remaining D3 and D4–D8 pending.** No
 production code depends on these choices yet. Approval of requirements in the
 [active plan](../PLAN.md) does not approve these mechanisms. Approval of this
 document would authorize the choices stated here, not unspecified later changes.
@@ -17,7 +18,7 @@ to an identity model, a local CLI, or a single managed-agent demonstration.
 |---|---|---|---|
 | D1 Storage | Small JSON record pages and paged directories in Drive, with a readable bootstrap | Native Sheets tables, with separately bounded long text | Approved, 2026-09-14 |
 | D2 Records and persistence | Retained proposal: typed records and verified small write intents | Immutable whole-instance generations or an event engine | Review deferred; interrupted-write recovery outside MVP; query rule remains approved |
-| D3 Execution and adapters | Agent operation recipes plus optional Python standard-library helpers; capability-declared adapters | Mandatory executable runtime | Pending |
+| D3 Execution and adapters | Code-capable agents required; exact code/runtime and adapter contracts remain proposed | Earlier support for agents without code execution is superseded | Code-execution requirement approved, 2026-09-14; remaining D3 pending |
 | D4 Ingestion | Exact zoned original Date for automatic association; bounded received-time discovery where supported; process appearances independently | Admit coarser Dates automatically; reuse content coverage from metadata alone | Pending |
 | D5 Knowledge and tasks | Source-supported claims and explicit relationships; parent fields separate; three-way task-field reconciliation | Mutable summaries and one-way task export | Pending |
 | D6 Briefs and effects | Persist intent before external effects, reconcile unknown outcomes, brief selection by newly verified knowledge | Retry uncertain sends; source-Date-only brief selection | Pending |
@@ -46,9 +47,10 @@ D2 also bundled record schemas, UUID representation and locator structure.
 Skipping its review does not approve those choices or remove the canonical
 knowledge/tasks/configuration/register requirements. Present the minimum record
 and ordinary-write design separately before dependent code; do not substitute a
-new persistence mechanism silently. For now, continue review with D3.
+new persistence mechanism silently. Continue with D4 after recording the D3
+code-execution requirement; remaining D3 contracts are still pending.
 
-D3–D8 remain proposals. References to D2 intents in external-effect handling,
+Remaining D3 and D4–D8 remain proposals. References to D2 intents in external-effect handling,
 installation and upgrades must be reconciled during their review; they cannot
 silently restore the deferred recovery mechanism. This exclusion does not itself
 decide D6's unknown-send/task outcomes or D8's upgrade behavior. No tests are
@@ -226,13 +228,25 @@ deferred interrupted-write recovery procedure or approve recovery triggers.
 
 ## D3 — Runtime, adapter contracts and first supplied routes
 
-Recommend authoritative Markdown operation recipes and JSON contracts/examples,
-with a small optional Python standard-library helper package for normalization,
-record preparation, bounded planning and reconciliation. Helpers are callable
-functions; a local daemon, shell, coding CLI, third-party Python packages and
-network SDK are not installation prerequisites. Agents capable of the declared
-operations may follow the same procedures using their native tools. The package
-must include complete instructions for that path, not refer parents to Python.
+**Approved requirement, 2026-09-14:** a School-OS agent must be able to execute
+code in its available execution environment. The user reports having confirmed
+this capability with all major personal-agent suppliers. Record that as
+user-reported supplier confirmation, not an independently observed qualification
+result. Do not require a supported operating path for agents that cannot execute
+code. The earlier D3 proposal to accommodate such agents is superseded.
+
+This requirement does not select Python or another language, versions, libraries,
+SDKs, code entry points, or runtime/provider contracts. It does not require every
+operation to use code, a dedicated personal computer, persistent local process,
+or coding CLI. The agent still reasons over explicit procedures and uses
+replaceable adapters. No capability probes or tests are authorized here.
+
+The remaining proposal is authoritative Markdown operation recipes and JSON
+contracts/examples, with small callable code for normalization, record
+preparation and bounded planning. Python standard-library helpers remain a
+candidate implementation choice awaiting approval. Record and ordinary-write
+mechanisms remain undecided, and D2 interrupted-write recovery stays outside
+the MVP. Instructions must explain the selected code and tool operations clearly.
 
 Generic adapter operations cover storage list/read/write, source enumeration,
 individual metadata/content/attachment reading, task snapshot/apply/readback,
@@ -265,11 +279,14 @@ Public diagnostics follow AGENTS' privacy-safe allowlist. Private development
 receipts are not prerequisites for canonical installed-instance recovery.
 
 Grounding: P2–P9; install, all applications, extensions and agent replacement.
-Alternative: one mandatory Python/runtime service makes enforcement more
-uniform but excludes agents without executable environments. Recipe execution
-has a higher risk of procedural mistakes, and actual native tool coverage is
-unknown until qualification. Provider-specific contract changes discovered in
-implementation will be surfaced if they change this architecture.
+The approved code capability supports repeatable mechanical operations across
+personal-agent environments. The earlier alternative of native-tool-only support
+would avoid requiring code capability but adds a second operating path; the user
+has selected code-capable agents. The tradeoff is a capability prerequisite,
+without a chosen language or execution contract yet. Exact file/network access,
+libraries, limits and adapter behavior remain unqualified. A mandatory persistent
+runtime service is neither required nor approved. Provider-specific contract
+changes will be surfaced if they change this architecture.
 
 ## D4 — Production association, discovery and content coverage
 
@@ -467,7 +484,8 @@ with qualifications left explicitly unestablished.
 
 Recommend a ZIP containing a release manifest, readable entry point, operation
 recipes, versioned record/adapter contracts, default configuration examples,
-optional helpers, reference adapter mappings, extension guide and license.
+code artifacts subject to remaining D3 decisions, reference adapter mappings,
+extension guide and license.
 An optional standard-library builder writes that archive; it will be prepared
 but not executed during this implementation phase. Package hashes verify
 official package integrity; private developer receipt/expectation hashes retain
@@ -522,7 +540,10 @@ records the full D1 approval scope. The user separately approved the
 [query-coverage rule](#approved-query-coverage-rule) with "Okay, make it so";
 this is not blanket approval of D2. The user subsequently **skipped D2 for now
 and excluded interrupted-write recovery from the MVP**. Keep the retained D2
-proposal deferred. Continue with D3–D8; separately resolve the minimum record and
+proposal deferred. The user approved required code-execution capability under
+D3 and supplied confirmation of its availability from personal-agent suppliers.
+That does not approve the rest of D3 or qualify particular runtime/adapter routes.
+Continue with D4–D8; resolve remaining D3 and the minimum record and
 ordinary-write design before its dependent implementation. A partial
 approval releases only its independent scope. Any new choice not covered above
 returns for approval rather than being labeled an

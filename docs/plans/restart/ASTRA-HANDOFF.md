@@ -16,10 +16,18 @@ canonical-write recovery is outside the MVP. Preserve its proposal and prepared
 cases for future work. The approved query-coverage rule, verified persistence,
 bounded discovery/window continuation and fresh-agent access remain required.
 Do not treat this deferral as approval of D2's bundled schemas or a replacement
-write design. Continue with D3; separately resolve minimum record/ordinary-write
+write design. Separately resolve minimum record/ordinary-write
 choices before dependent implementation. This exception overrides broader
 interrupted-write recovery wording below; other project areas and the mandatory
 stop before testing remain unchanged.
+
+Current D3 decision, approved 2026-09-14: an agent must be able to execute code.
+The user reports confirming this with all major personal-agent suppliers. Do not
+claim independently observed runtime/adapter qualification from that report.
+The earlier no-code-agent support proposal is superseded. Language/version,
+dependencies, SDKs and adapter contracts remain undecided; no personal machine,
+persistent process or coding CLI is required. Explain/review D4 next; retain the
+remaining D3 architecture approvals and the testing boundary.
 
 The previous implementation is retired as the foundation. Preserve the existing
 repository and Git history, but build the new project from the approved restart

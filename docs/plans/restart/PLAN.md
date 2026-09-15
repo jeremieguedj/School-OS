@@ -20,9 +20,10 @@ design priorities, seven core use cases, other mandatory principle sections and
 ten implementation areas. Requirements are already established; the remaining
 blocker is approval of concrete architecture, not renewed product discovery.
 
-The [architecture proposal, revision 4](implementation/ARCHITECTURE-PROPOSAL.md)
+The [architecture proposal, revision 5](implementation/ARCHITECTURE-PROPOSAL.md)
 contains recommendations, alternatives, tradeoffs and unknowns. **D1 and the
-D2 query-coverage rule are approved; D2 review is now deferred and D3–D8 are pending.**
+D2 query-coverage rule and D3 code-execution requirement are approved; D2 review
+is deferred, and remaining D3 and D4–D8 are pending.**
 On 2026-09-14 the user explicitly replied "D1 approved"
 after the explanation of multiple JSON pages and per-page capacity limits.
 Approval releases only work whose architecture dependencies are also approved.
@@ -34,7 +35,7 @@ ledger here remains authoritative.
 |---|---|---|
 | D1 | Physical Drive layout, bounded pages and directories | Approved explicitly, 2026-09-14 |
 | D2 | Canonical records and verified write recovery | Review skipped for now; interrupted-write recovery outside MVP; approved query rule retained |
-| D3 | Agent execution, optional helpers and supplied adapter routes | Pending |
+| D3 | Agent execution and supplied adapter routes | Code-execution capability required, approved 2026-09-14; language/runtime/adapter choices pending |
 | D4 | Precise association threshold, discovery budgets and content coverage | Pending |
 | D5 | Knowledge relationships, recurring/finite tasks and parent synchronization | Pending |
 | D6 | Brief selection, audio artifacts and external-effect recovery | Pending |
@@ -88,6 +89,17 @@ dependent code, without reintroducing interrupted-write recovery into the MVP.
 No testing is authorized. This exception governs the whole-project checklist
 and old recovery wording below; all other required areas remain in scope.
 
+**D3 approval scope, 2026-09-14:** the user explicitly requires an agent to be
+able to execute code and reports confirmation from all major personal-agent
+suppliers. Adopt code-execution capability as a prerequisite; the earlier
+proposal to support agents without it is superseded. The confirmation is
+user-reported, not an independently observed runtime/adapter qualification.
+No programming language/version, dependency, SDK, code entry point or adapter
+contract is selected by this decision. No personal computer, persistent process
+or coding CLI becomes required. Remaining D3 decisions stay pending; no tests
+or supplier probes are authorized. This supports repeatable processing while
+retaining the capability-led portability and simplicity principles.
+
 Independent approved preparation includes fictional lifecycle scenarios, a
 [proposed testing sequence](implementation/TESTING-PROPOSAL.md), and a new
 [development-only metadata model](identity/revised-model/README.md) in a separate
@@ -95,8 +107,8 @@ directory. Its code and fictional checks are authored, not executed. These are n
 replacement runtime, canonical schema or managed-agent qualification. Every
 functional test, model run, simulation, build and live operation remains stopped.
 
-Exact next action: continue architecture review with D3, then D4–D8. Resolve
-the minimum record and ordinary-write decisions separately before dependent code.
+Exact next action: explain and review D4, then D5–D8. Resolve remaining D3 and
+the minimum record/ordinary-write decisions before their dependent code.
 Implement the approved T1–T10 scope with the explicit MVP exception and prepare
 its in-scope tests. Publish the whole
 implementation, verify the remote commit and stop for the user's testing direction.

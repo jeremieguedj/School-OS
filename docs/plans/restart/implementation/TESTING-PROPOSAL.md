@@ -45,6 +45,19 @@ later, subject to the user's explicit MVP exclusion below.
 
 ## Current MVP boundary
 
+The user explicitly approved a D3 prerequisite: School-OS agents must be able
+to execute code. The user reports receiving confirmation of this capability
+from all major personal-agent suppliers. This is user-reported availability,
+not independent qualification of a particular runtime, account or operation.
+S01 and S22 assume code-capable managed agents; S02 retains one focused branch
+whose missing code capability fails that prerequisite. A no-code fallback is
+not an approved School-OS operating route.
+
+This prerequisite does not choose a programming language, Python dependency or
+version, network access, SDK or adapter contract, and it does not approve D3 in
+full. Execution can occur in the managed agent's temporary environment; no
+dedicated personal machine, persistent process or coding CLI is required.
+
 The user skipped D2 review and explicitly deferred recovery of interrupted
 canonical writes outside the MVP. S13 and the interrupted-write recovery branch
 of S12 are retained as prepared future scenarios. They are **post-MVP/deferred**,
@@ -61,6 +74,7 @@ whose acceptance or multi-record completion was interrupted.
 
 | Prepared material | Current classification |
 |---|---|
+| S01, S02 and S22 managed-agent capability | Code execution required; supplier availability is user-reported, remaining D3 architecture and actual qualification are unresolved |
 | S13 canonical-write interruption points and subsequent reconciliation | Post-MVP/deferred; retain as future evidence only |
 | S12 normal persistence/readback/cleanup | Remains in scope; do not claim unverified work complete |
 | S12 early-loss branch that recovers unfinished canonical writes | Post-MVP/deferred; retain its proposed recovery expectations for later |
@@ -169,6 +183,9 @@ mechanisms cannot be selected through a test harness or pilot.
    surface. Review the source cards independently of implementation output.
    Set user-approved budgets and stop conditions. Resolve any contract gaps
    before producing fixtures in their native formats.
+   For S01/S02/S22, distinguish the approved code-execution prerequisite from
+   the user's supplier-availability report and later observed qualification;
+   this update itself performs no capability probe.
 2. **Direct the fictional metadata and procedure cases.** Exercise S03–S11 and
    S18 with no private sources or external effects. Include reordered catalog
    candidates, repeated observations, missing/changing handles, explicit empty
@@ -220,8 +237,9 @@ approval dependencies; skipping D2 does not remove them from the proposal.
 D1's Drive layout remains approved. The user has also explicitly approved the
 query-coverage rule represented by S30–S31. D2 interrupted canonical-write
 recovery is now deferred outside the MVP; the skipped D2 record-schema review
-leaves those choices unresolved. D3–D8 retain their separate pending approval
-status. No alternative persistence mechanism is approved. Canonical schemas,
+leaves those choices unresolved. D3's code-execution prerequisite is approved;
+the remainder of D3 and D4–D8 retain their separate pending approval status.
+No alternative persistence mechanism is approved. Canonical schemas,
 normal write contracts, adapter contracts, runtime dependencies, scheduling and
 upgrade mechanisms must follow the approval status recorded in the active plan.
 These scenarios do not decide them. In particular:

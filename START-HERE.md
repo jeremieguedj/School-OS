@@ -33,6 +33,9 @@ architecture approvals; obtain the user's approval before adopting any new or
 changed architecture decision.
 Apply the active plan's explicit MVP scope exceptions: interrupted canonical-write
 recovery is deferred; the approved query-coverage rule remains required.
+School-OS agents must be able to execute code. This approved capability
+requirement does not select a language/runtime or require a personal computer,
+persistent process or coding CLI; see D3 in the active restart plan.
 
 For the next implementation handoff, publish the agreed new project code, then
 stop and check in with the user. The user personally manages and oversees the
