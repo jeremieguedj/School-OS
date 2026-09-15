@@ -655,14 +655,14 @@
 
   <header class="masthead">
     <div class="masthead-inner">
-      <p class="eyebrow">Based on architecture proposal revision 3 • D1 and query rule approved • remaining decisions open</p>
+      <p class="eyebrow">Based on architecture proposal revision 4 • D1 and query rule approved • D2 deferred</p>
       <h1>Architecture decisions for School-OS</h1>
       <p class="lede">
         The product direction is settled. The remaining job is to choose the concrete mechanisms that will store, process, synchronize, deliver, and upgrade School-OS.
       </p>
       <div class="status-line" aria-label="Review status">
-        <span class="status">D1 approved · query rule approved · other choices open</span>
-        <span class="source-link">Authoritative source: <a href="ARCHITECTURE-PROPOSAL.md">Architecture Proposal, revision 3</a></span>
+        <span class="status">D1 approved · query rule approved · D2 deferred</span>
+        <span class="source-link">Authoritative source: <a href="ARCHITECTURE-PROPOSAL.md">Architecture Proposal, revision 4</a></span>
       </div>
     </div>
   </header>
@@ -685,7 +685,7 @@
         <p class="eyebrow">Orientation</p>
         <h2 id="read-first-title">What is settled, and what is still open</h2>
         <p>
-          This review does not reopen School-OS’s purpose or narrow its scope. D1 is approved: Drive will hold multiple bounded JSON pages. The query-coverage rule is also approved. The rest of D2 and D3–D8 still need your decision. These mechanisms remain unimplemented and unqualified.
+          D1 and the query-coverage rule are approved. You have skipped D2 for now and excluded interrupted-write recovery from the MVP. D3–D8 remain open. These mechanisms remain unimplemented and unqualified.
         </p>
 
         <div class="boundary">
@@ -704,7 +704,7 @@
           <article class="pending">
             <h3>Pending architecture mechanisms</h3>
             <ul>
-              <li>Record families, persistence, and interrupted-write recovery.</li>
+              <li>Minimum record structures and ordinary-write behavior remain undecided; interrupted-write recovery is outside the MVP.</li>
               <li>Runtime recipes, adapter contracts, and the initial adapter set.</li>
               <li>Exact automatic-association threshold and processing budgets.</li>
               <li>Knowledge/task semantics, briefs, effects, schedules, and upgrades.</li>
@@ -724,7 +724,7 @@
           School-OS turns source material into durable, source-linked knowledge and tasks. Applications consume that canonical data through replaceable adapters; they do not become competing sources of truth.
         </p>
 
-        <div class="flow" role="img" aria-label="School sources flow through bounded discovery and processing into canonical Drive records, then through replaceable adapters into parent-facing applications, with durable recovery and package lifecycle surrounding the process.">
+        <div class="flow" role="img" aria-label="School sources flow through bounded discovery and processing into canonical Drive records, then through replaceable adapters into parent-facing applications, with bounded continuation and proposed package lifecycle surrounding the process.">
           <div class="flow-row">
             <div class="flow-label">1 · Source systems</div>
             <div class="flow-body">Email and attachments stay at their source. School-OS reads only what the current bounded operation needs.</div>
@@ -746,8 +746,8 @@
           </div>
           <div class="flow-arrow" aria-hidden="true">↕</div>
           <div class="flow-row">
-            <div class="flow-label">5 · Recovery &amp; lifecycle</div>
-            <div class="flow-body">Durable intents let a fresh agent resume work. Versioned packages and staged pin changes preserve private instance data and extensions.</div>
+            <div class="flow-label">5 · Continuation &amp; lifecycle</div>
+            <div class="flow-body">Bounded search-window continuation and fresh-agent access stay in scope. Interrupted canonical-write repair is deferred. Package and upgrade mechanisms remain proposed.</div>
           </div>
         </div>
         <p class="caption">This is an explanatory view of the proposal, not a simulation, implementation diagram, or qualification claim.</p>
@@ -767,7 +767,7 @@
           </article>
         </div>
         <div class="callout">
-          <p><strong>Four watchpoints across the packet:</strong> repeat appearances may require repeat reading; incomplete date evidence stays pending; replay preserves parent completion and plans; and an unknown write or send is reconciled before any retry.</p>
+          <p><strong>Four watchpoints across the packet:</strong> repeat appearances may require repeat reading; incomplete date evidence stays pending; replay preserves parent completion and plans; and D6’s unknown external-outcome handling still needs review. D2 interrupted-write recovery is deferred.</p>
         </div>
       </section>
 
@@ -775,7 +775,7 @@
         <p class="eyebrow">Approval packet</p>
         <h2 id="decisions-title">Decisions D1–D8</h2>
         <p>
-          Read the recommendation first. Open the details when you want to inspect authorization scope, alternatives, unknowns, and dependencies. D1 is approved; D2 has one approved query rule. The other choices remain open.
+          Read the recommendation first. Open the details when you want to inspect authorization scope, alternatives, unknowns, and dependencies. D1 and the query rule are approved; D2 review is deferred. Continue with D3. Record structures still need a separate decision before coding.
         </p>
 
         <article class="decision" id="d1">
@@ -814,17 +814,18 @@
         <article class="decision" id="d2">
           <div class="decision-head">
             <div class="decision-title-row">
-              <h3><span class="d-label">D2</span> How should interrupted writes recover?</h3>
-              <span class="pending-pill">One rule approved</span>
+              <h3><span class="d-label">D2</span> Deferred: interrupted-write recovery</h3>
+              <span class="pending-pill">Outside MVP</span>
             </div>
-            <p class="recommendation"><strong>Recommendation:</strong> give each item its own School-OS ID, save the intended change before writing, and verify what was saved so a fresh agent can finish interrupted work.</p>
+            <p class="recommendation"><strong>Your decision:</strong> skip D2 for now. Do not build recovery of interrupted canonical writes for the MVP. The earlier proposal is retained below for future review.</p>
+            <p>D2 also bundled record fields and ID/locator formats. Those remain undecided; skipping recovery does not remove the need for canonical knowledge, tasks, configuration, and registers.</p>
             <p><strong>Approved query rule:</strong> check coverage alongside saved knowledge. An unread email might contain exactly what the parent needs. Finish missing processing only within authorized scope and work limits; otherwise make the answer's limitation clear.</p>
-            <p>For example: “I found these two tasks due tomorrow, but yesterday’s processing is incomplete, so this list may be missing something.” The remaining D2 record and recovery mechanisms still need approval.</p>
+            <p>For example: “I found these two tasks due tomorrow, but yesterday’s processing is incomplete, so this list may be missing something.” The query rule remains approved despite the recovery deferral.</p>
           </div>
           <details>
-            <summary>Approval scope, alternatives, and unknowns</summary>
+            <summary>Retained proposal and approved query rule</summary>
             <div class="detail-body">
-              <h4>What approval authorizes</h4>
+              <h4>Earlier proposal — undecided records; recovery outside MVP</h4>
               <ul>
                 <li>Typed families for configuration, email, attachment, knowledge claims, tasks, discovery windows, coverage, work, tools/adapters, jobs, and runs/outputs/effects.</li>
                 <li>School-OS identities generated once and never derived from content or provider IDs; adapter-owned provider locators stay replaceable.</li>
@@ -847,7 +848,7 @@
                 <li>Complete missing processing only within existing authorization, capabilities, and budgets; otherwise answer with the gap.</li>
                 <li>Never claim a complete list, exhaustive count, or absence without supporting coverage. If the coverage lookup itself is unfinished, say so.</li>
               </ol>
-              <p>A question does not require clearing the entire backlog. The timing and ordering of recovery in daily/import/resume operations remain separate pending choices.</p>
+              <p>A question does not require clearing the entire backlog. This approved query rule does not restore interrupted-write repair or resumption to the MVP.</p>
               <a class="source-anchor" href="ARCHITECTURE-PROPOSAL.md#approved-query-coverage-rule">Read the approved query-coverage rule →</a>
               <a class="source-anchor" href="ARCHITECTURE-PROPOSAL.md#d2--canonical-record-meanings-and-write-recovery">Read D2 in the authoritative proposal →</a>
             </div>
@@ -1083,7 +1084,7 @@
           </div>
           <div class="walk-step">
             <h3>A lost task-app response is not blindly repeated</h3>
-            <p>School-OS has already saved the intended projection and marked its outcome unknown. It reads the app to find a matching School-OS task marker. If the outcome remains unknowable, it stops that effect and surfaces the uncertainty. <a href="#d2">D2</a> · <a href="#d6">D6</a></p>
+            <p>D6 still proposes saving the intended projection and checking an unknown result before another effect. Its reliance on D2 intents needs review after the MVP deferral; this is not an approved recovery guarantee. <a href="#d2">D2</a> · <a href="#d6">D6</a></p>
           </div>
           <div class="walk-step">
             <h3>The brief explains what changed</h3>
@@ -1091,7 +1092,7 @@
           </div>
           <div class="walk-step">
             <h3>A fresh agent can continue</h3>
-            <p>It reads the bootstrap, pending work, job binding, and last observed status from Drive. It does not need the previous chat, a local process, or a remembered provider token. <a href="#d3">D3</a> · <a href="#d7">D7</a> · <a href="#d8">D8</a></p>
+            <p>It reads the bootstrap, saved coverage, job binding, and last observed status from Drive. Fresh-agent access and bounded window continuation remain in scope. Repairing interrupted canonical writes is outside the MVP. <a href="#d3">D3</a> · <a href="#d7">D7</a> · <a href="#d8">D8</a></p>
           </div>
         </div>
       </section>
@@ -1099,7 +1100,7 @@
       <section id="recap" aria-labelledby="recap-title">
         <p class="eyebrow">Decision recap</p>
         <h2 id="recap-title">What remains to decide</h2>
-        <p>D1 and the query-coverage rule are approved. The rest of D2 and D3–D8 need an explicit approve/revise decision. Partial approval can release only work whose dependencies are also approved.</p>
+        <p>D1 and the query-coverage rule are approved. D2 is deferred; interrupted-write recovery is outside the MVP. D3–D8 remain open. Minimum record and ordinary-write choices will need a separate proposal before dependent code.</p>
 
         <table class="recap">
           <thead>
@@ -1111,7 +1112,7 @@
           </thead>
           <tbody>
             <tr><td>D1 · Approved</td><td>Paged JSON records and directories in Drive.</td><td>Managed-app file and folder operations.</td></tr>
-            <tr><td>D2 · Query rule approved</td><td>Record types and small write intents still proposed; coverage-aware answers approved.</td><td>Drive consistency and cross-record recovery.</td></tr>
+            <tr><td>D2 · Deferred</td><td>Interrupted-write recovery outside MVP; query rule still approved.</td><td>Minimum record and ordinary-write design remains undecided.</td></tr>
             <tr><td>D3</td><td>Native-tool recipes, JSON contracts, optional helpers, initial routes.</td><td>Exact provider/runtime capability.</td></tr>
             <tr><td>D4</td><td>Exact zoned original-Date threshold; bounded independent appearance processing.</td><td>Metadata/listing fidelity and real limits.</td></tr>
             <tr><td>D5</td><td>Claim relationships, explicit recurring/finite tasks, three-way sync.</td><td>Semantic and provider-field behavior.</td></tr>
@@ -1129,15 +1130,15 @@
           This page intentionally has no approval buttons, checkboxes, or saved state. Canonical approval is your explicit reply in the conversation and its later record in the active plan.
         </p>
         <p>You can approve the packet, revise individual decisions, or approve a subset. For example:</p>
-        <div class="approval-example" aria-label="Example approval reply">Approve D2, D3, D5, D6, D7, and D8 as proposed.
+        <div class="approval-example" aria-label="Example approval reply">Approve D3, D5, D6, D7, and D8 as proposed, subject to the recorded MVP exception.
 Revise D4: [state the threshold or policy you want].
 This approval does not authorize testing.</div>
         <p>Useful points to call out for the remaining decisions: the original-Date precision threshold; the initial adapter set; recurrence horizon; one-way versus three-way task synchronization; audio retention; and package, extension, or migration boundaries.</p>
 
         <h3>What happens after architecture approval</h3>
         <div class="timeline" aria-label="Next-step timeline">
-          <div>D1 and query rule approved; decide remaining choices</div>
-          <div>Full approved T1–T10 implementation</div>
+          <div>D2 deferred; review D3–D8 and minimum record design</div>
+          <div>Approved T1–T10 implementation with MVP exception</div>
           <div>Commit, push, and remote revision verification</div>
           <div class="stop">STOP and check in</div>
           <div>User directs any tests</div>
@@ -1153,7 +1154,7 @@ This approval does not authorize testing.</div>
   </div>
 
   <footer class="site-footer">
-    <p><strong>Document status:</strong> explanatory review artifact for Architecture Proposal revision 3, prepared 2026-09-14. D1 and the query-coverage rule were explicitly approved on 2026-09-14; remaining D2 and D3–D8 are pending. The proposal, product principles, active plan, and coverage map remain authoritative; this guide creates no architecture decision.</p>
+    <p><strong>Document status:</strong> explanatory review artifact for Architecture Proposal revision 4, prepared 2026-09-14. D1 and the query-coverage rule were explicitly approved on 2026-09-14; D2 review is deferred and interrupted-write recovery is outside the MVP; D3–D8 remain pending. The proposal, product principles, active plan, and coverage map remain authoritative; this guide creates no architecture decision.</p>
     <p>
       Sources: <a href="ARCHITECTURE-PROPOSAL.md">Architecture Proposal</a> ·
       <a href="COVERAGE.md">Whole-project coverage</a> ·

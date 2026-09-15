@@ -31,6 +31,8 @@ grounding for decisions not explicitly covered by approved plans. Follow the
 [Astra handoff](docs/plans/restart/ASTRA-HANDOFF.md). Implement existing explicit
 architecture approvals; obtain the user's approval before adopting any new or
 changed architecture decision.
+Apply the active plan's explicit MVP scope exceptions: interrupted canonical-write
+recovery is deferred; the approved query-coverage rule remains required.
 
 For the next implementation handoff, publish the agreed new project code, then
 stop and check in with the user. The user personally manages and oversees the

@@ -20,9 +20,9 @@ design priorities, seven core use cases, other mandatory principle sections and
 ten implementation areas. Requirements are already established; the remaining
 blocker is approval of concrete architecture, not renewed product discovery.
 
-The [architecture proposal, revision 3](implementation/ARCHITECTURE-PROPOSAL.md)
+The [architecture proposal, revision 4](implementation/ARCHITECTURE-PROPOSAL.md)
 contains recommendations, alternatives, tradeoffs and unknowns. **D1 and the
-D2 query-coverage rule are approved; remaining D2 and D3–D8 are pending.**
+D2 query-coverage rule are approved; D2 review is now deferred and D3–D8 are pending.**
 On 2026-09-14 the user explicitly replied "D1 approved"
 after the explanation of multiple JSON pages and per-page capacity limits.
 Approval releases only work whose architecture dependencies are also approved.
@@ -33,7 +33,7 @@ ledger here remains authoritative.
 | Decision | Proposal subject | Approval status |
 |---|---|---|
 | D1 | Physical Drive layout, bounded pages and directories | Approved explicitly, 2026-09-14 |
-| D2 | Canonical records and verified write recovery | Query-coverage rule approved explicitly, 2026-09-14; remaining D2 pending |
+| D2 | Canonical records and verified write recovery | Review skipped for now; interrupted-write recovery outside MVP; approved query rule retained |
 | D3 | Agent execution, optional helpers and supplied adapter routes | Pending |
 | D4 | Precise association threshold, discovery budgets and content coverage | Pending |
 | D5 | Knowledge relationships, recurring/finite tasks and parent synchronization | Pending |
@@ -63,7 +63,30 @@ answers when processing or coverage lookup is incomplete. A verified fact may
 be reported, but exhaustive lists, counts and absence claims require supporting
 coverage. This does not require clearing all pending work before answering.
 It does not approve the remaining D2 mechanisms, D3–D8, or any daily-run recovery
-trigger/ordering rule. Required record and adapter contracts remain pending.
+trigger/ordering rule. Required record and adapter contracts remain undecided.
+
+### User-approved MVP exception — interrupted writes
+
+On 2026-09-14 the user explicitly decided to skip D2 for now and stated that
+interrupted-write recovery is not part of the MVP. Defer the proposed durable
+write-intent discovery/reconciliation/repair/resumption mechanism and its
+acceptance scenarios. Preserve its design and prepared cases for future work.
+
+This is an explicit scope reduction from the initial whole-project assignment
+and the broader recovery direction in the product principles. The user direction
+takes precedence for the MVP; the principles themselves remain unchanged.
+The MVP must not claim to repair or complete interrupted canonical writes.
+Normal verified persistence, honest incomplete coverage, the approved query rule,
+bounded discovery/window continuation and fresh-agent access to saved knowledge
+remain in scope. D6 external-effect outcomes and D8 upgrade behavior retain their
+separate pending status; their references to D2 must be reconciled before adoption.
+
+Deferring D2 is not approval of its bundled record schemas, UUID format, locator
+records, or a replacement persistence design. The required canonical data remains
+in scope. Present a minimum record and ordinary-write proposal separately before
+dependent code, without reintroducing interrupted-write recovery into the MVP.
+No testing is authorized. This exception governs the whole-project checklist
+and old recovery wording below; all other required areas remain in scope.
 
 Independent approved preparation includes fictional lifecycle scenarios, a
 [proposed testing sequence](implementation/TESTING-PROPOSAL.md), and a new
@@ -72,9 +95,10 @@ directory. Its code and fictional checks are authored, not executed. These are n
 replacement runtime, canonical schema or managed-agent qualification. Every
 functional test, model run, simulation, build and live operation remains stopped.
 
-Exact next action: obtain and record approval or revisions for remaining D2 and
-D3–D8 without reopening the accepted query-coverage rule, then
-implement the full approved T1–T10 scope and prepare its tests. Publish the whole
+Exact next action: continue architecture review with D3, then D4–D8. Resolve
+the minimum record and ordinary-write decisions separately before dependent code.
+Implement the approved T1–T10 scope with the explicit MVP exception and prepare
+its in-scope tests. Publish the whole
 implementation, verify the remote commit and stop for the user's testing direction.
 Publishing this preparation checkpoint alone does not satisfy that code handoff.
 
@@ -161,6 +185,11 @@ most recently refined procedure; completing its development model alone does
 not complete the restart. The earlier wording "agreed initial project-code
 scope" did not enumerate that full scope and must not be used to narrow it.
 
+The [explicit MVP exception](#user-approved-mvp-exception--interrupted-writes)
+removes interrupted canonical-write recovery from the current delivery. The
+remaining whole-project areas stay required; T8 cannot be reported fully delivered
+against the original scope without naming this deferral.
+
 The following is a delivery checklist drawn from existing requirements, not
 approval of new schemas, storage layouts, contracts or runtime mechanisms.
 
@@ -173,7 +202,7 @@ approval of new schemas, storage layouts, contracts or runtime mechanisms.
 | Tasks and synchronization | Canonical actionable requests and parent task state, with synchronization to the selected task application when configured. |
 | Briefs and delivery | Recent-update and daily email briefs, optional audio when supported, and run/output attribution using the canonical knowledge and tasks. |
 | Tools, adapters and schedules | Known connections and capabilities, selected adapters per operation/job, scheduler locations, desired versus observed settings, verification freshness, and known-job/sender queries. |
-| Recovery and agent replacement | Durable progress that another session or agent can resume without the previous conversation, local files or mandatory provider token; missing capabilities and unfinished work remain explicit. |
+| Continuation and agent replacement | Durable bounded discovery/window progress and fresh-agent access without previous conversations, local files or mandatory provider tokens; explicit missing capabilities/coverage. Interrupted canonical-write repair/resumption is deferred outside MVP. |
 | Extensions and upgrades | New applications and compatible adapters can use the canonical data layer; package/update procedures preserve private data, configuration and compatible customizations. |
 | Development and portability | Clear agent instructions and simple supporting code/adapters for limited managed/cloud environments; useful failure evidence retained without rebuilding the retired machinery by default. |
 
@@ -229,7 +258,8 @@ report before interpreting `wrong_association` or the earlier pass/failure total
   residual indistinguishability honestly without adding content-based identity.
   Code/checks are authored only; no model or test execution occurred. Its limited
   Date fixture domain does not approve the production threshold in D4.
-- [ ] Implement the whole-project delivery scope above under the approved
+- [ ] Implement the whole-project delivery scope above with the explicit MVP
+  interrupted-write-recovery exception, under the approved
   architecture. Obtain approval for unresolved architectural choices before
   their dependent code; do not silently decide the Drive file/table layout.
   Prepare a proposed test inventory and fixtures without running them.

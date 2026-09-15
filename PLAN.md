@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: restart preparation is active on `codex/restart-school-os`; whole-project requirements are mapped. D1 and the D2 query-coverage rule are explicitly approved; remaining D2 and D3–D8 await approval. Production implementation and managed-agent qualification remain pending.
+Status: restart preparation is active on `codex/restart-school-os`; whole-project requirements are mapped. D1 and the query-coverage rule are approved. The user skipped D2 for now and excluded interrupted-write recovery from the MVP; D3–D8 await approval. Production implementation and managed-agent qualification remain pending.
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 Decision authority: [product principles](docs/product-principles.md#decision-authority)
@@ -24,9 +24,10 @@ restart branch and preserved baseline commit
 [architecture decisions and approval status](docs/plans/restart/implementation/ARCHITECTURE-PROPOSAL.md).
 The active restart plan records the approval ledger. Prepared fictional fixtures,
 test proposals and a separate development model do not establish production
-implementation or test results. Exact next action is explicit approval or
-revision of remaining D2 and D3–D8, followed by the full approved implementation
-and publication handoff; testing remains reserved to the user. The accepted
+implementation or test results. Exact next action is D3 review, followed by D4–D8;
+minimum record and ordinary-write choices must be presented separately before
+dependent coding. The implementation/publication handoff follows the explicit
+MVP exception recorded in the active plan; testing remains reserved to the user. The accepted
 query-coverage rule requires coverage checks alongside verified knowledge and
 explicit limitations when missing processing cannot be completed within scope.
 

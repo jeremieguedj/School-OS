@@ -4854,3 +4854,43 @@ requirements, then read this log from top to bottom.
   inactive samples, CI triggers are unchanged, and the restart branch has no
   open PR. Frozen evidence and the retired implementation have no changes in
   this unit. These checks are publication hygiene, not functional validation.
+
+## 2026-09-14 — D2 deferred; interrupted-write recovery outside MVP
+
+- The user decided to skip D2 for now and exclude interrupted-write recovery
+  from the MVP. Recorded this explicit scope reduction in the active plan and
+  architecture proposal revision 4. The D2 write-intent discovery, partial-write
+  repair, reconciliation and automatic resumption mechanism is deferred, not an
+  MVP implementation or acceptance requirement. Preserve its proposal and
+  prepared fictional cases for later work.
+- This decision supersedes the initial whole-project recovery requirement for
+  this feature. Product principles remain unchanged as the broader direction;
+  the MVP exception is explicit in the entry point, coordinator handoff, root
+  and restart plans, coverage map and HTML guide. Original T2/T8 coverage cannot
+  be reported fully delivered without naming the deferral.
+- D1, the approved query-coverage rule, normal verified persistence, source
+  custody, honest incomplete coverage, bounded discovery/window continuation and
+  fresh-agent access to saved knowledge remain in scope. D6 external effects
+  and D8 upgrades remain separate pending decisions; their D2 intent dependencies
+  must be reviewed rather than silently reinstating deferred recovery.
+- D2 also bundled schemas, UUID representation and locator structure. Skipping
+  its review leaves those undecided; it does not approve an alternative write
+  design or remove canonical knowledge/tasks/configuration/register requirements.
+  No replacement persistence architecture has been adopted or implemented.
+- Exact next action: review D3, followed by D4–D8. Present the minimum record and
+  ordinary-write design separately before dependent coding. Implement the
+  approved MVP scope, publish/verify its complete code and continuity, then stop
+  for the user's testing direction. This documentation checkpoint is not the
+  completed implementation handoff.
+- No tests, simulations, replays, builds, probes, ingestion, scheduled jobs or
+  live School-OS effects were run. Only publication hygiene is permitted for
+  this update; frozen studies and retired code remain unchanged.
+- One bounded worker updated only the testing proposal and fictional scenario
+  inventory. S13 and S12's interrupted-write branch are marked post-MVP/deferred;
+  their original stimuli and expectations remain intact. The proposed MVP test
+  sequence excludes those branches, preserves normal verification and S30–S31,
+  and keeps D6 effects/D8 upgrades subject to their separate architecture review.
+- Publication hygiene: no privacy findings; all 119 local document links and
+  section anchors resolve; diff whitespace checks pass. Hooks remain inactive
+  samples, CI triggers are unchanged, and the restart branch has no open PR.
+  These are publication checks only, not functional validation.

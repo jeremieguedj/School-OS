@@ -3,6 +3,12 @@
   "status": "PREPARED — NOT RUN",
   "purpose": "Scenario descriptions and independent expectations only; not a canonical schema, adapter contract, native document fixture, executable harness or qualification result.",
   "authority": "Current product principles, restart plan and metadata-only recipe. Every new architecture decision requires explicit user approval.",
+  "current_scope": {
+    "deferred_post_mvp": "The user skipped D2 review and excluded recovery of interrupted canonical writes from the MVP. S13 and S12's interrupted-write recovery branch are retained as future prepared scenarios, not failed or missing MVP functionality.",
+    "still_applicable": "Normal verified persistence and privacy, metadata identity, bounded discovery and continuation from saved window progress, normal fresh-agent queries, and the approved S30–S31 query-coverage rule remain applicable.",
+    "separate_pending_decisions": "D6 external-effect handling and D8 upgrade behavior are not deferred by skipping D2. D2 record-schema choices remain unresolved; no alternative persistence mechanism has been approved. D3–D8 keep their separate pending architecture status.",
+    "interpretation_of_continuation": "Unless a case is explicitly retained as deferred canonical-write recovery, continuation starts from normally verified saved records; it does not promise to reconcile an interrupted canonical write."
+  },
   "fictional_notice": "Every person, institution, mailbox, communication, job, output and event below is invented. example.org is used only for fictional addresses. Source-card labels are test references, not canonical record IDs or provider handles.",
   "separation_rules": [
     "Keep logical labels, expectations and scenario explanations hidden from any later blind interpreting agent.",
@@ -209,6 +215,7 @@
     {
       "id": "S09",
       "title": "Same-parent attachment candidates retain separate coverage uncertainty",
+      "scope_note": "The pause is between completed normal persistence operations. Recovering an interrupted canonical write remains deferred under S13; candidate identity and unread coverage requirements remain applicable.",
       "areas": ["attachment association", "content coverage"],
       "source_refs": ["mail-menu-a", "mail-menu-b", "mail-image"],
       "events": ["Catalog both lunch emails.", "Read only menu-candidate-a, then interrupt.", "A replacement adapter reorders the two same-parent menu.pdf candidates and changes their access aids.", "Later, a supported route provides the menu-candidate-b content stimulus."],
@@ -238,6 +245,7 @@
     {
       "id": "S12",
       "title": "Temporary source custody ends after verified persistence",
+      "scope_classification": {"normal_path": "In scope: normal verified persistence, honest incomplete status and temporary-copy cleanup safeguards.", "early_loss_recovery_branch": "POST-MVP/DEFERRED: recovery/refetch/reconciliation after the canonical write was interrupted by loss of the temporary environment. Preserve the original branch and proposed recovery expectations as future evidence; absence of this capability is not an MVP failure.", "continuing_safeguard": "Do not claim an unverified write or unread material complete, even when interrupted-write recovery is outside the MVP."},
       "areas": ["canonical data", "source custody", "coverage"],
       "source_refs": ["mail-handbook"],
       "events": ["Obtain a temporary body/attachment copy for authorized substantive processing.", "Persist the source reference, handbook facts, coverage and remaining work using the approved Drive contract.", "Read back each required result, then discard accessible temporary source material.", "In another branch, one required knowledge write cannot be verified before the temporary environment disappears."],
@@ -246,6 +254,8 @@
     {
       "id": "S13",
       "title": "Interrupt every relevant persistence boundary",
+      "scope_classification": "POST-MVP/DEFERRED — interrupted canonical-write recovery was explicitly excluded from the MVP. All original interruption stimuli and proposed recovery expectations are retained for future work; not failed or missing MVP functionality.",
+      "scope_note": "Normal readback verification and honest incomplete-status safeguards remain applicable outside this deferred recovery trial. This case does not classify task-app, email, audio or scheduler effects, whose D6 handling remains separately pending.",
       "areas": ["recovery", "canonical persistence", "coverage"],
       "source_refs": ["mail-trip", "mail-club"],
       "interruptions": ["Before any canonical write", "After the source index but before substantive knowledge", "After some knowledge but before canonical task work", "After task content but before coverage/unfinished-work confirmation", "After a provider accepted a write but before its response reached the agent", "After readback exposes a contradictory or missing value"],
@@ -307,6 +317,7 @@
     {
       "id": "S19",
       "title": "Unknown task-app write and provider-equivalent empty readback",
+      "scope_note": "D6 external-effect handling is separately pending; the D2 canonical-write recovery deferral does not defer this scenario or approve its mechanism.",
       "areas": ["task synchronization", "recovery", "adapter boundary"],
       "source_refs": ["mail-finite-response"],
       "given": ["The fictional parent selected Task Board A for this operation and the pickup survey is a verified canonical task.", "A create request was dispatched; its response is unavailable.", "Later native readback either provides supported matching evidence, exposes a conflicting task, or remains inaccessible."],
@@ -317,6 +328,7 @@
     {
       "id": "S20",
       "title": "Daily brief recency, delivery uncertainty and historical attribution",
+      "scope_note": "Delivery is an external effect whose D6 handling remains separately pending; it is not deferred by skipping interrupted canonical-write recovery.",
       "areas": ["briefs", "delivery", "attribution"],
       "source_refs": ["mail-trip-correction", "mail-trip-reminder", "mail-news"],
       "given": ["A fictional registered daily job runs as Agent Pine through Scheduler Meadow and sends using School Updates <updates@example.org>.", "Canonical knowledge contains the museum correction, old trip facts and current parent completion.", "The selected recent-update scope is explicit and a historical image gap remains open."],
@@ -327,6 +339,7 @@
     {
       "id": "S21",
       "title": "Optional audio depends on observed support",
+      "scope_note": "Audio generation/delivery external-effect handling remains separately pending under D6; the D2 deferral does not remove it or approve its mechanism.",
       "areas": ["audio", "capabilities", "briefs", "attribution"],
       "given": ["The fictional parent has selected an optional audio recap.", "Branch A has a capable authorized audio service; branch B lacks generation or artifact delivery; branch C loses the generation response."],
       "independent_expectations": ["Use the same accepted canonical facts/tasks and current correction semantics as the selected brief scope.", "Record generating agent/service and supported artifact or delivery attribution when evidence exists.", "State audio unavailability or unresolved outcome when capability/effect evidence is missing; text knowledge queries remain usable.", "Do not infer an audio artifact exists from a request, configuration record or fictional fixture.", "Actual audio content, pronunciation and audibility require an authorized native-artifact trial."],
@@ -335,6 +348,7 @@
     {
       "id": "S22",
       "title": "A fresh second agent queries and resumes without predecessor state",
+      "scope_note": "Normal fresh-agent queries and continuation from already verified saved source-window/content progress remain in scope. This case does not assume recovery from an interrupted canonical write.",
       "areas": ["queries", "agent replacement", "recovery", "registry"],
       "given": ["Only the approved Drive entry point is supplied to a fresh capable Agent Birch.", "No predecessor conversation, local files, pagination token or permanent provider handle is available.", "Known facts and jobs are persisted; the club timetable remains unread in the first branch."],
       "questions": [
@@ -358,6 +372,7 @@
     {
       "id": "S24",
       "title": "A supplied upgrade preserves private data and compatible extensions",
+      "scope_note": "D8 upgrades, including their proposed interruption behavior, remain a separate pending architecture decision; skipping D2 neither defers D8 nor approves a canonical-write recovery mechanism through an upgrade scenario.",
       "areas": ["package updates", "extensions", "configuration"],
       "given": ["A fictional installed release contains processed knowledge, parent task state, configured adapters and unfinished work.", "The parent added a compatible term-cost-view application and a conformant alternate task adapter using the canonical layer.", "A user-supplied newer package is available; a separate branch contains an incompatible change whose treatment is not already approved."],
       "events": ["Inspect package compatibility and apply only the approved update procedure.", "Resume from the instance after the update or a budget interruption."],
@@ -367,6 +382,7 @@
     {
       "id": "S25",
       "title": "Known jobs retain bindings, desired/observed status and provenance",
+      "scope_note": "D6 external schedule-effect handling remains separately pending; the D2 canonical-write recovery deferral does not remove these cases or approve their mechanisms.",
       "areas": ["registry", "schedules", "selected adapters", "attribution"],
       "given": ["Daily catalog job: Agent Pine, Scheduler Meadow, school scope in mailbox-alex and mailbox-sam, configured daily trigger in America/Los_Angeles, Source Adapter A, Task Board A, email output.", "Weekly recap job: Agent Birch, Scheduler Ridge, canonical knowledge input, optional Audio Service B.", "A third backup recap is separately registered; any further number of jobs is allowed."],
       "events": ["Record last observed enabled status and verification time for the first two schedules.", "Change the instance's default source adapter without editing those jobs.", "Record the parent's desired pause for the weekly job while external scheduler access is unavailable.", "In a separate branch, external schedule creation loses its response and later inspection is either sufficient or unavailable.", "Query the register from a reader that cannot access either scheduler."],
@@ -420,7 +436,7 @@
       "events": ["Read verified knowledge and the relevant discovery/processing coverage before answering.", "In branch A, authorization or the available budget does not permit completing the missing processing.", "In branch B, the existing authorized scope, capabilities and budget permit processing that email, persisting its substantive information and checking the remaining query-scope coverage."],
       "independent_expectations": ["Do not conclude there are no school tasks tomorrow from the empty known-task result.", "Do not assume the unread email is irrelevant from its neutral subject or its absence from the knowledge query hits.", "In branch A, explain that no September 7 action is currently verified in the processed knowledge and that the unread school email prevents a complete answer; do not reveal the hidden contact request as known.", "In branch B, after verified authorized processing, identify the required phone-number reply to the school office by 08:30 school time on September 7, including that a reply is required even when the number is unchanged, with source provenance.", "An exhaustive answer in branch B additionally requires established discovery and processing completeness for the declared query scope; processing this single email alone does not establish that.", "Do not exceed authorized scope/budgets, send the reply, or perform another external effect merely to answer the query."],
       "approval_basis": "The user explicitly approved checking discovery/processing coverage alongside knowledge, bounded authorized completion of missing processing, and limited answers when coverage is incomplete.",
-      "approval_dependencies": ["The accepted query rule does not approve remaining canonical schema, persistence, adapter or lookup mechanisms; the remainder of D2 and D3–D8 stays pending."]
+      "approval_dependencies": ["The accepted query rule remains applicable. D2 record-schema choices are unresolved after skipped review, interrupted canonical-write recovery is deferred outside the MVP, and D3–D8 remain separately pending; no alternative persistence mechanism is approved."]
     },
     {
       "id": "S31",
@@ -431,7 +447,7 @@
       "events": ["Inspect the returned knowledge and coverage without extending the budget.", "Answer at that boundary, retaining only the knowledge and coverage claims actually established.", "A later separately authorized continuation may finish the bounded lookup and supported processing, after which the answer must be reassessed from the resulting evidence."],
       "independent_expectations": ["An absence of gaps in the retrieved portion is not proof that the complete applicable coverage has no gaps.", "An empty September 7 task result does not justify saying no actions are due, no relevant emails exist, or the returned list is exhaustive.", "State that the bounded lookup could not establish complete discovery/processing coverage, so the answer is limited to verified knowledge examined so far.", "Do not invent the hidden email, its action or its exact count to explain the limitation; distinguish unknown completeness from an actually observed unread item.", "Stop within the authorized budget and leave or report the remaining coverage work through the approved procedure; do not require an unbounded history scan.", "After a later authorized continuation, claim completeness only if the evidence for the declared scope establishes it, and otherwise preserve the limitation."],
       "approval_basis": "The user explicitly approved limited answers when discovery/processing coverage cannot establish completeness, including bounded lookup limits.",
-      "approval_dependencies": ["No new completeness flag, coverage-index schema, lookup algorithm, budget value or continuation-persistence contract is adopted; D1 remains approved and the remainder of D2 and D3–D8 stays pending."]
+      "approval_dependencies": ["No new completeness flag, coverage-index schema, lookup algorithm, budget value or continuation-persistence contract is adopted. D1 and the query-coverage rule remain approved; D2 record-schema choices are unresolved, interrupted canonical-write recovery is deferred outside the MVP, and D3–D8 remain separately pending."]
     }
   ]
 }

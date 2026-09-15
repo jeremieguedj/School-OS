@@ -7,10 +7,26 @@ mechanisms and old runtime do not supply missing architecture approvals.
 
 Status: requirements mapped; [D1](ARCHITECTURE-PROPOSAL.md) **approved explicitly
 on 2026-09-14**. The [query-coverage rule](ARCHITECTURE-PROPOSAL.md#approved-query-coverage-rule)
-is also explicitly approved; remaining D2 and D3–D8 are pending. Dependency columns
-retain all relevant decisions, including approved choices. No replacement production capability is claimed implemented or
-tested. Test scenarios may be prepared without execution. No required area has
-been removed or deferred from the whole-project implementation handoff.
+is also explicitly approved. D2 review is deferred and interrupted canonical-write
+recovery is outside the MVP by explicit user direction; D3–D8 remain pending.
+Dependency columns retain the original decision references without approving
+their mechanisms. No replacement production capability is claimed implemented or
+tested. Test scenarios may be prepared without execution.
+
+## Explicit MVP scope exception
+
+The [active plan](../PLAN.md#user-approved-mvp-exception--interrupted-writes)
+records the user's 2026-09-14 exclusion. Defer D2 write-intent recovery helpers,
+partial-write reconciliation and associated acceptance cases. T2 and T8 are
+narrowed for this feature; original whole-project recovery coverage is not
+claimed delivered. Preserve the proposal and cases for future work.
+
+Verified normal persistence, source custody, discovery/content coverage,
+bounded window continuation, fresh-agent queries and honest answer limits remain
+required. D2's record structures and minimum ordinary-write behavior are still
+undecided, to be presented separately before dependent code. D6 effects and D8
+upgrades remain pending decisions; their D2 references require review rather than
+silently restoring the deferred mechanism. All other delivery areas remain in scope.
 
 ## Deliverables and approval dependencies
 
@@ -21,13 +37,13 @@ any new canonical meaning, dependency or runtime behavior still needs approval.
 | ID / required area | Existing approved design | Concrete new deliverables | Dependencies | Implementation / testing |
 |---|---|---|---|---|
 | T1 Installation/startup | Supplied pinned package; Drive startup/configuration; actual capability discovery | Release manifest; `operations/install.md`, `startup.md`; configuration contract; installation and selection helpers | D1–D3, D7–D8 | Pending / not run |
-| T2 Canonical data/custody | Drive knowledge/tasks/indexes/coverage/work; originals at source; bounded access and verified persistence | Record contracts; Drive adapter; bounded directories; record preparation/write-recovery helpers; temporary processing procedure | D1–D3 | Pending / not run |
+| T2 Canonical data/custody | Drive knowledge/tasks/indexes/coverage; originals at source; bounded access and verified normal persistence | Record contracts; Drive adapter; bounded directories; record preparation and ordinary-write procedure; temporary processing procedure | D1, undecided record/ordinary-write design, D3 | Pending; interrupted-write recovery excluded from MVP / not run |
 | T3 Historical/daily ingestion | Current logical-email recipe; individual replies; parent-bound attachments; separate windows and processing coverage | New isolated development model; metadata normalizer; `operations/import.md`, `daily.md`, `process-content.md`; source adapter and window/coverage helpers | D1–D4 | Development model prepared; production pending / not run |
 | T4 Knowledge/queries | Substantive facts and provenance; approved checks of discovery/content coverage; scoped completion or explicit answer limitations | Knowledge/relationship contract; extraction/query recipes; bounded query planning, coverage checks and source-reference helpers | D1–D5; query-coverage rule approved | Pending / not run |
 | T5 Tasks/synchronization | Canonical actionable requests; parent state; selected task application | Task/parent-state contract; reconciliation and synchronization recipes/helpers; task adapter routes | D2–D3, D5–D6 | Pending / not run |
 | T6 Briefs/delivery | Recent/daily email; supported optional audio; canonical inputs and attribution | Brief selection/composition; email/audio adapters; effect recovery and output records | D2–D3, D5–D6 | Pending / not run |
 | T7 Tools/schedules | Any number of agents/jobs; management locations; operation/job bindings; desired versus observed settings | Register/capability/job contracts; discovery, binding, schedule-management and known-job/sender query recipes | D1–D3, D6–D7 | Pending / not run |
-| T8 Recovery/replacement | Drive-only durable continuation; no prior conversation/local file/provider token prerequisite | `operations/resume.md`; unfinished-work selection; partial-write/unknown-effect handling; missed-window recovery | D1–D4, D6–D8 | Pending / not run |
+| T8 Continuation/replacement | Drive-only bounded window continuation and fresh-agent access; no prior conversation/local file/provider token prerequisite | Window continuation/missed-window procedures; explicit incomplete coverage; fresh-agent startup; review D6/D8 dependencies separately | D1, undecided record design, D3–D4, D6–D8 | Pending; interrupted canonical-write recovery deferred outside MVP / not run |
 | T9 Extensions/upgrades | Canonical-data applications; private data/configuration/compatible extensions survive updates | Extension manifest/guide; version compatibility rules; staged upgrade/recovery recipes; package builder | D1–D3, D8 | Pending / not run |
 | T10 Development/portability | Simple instructions/code/adapters; limited managed environments; useful private failure evidence | Generic entry point; optional helper package; adapter templates; prepared tests/fixtures; qualification limitations and repository continuity | D3, D8; other decisions for their dependent components | Preparation in progress / not run |
 
@@ -36,7 +52,7 @@ any new canonical meaning, dependency or runtime behavior still needs approval.
 | Priority | Required deliverables | Concrete obligation carried into implementation | Approvals |
 |---|---|---|---|
 | P1 Losslessness and provenance | T2–T6, T8 | Keep substantive information and qualifications; preserve source support; expose unread/partial/unsupported/unavailable material; do not archive raw sources | D1–D6 |
-| P2 Deterministic behavior | T1–T9 | Owned IDs; explicit decisions; independent state and verification; recovery without conversation; source-grounded semantic relationships | D1–D8 |
+| P2 Deterministic behavior | T1–T9 | Owned IDs; explicit decisions and verification; bounded window continuation without conversation; source-grounded relationships; interrupted-write repair explicitly deferred | D1–D8, subject to MVP exception |
 | P3 Simplicity | T1–T3, T7–T10 | Small records and adapters; ordinary household operation; no locks, leases, global agent singleton or concurrency engine | D1–D3, D7–D8 |
 | P4 Efficient execution | T1–T4, T6, T8 | Narrow startup; bounded record/content transfers, lookups and work; history may be traversed over several runs | D1–D4, D6 |
 | P5 Tool agnosticism | T2, T5–T7, T9–T10 | Stable canonical meaning; replaceable access aids and adapters; per-operation/job selection | D1–D3, D5–D8 |

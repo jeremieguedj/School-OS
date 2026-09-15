@@ -1,7 +1,7 @@
 # Restart implementation decisions for approval
 
-Updated 2026-09-14, revision 3: adds the explicitly approved query-coverage rule.
-**D1 approved; D2 query-coverage rule approved; remaining D2 and D3–D8 pending.** No
+Updated 2026-09-14, revision 4: records the user's MVP recovery exclusion.
+**D1 and query-coverage rule approved; D2 skipped for now; D3–D8 pending.** No
 production code depends on these choices yet. Approval of requirements in the
 [active plan](../PLAN.md) does not approve these mechanisms. Approval of this
 document would authorize the choices stated here, not unspecified later changes.
@@ -16,7 +16,7 @@ to an identity model, a local CLI, or a single managed-agent demonstration.
 | Decision | Recommendation | Main alternative | Approval |
 |---|---|---|---|
 | D1 Storage | Small JSON record pages and paged directories in Drive, with a readable bootstrap | Native Sheets tables, with separately bounded long text | Approved, 2026-09-14 |
-| D2 Records and persistence | School-OS IDs, typed records, verified small write intents, independent coverage | Immutable whole-instance generations or an event engine | Query-coverage rule approved, 2026-09-14; remaining D2 pending |
+| D2 Records and persistence | Retained proposal: typed records and verified small write intents | Immutable whole-instance generations or an event engine | Review deferred; interrupted-write recovery outside MVP; query rule remains approved |
 | D3 Execution and adapters | Agent operation recipes plus optional Python standard-library helpers; capability-declared adapters | Mandatory executable runtime | Pending |
 | D4 Ingestion | Exact zoned original Date for automatic association; bounded received-time discovery where supported; process appearances independently | Admit coarser Dates automatically; reuse content coverage from metadata alone | Pending |
 | D5 Knowledge and tasks | Source-supported claims and explicit relationships; parent fields separate; three-way task-field reconciliation | Mutable summaries and one-way task export | Pending |
@@ -27,6 +27,32 @@ to an identity model, a local CLI, or a single managed-agent demonstration.
 No option proposes changing metadata-only identity, source custody, unrestricted
 agent/job counts, or the exclusion of concurrent same-data writes. Those are
 already approved and are not being resubmitted for approval.
+
+## MVP exception — interrupted writes
+
+On 2026-09-14 the user decided to skip D2 for now and exclude interrupted-write
+recovery from the MVP. The D2 write-intent discovery, reconciliation, partial-write
+repair and automatic resumption procedure is deferred. Keep it as a future
+proposal, not an MVP implementation or acceptance requirement.
+
+This explicit MVP scope reduction supersedes the broader recovery requirement
+for this feature. It does not rewrite the long-term product principles. The
+approved query-coverage rule remains active, as do source custody, honest
+incomplete coverage, normal verified persistence, bounded discovery/window
+continuation and fresh-agent access to saved knowledge. The MVP cannot claim
+that an interrupted set of canonical writes will be repaired or completed.
+
+D2 also bundled record schemas, UUID representation and locator structure.
+Skipping its review does not approve those choices or remove the canonical
+knowledge/tasks/configuration/register requirements. Present the minimum record
+and ordinary-write design separately before dependent code; do not substitute a
+new persistence mechanism silently. For now, continue review with D3.
+
+D3–D8 remain proposals. References to D2 intents in external-effect handling,
+installation and upgrades must be reconciled during their review; they cannot
+silently restore the deferred recovery mechanism. This exclusion does not itself
+decide D6's unknown-send/task outcomes or D8's upgrade behavior. No tests are
+authorized by this scope change.
 
 ## D1 — Physical Drive layout and bounded access
 
@@ -81,6 +107,12 @@ An incapable route remains unsupported; another conformant storage adapter may
 be proposed later, without silently changing canonical formats.
 
 ## D2 — Canonical record meanings and write recovery
+
+**Deferred review.** Interrupted canonical-write recovery below is outside the
+MVP by explicit user direction. The record inventory and ID/locator choices are
+retained undecided; they are not adopted through D1 or through this deferral.
+Only the separately approved query-coverage rule at the end of this section
+remains an accepted D2 decision. See the [MVP exception](#mvp-exception--interrupted-writes).
 
 Recommend independently assigned School-OS IDs for instances, source accounts,
 emails, attachment groups/records, claims, tasks, jobs, runs, work and outputs.
@@ -156,7 +188,8 @@ until user-directed testing; no atomicity is assumed.
 On 2026-09-14 the user explicitly said "Okay, make it so" after the recommendation
 to check coverage alongside knowledge, finish missing processing only within
 authorized scope, or answer with the limitation. This approves this rule only;
-the remaining D2 record and recovery mechanisms still need approval.
+the record mechanisms remain undecided and interrupted-write recovery is now
+deferred outside the MVP.
 
 1. A question is answered from verified knowledge together with discovery and
    content-processing coverage for the source scope needed to support the answer.
@@ -188,8 +221,8 @@ all processing to finish before any answer is a credible alternative, but delays
 useful answers when sources are unavailable or the budget is exhausted. The
 approved rule permits useful qualified answers at the cost of coverage reads
 and sometimes an incomplete result. Exact bounded coverage access still depends
-on the pending record/adapter/query contracts. Daily/import/resume triggers and
-work ordering are separate operation-recipe choices, not approved by this rule.
+on the pending record/adapter/query contracts. This rule does not restore the
+deferred interrupted-write recovery procedure or approve recovery triggers.
 
 ## D3 — Runtime, adapter contracts and first supplied routes
 
@@ -487,8 +520,10 @@ after clarification that its JSON and directory limits apply per page, with
 additional pages available as history grows. The [active plan](../PLAN.md)
 records the full D1 approval scope. The user separately approved the
 [query-coverage rule](#approved-query-coverage-rule) with "Okay, make it so";
-this is not blanket approval of D2. **Remaining D2 and D3–D8 stay pending**
-explicit approval or revision before their dependent implementation. A partial
+this is not blanket approval of D2. The user subsequently **skipped D2 for now
+and excluded interrupted-write recovery from the MVP**. Keep the retained D2
+proposal deferred. Continue with D3–D8; separately resolve the minimum record and
+ordinary-write design before its dependent implementation. A partial
 approval releases only its independent scope. Any new choice not covered above
 returns for approval rather than being labeled an
 implementation detail. No testing permission is requested by this proposal.

@@ -39,9 +39,34 @@ or attachment parsing evidence. No attachment bytes, hashes, provider receipt
 shapes, actual deployment costs or production-sized datasets are supplied.
 Executable harnesses and native fixture artifacts must be prepared against the
 approved implementation when the relevant contracts are settled. Do not copy
-the retired runtime to fill those gaps. Required code and instructions for the
-whole project remain in implementation scope even when their qualification is
-scheduled later.
+the retired runtime to fill those gaps. Required code and instructions remain
+in the agreed implementation scope even when their qualification is scheduled
+later, subject to the user's explicit MVP exclusion below.
+
+## Current MVP boundary
+
+The user skipped D2 review and explicitly deferred recovery of interrupted
+canonical writes outside the MVP. S13 and the interrupted-write recovery branch
+of S12 are retained as prepared future scenarios. They are **post-MVP/deferred**,
+not failed tests or missing MVP functionality. No scenario has been executed or
+deleted. Skipping D2 review leaves its record-schema choices unresolved; it does
+not approve an alternative persistence or recovery mechanism.
+
+Normal verified persistence, honest incomplete-status reporting, privacy and
+temporary-source cleanup safeguards remain applicable. The metadata identity
+recipe, bounded discovery and continuation from already saved window progress,
+normal fresh-agent queries and the approved query-coverage rule remain in scope.
+An interruption between completed writes is different from recovering a write
+whose acceptance or multi-record completion was interrupted.
+
+| Prepared material | Current classification |
+|---|---|
+| S13 canonical-write interruption points and subsequent reconciliation | Post-MVP/deferred; retain as future evidence only |
+| S12 normal persistence/readback/cleanup | Remains in scope; do not claim unverified work complete |
+| S12 early-loss branch that recovers unfinished canonical writes | Post-MVP/deferred; retain its proposed recovery expectations for later |
+| S09, S10–S11, S22–S23, S30–S31 continuation/query cases | Continue from normally verified saved records; no guarantee of interrupted canonical-write recovery is implied |
+| S19–S21 and S25 external task/send/audio/schedule outcomes | D6 external-effect handling remains a separate pending architecture decision; not deferred by skipping D2 |
+| S24 package upgrades and their interruption behavior | D8 remains a separate pending architecture decision; not deferred by skipping D2 |
 
 Before an authorized semantic trial, bind each independent expectation to the
 exact test packet and its ordered content segments using the applicable
@@ -80,10 +105,12 @@ individual packets.
   coverage lookup that cannot establish completeness justifies an exhaustive
   list or an absence claim. Source deletion cannot erase accepted knowledge or
   authorize invented missing details.
-- Inspect every relevant durable write and readback in authorized recovery
-  trials. A source-index readback does not prove that knowledge, tasks, coverage
-  and unfinished work were persisted. A lost response or generic error does not
-  establish provider success, failure, throttling or safe retry.
+- Inspect the required normal writes and readbacks: a source-index readback
+  does not prove that knowledge, tasks, coverage and unfinished work were
+  persisted. The deferred interrupted canonical-write trials retain their
+  proposed recovery expectations for future work. A lost response or generic
+  error never establishes provider success, failure, throttling or safe retry;
+  this fact does not itself approve an MVP recovery mechanism.
 - Keep implementation coverage, fictional test results, observed connector
   conformance and managed-agent qualification separate. Passing one of these
   never implies the others. No fixture assumes a vendor supports a capability
@@ -94,24 +121,25 @@ individual packets.
 Every listed scenario is prepared and unexecuted. The implementation coverage
 map, maintained by the coordinator, remains the source for deliverable status;
 this table is a proposed testing map and does not mark implementation complete.
+The current MVP boundary above applies to every range containing S12 or S13.
 
 | Required area | Prepared scenario coverage |
 |---|---|
 | Installation, startup and capability discovery | S01 package/startup; S02 incomplete capability; S24 extension upgrade |
-| Canonical data, source custody and bounded access | S12 temporary content and readback; S13 interrupted persistence; S23 bounded history; S26 source unavailable |
+| Canonical data, source custody and bounded access | S12 normal content/readback; S23 bounded history; S26 source unavailable; S13 and S12 interrupted-write recovery retained post-MVP |
 | Historical/daily ingestion, identities and coverage | S03–S11 metadata/replies/attachment groups/window recovery; S14 visual and large-content gaps; S15 substantive extraction |
 | Knowledge, queries and provenance | S15 facts and qualifications; S16 explicit corrections; S22 fresh-agent queries; S26 unavailable original; S27 semantic-oracle integrity; S30 unread task; S31 incomplete coverage lookup |
 | Canonical tasks, parent state and task-app sync | S16 correction; S17 parent state; S18 no-action work; S19 unknown task write; S29 recurring requirement |
 | Recent/daily email briefs and optional audio | S20 brief/delivery attribution; S21 capability-dependent audio |
 | Tools, selected adapters and schedules | S02 capability discovery; S20 historical sender; S25 known-job visibility and bindings |
-| Recovery, missed work and agent replacement | S10–S13 window and persistence interruptions; S19 unknown effect; S22 fresh agent; S25 external scheduler uncertainty |
+| Continuation, missed work and agent replacement | S10–S11 saved window continuation; S22 fresh agent; S19 and S25 external-effect handling pending separately; S13 and S12 interrupted-write recovery post-MVP |
 | Compatible extensions and upgrades | S24 private-data/configuration/extension preservation and blocked incompatibility |
 | Managed/cloud operation and development evidence | S02 narrow capability gaps; S22 no previous environment; S23 budgets; S28 connector error boundary |
 
 | Product principle or core use case | Proposed acceptance evidence |
 |---|---|
 | Losslessness and provenance | S12–S17, S22, S26–S27, S29–S31: complete available substantive information, recurring requirements, source support and explicit remaining gaps |
-| Deterministic behavior | S03–S11, S13, S16–S19: explicit procedures, stable School-OS references and honest unknown outcomes |
+| Deterministic behavior | S03–S11, S16–S19: explicit procedures, stable School-OS references and honest unknown outcomes; S13's interrupted-write guarantees are future scope |
 | Simplicity | S01–S02, S22–S25: one-household serial operations, replaceable adapters, no locks or mandatory local daemon |
 | Efficient execution | S10–S14, S23, S30–S31: bounded reads and temporary work, narrow startup, durable remaining work, limited answers when completeness cannot be established |
 | Tool agnosticism | S03, S08–S09, S19, S21–S22, S25: connection changes preserve canonical meaning and job bindings |
@@ -146,11 +174,14 @@ mechanisms cannot be selected through a test harness or pilot.
    candidates, repeated observations, missing/changing handles, explicit empty
    versus unknown fields, source Date semantics, a later reply and short pages.
    Report distinguishable results separately from the S05 information limit.
-3. **Direct substantive extraction and canonical recovery.** Exercise S12–S17,
-   S22–S23 and S26–S31 on wholly fictional material. Include actual visual/table
-   artifacts when authorized, budget interruptions before/after each relevant
-   durable write, mismatched readback, and properly input-bound independent
-   expectations. Inspect assembled action flags and zero-action progression.
+3. **Direct substantive extraction and normal verified persistence.** Exercise
+   S12's normal path, S14–S17, S22–S23 and S26–S31 on wholly fictional material.
+   Exclude S13 and S12's interrupted-write recovery branch from this MVP stage.
+   Include actual visual/table artifacts when authorized, normal bounded stops
+   after verified writes, readback acceptance and properly input-bound
+   independent expectations. A mismatch must not be accepted as verified;
+   recovery after an interrupted canonical write is not an MVP acceptance case.
+   Inspect assembled action flags and zero-action progression.
    Exercise task queries before and after authorized processing of an unread
    email, and when bounded coverage lookup cannot establish completeness.
 4. **Direct one bounded managed-agent/Drive journey.** Use the approved layout
@@ -161,8 +192,9 @@ mechanisms cannot be selected through a test harness or pilot.
 5. **Direct external task, email and optional audio cases.** Select services and
    authorized test destinations explicitly. Exercise parent completion,
    planning dates, source corrections, recurring requirements with exceptions,
-   provider-equivalent empty readback and
-   unknown-write reconciliation before any retry. Then inspect actual brief
+   provider-equivalent empty readback and approved external-effect handling
+   for unknown outcomes before any retry. D6 remains a separate pending
+   architecture decision. Then inspect actual brief
    content, recency, delivery evidence, audio support and attribution.
 6. **Direct scheduling and fresh-agent replacement.** Create only the selected
    fictional test schedules when specifically authorized. Inspect desired and
@@ -177,14 +209,22 @@ mechanisms cannot be selected through a test harness or pilot.
    instance. Repeat targeted capability checks for additional selected adapters
    and workloads only as directed. Keep remaining unqualified areas explicit.
 
+S13 and S12's early-loss recovery branch are excluded from this proposed MVP
+sequence. They remain a future testing inventory, requiring the relevant
+architecture approval and the user's testing direction before execution.
+Stages involving D6 external effects or D8 upgrades retain their separate
+approval dependencies; skipping D2 does not remove them from the proposal.
+
 ## Approval dependencies and remaining unknowns
 
 D1's Drive layout remains approved. The user has also explicitly approved the
-query-coverage rule represented by S30–S31; it does not approve the remainder of
-D2 or D3–D8. Canonical schemas and record relationships, persistence/recovery
-behavior, adapter contracts, runtime dependencies, scheduling design and upgrade
-compatibility mechanisms retain the approval status recorded in the active
-plan. These scenarios do not decide them. In particular:
+query-coverage rule represented by S30–S31. D2 interrupted canonical-write
+recovery is now deferred outside the MVP; the skipped D2 record-schema review
+leaves those choices unresolved. D3–D8 retain their separate pending approval
+status. No alternative persistence mechanism is approved. Canonical schemas,
+normal write contracts, adapter contracts, runtime dependencies, scheduling and
+upgrade mechanisms must follow the approval status recorded in the active plan.
+These scenarios do not decide them. In particular:
 
 - Date precision, partial recipient and attachment inventory observations are
   supplied without inventing a generalized acceptance policy beyond the current
@@ -211,10 +251,11 @@ plan. These scenarios do not decide them. In particular:
   without making local receipts a parent-instance recovery dependency. Any new
   mechanism still requires architectural approval.
 
-At the completed whole-project implementation publication checkpoint, report
+At the completed agreed MVP implementation publication checkpoint, report
 these artifacts as prepared, all tests as not run, and the exact next action as
 awaiting the user's testing direction. Until the implementation and publication
 conditions are met, record the actual next action instead: the current
 architecture checkpoint awaits explicit architecture approval for dependent
 implementation. If architecture or publication is blocked, report that blocker
-separately; neither condition authorizes execution.
+separately; neither condition authorizes execution. List interrupted
+canonical-write recovery as an approved post-MVP deferral, not an MVP failure.

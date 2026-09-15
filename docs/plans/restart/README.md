@@ -8,7 +8,9 @@ evidence, not an instruction to rebuild their architecture.
 The coordinator is now working on `codex/restart-school-os`. The
 [whole-project coverage map](implementation/COVERAGE.md) is complete;
 [D1 and the query-coverage rule are approved](implementation/ARCHITECTURE-PROPOSAL.md);
-remaining D2 and D3–D8 await explicit approval.
+D2 review is deferred and interrupted-write recovery is outside the MVP by
+explicit user direction. D3–D8 await approval. The required record structures
+remain undecided; deferral is not approval of a replacement persistence design.
 [Fictional scenarios and proposed tests](implementation/TESTING-PROPOSAL.md)
 are preparation only. This is an architecture checkpoint, not the whole-code
 handoff or the start of testing.

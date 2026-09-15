@@ -11,6 +11,16 @@ directory. Keep this new session in this directory.
 Use a small team of agents for bounded parallel work. Own integration, decisions,
 repository continuity and communication with me.
 
+Current MVP exception, approved 2026-09-14: skip D2 review for now; interrupted
+canonical-write recovery is outside the MVP. Preserve its proposal and prepared
+cases for future work. The approved query-coverage rule, verified persistence,
+bounded discovery/window continuation and fresh-agent access remain required.
+Do not treat this deferral as approval of D2's bundled schemas or a replacement
+write design. Continue with D3; separately resolve minimum record/ordinary-write
+choices before dependent implementation. This exception overrides broader
+interrupted-write recovery wording below; other project areas and the mandatory
+stop before testing remain unchanged.
+
 The previous implementation is retired as the foundation. Preserve the existing
 repository and Git history, but build the new project from the approved restart
 design. Do not carry forward legacy architecture merely because code exists.
