@@ -14,6 +14,23 @@ is addressed. No implementation fix or defect workaround is permitted.
   download succeeded. This is an environment observation, not a School-OS bug
   diagnosis or universal download qualification. Observed route/tool declarations
   are not verified task or source capabilities.
+- **Instruction-isolation limitation:** the preserved Sol action log says it read
+  the local repository START-HERE and setup procedure before downloading the ZIP.
+  No inherited conversation is not the same as no preloaded repository guidance.
+  This attempt does not independently establish discovery from the bundle alone.
+  The coordinator supplied no extra initial wrapper, but the workspace harness
+  was an environmental difference. Preserve this attempt; do not silently restart
+  or coach it into a cleaner result.
+- **Path/read inefficiencies:** the log reports first trying the packaged setup
+  path inside the development checkout, a truncated broad dependency read, and
+  overly broad tool discovery, followed by narrower reads. Inspection of the
+  pinned repository START-HERE confirms it distinguishes `operations/setup.md`
+  from the packaged `system/operations/setup.md`. The missing path therefore
+  does not by itself establish a product documentation bug. These are reported
+  agent-execution observations, not a complete independently captured tool trace.
+- **Artifact verification:** coordinator read-only inspection of the downloaded
+  ZIP found 98,205 bytes and the exact published SHA-256. This confirms the local
+  downloaded file matches the release asset; it does not prove setup worked.
 - **Preservation:** its opening prompt and observed read/download sequence are
   saved in four ignored private evidence files. Coordinator verified directory
   mode 0700 and file modes 0600. It is held before Drive writes pending interview

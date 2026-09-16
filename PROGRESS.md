@@ -5850,3 +5850,29 @@ requirements, then read this log from top to bottom.
   process. Pending clarification is an authorization wait, not a running test.
   This turn made launch/evidence/preparation progress; the overall goal remains
   active and incomplete. No product implementation files changed.
+
+
+## 2026-09-16 — Initial Sol evidence audit; no repair
+
+- Previous goal turn classified as progress: fresh launch, preserved interview
+  observations, private evaluator preparation and published no-repair authority.
+  Current goal remains active; all worker handles now report completed or
+  interrupted. No browser task handle exists, so this is not a live-process wait.
+- Read-only review of the saved Sol action log found that the runtime read the
+  local repository START-HERE and setup procedure before the supplied ZIP.
+  Although the launch had no inherited conversation and only the minimal user
+  prompt, it does not establish bundle-only instruction discovery. Recorded
+  this environmental limitation without restarting or changing product files.
+- The worker's reported missing packaged path in the checkout is not established
+  as a documentation defect: the pinned repository entry explicitly distinguishes
+  repository and packaged paths. Broad/truncated reads and tool discovery are
+  recorded as reported agent inefficiencies, not independently complete traces.
+- Independently inspected the local downloaded ZIP: 98,205 bytes and the exact
+  published digest. A mode-0600 private audit records this distribution evidence;
+  it is neither canonical email identity nor functional setup validation.
+- The browser authorization clarification remains pending after the same
+  automatic-review rejection. No rejected action was retried or bypassed this
+  turn. No new live-source/account action, configuration write, ingestion,
+  implementation fix, workaround or retest occurred. Continue the existing
+  trials only after the pending authorization issue is resolved; keep all
+  results for joint review with the user.

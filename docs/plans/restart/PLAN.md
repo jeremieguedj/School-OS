@@ -24,7 +24,10 @@ product fixes, defect workarounds and repair/retest loops are not authorized.
 The fresh context-free Sol route has received only the published ZIP link and
 “setup my schoolOS.” It reports reading the starter and has asked its setup
 interview questions. It is held before Drive writes pending those answers. This
-is a discovery/interview observation, not a successful persisted setup.
+is a discovery/interview observation, not a successful persisted setup. Static
+review then found that this route read repository setup instructions before the
+ZIP; it cannot establish unassisted bundle-only discovery. Preserve the attempt
+and report that environment limitation without a fix or silent restart.
 
 Browser approval review accepted read-only inventory after the active goal was
 verified, but rejected opening a fresh Gemini Spark tab because it still treated
