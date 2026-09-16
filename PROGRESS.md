@@ -5746,3 +5746,36 @@ requirements, then read this log from top to bottom.
   with Gemini Spark and ChatGPT Work; then continue those existing isolated
   routes. Preserve the first attempt and resolve its upload capability and
   uncertain effects before any narrowly scoped recheck.
+
+
+## 2026-09-16 — User-directed realistic first setup
+
+- Updated product principles first to capture the core first-use path: one fresh,
+  unconfigured ZIP/folder link and “setup my schoolOS,” with setup instructions
+  discoverable through README/START-HERE/AGENTS and a single-line Claude import.
+- The static starter and agent-led setup are an explicit narrow addition to D8;
+  automated upgrades/migrations/compatibility/release machinery remain deferred.
+  No new canonical schema, identity, save engine or runtime dependency is adopted.
+- Two bounded Sol workers handle setup/entry instructions and the clean package
+  preparer. The coordinator owns continuity, review and Git publication. No Astra
+  worker is used. The previous trial worker now doing development cannot count
+  as a fresh context-free participant in a future trial.
+- Revised trial preparation separates the minimal opening message, parent
+  interview answers, later scoped ingestion request, source-grounded questions
+  and page-size evaluation. The historical guided prompts/results and unresolved
+  upload effects are preserved; no private v2 prompt upload is resumed.
+- Current boundary: implement and publish, then report readiness and stop. No new
+  trial, ingestion, smoke run, connector probe or functional check is authorized
+  by this work unit. Publication details follow after verification. Exact next
+  action is finishing starter publication, then waiting for the user's testing
+  direction using the revised realistic entry flow.
+
+- Static integration review completed. Consumer entry files also route already
+  configured instances to the requested operation; setup does not repeat merely
+  because starter files remain. The guide defers canonical bootstrap creation
+  until required interview/tool answers are available. The developer packager
+  reads an exact committed revision and includes only 30 approved operating/entry
+  files plus empty directory entries; it is not shipped as an instance runtime.
+- Privacy scan, relative document links/anchors and diff hygiene are clean. Hook
+  inspection found only sample hooks, no core.hooksPath override and no active
+  workflow; no check was disabled. Functional setup/ingestion remains untested.

@@ -1,6 +1,7 @@
 # Restart trial results
 
-Status: execution blocked; objective unfinished. All routes use the pinned operating implementation
+Status: historical guided attempt preserved; revised one-link setup not yet tested.
+The original guided attempt used the pinned operating implementation
 `138ca7954bdb3b7e9de065199fdb4903d6a924a3`. The original three-route objective
 is unfinished, and no functional product qualification is claimed.
 
@@ -60,10 +61,16 @@ contain private mailbox, child/school and Drive details, so explicit transfer
 approval is pending after automatic approval review rejected the upload. No bypass
 or substitute route has been used.
 
-## Next action
+## Next action — revised user setup flow
 
-Obtain explicit approval to transfer the private v2 instructions, then launch only
-the permitted Gemini Spark and ChatGPT Work routes and record their actual handles.
-Diagnose the coordinator route's local upload path within the existing architecture
-before any narrowly scoped setup recheck. Preserve the independent oracle boundary
-and compare only actual saved/read-back results.
+The user replaced the guided handoff with one fresh starter ZIP/folder link and
+“setup my schoolOS.” Implement and publish that starter, then report readiness
+and stop for user-directed testing. The next agents must discover instructions
+and conduct the parent interview themselves. Do not submit the private v2
+attachments or reuse the failed roots. Their pending transfer approval and
+unresolved prior effects remain historical facts, not permission to bypass
+review through another channel. The revised flow has no results yet.
+
+Use [the current trial handoff](TRIAL-PROMPTS.md) and preserve the independent
+oracle boundary. Only compare actual saved/read-back results; the previous
+source expectations apply only to the exact source interval they reviewed.

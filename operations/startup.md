@@ -4,8 +4,15 @@ This is a bounded orientation procedure for a capable agent, including one that
 has never used this household's School-OS before. It does not require previous
 chat history or a local instance mirror.
 
-1. **Find the parent's intended entry point.** Use their Drive pointer to the
-   readable START-HERE document. For first setup follow [setup](setup.md) instead.
+Before applying the installed-instance steps below, inspect the supplied root. If
+it is a fresh starter with consumer instructions, a reusable `system/` tree,
+empty `instance/` and `extensions/`, and no canonical configuration or instance
+ID, stop this procedure and follow [setup](setup.md). Discovering that unconfigured
+state comes before requiring a stable Drive bootstrap.
+
+1. **Find the parent's intended entry point.** For a configured instance, use
+   their Drive pointer to the readable START-HERE document. For first setup follow
+   [setup](setup.md) instead.
    Read the instance ID, official material revision, logical areas and how to
    locate their directories. A URL is an access aid: check internal instance and
    role identities. An ambiguous duplicate is unresolved; do not choose the first

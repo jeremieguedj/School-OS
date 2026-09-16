@@ -5,17 +5,19 @@ small mechanical helpers. Agents reason about school meaning and use their own
 authorized tools for access and effects. Authored instructions are not evidence
 that any particular agent or connector has been qualified.
 
-For an existing instance read [startup](startup.md). For an empty parent-selected
-Drive folder read [setup](setup.md). The installed readable START-HERE points to
-that instance's `system`, `instance` and `extensions` areas, internal identity,
-selected configuration and relevant directories. Do not load the repository's
-historical studies or retired release instructions into normal operations.
+For one fresh School-OS ZIP/folder link plus “setup my schoolOS,” read the one
+authoritative [setup procedure](setup.md) before expecting an installed bootstrap.
+For an existing configured instance read [startup](startup.md). The installed
+readable START-HERE points to that instance's `system`, `instance` and
+`extensions` areas, internal identity, selected configuration and relevant
+directories. Do not load the repository's historical studies or retired release
+instructions into normal operations.
 
 ## Choose the requested operation
 
 | Request | Procedure | Needed supporting material |
 |---|---|---|
-| Set up my household | [Setup and interview](setup.md) | [Tool mappings](tool-adapters.md), [storage](storage.md), [data contract](../contracts/data.md) |
+| Setup my School-OS from this fresh ZIP/folder | [Setup and interview](setup.md) | [Tool mappings](tool-adapters.md), [storage](storage.md), [data contract](../contracts/data.md) |
 | Import or catch up school mail | [Ingestion](ingestion.md) | [Identity](../contracts/identity.md), [extraction](extraction.md), [knowledge](knowledge.md), storage |
 | Resume unfinished discovery or missed mail | [Continuation](continuation.md) | Ingestion and saved coverage |
 | Answer a fact or historical trend question | [Query](query.md) | Knowledge, data contract and relevant coverage |
@@ -42,16 +44,22 @@ normalization, extracted address parts and UTF-8 text size. No provider SDK,
 generic writer, schema service, local daemon or School-OS batch scheduler is
 required. Other operations remain the agent's work through tools.
 
-## Installation material boundary
+## Starter material boundary
 
-Place the current operating material, `contracts/`, `helpers/`, supplied shared
-`adapters/`, and the [product principles](../docs/product-principles.md) in the
-instance's `system` area with a known published source revision. Keep the same
-relative relationships or make the bootstrap's logical location instructions
-explicit. Instance data/configuration belongs in `instance`; compatible household
-recipes and new shared tool mappings belong in `extensions`. The setup recipe
-establishes the required entry point and configuration through normal agent/tool
-operations. This is not a packaged installer, upgrader or compatibility manager.
+A fresh distributable ZIP or folder has consumer root instructions, the current
+operating tree under `system/`, and empty `instance/` and `extensions/` areas. It
+contains no canonical IDs, configuration or household data. The `system` tree
+includes current operations, `contracts/`, `helpers/`, supplied shared `adapters/`,
+and the product principles with a known published source revision. Keep their
+relative relationships usable. Instance data and configuration belong in
+`instance`; compatible household recipes and new shared tool mappings belong in
+`extensions`.
+
+The [setup recipe](setup.md) discovers that material, obtains missing parent
+choices, establishes the readable entry point and writes the approved
+configuration and canonical bootstrap through normal agent/tool operations. This
+starter path is in scope. It does not add an installer, automated upgrader,
+migration system or compatibility manager.
 
 Do not install the development repository's tests, historical `docs/plans`,
 frozen studies, Git state or private developer receipts as operating instructions.
@@ -76,6 +84,8 @@ Keep unsupported discovery or content visible. The ordinary daily brief requires
 complete agreed ingestion; manual requests use their separate freshness rule.
 
 The MVP excludes generic interrupted-write repair, central jobs/register/control,
-concurrent same-instance writes and packaged upgrades. These deferrals do not
-remove truthful saved coverage, task-app reconciliation, fresh-agent queries,
-usable first setup, current output attribution or compatible extensions.
+concurrent same-instance writes, and automated upgrades, migrations,
+compatibility handling and release management. These deferrals do not remove the
+fresh distributable starter, discoverable agent-led setup, truthful saved
+coverage, task-app reconciliation, fresh-agent queries, current output
+attribution or compatible extensions.

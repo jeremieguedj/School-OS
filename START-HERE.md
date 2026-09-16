@@ -4,14 +4,33 @@ This is the neutral entry point for a fresh agent. It is intentionally thin.
 
 ## Determine the mode
 
-1. Read the supplied restart instructions. Packaged installation/upgrades are outside this MVP; do not run a retired release manifest or installer.
-2. Read `docs/product-principles.md`, `PLAN.md`, and `PROGRESS.md` when maintaining this repository.
-3. For a private installed instance, begin from that instance's stable Drive bootstrap and instance manifest.
-4. Select exactly one operation: onboarding, import, daily run, manual daily-brief request, task sync, brief generation, upgrade, audit, or maintenance.
+1. **Fresh starter setup:** when the parent supplies a fresh School-OS ZIP or
+   folder link and asks to set it up, read [AGENTS.md](AGENTS.md), then follow the
+   authoritative [setup procedure](operations/setup.md), packaged at
+   `system/operations/setup.md`. Recognize the starter's reusable `system/` tree,
+   empty `instance/` and `extensions/`, and absence of canonical IDs or
+   configuration before looking for an installed-instance bootstrap. A starter
+   ZIP is in scope; do not run a retired release manifest or installer.
+2. **Configured private instance:** begin from that instance's stable readable
+   entry point, configuration and [startup procedure](operations/startup.md),
+   packaged at `system/operations/startup.md`. Preserve its data and extensions.
+3. **Repository development:** read `docs/product-principles.md`,
+   `docs/plans/restart/PLAN.md`, and `PROGRESS.md`, then follow the development
+   boundary below. These developer materials are not prerequisites for parent
+   setup or normal instance operation.
+4. Select exactly one operation: setup, import, daily run, manual daily-brief
+   request, task sync, brief generation, audit, compatible extension or
+   maintenance. Automated upgrade and migration machinery remains outside the
+   MVP.
 
 ## Product-context routing
 
-Read `docs/product-principles.md` during onboarding and before making decisions about architecture, customization, integrations, adapters, capability degradation, or new applications. Routine scheduled operations should not reread it unless their selected operation recipe declares it; they remain governed by the installed recipes and contracts.
+Read `docs/product-principles.md` during repository development. In a distributed
+starter or installed instance, read the supplied product principles in `system`
+during setup and before making decisions about architecture, customization,
+integrations, adapters, capability degradation or new applications. Routine
+scheduled operations should not reread it unless their selected operation recipe
+declares it; they remain governed by the installed recipes and contracts.
 
 ## Classify proposed changes
 
@@ -23,7 +42,11 @@ Before changing an installed instance or this reusable system, classify the requ
 
 Proceed with nonarchitectural work in the first two categories under the selected operation and ordinary user authorization. Every new or changed architecture decision, including one within a compatible expansion, requires explicit user approval under the [product decision authority](docs/product-principles.md#decision-authority). Before the third category, also explain why compatible expansion is insufficient and warn that the change may impair future official updates. Do not treat a user-created adapter as a core change merely because its provider is not included in the official release.
 
-## Restart development and testing boundary
+## Repository development and testing boundary
+
+This section applies only when maintaining or testing the reusable School-OS
+repository. It is not part of a parent's first-setup interview or an installed
+instance's routine operation.
 
 The [product principles](docs/product-principles.md) are the source of truth and
 grounding for decisions not explicitly covered by approved plans. Follow the
@@ -33,9 +56,11 @@ historical). Implement existing explicit
 architecture approvals; obtain the user's approval before adopting any new or
 changed architecture decision.
 Apply the active plan's explicit MVP revisions: interrupted canonical-write
-recovery, centralized tools/jobs management and packaged installation/upgrades
-are deferred. The executing agent manages its own resources, batching, continuity
-and nonconcurrent schedules; School-OS supplies guidance and completion rules.
+recovery, centralized tools/jobs management, and automated upgrades, migrations,
+compatibility handling and release management are deferred. A distributable fresh
+starter ZIP/folder and discoverable agent-led setup are included. The executing
+agent manages its own resources, batching, continuity and nonconcurrent schedules;
+School-OS supplies guidance and completion rules.
 A logical run must complete its agreed ingestion before daily brief composition;
 a real blocker is incomplete work, not a completed partial daily brief. D5 is
 approved. The separate query-coverage rule remains required for knowledge answers.
@@ -61,9 +86,11 @@ given an invented overflow format. No current architecture question remains.
 For the remaining repository work, use bounded Sol workers only, never Astra.
 The root agent primarily coordinates, handles architecture and other escalations,
 integrates the result and owns publication.
-Setup now includes the approved [parent interview](operations/setup.md): offer
-known task tools available to the executing agent and ask for the parent's
-choice. Use or author one shared [tool-semantic adapter](operations/tool-adapters.md)
+Setup follows the approved [authoritative parent interview](operations/setup.md):
+resolve missing household, school, mailbox, location and tool choices; show the
+actual known options available to the executing agent; and ask for the parent's
+choice. Do not repeat choices already authorized. Use or author one shared
+[tool-semantic adapter](operations/tool-adapters.md)
 per tool, reusable through each agent's own connector. The adapter defines
 School-OS-to-tool meanings; API, SDK, authentication and transport belong to the
 connector. Missing conformant mappings may be authored under this approval;
@@ -79,27 +106,27 @@ verified/corrected information and relevant open tasks, shows original source
 dates and discloses failed task-app sync; source accuracy, truthful task/coverage
 state and the daily ingestion gate remain required.
 
-The user has now supplied subsequent testing direction: after completing the
-retained MVP, committing/pushing it and verifying the remote revision, conduct
-three isolated seven-day school-email ingestion trials (a fresh context-free
-worker, Gemini Spark through the user's browser, and ChatGPT Work through the
-user's browser). Each uses its own fresh instance under the authorized tests
-folder. This explicitly supersedes the earlier requirement to wait for another
-permission at that checkpoint, only for these ingestion and audit trials.
-Do not start functional execution before implementation publication. Do not infer
-permission for outbound briefs, task-app writes, schedules or changes to existing
-instances. Preserve private evidence and report incomplete capabilities honestly.
-Inspect hooks and CI before publication; never silently bypass checks. See
-[the current execution authorization](docs/plans/restart/PLAN.md#current-execution-authorization).
+The latest testing boundary is a publication/readiness stop. Finish and publish
+the fresh one-link starter and revised setup material, verify the publication,
+report readiness, and wait for the user's direction before launching the revised
+three-route setup and ingestion trials. Earlier guided-trial attempts and their
+unresolved effects remain historical evidence; do not resume their private v2
+handoffs. The retained later-test scope still uses one fresh context-free Sol
+worker, Gemini Spark and ChatGPT Work in separate new folders, with ingestion
+authorized separately after verified setup. It does not permit outbound briefs,
+task-app writes, schedules or changes to existing instances. Preserve private
+evidence and report incomplete capabilities honestly. Inspect hooks and CI before
+publication; never silently bypass checks. See
+[the current execution boundary](docs/plans/restart/PLAN.md#current-checkpoint--one-link-setup-implementation-and-testing-hold).
 
 ## Instruction hierarchy
 
-For an installed instance, use this order:
+For setup or an installed instance, use this order:
 
 1. Platform safety rules and the runtime's actual tool capabilities.
 2. Direct user instruction for the current operation.
-3. The selected installed operation recipe.
-4. The installed release architecture and contracts.
+3. The selected supplied or installed operation recipe.
+4. The supplied or installed system architecture and contracts.
 5. Valid instance configuration and state.
 6. Historical logs and derived files.
 

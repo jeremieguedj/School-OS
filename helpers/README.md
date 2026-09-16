@@ -73,10 +73,14 @@ processing and authorized provider work stay with the executing agent and its
 tools under the active recipes. These functions introduce no personal-machine,
 persistent-process or coding-CLI requirement.
 
-[Prepared checks](prepared_checks/check_source_metadata.py) cover explicit raw
-and decoded counterparts, missing/unknown representation, folded versus invalid
-headers, mixed literal/encoded spacing, strict decoding, preserved
-address distinctions, rejected unextracted forms and exact multibyte UTF-8
-measurement. They are **written but not run**. No module import, compilation,
-example execution, test, build, formatter, typecheck or connector probe was
-performed during authoring. Run nothing until the user's testing direction.
+Repository developers may consult the optional
+[prepared checks](prepared_checks/check_source_metadata.py) for explicit raw and
+decoded counterparts, missing/unknown representation, folded versus invalid
+headers, mixed literal/encoded spacing, strict decoding, preserved address
+distinctions, rejected unextracted forms and exact multibyte UTF-8 measurement.
+That developer-only artifact is not required for setup or operation and may be
+absent from a distributed starter. The checks are **written but not run**. No
+module import, compilation, example execution, test, build, formatter, typecheck
+or connector probe was performed during authoring. Do not run these prepared
+developer checks until the user's testing direction. This hold does not prohibit
+authorized installed operations from using the helper functions.

@@ -8,32 +8,51 @@ authorize ingestion, sending or task updates. If the parent explicitly requests
 an import or another operation at the same time, finish setup and then select and
 run that separately authorized operation under its own instructions.
 
+This is the one authoritative setup procedure. A new parent may provide only one
+agent-accessible link to a fresh School-OS ZIP or folder and say “setup my
+schoolOS.” That is enough to begin this procedure. It is not necessary to receive
+a developer trial prompt, repository history, prior conversation or preloaded
+household data.
+
 Read [the data contract](../contracts/data.md#instance-configuration),
 [Drive setup and storage](storage.md#bootstrap-an-instance) and the supplied
 [shared mappings](../adapters/README.md). Use their concrete references and page
 rules; do not copy an old instance or infer configuration from fictional examples.
 
-## 1. Establish whether the instance is new or existing
+## 1. Discover the supplied material and establish instance state
 
-1. Ask for the parent-selected Drive location and the supplied School-OS
-   materials. Do not assume a new instance already has a readable entry point.
-2. Check the selected location for an existing School-OS entry point and instance
-   before creating anything. If one exists, read only its relevant D1
-   configuration, operation instructions and selected adapters.
-3. For a genuinely new instance, follow the storage bootstrap procedure at the
-   parent-selected location. Create the readable entry point and D1 `system`,
-   `instance` and `extensions` areas. Copy the supplied current instructions,
-   contracts, helpers and shared mappings into `system`; keep configuration and
-   canonical pages in `instance`, and household-created recipes/mappings in
-   `extensions`. Preserve usable relative references, include the supplied product
-   principles, and identify the supplied published revision in the readable entry
-   point. Normal operations need no development plans, studies or prior chat.
-   Use only the supplied restart materials. No retired installer,
-   release manifest, migration or activation engine is involved.
-4. Preserve every existing explicit household choice and user-created extension.
+1. Open the parent-supplied link with the agent's available file access. If it is
+   a ZIP, unpack it in the agent's available temporary workspace so its root
+   instructions can be read. Read the supplied `README.md`, `START-HERE.md` and
+   `AGENTS.md`, then continue here at `system/operations/setup.md`. Do not require
+   an installed-instance manifest before reading a fresh starter.
+2. Recognize an unconfigured starter by its consumer root instructions, supplied
+   reusable `system/` tree, empty `instance/` and `extensions/` areas, and absence
+   of canonical instance configuration and IDs. The bundle's existence does not
+   mean a private instance is configured, persisted or ingested. Do not fill its
+   empty areas with examples or developer trial data.
+3. Resolve the parent-selected permanent Drive location. If the supplied folder
+   is already the intended location, use that explicit choice. Otherwise ask
+   where the configured instance should live; do not treat the sharing link as
+   the location choice, account credentials or provider authorization.
+4. Before creating anything, check the selected location for an existing
+   School-OS entry point and configuration. If one exists, classify it as an
+   existing instance, read only its relevant D1 configuration, operation
+   instructions and selected adapters, and preserve it. A changed link or
+   different display name is not evidence that a second instance is needed.
+5. For a genuinely new instance, plan or place only the supplied reusable starter
+   material at the parent-selected location at this stage. Keep the supplied
+   current instructions, contracts, helpers, principles and shared mappings in
+   `system`; reserve `instance` for configuration and canonical pages and
+   `extensions` for household-created recipes and mappings. Do not assign an
+   instance ID, create configuration or bootstrap canonical roots until the
+   interview and tool-selection steps below resolve the required choices. Normal
+   operations need no development plans, studies, tests or prior chat. No retired
+   installer, release manifest, migration or activation engine is involved.
+6. Preserve every existing explicit household choice and user-created extension.
    Ask again only when a value is missing, conflicting or the parent asks to
    change it; do not add an automatic reconfirmation gate.
-5. Classify the request as new setup, configuration change or support for a new
+7. Classify the request as new setup, configuration change or support for a new
    tool. A conformant tool mapping is compatible expansion; new canonical meaning
    or incompatible behavior still needs explicit architecture approval.
 
@@ -44,6 +63,8 @@ At this stage collect the parent's needs and preliminary preferences; present
 the options this agent can actually see in the next step before asking for the
 final tool selection.
 
+- Where should the configured School-OS instance live, if the supplied folder is
+  not already the parent's explicit permanent location?
 - Which parent/guardian is configuring the instance, and which children,
   schools/classes and household timezone are in scope?
 - Which logical school mailboxes and school/date scope should School-OS use?
@@ -67,11 +88,13 @@ mailbox, child or source scope from a sample.
 
 ## 3. Offer available options and obtain the final selection
 
-Offer relevant known options the current agent can see, alongside any explicit
-existing choice and the parent's preliminary preference. Explain material limits,
-then ask the parent for the final tool/account selection. A vendor name is not
-capability evidence. Use these phrases as descriptive labels in the conversation
-or setup summary, not as a persisted enum, schema or new capability registry:
+List the relevant known options the current agent can actually access or offer,
+alongside any explicit existing choice and the parent's preliminary preference.
+Do not make the parent guess which integrations may exist. Explain material
+limits, then ask the parent for the final tool/account selection. A vendor name
+is not capability evidence. Use these phrases as descriptive labels in the
+conversation or setup summary, not as a persisted enum, schema or new capability
+registry:
 
 - **Parent selected:** the parent chose this tool/account/scope.
 - **Available now:** the current agent declares an authorized route for the
@@ -122,6 +145,18 @@ if the requested tool cannot fit the existing School-OS semantics.
 
 ## 5. Save and hand off
 
+The parent's setup request authorizes the configuration and canonical bootstrap
+writes needed here once the parent has selected their location and missing
+choices. Do not ask again for a choice or write already authorized in this setup
+conversation. External account authorization remains separate, and setup still
+does not authorize source ingestion, task mutation, outbound delivery or a
+schedule.
+
+For a genuinely new instance, now follow the
+[storage bootstrap procedure](storage.md#bootstrap-an-instance). Preserve usable
+relative references and identify the supplied published revision in the readable
+entry point.
+
 Assign School-OS-owned UUIDs for the instance and new Entity, Topic and Membership
 records using the data contract. Keep the parent-declared household, children,
 schools/classes and their dated relationships; an unknown enrollment date stays
@@ -134,6 +169,11 @@ configuration. Include `selected_task_projection`, `selected_brief_recipes` and
 logical mailbox, configured school scope, import boundary and selected shared
 mail mapping. Keep private container handles and connection labels in instance
 configuration; never put them in a reusable mapping or this repository.
+
+Persist only the fields, records, roots and references defined by the current
+data and storage contracts. Do not add a starter status, setup receipt, installer
+manifest, migration marker, release-manager state or any other new schema merely
+to record that setup ran.
 
 Create the bounded family/page directories required for the selected configuration
 using the storage procedure. Read the entry point, configuration and referenced

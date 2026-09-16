@@ -6,8 +6,10 @@ are authored and statically reviewed; they remain untested and
 unqualified. Q10 is resolved: the linked-piece proposal was rejected and the
 delegated assessment retains the single 64 KiB page maximum. Implementation revision
 `138ca7954bdb3b7e9de065199fdb4903d6a924a3` is published and remote verified.
-Next: the three authorized isolated ingestion/audit trials at that revision;
-none has started.
+The earlier guided setup trial blocked before ingestion; its evidence is
+preserved. Current work adds a fresh starter ZIP and minimal one-link setup.
+Next: publish the starter, report readiness and stop until the user directs
+revised-flow testing.
 
 The authoritative [restart plan](docs/plans/restart/PLAN.md) records decisions,
 retained scope, explicit deferrals and the
@@ -17,7 +19,9 @@ principle/use case. The [progress log](PROGRESS.md) records completed work units
 
 All remaining published Q1/Q2 data/index, Q4 discovery and Q6 reuse recommendations
 are explicitly approved. Any new architecture still requires approval. D2 generic
-save/repair, D7 centralized jobs and D8 packaged lifecycle remain deferred.
+save/repair, D7 centralized jobs and D8 automated upgrade/migration lifecycle
+remain deferred. The user explicitly added the clean starter ZIP and
+discoverable agent-led setup; see [bundle preparation](docs/setup-bundle.md).
 The current [page-size assessment](docs/plans/restart/implementation/PAGE-SIZE-ASSESSMENT.md)
 records the Q10 decision. A whole record that exceeds 64 KiB blocks without
 truncation or an invented overflow format; actual size, I/O and query evidence
@@ -52,10 +56,12 @@ No private/untracked material is part of cleanup or publication.
 2. Review the complete result against the approved contracts and product
    principles. Perform publication hygiene, commit/push and verify the remote
    implementation revision. Do not execute functional tests before this boundary.
-3. Run the explicitly authorized three isolated seven-day school-email trials:
+3. Report readiness and stop. Only after the user directs testing, run the three
+   revised isolated seven-day school-email trials:
    context-free fresh worker, Gemini Spark browser, ChatGPT Work browser. Use the
-   same fixed interval and revision, separate new Drive folders and no inherited
-   instances or extracted answers. No outbound brief, personal task-app mutation
+   same starter link plus “setup my schoolOS,” followed by interview answers and
+   a separate ingestion request with a fixed common interval/revision. Use
+   separate new Drive folders and no inherited instances or extracted answers. No outbound brief, personal task-app mutation
    or schedule is authorized by these trials.
 4. Audit observable execution, source coverage, knowledge/actions, inefficiencies,
    failures and source-supported query retrieval. Preserve private evidence and

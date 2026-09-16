@@ -5,11 +5,54 @@ Status: the user approved the corrected interpretation and operating choices on
 logical-email reuse, normalization, parent-bound attachment lookup and durable
 search-window recovery. Retained implementation is authored and statically reviewed; the
 user rejected linked overflow pieces and the delegated assessment retains one
-64 KiB page maximum. Initial managed-agent setup qualification is blocked;
+64 KiB page maximum. The earlier guided setup attempt blocked; the revised
+one-link setup flow is being prepared for publication and is untested. Trial
 ingestion and retrieval remain unexercised. The [artifact guide](README.md) separates current authority from frozen
 experiments and historical proposals.
 
-## Current coordinator checkpoint — approved implementation
+## Current checkpoint — one-link setup implementation and testing hold
+
+The user's latest direction on 2026-09-16 explicitly adds a distributable fresh,
+unconfigured starter ZIP/folder and the first-use request **“setup my schoolOS.”**
+The agent discovers a dedicated setup guide through README/START-HERE/AGENTS;
+CLAUDE contains only `@AGENTS.md`. The parent interview, available tool choices
+and shared API-agnostic tool mappings remain required. The product principles
+have been updated first to capture this core use case.
+
+This narrowly supersedes D8's blanket packaged-installation exclusion: a static
+starter archive and agent-led setup are now in scope. Automated upgrades,
+migrations, compatibility enforcement and release-management machinery remain
+deferred. No new canonical schema, instance-state field, write engine, identity
+rule or runtime dependency is adopted. The bundle uses approved D1 separation:
+consumer entry files, reusable instructions under `system/`, and empty `instance/`
+and `extensions/` areas. Setup creates real configured records after the interview.
+
+Deliverables: the dedicated [setup guide](../../../operations/setup.md), entry
+files, clean [starter archive preparation](../../setup-bundle.md), and revised
+[trial handoff](TRIAL-PROMPTS.md). The archive will be published from a pinned commit
+through an agent-accessible release link; it contains no legacy runtime, private
+configuration, developer trial instructions, tests or evaluator answers.
+
+**Execution boundary:** implement, perform publication hygiene, commit/push and
+verify the revision and starter asset, then report readiness and **stop**. Do not
+launch a new trial, ingestion, connector probe or functional check in this phase.
+The exact next action after that handoff is the user's direction to begin the
+revised realistic setup trials. The earlier automatic-trial instruction and
+private v2 prompt handoffs do not override this newer checkpoint.
+
+For later testing, all three fresh agents receive only the same starter link and
+minimal setup request. Answer their interviews, assigning separate new folders
+under School OS tests before any write. Ingestion is a separate scoped request
+after verified setup. Preserve earlier failed folders and unknown effects; do not
+reuse their state. Keep private disclosure permissions, source expectations and
+page-size auditing separate from the user-facing opening prompt. Historical
+results below remain evidence, not qualification of this revised flow.
+
+Publication details are recorded in PROGRESS.md and the starter release. Until
+that publication is verified, readiness is not claimed. No new architecture
+approval is pending for this expressly requested setup change.
+
+## Previous implementation and trial checkpoint (historical)
 
 The user explicitly approved **all remaining published proposals and
 recommendations** after reviewing the concrete data architecture. Q1/Q2's exact
@@ -29,9 +72,9 @@ recoverable from the snapshot and history; frozen restart studies remain intact.
 The retained operations, contracts, adapters and fictional examples are authored
 but untested. Q10 is resolved with no new format: whole records remain bounded by
 the existing 64 KiB maximum, and oversize records block without truncation. Static
-integration and implementation publication are complete. Exact next action:
-conduct the three authorized isolated trials at the published revision below,
-then independently audit their saved results and retrieval evidence.
+integration and publication of that earlier operating revision were complete.
+Its then-authorized trials are recorded below; the newer one-link setup
+checkpoint above controls the next action.
 
 ### Q10 decision — retain the single page maximum
 
@@ -113,18 +156,25 @@ trial goal remains unfinished. Private references and evidence remain outside
 Git. The current privacy-safe checkpoint is summarized in
 [trial results](TRIAL-RESULTS.md).
 
-**Current execution blocker:** the first worker and independent audit have
+**Previous guided-trial blocker (preserved evidence):** the first worker and independent audit have
 finished; no trial process is still running. A read-only browser-extension
 prerequisite inspection was blocked by browser security, leaving that setting
 and the upload root cause unknown. The same private-transfer approval has
 remained pending across successive goal turns. Preserve the original instances
-and unresolved effects. Next action: obtain explicit consent for the prepared
+and unresolved effects. The then-planned next action was to obtain explicit consent for the prepared
 private instructions to Gemini Spark and ChatGPT Work, then launch those routes
 with their existing isolated folders and pinned inputs. A coordinator-route
 recheck also needs a working raw-file route and sufficient prior-effect evidence;
 do not restart it from an empty-looking, nonexhaustive listing.
 
 ## Current execution authorization
+
+The one-link setup checkpoint above requires publication and a readiness handoff,
+then a stop. Do not start revised source/Drive work or functional evaluation until
+the user directs testing. The following subsection preserves earlier authority
+and scope limits; it does not launch revised trials automatically.
+
+### Previous trial authorization (historical)
 
 The user explicitly supplied subsequent testing direction after approving the
 architecture: following completed implementation publication, run three isolated
@@ -143,11 +193,13 @@ source evidence rather than treating another agent's extraction or provider-entr
 counts as logical-email ground truth. Preserve raw development receipts privately;
 public reports contain sanitized findings, never household records or source IDs.
 
-This instruction supersedes the earlier mandatory wait for testing permission
-**after** implementation publication for these specified trials. It does not
+At that checkpoint, this instruction superseded the earlier mandatory wait
+**after** implementation publication for those specified trials. The latest
+one-link setup direction reinstates the readiness stop described above. It does not
 permit early testing, unrelated qualification runs, outbound email/audio delivery,
 personal task-app mutations, scheduled jobs or modifications to existing instances.
-Normal source/Drive operations required by the three trials are authorized.
+Normal source/Drive operations were authorized for that earlier trial phase;
+revised-flow operations await the next user-directed testing phase.
 A newly discovered architecture change still needs approval. The coordinator
 may resolve routine implementation choices and manage bounded agents autonomously.
 For the remaining repository work, the user requires bounded Sol workers only,
@@ -170,9 +222,10 @@ retain its exact files. Current implementation instructions live in operations/
 and contracts/, with helpers/ for the approved small code subset.
 
 The [whole-project coverage map](implementation/COVERAGE.md) reconciles all nine
-design priorities, seven core use cases, other mandatory principle sections and
+design priorities, eight core use cases, other mandatory principle sections and
 ten implementation areas. Requirements are already established; the remaining
-work is implementation of the approved architecture, not renewed product discovery.
+work is starter publication/readiness and later user-directed evaluation, not
+renewed product discovery.
 
 The [architecture proposal, revision 11](implementation/ARCHITECTURE-PROPOSAL.md)
 records recommendations and explicit decisions. **D1, query coverage, D3 minimal

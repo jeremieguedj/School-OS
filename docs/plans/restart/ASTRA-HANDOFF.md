@@ -10,11 +10,14 @@ docs/product-principles.md, the current docs/plans/restart/PLAN.md, the latest
 PROGRESS.md entries and the approved data/identity contracts before acting.
 Inspect actual branch, working tree and history. The active plan's
 [current execution authorization](PLAN.md#current-execution-authorization)
-supersedes this handoff's earlier mandatory wait after publication.
+requires publication/readiness and then a stop until the user directs the
+revised one-link setup trials. Earlier automatic launch timing is superseded.
 
 All remaining published Q1/Q2, Q4 and Q6 recommendations are explicitly approved.
 Do not re-request those decisions. Any new architecture still requires approval.
-D2 generic save/repair, D7 centralized jobs and D8 packaged lifecycle stay deferred.
+D2 generic save/repair, D7 centralized jobs and D8 automated upgrade/migration
+lifecycle stay deferred. A fresh starter ZIP/folder and discoverable setup from
+one link plus “setup my schoolOS” are now explicitly in scope.
 Use the approved small Python standard-library helpers and agent/tool operations;
 do not rebuild the old runtime under a different name.
 
@@ -29,11 +32,14 @@ be truncated or assigned an invented format. Use no more than three
 bounded Sol workers with clear file ownership. Root reviews product/principle
 conformance and does not silently reduce retained scope.
 
-Complete and publish implementation, verify its remote revision, then conduct
-only the newly authorized three isolated seven-day school-email ingestion trials:
+Complete and publish the starter implementation and artifact, verify its remote
+revision, report readiness and stop. After the user directs testing, conduct
+only the revised three isolated seven-day school-email ingestion trials:
 a fresh context-free worker, Gemini Spark through the user's browser, and ChatGPT
 Work through the browser. Each gets its own new Drive instance within the user's
-test folder, the same revision and the same fixed interval. Never reuse prior
+test folder, the same starter revision and the same fixed interval. Start with
+only the starter link and minimal setup request; the agent discovers the guide
+and asks the parent for missing choices. Ingestion follows as a separate request. Never reuse prior
 instance contents or authorize outbound briefs, personal task edits or schedules
 by implication. Keep raw evidence private; report observable retrieval and decision
 evidence, not hidden internal reasoning. Preserve failures and report capabilities

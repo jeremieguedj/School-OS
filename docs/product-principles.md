@@ -24,6 +24,30 @@ All three roles use the same product principles when making design or operationa
 
 An instance must be usable from managed or cloud agent applications with limited resources and temporary execution environments. It must not require a dedicated personal machine, a continuously running local process, or a coding CLI. A fresh capable agent starts from the instance on Drive and discovers the instructions, state, tools, and unfinished work it needs; the previous agent's conversation and local files are not required.
 
+## Approved first-use setup direction — 2026-09-16
+
+A core first-use path begins when a parent gives a new agent session one
+agent-accessible link to a ZIP or School-OS folder containing a fresh, new,
+unconfigured starter bundle and says only, “setup my schoolOS.” The agent must
+discover the dedicated setup instructions through the bundle's `README.md`,
+`START-HERE.md`, and `AGENTS.md` entry path. A Claude-specific entry file contains
+only an `@AGENTS.md` import so the shared instructions remain authoritative. This
+path must not require a filled developer trial prompt, repository history,
+preloaded household data, or prior conversation.
+
+The starter bundle is not yet a configured or persisted private instance, and
+nothing has been ingested merely because the bundle was shared. The link provides
+access to the bundle; it is not a credential, account authorization, or permission
+for source ingestion or outbound effects. The setup request, later ingestion, and
+any outbound action retain separate instructions and authorization boundaries.
+
+During setup, the agent interviews the parent for the household, school, mailbox,
+and tool choices needed to configure the instance. It explains known options and
+capabilities available to that agent rather than assuming a fixed vendor list.
+For selected tools, it reuses or creates the approved shared, API-agnostic
+semantic adapters described below. This direction adds no new schema, runtime,
+installer, migration system, or release-management engine.
+
 ## Approved setup and adapter direction — 2026-09-15
 
 The user explicitly approved an agent-led setup interview. Ask which task tool the parent wants to use, explain known options available to the current agent, and establish the selected tool and relevant scope. A familiar vendor name does not establish access or support. If the desired tool is accessible but has no School-OS adapter yet, the agent may author the missing adapter within the approved School-OS meanings. A new architectural choice still requires explicit approval; this direction does not approve every possible tool mapping in advance.
@@ -32,7 +56,7 @@ A **School-OS tool adapter** is shared guidance mapping School-OS meanings and p
 
 The agent's **connector** supplies access to the tool and owns API calls, authentication, SDK and transport details. The School-OS adapter is independent of that API implementation; it does not duplicate a provider wrapper for each agent or connector. Agents may use different connectors to apply the same tool guidance, but must check that their available route can carry out the required operation and verify its outcome. Provider handles and connector metadata remain replaceable access aids, not canonical identity or evidence of completion.
 
-This explicitly distinguishes the current semantic use of “School-OS adapter” from older documents that used “adapter” for provider/API wrappers. It adds no central registry, installer, schema or write engine. The long-term tools/jobs visibility and packaged lifecycle principles below remain product direction; their centralized D7 machinery and D8 packaged lifecycle are explicitly deferred from the current MVP in the [active restart plan](plans/restart/PLAN.md#user-approved-mvp-revisions-2026-09-15).
+This explicitly distinguishes the current semantic use of “School-OS adapter” from older documents that used “adapter” for provider/API wrappers. It adds no central registry, installer, schema or write engine. The long-term tools/jobs visibility and automated lifecycle principles below remain product direction; their centralized D7 machinery and D8 upgrade, migration, compatibility and release-management machinery are explicitly deferred from the current MVP in the [active restart plan](plans/restart/PLAN.md#user-approved-mvp-revisions-2026-09-15). The fresh starter bundle and discoverable setup path above remain in scope.
 
 ## Approved completion review direction — 2026-09-15
 
@@ -107,13 +131,15 @@ Enumeration progress is durable instance data: record the mailbox, configured se
 The broader product direction below remains intentional. The user has explicitly
 deferred general interrupted-canonical-write repair and the separate generic
 record/save framework, centralized tools/jobs/register/scheduler management, and
-packaged installation/upgrades/compatibility machinery from this MVP. These
-exceptions do not remove agent-led first setup, normal save/readback, durable
-source windows and binary coverage, task synchronization, current output
-attribution, fresh-agent queries or compatible extensions. Users and agents own
-nonconcurrent schedules and normal environment resource management. No complete
-reset/write-repair guarantee is made. Current operation recipes carry these
-boundaries without requiring the development conversation.
+automated upgrades, migrations, compatibility handling and release-management
+machinery from this MVP. A distributable fresh starter bundle and discoverable,
+agent-led setup are in scope; they do not constitute that deferred machinery.
+These exceptions do not remove normal save/readback, durable source windows and
+binary coverage, task synchronization, current output attribution, fresh-agent
+queries or compatible extensions. Users and agents own nonconcurrent schedules
+and normal environment resource management. No complete reset/write-repair
+guarantee is made. Current operation recipes carry these boundaries without
+requiring the development conversation.
 
 ## Tools, schedules, and operating visibility
 
@@ -125,13 +151,14 @@ Record runs and resulting outputs with enough attribution to identify the respon
 
 ## Core use cases
 
+- Start from one agent-accessible link to a fresh, unconfigured School-OS ZIP or folder and the request “setup my schoolOS”; let a new agent discover the setup instructions, interview the parent, and configure and persist the private instance without repository history, preloaded household data, or a developer-authored trial prompt.
 - Catalog communications and preserve their substantive information and provenance, with raw material retained only in its source system and temporary processing copies discarded.
 - Query any information received from school, including historical facts, guidelines, deadlines, and action items.
 - Let any agent connected to the instance and capable of reading its records answer: "What are the current known scheduled jobs, which agents run them, and where are they managed?" Report the recorded status, last verification, and any freshness or access limits; identify the job and sender responsible for a recorded brief when asked.
 - Reconcile actionable requests into durable canonical tasks and synchronize them with a selected task application when configured.
 - Produce recent-update briefs, including the currently implemented daily email brief and an optional audio brief when the runtime and selected service support it.
 - Easily create new applications, automations, analyses, and workflows on top of the canonical School-OS data layer without redesigning ingestion or compromising provenance.
-- Install from a user-supplied packaged GitHub release and later update the private instance while retaining its private data, configuration, and compatible user-created adapters, applications, and workflows.
+- Later update the private instance from an official release while retaining its private data, configuration, and compatible user-created adapters, applications, and workflows.
 
 Email, task synchronization, and audio generation are reference applications of the data layer, not the boundary of the product.
 
@@ -151,7 +178,9 @@ Apply these priorities when requirements or implementation choices compete:
 
 ## Release and instance lifecycle
 
-GitHub is the authoritative source for the official School-OS system and its latest published releases. A typical user does not need to connect an agent to GitHub: the user downloads the published release package, commonly a ZIP or other release archive, gives it to the agent, and asks the agent to install or upgrade the private instance. Production operations use the pinned installed release rather than a live GitHub branch.
+GitHub is the authoritative source for the official School-OS system and its latest published releases. For first setup, a typical parent gives a new agent one accessible link to a fresh starter ZIP or folder and asks it to set up School-OS; the agent need not receive repository history or connect to GitHub. That starter path is current scope and does not imply an installer. Production operations use the pinned installed system material rather than a live GitHub branch.
+
+Automated upgrade, migration, compatibility and release-management machinery remains future work. A later lifecycle may let a parent give an official release to an agent and ask it to update the private instance while retaining private data, configuration and compatible extensions, but the current starter-bundle setup path does not claim that machinery.
 
 The private instance is expected to evolve. A parent may work with an agent to add support for another task manager, delivery service, analysis, application, or workflow. An addition that follows the canonical data model, invariants, and applicable contracts is compatible system expansion and should not by itself prevent future system upgrades.
 

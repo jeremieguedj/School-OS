@@ -1,6 +1,33 @@
 # Agent instructions
 
-Read [START-HERE.md](START-HERE.md) before working in this repository. Follow its
+Read [START-HERE.md](START-HERE.md) first and select the actual context.
+
+## Parent setup or instance operation
+
+If a parent supplied a fresh School-OS ZIP or folder link and said “setup my
+schoolOS,” follow the one authoritative [setup procedure](operations/setup.md),
+packaged at `system/operations/setup.md`. Discover and read the fresh starter
+before expecting an instance ID, configuration or installed bootstrap. The
+starter's `instance/` and `extensions/` areas are initially empty. Ask only for
+missing household, school, mailbox, location and tool choices, show the actual
+options available to this agent, and preserve choices already made.
+
+The link is access to system material, not a credential or authorization for
+ingestion, task mutations, outbound messages or schedules. Keep setup and those
+later operations under their separate instructions and authority. Use current
+shared API-agnostic semantic adapters or author a conformant missing mapping as
+the setup procedure allows. Persist and read back only the current approved
+configuration and canonical bootstrap; do not invent a setup schema, installer
+state or prefilled identity.
+
+For an existing configured instance, use its readable entry point and
+[startup procedure](operations/startup.md). Preserve its data, explicit choices
+and extensions. Do not apply the repository-development workflow below to an
+ordinary parent setup or operation.
+
+## Repository development
+
+When maintaining this repository, follow
 [development continuity](START-HERE.md#repository-development-continuity) and the
 [current restart plan](docs/plans/restart/PLAN.md). The snapshot
 `orgos-restart-documentation` preserves the former instructions and implementation.
@@ -11,7 +38,8 @@ The new project uses the approved restart contract and agent-led operations.
 Retired packet validators, generation runtimes, provider-derived IDs and the old
 release builder are historical evidence, not implementation dependencies.
 
-For School-OS development and the specifically authorized ingestion trials:
+For School-OS repository development and the specifically authorized ingestion
+trials:
 
 1. Keep private instance material out of Git, patches, terminal output and chat.
    Preserve complete connector receipts or thrown exceptions before normalization

@@ -1,6 +1,12 @@
 # School-OS restart: current plan and artifacts
 
-Updated 2026-09-16. Start here when resuming the restart. The retained MVP
+Updated 2026-09-16. The latest approved addition is a clean starter ZIP and the
+one-link “setup my schoolOS” flow, with a discoverable dedicated setup guide and
+parent interview. See [starter distribution](../../setup-bundle.md) and the
+[revised trial handoff](TRIAL-PROMPTS.md). Publish and report readiness; hold new
+testing for the user's direction. Earlier guided attempts remain historical.
+
+Start here when resuming the restart. The retained MVP
 implementation is authored but not yet qualified. Earlier experiments and the
 retired runtime are evidence, not an instruction to rebuild their architecture.
 
@@ -10,7 +16,8 @@ from current MVP delivery. D1, query coverage, D3’s minimal Python standard-li
 helpers with agent/tool operations, and D5 are approved. On 2026-09-15 the user replaced School-OS-managed
 batching with executing-agent guidance and complete logical-run ingestion,
 required agent-led uncertain-effect verification and ingestion-before-brief,
-and deferred D7 tools/jobs management and D8 packaged lifecycle. D2 canonical
+and deferred D7 tools/jobs management and D8 automated lifecycle machinery.
+The 2026-09-16 starter ZIP/setup addition is the explicit narrow D8 exception. D2 canonical
 repair and the separately proposed records/ordinary-save framework are deferred. The [active plan](PLAN.md) records exact approval
 boundaries and remaining choices; the excluded record/save framework is not a
 prerequisite for retained work. The product principles retain the broader
@@ -54,10 +61,10 @@ The [product principles](../../product-principles.md#decision-authority) are the
 source of truth and grounding for uncovered decisions. Every new or changed
 architecture decision requires explicit user approval before adoption or
 implementation, except where the user has explicitly delegated a recorded choice.
-After publishing and verifying the agreed implementation revision, the active plan
-authorizes exactly three isolated seven-day ingestion/audit trials and the matched
-64/128/256 KiB page-size evaluation. No unrelated test or effect starts
-automatically. The [coordinator handoff](ASTRA-HANDOFF.md) has a historical
+After publishing and verifying the starter, report readiness and wait. The three
+planned isolated seven-day ingestion/audit trials and matched 64/128/256 KiB
+page-size evaluation begin only on subsequent user direction. No test or provider
+effect starts automatically. The [coordinator handoff](ASTRA-HANDOFF.md) has a historical
 filename; the active plan controls current authority.
 
 The assignment covers the [whole project](PLAN.md#whole-project-implementation-scope):
@@ -133,8 +140,8 @@ optional, and short pages with continuation require continued enumeration.
 
 The retained implementation covers the MVP checklist subject to its explicit
 deferrals. An identity model alone is not the completed project. Publish and
-verify the agreed project revision before running the three specifically
-authorized isolated trials. Actual route behavior, attachment-group processing,
+verify the starter revision, report readiness and wait for the user to direct
+the three revised isolated trials. Actual route behavior, attachment-group processing,
 complete discovery, fresh-session handoff, page-size cost and retrieval remain
 qualification work; unrelated pilots, scheduling and external effects remain
 unauthorized.
@@ -146,9 +153,10 @@ The user has explicitly approved all remaining published Q1/Q2, Q4 and Q6
 recommendations. Earlier proposal/pending language in historical review material
 records the discussion at that time, not a remaining approval gate. The active
 [plan](PLAN.md#current-execution-authorization) records the final authority and
-three isolated post-publication ingestion/audit trials. Those trials supersede
-the earlier requirement to wait for subsequent testing direction; unrelated
-qualification and outbound effects remain unauthorized.
+three isolated post-publication ingestion/audit trials. That earlier automatic
+launch timing is now superseded by the one-link setup readiness stop; subsequent
+user direction is required. Unrelated qualification and outbound effects remain
+unauthorized.
 
 The requested **OrgoS Restart Documentation** snapshot preserves all tracked
 documentation, decisions, architecture, plans, source history and frozen evidence

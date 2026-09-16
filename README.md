@@ -5,14 +5,36 @@ knowledge base for a household's school communications, tasks and briefs.
 Original emails and attachments stay at their source; saved knowledge retains
 source links, scope, dates and qualifications.
 
-Start with [START-HERE.md](START-HERE.md). The [operation guide](operations/README.md)
-contains the reusable instructions. [Product principles](docs/product-principles.md)
-and the [approved restart plan](docs/plans/restart/PLAN.md) govern implementation.
+## Set up a fresh School-OS
+
+Give a new agent session one accessible link to the fresh School-OS ZIP or folder
+and say only: **“setup my schoolOS.”** The agent starts with
+[START-HERE.md](START-HERE.md), reads [AGENTS.md](AGENTS.md), and follows the one
+authoritative [setup procedure](operations/setup.md). In a distributed starter,
+that procedure is at `system/operations/setup.md`.
+
+The fresh starter has reusable operating material plus empty `instance/` and
+`extensions/` areas. It contains no configured household, canonical IDs or
+ingested school data. Sharing its link supplies neither credentials nor permission
+to ingest mail, update tasks, send messages or create schedules. The setup
+procedure interviews the parent, shows the tools that agent can actually offer,
+then saves and verifies only the approved configuration and canonical bootstrap.
+
+If this is already a configured private instance, use its readable entry point
+and [startup procedure](operations/startup.md); preserve its configuration, data
+and extensions.
+
+## Repository development
+
+The [operation guide](operations/README.md) contains the reusable instructions.
+[Product principles](docs/product-principles.md) and the
+[approved restart plan](docs/plans/restart/PLAN.md) govern development of this
+repository, not a parent's ordinary setup session.
 
 **Status:** the approved restart MVP is being implemented. Existing helpers and
 instructions are authored but not qualified. The retired implementation is not
-the foundation of this project. No installation or provider compatibility claim
-is made by this repository state.
+the foundation of this project. No provider compatibility claim is made by this
+repository state.
 
 ## Current project material
 
@@ -31,10 +53,12 @@ adding instance configuration or rewriting valid smaller pages. Agents use share
 semantic adapters through their own connectors. No dedicated computer, persistent
 local runtime, coding CLI or central scheduler is required.
 
-The MVP defers generic interrupted-write repair, centralized jobs management and
-packaged installation/upgrades. Users and agents operate nonconcurrently on the
-same Drive data. See the [coverage map](docs/plans/restart/implementation/COVERAGE.md)
-for retained versus deferred scope.
+The MVP includes the distributable fresh starter and discoverable agent-led setup.
+It defers generic interrupted-write repair, centralized jobs management, and
+automated upgrades, migrations, compatibility handling and release management.
+Users and agents operate nonconcurrently on the same Drive data. See the
+[coverage map](docs/plans/restart/implementation/COVERAGE.md) for retained versus
+deferred scope.
 
 ## Preserved history
 
