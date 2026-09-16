@@ -1,6 +1,0 @@
-{
-  "operations": {
-    "daily-run": "core/operations/daily-run.md"
-  },
-  "schema_version": 1
-}

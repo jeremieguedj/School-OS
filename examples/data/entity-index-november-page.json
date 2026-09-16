@@ -1,0 +1,18 @@
+{
+  "instance_id": "inst_11111111-1111-4111-8111-111111111111",
+  "family": "entity_index",
+  "page_id": "page_entity_index_81000000-0000-4000-8000-000000000001",
+  "schema_version": "1",
+  "content_revision": 1,
+  "index_key": {"entity_id": "entity_10000000-0000-4000-8000-000000000002", "time_bucket": "2025-11"},
+  "entries": [
+    {
+      "record_ref": {"family": "knowledge", "id": "knowledge_60000000-0000-4000-8000-000000000001", "page_hint": "page_90000000-0000-4000-8000-000000000009"},
+      "matched_role": "subject",
+      "date_basis": "observation_period",
+      "semantic_interval": {"start": "2025-11", "end": "2025-11"},
+      "primary_source_month": "2026-03"
+    }
+  ],
+  "continuation": {"state": "exhausted"}
+}

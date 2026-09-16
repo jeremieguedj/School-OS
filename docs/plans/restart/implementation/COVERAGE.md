@@ -1,15 +1,17 @@
 # Whole-project restart coverage
 
-Updated 2026-09-15 from the [product principles](../../../product-principles.md),
+Updated 2026-09-16 from the [product principles](../../../product-principles.md),
 [active plan](../PLAN.md), [metadata recipe](../identity/METADATA-RECIPE.md) and
 [historical lifecycle scenarios](../SIMULATION.md). The lifecycle model's
 mechanisms and old runtime do not supply missing architecture approvals.
 
-The [updated question list](OPEN-QUESTIONS.md) records Q3/Q5/Q7–Q9 decisions and
-Q6's binary email outcome. The [concrete data/index proposal](DATA-ARCHITECTURE-PROPOSAL.md)
-covers child/family/school scope, linked fields and query routes. The user has
-now explicitly approved those contracts and the Q4/Q6 discovery/reuse rules.
-No published architecture questions remain open. No generic D2 framework is restored; no performance is qualified.
+The [updated question list](OPEN-QUESTIONS.md) records the approved Q1–Q9
+decisions. The [concrete data/index proposal](DATA-ARCHITECTURE-PROPOSAL.md)
+covers child/family/school scope, linked fields and query routes. Q1/Q2's exact
+data/index architecture, Q4 discovery and Q6 completed-email reuse are approved.
+Implementation review exposed one later question: Q10's exact representation for
+lossless oversized-value segments remains proposed, not approved. No generic D2
+framework is restored and no performance is qualified.
 
 Status: requirements mapped; D1, the
 [query-coverage rule](ARCHITECTURE-PROPOSAL.md#approved-query-coverage-rule),
@@ -32,8 +34,12 @@ separate records/ordinary-save framework is now outside MVP, alongside the
 earlier exclusions below; it is not an approval gate for MVP coding. Q3 run-start scope, Q5 strict Date precision, Q6 binary ingestion and Q7–Q9
 manual/audio policies are approved. Concrete data/index and discovery/reuse rules are now explicitly approved. New architecture cannot be invented through generic delegation.
 Supplier capability availability is user-reported, not independently qualified.
-Helper and operation-instruction authoring are separate from whole-project
-implementation, vendor qualification and testing.
+The retained operations, contracts, shared adapter mappings and fictional
+examples are authored. They remain untested and do not qualify any connector or
+managed agent. Q10 blocks the complete retained MVP because oversized values
+must not be truncated or assigned an invented persisted shape. An accepted
+incomplete checkpoint may be published with that blocker stated; it is not the
+complete implementation publication required before the three authorized trials.
 
 ## Current execution direction and explicit MVP exclusions
 
@@ -96,11 +102,12 @@ reuse and authoring of a missing shared semantic mapping. A replacement agent
 with authorized access to the same tool reuses the same School-OS mapping while
 using its own connector implementation.
 
-This is the approved setup/adapter direction expressed as instructions and a
-template. It is not an installed instance, an implemented task-sync operation,
-a supplied qualified vendor adapter, or a claim that any current connector can
-carry out the whole operation. No registry, installer, record schema, generic
-write engine or API wrapper is added. D7/D8 deferrals remain explicit.
+This approved direction is now expressed through the setup/template documents,
+the authored [task-sync operation](../../../../operations/task-sync.md), and the
+shared mappings under [`adapters/`](../../../../adapters/README.md). It is not an
+installed instance or a claim that a current connector can carry out the whole
+operation. No registry, installer, generic write engine or API wrapper is added.
+D7/D8 deferrals remain explicit.
 
 ## Completion-review instruction checkpoint
 
@@ -116,8 +123,8 @@ This authored instruction is retained MVP work, not a deferred feature or a new
 approval gate. It is unexecuted, and no actual task tool or detection accuracy is
 qualified. Future automatic closure is only a possibility after later review;
 no fixed accuracy threshold or automatic promotion is approved. Sent-mail source
-scope is not expanded by this direction. The remaining full synchronization and
-ingestion implementation, and the user-controlled testing phase, are separate.
+scope is not expanded by this direction. Synchronization and ingestion procedures
+are authored but untested; they do not establish detection accuracy.
 
 ## Brief-recipe instruction checkpoint
 
@@ -138,27 +145,28 @@ offer to ingest new mail first, and let the parent choose a limited brief now.
 Configured audio goes with the email; on audio failure, text email includes a
 failure notice. No canonical audio archive remains after delivery. The authored
 guidance adds no recipe registry, precedence engine or scheduler and has not
-been executed. Full delivery implementation and later qualification remain.
+been executed. The retained daily/brief/delivery instructions and mappings are
+authored; actual delivery and later qualification remain unproven.
 
 ## Deliverables and approval dependencies
 
-The checkpoint sections identify authored files. Other deliverables below remain
-required work, not assertions that they exist or approval of the mechanisms they
-would contain. A path/name choice is routine; any new canonical meaning,
-dependency or runtime behavior still needs approval.
+The checkpoint sections and table identify the retained authored files. Authored
+means present for static review, not executed or qualified. Q10 is the one current
+architecture dependency; any other new canonical meaning, dependency or runtime
+behavior still needs approval.
 
 | ID / required area | Existing approved design | Concrete new deliverables | Dependencies | Implementation / testing |
 |---|---|---|---|---|
-| T1 Setup/startup | D1 entry point/separated areas; code-capable agents; approved parent interview, available tool choices and shared adapter reuse | `operations/README.md` and `setup.md`; agent establishes task-tool choice/access, uses or authors a mapping, and follows D1 startup/configuration instructions | Setup/shared semantic adapter direction approved, 2026-09-15; no records-framework gate or new installer/registry | Setup/adapter instructions authored; complete usable startup implementation remains pending; D8 package installer deferred / not run |
-| T2 Canonical data/custody | Canonical Drive knowledge/tasks/indexes/coverage; originals at source; normal verified saves | Agent instructions preserving D1/D5 meanings, bounded pages, normal verification and temporary cleanup; `utf8_size` supports byte accounting | D1/D5/helpers approved; specific retained field/link proposal Q1 authored and awaiting approval; framework explicitly deferred; no substitute write engine | Helper authoring only; full operation pending / not run |
-| T3 Historical/daily ingestion | Metadata recipe and separate coverage; one logical run with agent-managed resource work | Subject/address-parts helpers; import/daily/content recipes; source adapters and blocker guidance | Approved recipe/mechanical helpers; Q3/Q5/Q6 outcome approved; Q4 discovery/Q6 reuse pending | Isolated model and minimal helper authoring; full ingestion pending / not run |
-| T4 Knowledge/queries | D5 claims/relationships; query coverage checks and limited answers | Extraction/query recipes; agent-led retrieval/save/verification under approved meanings | D1/D5/query rule approved; no records/save-framework prerequisite | Concrete Q1/Q2 examples proposed; approval pending; full operation pending / not run |
-| T5 Tasks/synchronization | D5 tasks, parent fields, recurrence and three-way reconciliation; one shared tool mapping; clear task-satisfying evidence requires parent confirmation before completion | `operations/tool-adapters.md`, `tool-adapter-template.md` and `completion-review.md`; separate uncompleted candidates in supported status/section; parent checks reviewed tasks off; full reconciliation/sync recipes still required | D5, semantic-adapter reuse/authoring and confirmation-pending behavior approved; no extra state/schema approval gate; automatic closure and new source scope are not approved | Mapping/template and completion-review instructions authored; full sync operation and actual vendor mappings not delivered or qualified; detection accuracy unestablished / not run |
-| T6 Briefs/delivery | Complete ingestion before ordinary daily brief; agent checks uncertain effects; users/agents create and choose any number of recipes; approved starter selection and failed-sync disclosure | `operations/brief-recipes.md`; starter uses newly verified/corrected knowledge, original dates and relevant open tasks with task-state distinctions; remaining delivery/audio instructions and honest outcomes/attribution | Gate/verification, recipe extensibility and starter behavior approved; manual freshness choice and audio delivery/cleanup approved; no recipe framework/registry | Brief-recipe guidance authored; full delivery implementation incomplete and unqualified / not run |
-| T7 Tools/schedules | Approved setup choice and cross-agent reuse of per-tool semantic mappings; users/agents own nonconcurrent scheduling | `operations/setup.md` and `tool-adapters.md` guide tool choice and mapping reuse/authoring; connectors supply actual access | Setup/adapter architecture approved separately from helpers; D7 central register/control remains excluded | Selection/reuse instructions authored; no qualified vendor coverage claim; central register, control and known-job query deferred / not run |
-| T8 Continuation/replacement | Saved source/content progress and fresh-agent access; agent owns resource recovery | Token-loss replay/missed-input/fresh-agent guidance; explicit blockers; no batch scheduler | Approved direction; remaining D4 choices pending; no records-framework gate | Pending; D2 canonical-write repair deferred / not run |
+| T1 Setup/startup | D1 entry point/separated areas; code-capable agents; approved parent interview, available tool choices and shared adapter reuse | [`operations/startup.md`](../../../../operations/startup.md), [`operations/setup.md`](../../../../operations/setup.md), and the operation index establish startup/configuration and tool choice | Setup/shared semantic adapter direction approved; no records-framework gate or new installer/registry | Retained instructions authored and untested; D8 package installer deferred |
+| T2 Canonical data/custody | Canonical Drive knowledge/tasks/indexes/coverage; originals at source; normal verified saves | [`contracts/data.md`](../../../../contracts/data.md), [`contracts/identity.md`](../../../../contracts/identity.md), [`operations/storage.md`](../../../../operations/storage.md), and [`examples/data/`](../../../../examples/data/README.md) define bounded records, routes, indexes, custody and readback | Q1/Q2, D1/D5/helpers approved; Q10 segment shape pending; generic framework explicitly deferred | Authored and untested; bounded values covered, oversized retention blocked pending Q10 |
+| T3 Historical/daily ingestion | Metadata recipe and separate coverage; one logical run with agent-managed resource work | [`operations/ingestion.md`](../../../../operations/ingestion.md), [`operations/extraction.md`](../../../../operations/extraction.md), Gmail/Drive mappings and [`examples/ingestion/`](../../../../examples/ingestion/README.md) cover discovery, content and binary completion | Q3–Q6 approved, including Q4 discovery and Q6 reuse; Q10 blocks oversized retained values | Authored and untested; no connector or ingestion run qualified |
+| T4 Knowledge/queries | D5 claims/relationships; query coverage checks and limited answers | [`operations/knowledge.md`](../../../../operations/knowledge.md) and [`operations/query.md`](../../../../operations/query.md) route extraction, relationships, indexes, fallback and qualified answers through the data/storage contracts | Q1/Q2, D1/D5/query rule approved; no records/save-framework prerequisite; Q10 pending | Authored and untested; no retrieval or semantic-accuracy qualification |
+| T5 Tasks/synchronization | D5 tasks, parent fields, recurrence and three-way reconciliation; one shared tool mapping; task evidence requires parent confirmation | [`operations/task-sync.md`](../../../../operations/task-sync.md), [`operations/completion-review.md`](../../../../operations/completion-review.md), and Google Sheets/Todoist mappings implement retained instructions | D5, shared mappings and confirmation-pending behavior approved; automatic closure and expanded source scope are not | Authored and untested; no task connector or detection accuracy qualified |
+| T6 Briefs/delivery | Complete ingestion before ordinary daily brief; agent checks uncertain effects; arbitrary compatible recipes; approved starter and failed-sync disclosure | [`operations/daily.md`](../../../../operations/daily.md), [`operations/brief-recipes.md`](../../../../operations/brief-recipes.md), and Gmail/ElevenLabs mappings cover composition, manual freshness, audio fallback and truthful outcomes | All D6/Q7–Q9 choices approved; no recipe registry or effect engine | Authored and untested; no send/audio route qualified or authorized by publication |
+| T7 Tools/schedules | Approved setup choice and cross-agent reuse of per-tool semantic mappings; users/agents own nonconcurrent scheduling | [`operations/tool-adapters.md`](../../../../operations/tool-adapters.md) and mappings for Drive, Gmail, Sheets, Todoist and optional ElevenLabs | Shared-adapter architecture approved; D7 central register/control remains excluded | Authored and untested; no vendor compatibility claim; central scheduling/query features deferred |
+| T8 Continuation/replacement | Saved source/content progress and fresh-agent access; agent owns resource recovery | [`operations/continuation.md`](../../../../operations/continuation.md), startup and ingestion instructions cover fresh-agent continuation, missed work and explicit blockers without a batch scheduler | D4 direction approved; Q1–Q9 settled; no records-framework gate | Authored and untested; D2 canonical-write repair remains deferred |
 | T9 Extensions/upgrades | Approved D1 separation preserves future official/private/extension support | Preserve separated storage roles; canonical-data consumers remain possible | D1 approved; D8 installer/upgrade/compatibility/migration excluded from MVP | D8 capabilities deferred, not delivered / not run |
-| T10 Development/portability | Code-capable agents; small stdlib Python routines; shared semantic tool guidance independent of each connector; private developer evidence | Minimal helpers and prepared checks; `operations/README.md`, setup/adapter guidance/template; actual script references, lifecycle scenarios, limits and continuity | Minimal helpers and setup/shared-adapter direction approved; new dependencies/architecture still require separate approval | Helpers/checks and instruction subset authored; actual vendor routes unqualified; whole-project implementation incomplete / not run |
+| T10 Development/portability | Code-capable agents; small stdlib Python routines; shared semantic tool guidance independent of each connector; private developer evidence | Minimal helpers/prepared checks, operation index, contracts, adapter mappings and fictional data/ingestion examples provide portable handoff material | Minimal helpers and setup/shared-adapter direction approved; Q10 remains the only current architecture dependency | Retained materials authored and untested; actual vendor routes unqualified; full MVP blocked by Q10 |
 
 ## Every design priority
 
@@ -170,8 +178,8 @@ controls what is approved, unresolved or explicitly outside MVP.
 | P1 Losslessness and provenance | T2–T6, T8 | Keep substantive information and qualifications; preserve source support; expose unread/partial/unsupported/unavailable material; do not archive raw sources | D1–D6 |
 | P2 Deterministic behavior | T1–T9 | Explicit procedures and mechanical helpers; normal agent verification and source-grounded relationships; no deferred repair/framework claim | Current approvals and explicit framework/D2/D7/D8 exclusions |
 | P3 Simplicity | T1–T3, T7–T10 | Minimal helpers and agent-owned work; no schema/write engine, locks, central scheduler/register or concurrency subsystem | D1/helpers/execution direction approved; explicit exclusions |
-| P4 Efficient execution | T1–T4, T6, T8 | Narrow startup/storage access; agent-adapted chunks within one logical run; former School-OS message/listing/transfer caps are not success boundaries | D1 and revised D4/D6 direction; remaining contracts pending |
-| P5 Tool agnosticism | T1–T2, T5–T7, T9–T10 | One shared School-OS semantic mapping per tool preserves approved canonical meanings across agents; each connector owns API/authentication/SDK/transport and replaceable handles; no per-agent duplicate mapping or central bindings manager | D1/D5/helpers and setup/shared-adapter direction approved; remaining D6 choices and genuinely new architecture pending |
+| P4 Efficient execution | T1–T4, T6, T8 | Narrow startup/storage access; agent-adapted chunks within one logical run; former School-OS message/listing/transfer caps are not success boundaries | D1 and approved D4/D6 direction; authored and untested |
+| P5 Tool agnosticism | T1–T2, T5–T7, T9–T10 | One shared School-OS semantic mapping per tool preserves approved canonical meanings across agents; each connector owns API/authentication/SDK/transport and replaceable handles; no per-agent duplicate mapping or central bindings manager | D1/D5/helpers and setup/shared-adapter direction approved; genuinely new architecture still needs approval |
 | P6 Capability-led portability | T1, T3, T5–T8, T10 | Interview uses options accessible to the current agent; a replacement agent reuses the same tool mapping but checks its own authorized route and limits; small stdlib helpers; no personal machine/daemon/CLI requirement | Code/helpers/execution and setup/adapter direction approved; mapping reuse does not establish actual connector or runtime qualification |
 | P7 Extensibility from canonical data | T2, T4–T7, T9 | Same substantive claims/tasks/source links; any number of user/agent-created brief recipes may be chosen without changing data authority or hiding coverage; no recipe registry or deferred D7/D8 machinery introduced | D1/D5 and brief-recipe extensibility approved; genuinely new canonical architecture requires approval |
 | P8 Extensible/upgradable instances | T1, T7, T9–T10 | Preserve approved D1 separation for future support; package installation/update/compatibility guarantees are explicitly not MVP claims | D1 approved; D8 deferred |
@@ -204,17 +212,16 @@ controls what is approved, unresolved or explicitly outside MVP.
 | Logical email/reply identity | Reuse supported logical metadata; provider-entry counts are not ground truth; each reply has its own Date and coverage; optional navigation grouping | T2–T3; D2–D4 |
 | Attachment identity and coverage | Parent plus original filename; same-parent groups and unnamed/incomparable inventories; no position/handle/content identity; unread candidate cannot inherit completion | T2–T3, T8; D2–D4 |
 | Bounded discovery | Persist scope and date semantics; follow continuation after short pages; unfinished-window replay without token; listing exhaustion independent of processing completeness | T2–T3, T8; D1–D4 |
-| Tools/schedules/visibility | Long-term central visibility is not an MVP claim: D7 register/control excluded; user/agents schedule nonconcurrently and reuse selected semantic mappings through their own connectors; credentials remain outside canonical data | T6–T8; shared-adapter direction approved; D7 exclusion and remaining D6 choices |
+| Tools/schedules/visibility | Long-term central visibility is not an MVP claim: D7 register/control excluded; user/agents schedule nonconcurrently and reuse selected semantic mappings through their own connectors; credentials remain outside canonical data | T6–T8; shared-adapter direction and D6 approved; D7 excluded |
 | Release/instance lifecycle | Long-term supplied-package lifecycle retained in principles; D8 delivery deferred; D1 separated areas remain; approved setup interview and adapter-selection guidance authored | T1, T9–T10; D1/setup direction approved, D8 excluded |
 | Compatibility posture | Runtime/vendor names are examples, not compatibility promises; exact route qualification is independent of prepared implementation | T1, T7, T10; D3, D7–D8 |
 
 ## Repository evidence and instruction conflicts
 
-The session began with a clean tree on `codex/mvp-recovery` at
-`39d752c364a1cf404e5a6fc5739148b7d35a6b35`, equal to the local remote-tracking
-revision. Work remains in the current directory on `codex/restart-school-os`.
-The annotated `restart-baseline-2026-09-14` tag preserves that committed baseline.
-Local creation of the tag is not a claim that the tag has been published.
+The active work is in the current directory on `codex/restart-implementation`,
+created clean from the verified `orgos-restart-documentation` snapshot at
+`09f6be151cd549431343b9ebe44a1d03371d2f4f`. The earlier annotated
+`restart-baseline-2026-09-14` tag and frozen studies remain preserved.
 
 | Retired instruction or mechanism | Conflict / treatment |
 |---|---|
@@ -223,8 +230,8 @@ Local creation of the tag is not a claim that the tag has been published.
 | Old operation state requires immutable hash-chain generations and critical exact provider references | No carry-forward authority; D1–D2 propose a replacement for explicit approval |
 | Old update/release contracts require conditional writes or coordinated writers | Same-data concurrency is excluded; do not rebuild this infrastructure |
 | Old instruction-ownership document points to retired architecture as active invariant owner | Current product principles and approved restart plan govern |
-| Historical simulation proposes a live pilot to select physical layout and includes a reproduction command | User approval precedes dependent implementation; all execution waits for the subsequent testing direction |
-| Old AGENTS evidence rules call for replay/focused tests before rebuilding | Preserve the privacy/evidence safeguards; no replay/build/test is authorized now |
+| Historical simulation proposes a live pilot to select physical layout and includes a reproduction command | Q1–Q9 are approved; the three named isolated trials are authorized only after complete implementation publication and exact remote verification |
+| Old AGENTS evidence rules call for replay/focused tests before rebuilding | Preserve the privacy/evidence safeguards; do not run early tests or broaden the three-trial authorization |
 | Legacy release operation mandates full repository validation | Publication hygiene only in this phase; no full validator, package build or indirect test execution |
 
 The frozen Gmail model, code/results and study interpretation stay unchanged.
@@ -234,17 +241,17 @@ production storage or semantic-accuracy qualification.
 
 ## Publication and testing gate
 
-Inspected local hooks: no configured `core.hooksPath`; only inactive sample hooks
-in `.git/hooks`. The tracked workflow runs `scripts/validate.py` on pull requests,
-pushes to `main`, and manual dispatch. That script builds/verifies packages and
-executes tests, so it must not run now. Recheck hooks, final CI and remote PR state
-before publishing. An ordinary push to a new restart branch without an open PR
-does not match the inspected workflow triggers. Do not create a PR or dispatch
-the workflow in this phase; do not silently disable checks.
+Only inactive sample hooks are present. The legacy workflow that built and tested
+the retired runtime is removed from the active branch and preserved in the
+documentation snapshot; no replacement functional CI is claimed. Recheck hooks,
+CI, diff, privacy, document links and Git state before publication. Do not
+silently disable a current check or substitute publication hygiene for testing.
 
-The whole-code handoff requires every T1–T10 item accounted for with the explicit
-D2/records-framework/D7/D8 exclusions and remaining D4/D6 decisions and any specific new architecture named,
-accepted code committed/pushed, the exact remote commit verified, current
-continuity documents and a clear **implemented but untested** report. This
-preparation/approval checkpoint is not that handoff. Any blocked publication or
-missing architectural approval is reported rather than replaced with testing.
+An accepted authored checkpoint may be committed/pushed with Q10 and the untested
+state reported. It must not be called the complete retained MVP or used to begin
+the trials. The complete handoff requires every T1–T10 item accounted for with
+the explicit D2/records-framework/D7/D8 exclusions, Q10 resolved and integrated,
+accepted changes published, the exact remote commit verified, current continuity
+documents and a clear **implemented but untested** report. After that publication,
+the already authorized context-free worker, Gemini Spark and ChatGPT Work
+seven-day isolated ingestion trials proceed without another permission round.

@@ -1,0 +1,28 @@
+{
+  "instance_id": "inst_11111111-1111-4111-8111-111111111111",
+  "family": "attachment_group",
+  "page_id": "page_90000000-0000-4000-8000-000000000007",
+  "schema_version": "1",
+  "content_revision": 1,
+  "records": [
+    {
+      "attachment_group_id": "attachment_group_41000000-0000-4000-8000-000000000001",
+      "email_ref": {"family": "email", "id": "email_40000000-0000-4000-8000-000000000001"},
+      "original_filename": {"state": "known", "value": "Contact-Confirmation.pdf"},
+      "inventory_scope": "complete_for_selected_message_route",
+      "candidates": [
+        {
+          "candidate_ref": "candidate_1",
+          "access_aid": "replaceable-fictional-attachment-handle",
+          "ingestion_evidence": {
+            "state": "processed_saved_verified",
+            "knowledge_refs": [{"family": "knowledge", "id": "knowledge_60000000-0000-4000-8000-000000000003"}],
+            "verified_at": "2026-03-12T17:20:00Z"
+          }
+        }
+      ],
+      "required_for_full_ingestion": {"state": "required", "reason": "the body says the PDF contains the required household confirmation instructions"},
+      "recorded_at": "2026-03-12T17:08:00Z"
+    }
+  ]
+}

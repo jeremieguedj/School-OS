@@ -1,10 +1,20 @@
 # Final numbered decisions and recorded approvals
 
-Updated 2026-09-15 after the user approved every remaining numbered proposal and recommendation. The [active plan](../PLAN.md) remains the approval ledger.
+Updated 2026-09-16 after implementation review exposed one narrow missing
+representation. The [active plan](../PLAN.md) remains the approval ledger.
 
-All nine questions are settled. Q1/Q2 adopt the concrete linked-data and lookup contract. Q4 adopts the simpler arrival-boundary discovery policy. Q6 adopts binary email completion and the narrow fully-ingested reuse rule. The original numbering and rejected alternatives are preserved for review history.
+All nine questions from the published review are settled. A new narrow implementation
+gap is described in Q10 below; it does not reopen those approvals. Q1/Q2 adopt the concrete linked-data and lookup contract. Q4 adopts the simpler arrival-boundary discovery policy. Q6 adopts binary email completion and the narrow fully-ingested reuse rule. The original numbering and rejected alternatives are preserved for review history.
 
-The approved documentation will first be preserved in the requested GitHub snapshot **OrgoS Restart Documentation**. The next phase is completing and publishing the agreed implementation. Three isolated last-seven-day ingestion trials are authorized only after that implementation is published and its remote SHA is verified; this documentation snapshot does not execute them.
+The approved Q1–Q9 documentation is preserved at commit
+`09f6be151cd549431343b9ebe44a1d03371d2f4f` in the annotated tag
+`orgos-restart-documentation` and the published
+[OrgoS Restart Documentation release](https://github.com/jeremieguedj/School-OS/releases/tag/orgos-restart-documentation).
+Operational contracts, procedures, examples and shared semantic adapters have
+since been authored and remain untested. The next phase is to resolve Q10,
+finish the retained MVP, commit and push it, and verify the exact remote revision.
+The three isolated last-seven-day ingestion trials are already authorized after
+that publication prerequisite; no further generic testing permission is needed.
 
 ## Q1. What exact information and links must the saved JSON records contain?
 
@@ -18,7 +28,7 @@ See [the approved data architecture](DATA-ARCHITECTURE-PROPOSAL.md) and its [vie
 
 **Historical alternative and tradeoff:** Mostly free-text records are easier to improvise but make scope, filtering and cross-agent interpretation unreliable. Copying school facts per child creates duplicates and divergent updates. The approved structure adds a small amount of explicit metadata, with no generic write engine.
 
-**Decision / limits:** The exact record fields, references, dates, scope rules and task granularity are approved for dependent implementation. They remain unimplemented and unqualified.
+**Decision / limits:** The exact record fields, references, dates, scope rules and task granularity are approved. The retained operational implementation is authored and untested; Q10 is the one missing representation needed for oversized values.
 
 ## Q2. How should the index find all relevant information about a child and topic over time?
 
@@ -32,7 +42,7 @@ See [the approved data architecture](DATA-ARCHITECTURE-PROPOSAL.md) and its [vie
 
 **Historical alternative and tradeoff:** Scanning a whole year avoids maintaining topic indexes but grows costly. A search/vector service adds a new dependency and does not itself establish exact scope or completeness. The approved contract uses bounded Drive pages and explicit aliases, with a documented fallback when an index is stale.
 
-**Decision / limits:** The index entries, membership history, alias rules, completeness limits and end-to-end query traces are approved for implementation. Efficiency is designed for; it has not been measured.
+**Decision / limits:** The index entries, membership history, alias rules, completeness limits and end-to-end query traces are approved and authored. Efficiency is designed for; it has not been measured.
 
 ## Q3. Should a daily run cover every School-OS-pending item through the start of that run?
 
@@ -110,7 +120,7 @@ When audio is properly configured, prepare it and send it with the email. If aud
 
 ## Boundaries
 
-D1 storage, D3 helpers/shared adapters, D5 knowledge/task meanings and prior approvals stay in force. The generic record/save and interrupted-write repair framework, central jobs/scheduler register and packaged lifecycle remain outside MVP. The field/index design is approved, but remains an unimplemented and untested data layer.
+D1 storage, D3 helpers/shared adapters, D5 knowledge/task meanings and prior approvals stay in force. The generic record/save and interrupted-write repair framework, central jobs/scheduler register and packaged lifecycle remain outside MVP. The retained field/index and operation material is authored but untested; Q10 prevents a whole-MVP completion claim.
 
 After the completed implementation is published and its remote SHA verified, the user has authorized three isolated ingestion trials over the last seven days:
 
@@ -118,6 +128,41 @@ After the completed implementation is published and its remote SHA verified, the
 2. Gemini Spark through its browser; and
 3. ChatGPT Work through its browser.
 
-Each trial uses the published implementation SHA in isolation. They do not begin during this documentation snapshot or authorize earlier probes, ingestion or functional validation.
+Each trial uses the published implementation SHA in isolation. They do not begin
+before the complete retained implementation is published and verified. They need
+no additional generic permission, but they do not authorize earlier probes,
+outbound briefs, task-app effects, schedules or changes to existing instances.
 
 The recommendations serve source-linked lossless knowledge, simple parent workflows, efficient bounded access, explicit scope, fresh-agent portability and honest completion. The [coverage map](COVERAGE.md) retains the whole deliverable scope.
+
+
+## Q10. How are oversized values represented as linked pieces?
+
+**New implementation gap — awaiting explicit approval.** D1 and Q1 already
+require lossless numbered segments, but do not define the segment record or
+reference shape. The [concrete recommendation](SEGMENT-REPRESENTATION-PROPOSAL.md)
+adds one bounded `record_segment` family and a first-reference/count descriptor
+for long Knowledge statements, relationship history and Task completion reviews.
+
+The recommendation gives every segment its own School-OS ID, owner reference,
+field path, ordinal, JSON-text chunk and optional next reference. The owning
+Knowledge or Task stores the first reference and expected count. A changed value
+gets a complete new immutable chain with new IDs; readers verify and reconstruct
+the entire typed value before treating it as complete. See the
+[plain-language page](segment-representation.html) for the exact proposed shape
+and flow.
+
+This preserves the approved 64 KiB bound and lossless content without a writer or
+repair engine. The tradeoff is extra Drive reads and writes for oversized values,
+copy-on-change chains, and potentially unreachable old pieces with no automatic
+cleanup promise.
+
+**Alternatives:** separate segment families for each field are more
+self-describing but create three formats; raising the page limit reduces reads
+but changes D1 and may exceed managed-agent transfer limits; blocking oversized
+values avoids a new shape but fails the approved lossless requirement and leaves
+affected ingestion incomplete.
+
+**Decision / limits:** explicit user approval is pending. Until decided,
+affected writes remain blocked and whole-MVP implementation is not claimed
+complete. This question does not reopen Q1–Q9 or authorize any execution.

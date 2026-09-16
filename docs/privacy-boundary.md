@@ -12,4 +12,4 @@ Never commit:
 
 Private information belongs only in the user's installed Drive instance and connected services. Synthetic fixtures must be invented independently, not redacted copies of real communications.
 
-Before a public release, follow the repository privacy audit defined in `core/operations/release.md`.
+Before publication, follow the repository continuity in `START-HERE.md` and run the independent `scripts/privacy_scan.py` on all accepted tracked and new files. Keep raw development receipts in an admitted gitignored private directory with restrictive permissions; publish only synthetic examples and privacy-safe findings.

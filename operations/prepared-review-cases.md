@@ -5,8 +5,9 @@ publication of the agreed whole-project implementation. These are independent
 expectations for later review, not a harness, canonical schema, live adapter or
 qualification result. Preserve the frozen studies and existing fixture inventory.
 
-All people, tools and messages below are fictional. “Taskboard” is a hypothetical
-task app, not a claim about a real vendor's fields or connector support.
+All people, messages and case situations below are fictional. “Taskboard” and
+“Listbook” are hypothetical task apps. Named real products identify a mapping
+to review, not an actual account, observed execution or connector support claim.
 
 | Case | Given / request | Expected behavior to inspect later |
 |---|---|---|
@@ -28,12 +29,13 @@ task app, not a claim about a real vendor's fields or connector support.
 | Binary email outcome | One email includes a body and required consent attachment. | Fully ingested only after both are processed and resulting knowledge/source links saved and checked. Otherwise not ingested; do not advertise a body-only completed email or partial-resume workflow. |
 | Audio unknown send | Combined email/audio send gives an unknown outcome. | Use authorized evidence to verify before any repeat. Do not convert lack of response into failed audio or blindly send a text-only duplicate. |
 
-## Proposed Q1/Q2 data-contract cases — awaiting architecture approval
+## Approved Q1/Q2 data-contract cases — prepared, unexecuted
 
-These are written expectations for the new proposal, not adoption or executed
-checks. Review the chosen contract before directing any later run.
+These are written expectations for the approved contract, not executed checks.
+The actual contract is [data.md](../contracts/data.md); publication and permitted
+trial scope remain governed by the active plan.
 
-| Case | Fictional input | Proposed behavior to inspect later |
+| Case | Fictional input | Expected behavior to inspect later |
 |---|---|---|
 | One child’s evolution | Autumn: Robin needs fraction prompts. Spring: Robin explains equivalence independently. Jamie has a separate report. | Retain both Robin observations with their actual dates and sources, exclude Jamie’s report from Robin’s personal trend, and do not call improvement a correction. |
 | Shared school rule | Pine School has one continuing lunch rule; Robin and Jamie are enrolled. | Store one school-scoped claim, retrieve it through dated membership for either child, and return it once in the family view. An old source month must not hide a currently applicable rule. |
@@ -42,7 +44,32 @@ checks. Review the chosen contract before directing any later run.
 | Incomplete index | A new canonical page is saved but its topic index is stale; a fractions observation lacks a math co-tag. | Detect recorded revision mismatch where observable, read appropriate canonical/entity candidates or disclose incomplete search. Fresh page indexing alone does not prove semantic classification completeness. No D2 repair guarantee. |
 | Parent task | Parent adds “Pack Robin’s snack” with no school requirement. | Preserve a parent-origin task and its planning state without inventing a school source or deadline. |
 
-## Proposed sequence for the user to direct
+## Additional task and adapter cases — prepared, unexecuted
+
+| Case | Fictional input | Expected behavior |
+|---|---|---|
+| Separate parent edits | Base owner Avery/date September 17; Drive date September 18; app owner Blair. | Merge independent fields, preserve the school deadline and read back both sides. |
+| Conflicting date | The app instead changes the planned date to September 19. | Retain base and both dates; ask for a parent decision; do not advance that field's synchronized base. |
+| Explicit clear versus missing field | Parent clears a note; another connector omits the unread note column. | Accept the observed deliberate clear; retain unknown for the unread field. Never equate omitted data with a clearing edit. |
+| Rejected completion | A receipt is mistakenly linked to Robin; parent says it concerns Jamie. | Keep the review evidence with rejected state and parent explanation, keep Robin's Task open, and do not re-present the same evidence. |
+| Task identity replaced | A renamed task retains its owned marker; a lookalike task has no marker. | Match the renamed task by exact owned ID; do not bind the lookalike by title. |
+| Sorted task rows | Parent sorts the selected Google Sheets table. | Resolve each row by owned Task ID again; row position is only an access aid. |
+| Duplicate marker | Two app tasks carry the same School-OS Task ID. | Surface ambiguity; do not update the first result, silently merge or delete either task. |
+| Recurring projection | School requests kit on each Wednesday this term; app cannot expose independent recurrence history. | Project next 14 days as independent occurrence Tasks, retain overdue occurrences and complete series, and never complete the series from one checkbox. |
+| No actions | Complete school notice contains only office hours. | Preserve Knowledge; do not manufacture a Task, task-app write or completion authorization. |
+| Unsupported audio retrieval | Audio service accepts generation but the agent cannot retrieve the result. | Report the actual generation/retrieval status; do not claim an available attachment or blindly regenerate. Apply failure fallback only once failure is established. |
+
+## Execution boundary and later sequence
+
+All cases above remain written fixtures. After the full implementation is
+committed, pushed and remotely verified, the user has authorized three isolated
+seven-day ingestion trials: a fresh context-free worker, Gemini Spark and
+ChatGPT Work, each with the same revision/window and its own new Drive instance.
+Those trials do not authorize task-app writes, outbound briefs or audio delivery.
+Use the actual authorization and private evidence discipline in the active plan.
+
+For broader functionality still awaiting a directed execution phase, the proposed
+sequence remains:
 
 1. Review the instruction and semantic-mapping texts against these expectations.
 2. Exercise fictional setup and two-agent adapter reuse, including missing capabilities.
@@ -50,5 +77,5 @@ checks. Review the chosen contract before directing any later run.
 4. Exercise complete daily ingestion and recipe selection with corrections, older notices and failed sync.
 5. Only after the user authorizes it, qualify chosen real connectors and supported output routes using the repository's privacy and evidence discipline.
 
-No stage has run. A text review or publication link/privacy check does not prove
+No stage described here has run. A text review or publication link/privacy check does not prove
 that an agent, connector, storage operation or task synchronization works.

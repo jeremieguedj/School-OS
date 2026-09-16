@@ -1,12 +1,35 @@
 # Agent execution guidance for the revised MVP
 
-Status: instructions grounded in the user's explicit 2026-09-15 D4/D6 directions.
+Status: retained execution instructions authored from the approved Q1–Q9
+architecture and the user's D4/D6 directions. They are untested. Q10's exact
+oversized-value segment representation remains pending and blocks a complete MVP.
 This document specifies outcomes and gives resource-management advice. It does
 not implement a batch controller, scheduler, environment-recovery engine or
 canonical-write repair system. D3 now selects minimal Python standard-library
 helpers and otherwise agent/tool work. The separate records/ordinary-save
 framework is excluded, not a prerequisite; preserve approved data meanings and
-normal verification. The [active plan](../PLAN.md) records remaining decisions.
+normal verification. The [active plan](../PLAN.md) records Q10 and the publication
+boundary; there are no remaining Q1–Q9 decisions.
+
+## Authoritative operation routes
+
+Use the current retained files rather than historical proposals: read
+[`contracts/data.md`](../../../../contracts/data.md) and
+[`contracts/identity.md`](../../../../contracts/identity.md), then select the
+needed procedure from [`operations/README.md`](../../../../operations/README.md).
+Startup and storage use [`startup.md`](../../../../operations/startup.md) and
+[`storage.md`](../../../../operations/storage.md); source work uses
+[`ingestion.md`](../../../../operations/ingestion.md),
+[`extraction.md`](../../../../operations/extraction.md) and
+[`continuation.md`](../../../../operations/continuation.md); knowledge and tasks
+use [`knowledge.md`](../../../../operations/knowledge.md),
+[`query.md`](../../../../operations/query.md) and
+[`task-sync.md`](../../../../operations/task-sync.md); ordinary daily composition
+uses [`daily.md`](../../../../operations/daily.md) and the selected brief recipe.
+Shared tool meanings live under [`adapters/`](../../../../adapters/README.md).
+The [data examples](../../../../examples/data/README.md) and
+[ingestion examples](../../../../examples/ingestion/README.md) are fictional and
+illustrative, not execution evidence.
 
 ## Responsibility
 
@@ -101,10 +124,13 @@ workflow. Preserve honest evidence of what was and was not read; a blocked or
 unknown result must not become fully ingested. The MVP does not promise repair
 of interrupted canonical writes.
 
-Whether a later metadata-matching appearance may skip content using a previously
-verified fully-ingested state remains a separate, narrow reuse decision. The
-binary outcome does not silently select that rule, a per-appearance ledger or
-mandatory rereading. Do not infer prior content processing from metadata alone.
+A unique supported metadata match may reuse a previously saved and verified
+`fully_ingested` result under the approved rule in
+[`contracts/identity.md`](../../../../contracts/identity.md). Skip content only
+when that canonical coverage is verified and no explicit new or contradictory
+inventory/coverage evidence exists. Metadata alone never proves prior processing;
+`not_ingested`, absent/unverifiable coverage or new required material requires
+whole-email ingestion.
 
 ## Advice for managing resources
 
@@ -133,9 +159,11 @@ substantive information, qualifications and actions.
 
 Process all available required attachment candidates with honest inventory and
 read coverage. For large material, use an available supported reading route
-within actual limits. Do not invent a segmentation capability, truncate school
-information or mark unsupported content complete. Lack of access or usable
-content support is a blocker to full ingestion, not a reason to silently omit it.
+within actual limits. Q10's persisted segment shape is not approved. Until it is
+integrated, an oversized substantive value blocks retention and full ingestion.
+Do not invent a segmentation capability, truncate school information or mark
+unsupported content complete. Lack of access or usable content support is a
+blocker to full ingestion, not a reason to silently omit it.
 
 ## Task evidence and selected brief recipes
 
@@ -220,6 +248,12 @@ guarantee is selected.
 ## Development boundary
 
 These instructions are authored deliverables, not an executed recipe or proof of
-supplier capability. No tests, simulations, probes, ingestion, sends or schedules
-are authorized. After publishing the agreed MVP implementation, stop and let the
-user direct testing.
+supplier capability. No early tests, simulations, probes, ingestion, sends or
+schedules are authorized. An accepted incomplete checkpoint may be published with
+Q10 and the untested state explicit, but it does not satisfy the trial prerequisite.
+After Q10 is approved and integrated, publish the complete retained MVP and verify
+its exact remote revision. Then conduct only the three already authorized isolated
+seven-day school-email ingestion trials: a fresh context-free worker, Gemini Spark
+and ChatGPT Work, each in a separate new instance. That sequence needs no new
+permission round; it does not authorize outbound briefs, personal task-app writes,
+schedules, unrelated qualification or changes to existing instances.

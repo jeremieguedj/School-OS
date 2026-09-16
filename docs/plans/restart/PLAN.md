@@ -3,8 +3,9 @@
 Status: the user approved the corrected interpretation and operating choices on
 2026-09-14. The current [metadata recipe](identity/METADATA-RECIPE.md) defines
 logical-email reuse, normalization, parent-bound attachment lookup and durable
-search-window recovery. Implementation and managed-agent qualification remain
-pending. The [artifact guide](README.md) separates current authority from frozen
+search-window recovery. Retained implementation is authored and undergoing integration review; the
+Q10 overflow representation remains unresolved. Managed-agent qualification
+has not started. The [artifact guide](README.md) separates current authority from frozen
 experiments and historical proposals.
 
 ## Current coordinator checkpoint — approved implementation
@@ -17,18 +18,31 @@ arrival-window discovery and Q6's fully-ingested metadata-match reuse are also
 approved. Prior Q3/Q5/Q7–Q9 approvals and D1/D3/D5 remain in force. This is explicit
 approval of those concrete proposals, not blanket approval of future designs.
 
-The user requests a named GitHub snapshot, **OrgoS Restart Documentation**, before
-implementation. Publish the updated approval ledger and documentation under
-annotated tag `orgos-restart-documentation`, with a GitHub release bearing that
-exact display name. It is a documentation checkpoint, not an installable product
-release or a validation claim. Then create `codex/restart-implementation` from it
-in this same directory. Retire old runtime entry points/code/contracts from the
-active checkout while preserving them in the snapshot and existing history.
-Keep frozen restart studies, useful evidence, principles and continuity.
+The named GitHub snapshot **OrgoS Restart Documentation** is published under the
+annotated tag `orgos-restart-documentation`, targeting
+`09f6be151cd549431343b9ebe44a1d03371d2f4f`. The release, tag and remote revision
+were verified. The active `codex/restart-implementation` branch began clean at
+that checkpoint. Retired runtime entry points, code and contracts remain
+recoverable from the snapshot and history; frozen restart studies remain intact.
 
-Implementation is incomplete. Exact next action: finish and verify the snapshot,
-then complete the retained MVP through bounded workers, integrate/review, publish
-and verify the exact remote implementation revision.
+The retained operations, contracts, adapters and fictional examples are authored
+but untested. Implementation is incomplete while Q10 remains unresolved. Exact
+next action: obtain the segment-format decision, integrate the approved shape,
+finish static integration review and publication hygiene, then publish and verify
+the exact remote implementation revision before any authorized trial begins.
+
+### Implementation review escalation — exact overflow representation
+
+All nine published questions remain approved. Implementation exposed one missing
+shape: Q1 reserves `segment_refs`, and D1 requires lossless numbered pieces, but
+the published contract defines neither segment records nor their references.
+Fresh agents must not invent incompatible persistent formats. The coordinator
+has asked for approval of the narrow
+[record-segment representation](implementation/SEGMENT-REPRESENTATION-PROPOSAL.md).
+It is a proposal only; no new family is adopted yet. Oversized-value writes are
+explicitly blocked, not truncated or silently deferred from the required MVP.
+Independent implementation/review proceeds. The whole-MVP publication prerequisite
+for the authorized trials is not met while this required representation is open.
 
 ## Current execution authorization
 
@@ -56,9 +70,12 @@ personal task-app mutations, scheduled jobs or modifications to existing instanc
 Normal source/Drive operations required by the three trials are authorized.
 A newly discovered architecture change still needs approval. The coordinator
 may resolve routine implementation choices and manage bounded agents autonomously.
+For the remaining repository work, the user requires bounded Sol workers only,
+with no Astra workers. The root agent primarily coordinates, handles architecture
+and other escalations, integrates the work and owns publication.
 
-The latest documentation snapshot request is additive: complete it first; it does
-not cancel implementation or the subsequent authorized trials. Keep exact published
+The documentation snapshot request was additive and is now complete; it does not
+cancel implementation or the subsequent authorized trials. Keep exact published
 revisions and results in PROGRESS.md. Do not declare the goal complete at the
 snapshot or implementation-only checkpoint.
 
@@ -66,7 +83,11 @@ The 2026-09-14 implementation session remains in the existing repository directo
 on `codex/restart-school-os`. Its clean starting revision was
 `39d752c364a1cf404e5a6fc5739148b7d35a6b35`. The annotated preservation tag
 `restart-baseline-2026-09-14` targets that committed pre-cleanup baseline.
-The old runtime has not been adopted as the new foundation or removed yet.
+The old runtime was not adopted as the new foundation. After the verified
+`orgos-restart-documentation` snapshot, active retirement began on
+`codex/restart-implementation` in this same directory; the snapshot and history
+retain its exact files. Current implementation instructions live in operations/
+and contracts/, with helpers/ for the approved small code subset.
 
 The [whole-project coverage map](implementation/COVERAGE.md) reconciles all nine
 design priorities, seven core use cases, other mandatory principle sections and
@@ -559,7 +580,8 @@ report before interpreting `wrong_association` or the earlier pass/failure total
 - [ ] Implement the whole-project delivery scope above with the explicit MVP
   interrupted-write-recovery exception, under the approved
   architecture. Obtain approval for unresolved architectural choices before
-  their dependent code; do not silently decide the Drive file/table layout.
+  their dependent code; Q10's segment representation is the current unresolved
+  dependency. Do not silently decide the Drive file/table layout.
   Prepare a proposed test inventory and fixtures without running them.
 - [ ] Publish the agreed code and updated continuity documents. Report the
   exact revision, coverage of every deliverable, pending decisions, known risks, tests not

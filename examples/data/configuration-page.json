@@ -1,0 +1,35 @@
+{
+  "instance_id": "inst_11111111-1111-4111-8111-111111111111",
+  "family": "configuration",
+  "page_id": "page_90000000-0000-4000-8000-000000000001",
+  "schema_version": "1",
+  "content_revision": 1,
+  "records": [
+    {
+      "instance_id": "inst_11111111-1111-4111-8111-111111111111",
+      "household_entity_ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000001"},
+      "household_timezone": "America/Los_Angeles",
+      "source_accounts": [
+        {"family": "source_account", "id": "source_account_30000000-0000-4000-8000-000000000001"}
+      ],
+      "entity_topic_roots": {
+        "entity_directory_page_id": "page_a0000000-0000-4000-8000-000000000001",
+        "membership_directory_page_id": "page_a0000000-0000-4000-8000-000000000002",
+        "topic_directory_page_id": "page_a0000000-0000-4000-8000-000000000003",
+        "entity_index_directory_page_id": "page_a0000000-0000-4000-8000-000000000004",
+        "topic_index_directory_page_id": "page_a0000000-0000-4000-8000-000000000005",
+        "incoming_relationship_index_directory_page_id": "page_a0000000-0000-4000-8000-000000000006",
+        "index_coverage_directory_page_id": "page_a0000000-0000-4000-8000-000000000007"
+      },
+      "access_aids": [
+        {
+          "adapter_ref": "system/tool-adapters/fictional-mail-tool",
+          "connection_label": "Fictional mail connection",
+          "provider_handle": "replaceable-fictional-mailbox-handle",
+          "observed_at": "2026-03-12T17:00:00Z"
+        }
+      ],
+      "selected_brief_recipes": ["system/daily-family-brief"]
+    }
+  ]
+}

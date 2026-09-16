@@ -1,0 +1,17 @@
+{
+  "instance_id": "inst_11111111-1111-4111-8111-111111111111",
+  "family": "source_account",
+  "page_id": "page_90000000-0000-4000-8000-000000000002",
+  "schema_version": "1",
+  "content_revision": 1,
+  "records": [
+    {
+      "source_account_id": "source_account_30000000-0000-4000-8000-000000000001",
+      "label": "Fictional family school mailbox",
+      "logical_mailbox_identity": "Parent-selected school correspondence mailbox",
+      "configured_scope": "Cedar Grove School correspondence for the Lane household",
+      "import_boundary": {"state": "known", "value": "2025-08-01", "precision": "day", "meaning": "configured_import_start"},
+      "adapter_ref": "system/tool-adapters/fictional-mail-tool"
+    }
+  ]
+}

@@ -1,59 +1,77 @@
-# School-OS operations
+# School-OS operating instructions
 
-These are reusable instructions for agents operating a School-OS instance. They
-are authored guidance, not evidence that any connector, tool or provider route
-has been qualified.
+These procedures implement the approved restart MVP as agent instructions and
+small mechanical helpers. Agents reason about school meaning and use their own
+authorized tools for access and effects. Authored instructions are not evidence
+that any particular agent or connector has been qualified.
 
-For an existing instance, begin from its readable Drive entry point and selected
-configuration. For first setup, use the supplied School-OS materials and the
-parent-selected Drive location, check for an existing instance, then create the
-approved D1 bootstrap and areas only when none exists. Follow the
-[product principles](../docs/product-principles.md),
-the approved [metadata identity recipe](../docs/plans/restart/identity/METADATA-RECIPE.md)
-and the installed operation that matches the parent's request. A capable agent
-uses the actual small helper named by a recipe when it applies; see the
-[helper guide](../helpers/README.md). The agent and its authorized tools perform
-the rest of the operation.
+For an existing instance read [startup](startup.md). For an empty parent-selected
+Drive folder read [setup](setup.md). The installed readable START-HERE points to
+that instance's `system`, `instance` and `extensions` areas, internal identity,
+selected configuration and relevant directories. Do not load the repository's
+historical studies or retired release instructions into normal operations.
 
-## Start here
+## Choose the requested operation
 
-- [First setup](setup.md): interview the parent, record the selected scope and
-  inspect the current agent's available tools.
-- [Tool adapters](tool-adapters.md): select an existing shared semantic mapping
-  or author a missing conformant mapping for one tool.
-- [Tool-adapter template](tool-adapter-template.md): the generic headings and
-  questions a new mapping should answer.
-- [Completion review](completion-review.md): preserve clear completion evidence,
-  ask the parent to confirm it, and synchronize confirmed completion under D5.
-- [Brief recipes](brief-recipes.md): create, select and use parent-chosen brief
-  formats without changing source truth, coverage or task meanings.
+| Request | Procedure | Needed supporting material |
+|---|---|---|
+| Set up my household | [Setup and interview](setup.md) | [Tool mappings](tool-adapters.md), [storage](storage.md), [data contract](../contracts/data.md) |
+| Import or catch up school mail | [Ingestion](ingestion.md) | [Identity](../contracts/identity.md), [extraction](extraction.md), [knowledge](knowledge.md), storage |
+| Resume unfinished discovery or missed mail | [Continuation](continuation.md) | Ingestion and saved coverage |
+| Answer a fact or historical trend question | [Query](query.md) | Knowledge, data contract and relevant coverage |
+| Synchronize parent task edits | [Task sync](task-sync.md) | Selected shared adapter, [completion review](completion-review.md) |
+| Produce the ordinary daily update | [Daily](daily.md) | Ingestion, task sync when configured, chosen brief recipe |
+| Produce a manual or custom brief | [Brief recipes](brief-recipes.md) | Query, freshness conversation, authorized output route |
+| Use a new task tool | [Tool adapters](tool-adapters.md) | [Adapter template](tool-adapter-template.md), current agent's available connector |
 
-## Operating boundary
+## Canonical data and actual code
 
-A **tool-semantic adapter** explains how one tool's concepts and observable
-results map to School-OS operations. It is shared by every capable agent and
-connector that reaches that tool. It does not contain credentials, make API or
-SDK calls, own transport, or fork for a particular agent. The connector remains
-responsible for authentication, API/SDK access, transport and its provider
-envelope.
+The [data contract](../contracts/data.md) defines the exact approved fields,
+references, scope, page envelopes, directories and indexes. [Storage](storage.md)
+explains normal bounded reads/writes and verification. [Knowledge](knowledge.md)
+separates saved school facts/guidelines/observations from actionable tasks and
+preserves individual, family and school scope.
 
-Supplied School-OS operation material and supplied adapters belong with official
-materials in D1's `system` area. A parent or agent's compatible addition belongs
-under its declared ownership in `extensions`. The instance's existing readable
-entry point and D1 configuration make the selected adapter discoverable; these
-instructions create no new registry, mandatory filename, precedence rule,
-identifier format, schema or Drive area.
+The [helper guide](../helpers/README.md) describes the real Python standard-library
+[source_metadata.py](../helpers/source_metadata.py) functions for subject
+normalization, extracted address parts and UTF-8 text size. No provider SDK,
+generic writer, schema service, local daemon or School-OS batch scheduler is
+required. Other operations remain the agent's work through tools.
 
-An adapter cannot make a connector reveal information or perform an operation it
-does not support. Keep unsupported, unavailable and unknown behavior explicit.
-Do not infer capability from an agent or vendor name, and do not treat a generic
-error as success, authorization failure, rate limiting or a safe retry.
+## Installation material boundary
 
-The parent may use several agents and tools, but simultaneous updates to the same
-canonical Drive data remain outside scope. No operation here creates a central
-job manager, scheduler, package installer, provider SDK or persistence framework.
-All execution and live qualification remain subject to the repository's testing
-and authorization boundaries.
+Place the current operating material, `contracts/`, `helpers/`, supplied shared
+`adapters/`, and the [product principles](../docs/product-principles.md) in the
+instance's `system` area with a known published source revision. Keep the same
+relative relationships or make the bootstrap's logical location instructions
+explicit. Instance data/configuration belongs in `instance`; compatible household
+recipes and new shared tool mappings belong in `extensions`. The setup recipe
+establishes the required entry point and configuration through normal agent/tool
+operations. This is not a packaged installer, upgrader or compatibility manager.
 
-[Prepared review cases](prepared-review-cases.md) contain fictional inputs and
-expected outcomes for later user-directed testing. They have not been run.
+Do not install the development repository's tests, historical `docs/plans`,
+frozen studies, Git state or private developer receipts as operating instructions.
+The installed current recipes and contracts are sufficient to perform the retained
+operations without the developer conversation. Examples are fictional explanatory
+material; never install their household records as real instance data.
+
+## Authority and limits
+
+Follow platform constraints, explicit parent instructions, the selected current
+recipe, installed contracts and valid configuration, in that order. The
+[product principles](../docs/product-principles.md) govern design decisions and
+compatible extensions. A new architecture choice needs explicit approval; a
+conformant missing tool mapping can be authored under the approved setup policy.
+One shared semantic adapter maps School-OS meanings to one tool's concepts; each
+agent's connector owns API calls, credentials, authentication and transport.
+
+Canonical data lives on Drive. Raw school emails/attachments stay at their source;
+discard accessible temporary copies after verified persistence. Provider handles
+are replaceable access aids, never canonical identity or completion evidence.
+Keep unsupported discovery or content visible. The ordinary daily brief requires
+complete agreed ingestion; manual requests use their separate freshness rule.
+
+The MVP excludes generic interrupted-write repair, central jobs/register/control,
+concurrent same-instance writes and packaged upgrades. These deferrals do not
+remove truthful saved coverage, task-app reconciliation, fresh-agent queries,
+usable first setup, current output attribution or compatible extensions.

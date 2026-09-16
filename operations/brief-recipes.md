@@ -11,6 +11,11 @@ truth, coverage, task state, identity, ingestion completion or the meaning of a
 verified external effect. It also does not authorize a source read, task update,
 email send, audio generation or schedule by itself.
 
+Read the selected mapping and instance configuration, then use
+[query](query.md), [task synchronization](task-sync.md) and
+[the data contract](../contracts/data.md) for the underlying information. The
+[daily operation](daily.md) establishes the ordinary daily ingestion gate.
+
 ## Where recipes belong
 
 A supplied starter recipe belongs with official School-OS material in D1's
@@ -80,6 +85,13 @@ purpose. Use the selected version as written. If the request would materially
 change the selection or delivery, update or create a recipe with the parent
 instead of silently changing its meaning.
 
+Use the requested reporting interval and its timezone. If the recipe refers to
+the previous brief but that boundary cannot be established from available
+configuration or evidence, obtain the missing interval rather than inventing
+one from another agent's chat. An explicit current choice requires no repeat
+confirmation. A manual brief is a new requested output, not automatically a
+retry of a scheduled send.
+
 ### 2. Establish scope and capabilities
 
 Resolve the recipe's source, child, school and time scope against the parent's
@@ -104,8 +116,10 @@ and checked. Required attachments remain in scope; incomplete required content
 means not ingested. No partial-email completion/resume workflow is selected.
 Internal processing evidence must remain honest. If relevant ingestion or
 coverage is blocked or unverifiable, report the blocker and do not issue the
-ordinary completed daily brief. This binary outcome does not decide whether a
-later matching appearance can skip content; that narrow reuse rule remains open.
+ordinary completed daily brief. Reuse a fully ingested logical email only under
+the approved metadata and Q6 rule in [ingestion](ingestion.md). A known new reply,
+new required attachment, contradiction or incomplete prior result cannot inherit
+the earlier completion.
 
 For a **manual** brief, the parent may choose a limited output from currently
 verified information after the following disclosure and choice:
@@ -134,6 +148,14 @@ daily brief, include newly verified or substantively corrected information,
 show the original school dates, and include relevant open tasks. Separate tasks
 awaiting parent confirmation from open work and from parent-confirmed completion.
 
+Use substantive Knowledge and its ingestion evidence, not the timestamp of a
+directory rebuild or file move, to decide what is newly verified. A routine save
+does not make an old school notice new. Follow incoming corrections and preserve
+the distinction between changing circumstances and correction of a false prior
+statement. Resolve child, household and school applicability through dated
+membership; return one shared fact or household Task once. A custom recipe may
+select older applicable information even when it is not new in this interval.
+
 Use the current verified task state available to the operation. If task-app
 synchronization failed, was incomplete or could not be verified, disclose that
 fact in the brief; do not present the app as current or silently substitute title
@@ -145,6 +167,25 @@ Apply the recipe's headings, grouping and concise wording. Preserve source
 attribution, original date precision, qualifications and material uncertainty.
 Do not turn an inferred preference into a school requirement, an upcoming item
 into an overdue task, or a pending parent confirmation into completion.
+
+For the supplied starter, write:
+
+1. A short heading with the reporting interval and covered school/household scope.
+2. Newly verified information and substantive corrections, with readable source
+   references and original school dates. State qualifications beside the item.
+3. Relevant open actions, showing the school deadline separately from the
+   parent's planned date and owner. Show conditional applicability honestly.
+4. A separate **Awaiting your confirmation** group with linked source evidence.
+   A rejected suggestion is not included again on the same evidence.
+5. Any material coverage/freshness or task-app synchronization limit, and the
+   actual generating agent. An empty update section may say no newly verified
+   information was found only for the supported complete scope; it does not mean
+   no obligations remain.
+
+Do not copy whole raw emails into the brief. Retain substantive details needed
+by the parent and readable provenance; canonical Knowledge remains the durable
+source-linked record. For other selected recipes, use their presentation while
+preserving the same truth and coverage requirements.
 
 ### 6. Deliver only when authorized, then verify
 
@@ -160,6 +201,15 @@ generic success response does not prove delivery, and an unknown generation or
 send outcome must be reconciled before any repeat. Apply the existing agent
 verification rule; do not blindly resend or generate again. Report what was
 verified and any remaining uncertainty.
+
+Identify the agent that generated the brief separately from the actual service
+and account that sent it, where observed. Include the reporting scope, source
+references and generated time in the output or its accompanying report so a
+parent can understand what it represents. Never guess a sender from the agent's
+brand. State whether there is a draft, a verified sent output, a verified failure
+or an unresolved outcome, with its usable output reference when available.
+This is attribution for the current output, not a central job/run registry or a
+claim to inventory every household job.
 
 School-OS keeps no canonical audio archive. After audio delivery to the authorized
 email or chat destination is verified, discard the accessible temporary audio
@@ -179,7 +229,7 @@ connector or provider support.
 ### Starter daily brief
 
 For fictional parent Avery, select school information first verified or
-substantively corrected since yesterday's brief. Show the school's original
+substantively corrected in the chosen daily reporting interval. Show the school's original
 date beside each update. Follow with relevant open tasks, then a separate
 **Awaiting your confirmation** section. If the task app could not be synchronized
 and verified, say so directly even when ingestion and the email brief itself are

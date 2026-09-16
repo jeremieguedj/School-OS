@@ -48,14 +48,18 @@ The daily brief begins as a template recipe. Users and agents may create any num
 
 The approved starter selects newly verified or substantively corrected information for the reporting interval, shows original school dates, and includes relevant open tasks. After complete relevant ingestion, it may use verified canonical knowledge and tasks when task-app synchronization fails, while plainly disclosing the failed sync and the limit on app-state freshness. It must not describe unknown app edits or outcomes as synchronized. This selection and disclosure behavior is approved for the starter; other chosen recipes may arrange or select information differently within the same product safeguards.
 
-The ordinary daily brief still follows complete relevant ingestion. A separate parent-requested brief from currently verified information while relevant material remains unread is only a proposed exception, not approved by recipe extensibility. Optional audio policy also remains pending. Follow the [brief-recipe instructions](../operations/brief-recipes.md). This direction adds no recipe schema, registry, selection precedence, scheduling mechanism or testing permission.
+The ordinary daily brief still follows complete relevant ingestion. The later explicit Q7–Q9 approvals below settle the manual freshness conversation and optional audio policy; they are not inferred merely from recipe extensibility. Follow the [brief-recipe instructions](../operations/brief-recipes.md). This direction adds no recipe registry, selection precedence or scheduling mechanism. Development execution follows the separately recorded user authorization.
 
 ## Approved scope, ingestion and brief refinements — 2026-09-15
 
 Knowledge and tasks must retain their real applicability: individual child,
 family or school. Support a child's topic history and evolution without copying
 one shared school statement to every child or duplicating one family obligation.
-Concrete schema and lookup/index architecture still require explicit approval.
+The user subsequently explicitly approved the concrete retained schema and
+lookup/index architecture. The operational [data contract](../contracts/data.md)
+records it. New canonical meaning or representation beyond that approved design
+still needs explicit approval; the known oversized-value segment representation
+is being resolved separately and is not silently invented.
 
 The daily input is all School-OS-pending mail in configured scope through run
 start; mailbox read status is not ingestion. Each email has one outcome: fully
@@ -79,7 +83,7 @@ The source index must identify the source account, original item, and relevant p
 
 Canonical source and attachment record identities belong to School-OS. Critical decisions about identity, correctness, completion and recovery must not depend on the presence, format, permanence or cross-connector consistency of API/provider-specific parameters, identifiers or connector-generated metadata. Keep those details at the replaceable connector/access layer as access aids; their absence or change must not invalidate canonical knowledge or make unrelated operations fail. An agent may obtain a current provider handle through its connector to perform an operation, but that handle does not establish the target's identity or correctness. Shared School-OS adapter guidance preserves the required semantic checks independently of that access route.
 
-Email identity and recovery must use source metadata only: the logical mailbox, original subject, sender, sending date/time, separately identified received date/time, To/Cc recipients, and original attachment filenames/count when comparably exposed. Preserve the meaning, timezone and precision of dates and the roles of addresses; do not substitute sending, receipt and observation times for one another. Do not inspect or compare message bodies, quoted text, HTML, MIME content structure, embedded images, attachment bytes, summaries or content fingerprints to establish email identity, attachment identity or thread association. There is no content-inspection fallback for ambiguous metadata. The current procedure is the [metadata-only identity recipe](plans/restart/identity/METADATA-RECIPE.md).
+Email identity and recovery must use source metadata only: the logical mailbox, original subject, sender, sending date/time, separately identified received date/time, To/Cc recipients, and original attachment filenames/count when comparably exposed. Preserve the meaning, timezone and precision of dates and the roles of addresses; do not substitute sending, receipt and observation times for one another. Do not inspect or compare message bodies, quoted text, HTML, MIME content structure, embedded images, attachment bytes, summaries or content fingerprints to establish email identity, attachment identity or thread association. There is no content-inspection fallback for ambiguous metadata. The installed procedure is the [metadata-only identity contract](../contracts/identity.md), derived from the approved restart recipe.
 
 School-OS catalogs logical emails rather than requiring one record per provider entry or repeated search appearance. Reuse a logical email record when the sufficiently supported normalized metadata recipe agrees and there is no contradictory evidence. Different provider handles alone do not establish different logical emails, force duplicate records, or block ingestion. Preserve distinctions established by source metadata and keep genuinely ambiguous associations explicit. Existing duplicate catalog records must not be silently destructively merged. No single metadata field or field combination is guaranteed unique or universally available; this policy accepts the residual possibility of genuinely different emails sharing all permitted metadata. Do not promise zero identity errors or infer a product failure merely because the number of provider entries differs from the number of logical records.
 
@@ -92,6 +96,19 @@ Catalog each individual message and reply separately. Thread grouping is an opti
 Processing and startup must remain bounded as history grows. Read the relevant records and source items in manageable units, preserve progress on Drive, and retrieve an original again only when the operation needs it. Do not require loading the whole history or an arbitrarily large source into an agent's working environment.
 
 Enumeration progress is durable instance data: record the mailbox, configured search scope, completed date windows and unfinished work separately from content-processing completion. Follow available continuation pages even after a short page. A temporary pagination token may accelerate an adapter but cannot be required for recovery; a fresh agent can repeat an unfinished window and reuse logical email records through metadata. Mark a window complete only when the available listing route establishes exhaustion. Narrower windows can reduce work but do not prove that a silently capped tool is complete.
+
+## Current explicit MVP exceptions
+
+The broader product direction below remains intentional. The user has explicitly
+deferred general interrupted-canonical-write repair and the separate generic
+record/save framework, centralized tools/jobs/register/scheduler management, and
+packaged installation/upgrades/compatibility machinery from this MVP. These
+exceptions do not remove agent-led first setup, normal save/readback, durable
+source windows and binary coverage, task synchronization, current output
+attribution, fresh-agent queries or compatible extensions. Users and agents own
+nonconcurrent schedules and normal environment resource management. No complete
+reset/write-repair guarantee is made. Current operation recipes carry these
+boundaries without requiring the development conversation.
 
 ## Tools, schedules, and operating visibility
 

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Proposed School-OS representation for oversized Knowledge and Task values. Q10 remains pending approval.">
+  <title>Proposed segment representation · School-OS</title>
+  <style>
+    :root { --ink:#19312b; --muted:#596b65; --paper:#fffef9; --surface:#fff; --line:#d6e0db; --green:#17634d; --wash:#edf5f1; --amber:#8a5c0b; --amber-wash:#fff5dc; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; scroll-padding-top:1.5rem; }
+    body { margin:0; color:var(--ink); background:var(--paper); font:17px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; }
+    a { color:var(--green); text-underline-offset:.17em; }
+    a:focus-visible, summary:focus-visible { outline:3px solid #bf8730; outline-offset:4px; }
+    header { padding:3.5rem max(1.25rem,calc((100vw - 1120px)/2)); background:linear-gradient(135deg,#e8f3ed,#f9f5e9); border-bottom:1px solid var(--line); }
+    header p, main, footer { max-width:74ch; }
+    h1 { max-width:18ch; margin:.35rem 0 1rem; font:600 clamp(2.25rem,6vw,4.4rem)/1.02 Georgia,serif; letter-spacing:-.035em; }
+    h2 { margin:3.5rem 0 1rem; font:600 clamp(1.6rem,4vw,2.25rem)/1.2 Georgia,serif; }
+    h3 { margin:2rem 0 .65rem; font-size:1.15rem; }
+    .eyebrow { margin:0; color:var(--green); font-size:.78rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+    .lead { font-size:1.2rem; }
+    .status { display:inline-block; margin-top:1rem; padding:.45rem .75rem; color:#654405; background:var(--amber-wash); border:1px solid #dfbd79; border-radius:999px; font-weight:750; }
+    .layout { display:grid; grid-template-columns:220px minmax(0,74ch); gap:3rem; max-width:1120px; margin:auto; padding:2rem 1.25rem 5rem; }
+    nav { position:sticky; top:1rem; align-self:start; font-size:.9rem; }
+    nav a { display:block; padding:.35rem 0; text-decoration:none; }
+    main { min-width:0; }
+    .notice, .tradeoff { padding:1.1rem 1.25rem; border-radius:10px; }
+    .notice { background:var(--amber-wash); border-left:4px solid #b27a1b; }
+    .tradeoff { background:var(--wash); border:1px solid var(--line); }
+    .flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:.55rem; margin:1.5rem 0; }
+    .flow div { padding:.8rem; background:var(--surface); border:1px solid var(--line); border-radius:9px; font-size:.9rem; }
+    .flow strong { display:block; color:var(--green); }
+    pre { overflow:auto; padding:1rem; color:#ecf8f2; background:#17352e; border-radius:9px; font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace; }
+    code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+    p code, li code { padding:.08em .28em; background:#eef3ef; border-radius:4px; }
+    li + li { margin-top:.65rem; }
+    footer { margin:auto; padding:1.5rem 1.25rem 3rem; color:var(--muted); border-top:1px solid var(--line); font-size:.9rem; }
+    @media (max-width:820px) { .layout { grid-template-columns:1fr; gap:.5rem; } nav { position:static; display:flex; flex-wrap:wrap; gap:.2rem 1rem; } .flow { grid-template-columns:1fr; } }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="eyebrow">Q10 · one unresolved implementation decision</p>
+    <h1>Keep oversized values lossless and bounded</h1>
+    <p class="lead">The approved design requires numbered pieces but never defined how fresh agents store and follow them. This page presents the exact proposed representation. It does not adopt it.</p>
+    <span class="status">Awaiting explicit user approval</span>
+  </header>
+  <div class="layout">
+    <nav aria-label="Page contents">
+      <a href="#gap">The gap</a>
+      <a href="#recommendation">Recommendation</a>
+      <a href="#shape">Exact shape</a>
+      <a href="#flow">Write and read flow</a>
+      <a href="#tradeoffs">Tradeoffs</a>
+      <a href="#alternatives">Alternatives</a>
+      <a href="#decision">Decision boundary</a>
+    </nav>
+    <main>
+      <section id="gap">
+        <div class="notice"><strong>Nothing on this page is implemented as approved architecture.</strong> Q1 reserves <code>segment_refs</code>, and D1 requires lossless numbered pieces, but neither defines their record or reference shape. Until Q10 is decided, a write that needs segmentation remains blocked.</div>
+        <h2>Where the missing shape matters</h2>
+        <p>The gap affects three already-approved values: a Knowledge <code>statement</code>, Knowledge <code>relationships</code>, and Task <code>parent_state.completion_reviews</code>. Small values keep their current shape. No other field gains segmentation by implication.</p>
+      </section>
+      <section id="recommendation">
+        <h2>Recommendation: one narrow segment family</h2>
+        <p>Use one <code>record_segment</code> family. Each segment has a School-OS ID, its owning Knowledge or Task, the field being split, a one-based ordinal, a chunk of JSON-encoded text, and an optional next reference. The owner stores only the first reference and expected count.</p>
+        <p>Segments use ordinary bounded D1 JSON pages and the same family-directory/locator mechanism as other canonical records. They are access machinery, not new facts, emails or Tasks. This adds no generic writer, queue, service, garbage collector or repair engine.</p>
+      </section>
+      <section id="shape">
+        <h2>The exact proposed shape</h2>
+        <p>A long Knowledge statement replaces <code>statement</code> with the already-approved <code>segment_refs</code> field:</p>
+        <pre><code>{
+  "value_encoding": "json_text",
+  "first_ref": {"family": "record_segment", "id": "segment_&lt;uuid-v4&gt;"},
+  "segment_count": 2
+}</code></pre>
+        <p>An oversized <code>relationships</code> or <code>parent_state.completion_reviews</code> array becomes <code>{"state":"segmented","segment_refs": &lt;the same descriptor&gt;}</code>. This is a known alternative representation, not an empty or unknown array.</p>
+        <p>Each segment, inside the normal D1 page envelope, is:</p>
+        <pre><code>{
+  "segment_id": "segment_&lt;uuid-v4&gt;",
+  "owner_ref": {"family": "knowledge", "id": "knowledge_&lt;uuid-v4&gt;"},
+  "field_path": "statement",
+  "ordinal": 1,
+  "text_chunk": "first part of the JSON-encoded value",
+  "next_ref": {"family": "record_segment", "id": "segment_&lt;another-uuid-v4&gt;"}
+}</code></pre>
+        <p>The final segment omits <code>next_ref</code>. IDs are assigned once and never derived from content. Task completion-review segments use a Task owner reference.</p>
+      </section>
+      <section id="flow">
+        <h2>Write, switch, reconstruct, verify</h2>
+        <div class="flow" aria-label="Proposed segment lifecycle">
+          <div><strong>1 · Encode</strong>Encode the whole original field as JSON text.</div>
+          <div><strong>2 · Split</strong>Split losslessly at character boundaries, preferring paragraphs.</div>
+          <div><strong>3 · Save</strong>Write and read back a complete new immutable chain.</div>
+          <div><strong>4 · Switch</strong>Change and read back the owner descriptor and required indexes.</div>
+          <div><strong>5 · Read</strong>Follow, verify, join and decode every expected piece.</div>
+        </div>
+        <p>Each containing page, including escaping and envelope overhead, stays within 64 KiB. Every logical value change creates a complete chain with new segment IDs. The current referenced chain is never edited in place before the owner switches.</p>
+        <p>A reader verifies owner, field, ordinal, distinct IDs, next links and the exact segment count. It concatenates all chunks and decodes JSON once into the original string or array type. A missing piece, cycle, duplicate ordinal, wrong owner, wrong type or unexpected continuation is incomplete data. It never becomes a shortened fact or history.</p>
+        <p>The owner revision changes with the logical value. Derived indexes use the reconstructed whole value. Whole-email ingestion cannot complete until every required piece is saved and checked.</p>
+      </section>
+      <section id="tradeoffs">
+        <h2>What this buys, and what it costs</h2>
+        <div class="tradeoff"><p><strong>Benefits:</strong> lossless retained knowledge, bounded pages and references, fresh-agent interoperability, and no provider-derived identity or new dependency.</p><p><strong>Costs:</strong> extra Drive reads and writes only for oversized values. Changing a value copies its chain. Old unreachable pieces may remain and consume storage because automatic cleanup is not proposed. Individual JSON-text chunks are inconvenient to read alone; only the complete reconstructed value has the original meaning.</p></div>
+        <p>Save/readback remains non-atomic under the existing MVP boundary. The proposal adds no interrupted-write recovery promise, checksum identity or automatic cleanup guarantee. Actual connector cost and reliability remain unknown until later authorized trials.</p>
+      </section>
+      <section id="alternatives">
+        <h2>Credible alternatives</h2>
+        <ul>
+          <li><strong>Separate segment families for each field.</strong> Individual pieces are more self-describing, but School-OS gains three parallel formats and more adapter/documentation work.</li>
+          <li><strong>Raise the page limit or allow oversized records.</strong> This reduces reads, but changes approved D1 bounds and may fail on managed-agent transfer limits.</li>
+          <li><strong>Block oversized values in the MVP.</strong> This avoids a new shape, but cannot meet the approved lossless information/history requirement and leaves affected ingestion incomplete.</li>
+        </ul>
+      </section>
+      <section id="decision">
+        <h2>The exact decision boundary</h2>
+        <p>Explicit user approval would adopt only this segment record, descriptor, allowed fields and lifecycle. It would not qualify the implementation, restore D2 recovery or the generic writer, authorize a different schema, or authorize an unrelated test sequence.</p>
+        <p>The next phase remains: decide Q10, finish the retained MVP, commit and push it, verify the exact remote revision, then run the three already-authorized isolated seven-day ingestion trials. No trial has started.</p>
+        <p><a href="SEGMENT-REPRESENTATION-PROPOSAL.md">Exact proposal source</a> · <a href="architecture-guide.html#open-questions">Current decision guide</a> · <a href="data-architecture.html">Approved data architecture</a> · <a href="architecture-in-practice.html">Architecture in practice</a></p>
+      </section>
+    </main>
+  </div>
+  <footer>Written proposal only. No test, connector operation, ingestion or live effect was performed.</footer>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{
+  "instance_id": "inst_11111111-1111-4111-8111-111111111111",
+  "family": "email",
+  "page_id": "page_90000000-0000-4000-8000-000000000006",
+  "schema_version": "1",
+  "content_revision": 1,
+  "records": [
+    {
+      "email_id": "email_40000000-0000-4000-8000-000000000001",
+      "source_account_ref": {"family": "source_account", "id": "source_account_30000000-0000-4000-8000-000000000001"},
+      "observed_metadata": {
+        "subject": "Spring math and household update",
+        "sender": "Morgan Reed <mreed@cedargrove.example>",
+        "original_date": {"state": "known", "value": "2026-03-12T08:15:23-07:00", "precision": "second", "timezone": "-07:00", "meaning": "original_email_date"},
+        "received_time": {"state": "known", "value": "2026-03-12T15:15:42Z", "precision": "second", "timezone": "Z", "meaning": "received_time"},
+        "recipients": {"state": "known", "to": ["lane-family@example.net"], "cc": []},
+        "attachment_inventory": {"state": "known_complete", "original_names": ["Contact-Confirmation.pdf"]}
+      },
+      "comparison_metadata": {
+        "subject": "Spring math and household update",
+        "sender": {"local_part": "mreed", "domain": "cedargrove.example"},
+        "to": [{"local_part": "lane-family", "domain": "example.net"}],
+        "cc": [],
+        "original_date_instant": "2026-03-12T15:15:23Z"
+      },
+      "association": {"state": "resolved", "pending_candidate_refs": []},
+      "access_aids": [{"adapter_ref": "system/tool-adapters/fictional-mail-tool", "provider_handle": "replaceable-fictional-message-handle", "observed_at": "2026-03-12T17:05:00Z"}],
+      "coverage_ref": {"family": "ingestion_coverage", "id": "coverage_50000000-0000-4000-8000-000000000001"},
+      "recorded_at": "2026-03-12T17:06:00Z"
+    }
+  ]
+}

@@ -11,6 +11,9 @@ service, state machine or provider-specific rule. It also does not authorize a
 source read or tool write by itself; perform only the operation the parent has
 requested through already authorized tools and configured synchronization.
 
+Use [the data contract](../contracts/data.md), [storage](storage.md) and
+[task synchronization](task-sync.md) for actual records, saves and parent edits.
+
 ## Meaning of the review state
 
 Completion evidence is strong enough only when it establishes the requested
@@ -34,16 +37,20 @@ The parent-confirmation state is not canonical completion. It tells the parent:
 
 ## Agent procedure
 
-### 1. Process the source and own coverage
+### 1. Read the source evidence within ingestion
 
-Complete the authorized source operation and establish its required coverage
-before interpreting completion evidence. Preserve the original source meaning,
-time precision, child and school context, and any uncertainty. Do not start an
-automatic monitor, poll for status, or search sent mail unless the parent has
-separately requested and authorized that source scope.
+Read the individual email's complete required body and attachment material and
+establish the evidence before deciding that it fulfills a Task. Preserve the
+original source meaning, time precision, child and school context, and any
+uncertainty. Apply this review while composing and saving the email's Knowledge
+and Tasks; it does not require a pre-existing `fully_ingested` flag. The ingestion
+operation sets that flag only after all required Knowledge, Tasks, source links
+and coverage are saved and read back. No completed partial email is claimed.
 
-If coverage is incomplete, describe the gap. Do not use absence from a partial
-read as proof that the task is unfinished or satisfied.
+Do not start an automatic monitor, poll for status, or search sent mail unless
+that source scope is already requested and authorized. If required material is
+unread, describe the gap and keep the email not ingested. Do not use absence from
+a partial read as proof that the task is unfinished or satisfied.
 
 ### 2. Link the evidence to the exact task
 
@@ -60,23 +67,33 @@ the issue for review.
 
 ### 3. Preserve evidence and pending confirmation in Drive
 
-Save the source evidence and its relationship using the instance's existing
-canonical Drive meanings. Record that the linked task is **Completion detected
-— awaiting parent confirmation**, while leaving canonical completion false.
+Save the source evidence as source-linked Knowledge. Add its typed evidence
+references and actual detection time to an approved
+`parent_state.completion_reviews` entry with `state: awaiting_confirmation`.
+This records **Completion detected — awaiting parent confirmation**, while
+leaving `parent_state.completed` false.
 Preserve the evidence needed for the parent to understand why it was flagged,
 then perform the normal save readback required by the operation.
 
-This instruction does not prescribe a new field, enum, record layout or
-identifier. Use the existing task, fact and relationship representation selected
-by the instance and approved architecture. If that representation cannot
-preserve the distinction without a new architecture choice, report the gap
-instead of inventing one.
+Read prior review decisions before adding the entry. The same evidence already
+awaiting, confirmed or rejected does not create another suggestion. Materially
+new evidence may justify a new awaiting entry with its own references, without
+erasing a rejected decision. If review history outgrows its bounded Task page, do not truncate evidence or
+decisions. The data contract explicitly identifies the segment representation
+as unresolved; report the affected save as blocked until that representation
+is approved. Do not invent a local segment shape.
 
 If the canonical task is already parent-confirmed complete, retain and link the
 later evidence as appropriate, but do not reopen or downgrade the task merely
 because a later receipt or acknowledgment arrived.
 
 ### 4. Present the review state in the task tool
+
+Perform this step only when a task projection is selected and task-app
+synchronization is authorized. An ingestion-only operation saves the canonical
+review above and reports it; it does not update an app or wait for parent
+confirmation before the email can finish ingestion. With no selected task tool,
+the canonical review is still available through School-OS queries and briefs.
 
 Read the selected shared tool-semantic adapter. Through the agent's authorized
 connector, project the pending-confirmation meaning in an appropriate supported form:
@@ -107,6 +124,14 @@ synchronization reads that parent edit, compares Drive, the prior synchronized
 base and the current app value, and writes unconflicted parent-confirmed
 completion to canonical Drive data. Verify both sides according to the selected
 adapter and normal write procedure.
+
+Mark the relevant awaiting review `confirmed` with the observed decision time
+when that parent confirmation is established. If the parent rejects the
+suggestion, retain its evidence and change that review to `rejected`, preserving
+the decision time and any parent explanation. Keep the Task open unless a
+separate supported parent decision changes it. If the tool cannot express
+rejection unambiguously, accept it through an explicit parent instruction; never
+infer it merely from moving a row, an absent task or a hidden section.
 
 If Drive and the app contain contradictory edits to the same field, do not pick
 one silently. Preserve both observations and ask for review under D5 conflict

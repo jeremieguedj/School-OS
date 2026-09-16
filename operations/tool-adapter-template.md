@@ -62,6 +62,11 @@ section, depending on the tool’s capabilities and chosen mapping. Preserve
 the task’s identity and parent-editable fields. Also describe how the parent marks the projected task complete and how
 the connector can read that choice for the next D5 three-way synchronization.
 
+Describe how the parent rejects a detected-completion suggestion, or state that
+rejection requires an explicit instruction through an agent. Preserve the
+approved review entry and evidence. The same rejected evidence must not create a
+new awaiting entry. Do not infer rejection from a missing task or incomplete read.
+
 Do not map the pending-confirmation meaning to the tool's completed state. Do
 not invent fallback labels, tags, custom fields, identifiers or permissions. If
 neither a suitable status nor section is available, mark the projection

@@ -2,7 +2,7 @@
 
 Status: **written, not run or qualified**. These Python standard-library
 functions support the approved
-[metadata recipe](../docs/plans/restart/identity/METADATA-RECIPE.md). They have no
+[metadata recipe](../contracts/identity.md). They have no
 I/O, provider dependency, command-line entry point, persistence layer or model
 calls. No Python version or minimum runtime is pinned here.
 

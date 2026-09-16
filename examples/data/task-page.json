@@ -1,0 +1,35 @@
+{
+  "instance_id": "inst_11111111-1111-4111-8111-111111111111",
+  "family": "task",
+  "page_id": "page_90000000-0000-4000-8000-000000000010",
+  "schema_version": "1",
+  "content_revision": 1,
+  "records": [
+    {
+      "task_id": "task_70000000-0000-4000-8000-000000000001",
+      "origin": "source_derived",
+      "action": "Confirm the household emergency-contact details in the Cedar Grove portal.",
+      "context": "One confirmation covers Robin and Jamie.",
+      "scope_ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000001"},
+      "source_context_refs": [{"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000004"}],
+      "completion_subject_ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000001"},
+      "beneficiary_refs": [
+        {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000002"},
+        {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000003"}
+      ],
+      "supporting_knowledge_refs": [{"family": "knowledge", "id": "knowledge_60000000-0000-4000-8000-000000000003"}],
+      "action_kind": "finite",
+      "school_timing": {"deadline": {"state": "known", "value": "2026-03-20", "precision": "day", "meaning": "school_deadline"}},
+      "parent_state": {
+        "owner": {"state": "unknown", "reason": "parent has not assigned an owner"},
+        "planned_date": {"state": "unknown", "reason": "parent has not selected a date"},
+        "progress": "open",
+        "completed": false,
+        "personal_notes": [],
+        "completion_reviews": []
+      },
+      "task_sync": [],
+      "recorded_at": "2026-03-12T17:16:00Z"
+    }
+  ]
+}

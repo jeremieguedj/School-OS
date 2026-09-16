@@ -1,55 +1,46 @@
 # School-OS
 
-**Restart in progress.** Follow [START-HERE.md](START-HERE.md), the current
-[product principles](docs/product-principles.md) and
-[restart plan](docs/plans/restart/PLAN.md). The implementation and operational
-claims below describe the retired baseline, preserved by tag
-`restart-baseline-2026-09-14`; they are historical evidence, not instructions to
-install or run the restart. The new production architecture awaits the explicit
-approvals recorded in the active plan. No restart qualification is claimed.
+School-OS gives a capable agent shared instructions and a canonical Google Drive
+knowledge base for a household's school communications, tasks and briefs.
+Original emails and attachments stay at their source; saved knowledge retains
+source links, scope, dates and qualifications.
 
-School-OS is a reusable, agent-operated system for turning school or family communications into a private, source-linked knowledge base, task register, and daily brief.
+Start with [START-HERE.md](START-HERE.md). The [operation guide](operations/README.md)
+contains the reusable instructions. [Product principles](docs/product-principles.md)
+and the [approved restart plan](docs/plans/restart/PLAN.md) govern implementation.
 
-The canonical knowledge layer is the foundation of the product. Daily email, task synchronization, and optional audio briefs are applications built on it, and users can add other applications and workflows without replacing the underlying source-linked data. See [Product principles](docs/product-principles.md) for the intended users, use cases, and design priorities.
+**Status:** the approved restart MVP is being implemented. Existing helpers and
+instructions are authored but not qualified. The retired implementation is not
+the foundation of this project. No installation or provider compatibility claim
+is made by this repository state.
 
-It is designed for this deployment model:
+## Current project material
 
-```text
-GitHub tagged release -> user manually shares release with agent -> installed runtime in Google Drive -> manual/scheduled operations run from Drive
-```
+- `operations/`: agent procedures for setup, ingestion, knowledge, tasks and briefs.
+- `helpers/`: the approved small Python standard-library routines.
+- `docs/product-principles.md`: product authority.
+- `docs/plans/restart/`: approved design, continuity and historical evidence.
+- `scripts/privacy_scan.py`: independent development publication hygiene.
 
-GitHub is the reusable upstream. A user's Google Drive contains the active installed release and all private configuration, source catalog, task history, and runtime state. A scheduled run must not depend on GitHub access.
+Drive instances separate `system`, `instance` and `extensions`. Canonical data uses
+bounded JSON pages and owned IDs; provider handles only aid access. Agents use
+shared semantic adapters through their own connectors. No dedicated computer,
+persistent local runtime, coding CLI or central scheduler is required.
 
-## Principles
+The MVP defers generic interrupted-write repair, centralized jobs management and
+packaged installation/upgrades. Users and agents operate nonconcurrently on the
+same Drive data. See the [coverage map](docs/plans/restart/implementation/COVERAGE.md)
+for retained versus deferred scope.
 
-- Private data never belongs in this repository.
-- The source catalog preserves facts, provenance, coverage, and raw source text according to the installed configuration.
-- Derived summaries, guidelines, and task projections are regenerated from canonical records.
-- The external task app is a user interaction surface; the canonical task record and history remain in the private instance.
-- Providers and agent runtimes are selected explicitly through adapters and configuration.
-- The package must be usable by a single agent without conversational memory or subagents.
-- All write-capable operations follow the installed operation recipe and its verification requirements.
-- Every installable release is a pinned, immutable package with a complete payload inventory and independently distributed archive checksum.
+## Preserved history
 
-## Repository map
+The [OrgoS Restart Documentation snapshot](https://github.com/jeremieguedj/School-OS/releases/tag/orgos-restart-documentation)
+fixes the approved documentation and the complete pre-cleanup tracked tree at
+`09f6be151cd549431343b9ebe44a1d03371d2f4f`. Legacy code, schemas, installers, adapters
+and validation workflow are recoverable there and in Git history. The earlier
+`restart-baseline-2026-09-14` tag also remains intact. Frozen restart studies retain
+their original code and results and are not active operating recipes.
 
-- [START-HERE.md](START-HERE.md) — neutral agent entry point.
-- [docs/product-principles.md](docs/product-principles.md) — purpose, personas, use cases, and product-level design priorities.
-- [PLAN.md](PLAN.md) — resumable implementation plan.
-- [PROGRESS.md](PROGRESS.md) — current execution checkpoint.
-- [core](core) — generic operations, contracts, and decision tables.
-- [adapters](adapters) — runtime and provider mappings.
-- [templates](templates) — synthetic private-instance starting files.
-- [docs](docs) — architecture, privacy boundaries, onboarding, and deferred review.
-
-## Current status
-
-This repository is being built from an existing private deployment. It intentionally contains no real names, domains, email messages, Drive IDs, provider IDs, recipients, or secrets. Alpha packages are prereleases; `release.yaml` is authoritative about whether the checked-out source is an installable released version.
-
-### Alpha.13 recovery evidence
-
-The alpha.13 synthetic suite exercises planned continuation, immutable
-checkpoint-chain recovery, lossless catalog adoption, canonical task/comment
-recovery, and delivery-ledger reconciliation after local work is discarded.
-These are repository-level behavioral checks; they do not establish production
-provider, scheduler, or private-instance conformance.
+Development stays in this repository on `codex/restart-implementation`. Only
+current instructions are offered to new instance agents. Private household data,
+provider receipts and credentials must never be committed.

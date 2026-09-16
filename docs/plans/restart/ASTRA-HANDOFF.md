@@ -1,4 +1,9 @@
-# Restart coordinator handoff
+# Restart coordinator handoff (historical filename)
+
+The filename predates the current staffing direction. Use bounded Sol workers
+only and do not assign Astra workers. The root agent primarily coordinates,
+handles architecture and other escalations, integrates the result and owns Git
+publication.
 
 Stay in the current repository directory. Read START-HERE.md, AGENTS.md,
 docs/product-principles.md, the current docs/plans/restart/PLAN.md, the latest
@@ -13,14 +18,18 @@ D2 generic save/repair, D7 centralized jobs and D8 packaged lifecycle stay defer
 Use the approved small Python standard-library helpers and agent/tool operations;
 do not rebuild the old runtime under a different name.
 
-First preserve **OrgoS Restart Documentation** as a tagged GitHub documentation
-snapshot. Then implement on `codex/restart-implementation` in this directory,
-keeping legacy code recoverable in history but outside active runtime entry points.
-The coordinator owns Git, integration, architecture escalations and communication.
-Use no more than three bounded workers with clear file ownership. Root reviews
-product/principle conformance and does not silently reduce retained scope.
+**OrgoS Restart Documentation** is already preserved and verified as a tagged
+GitHub documentation snapshot at `09f6be151cd549431343b9ebe44a1d03371d2f4f`.
+Continue on `codex/restart-implementation` in this directory, keeping legacy code
+recoverable in history but outside active runtime entry points. Retained
+operations, contracts, adapters and fictional examples are authored but untested.
+Q10's exact segment representation is still pending approval; oversized values
+block until it is settled and must never be truncated. Use no more than three
+bounded Sol workers with clear file ownership. Root reviews product/principle
+conformance and does not silently reduce retained scope.
 
-Complete and publish implementation, verify its remote revision, then conduct
+After Q10 is approved, complete and publish implementation, verify its remote
+revision, then conduct
 only the newly authorized three isolated seven-day school-email ingestion trials:
 a fresh context-free worker, Gemini Spark through the user's browser, and ChatGPT
 Work through the browser. Each gets its own new Drive instance within the user's

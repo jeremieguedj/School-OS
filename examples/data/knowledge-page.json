@@ -1,0 +1,106 @@
+{
+  "instance_id": "inst_11111111-1111-4111-8111-111111111111",
+  "family": "knowledge",
+  "page_id": "page_90000000-0000-4000-8000-000000000009",
+  "schema_version": "1",
+  "content_revision": 1,
+  "records": [
+    {
+      "knowledge_id": "knowledge_60000000-0000-4000-8000-000000000001",
+      "knowledge_kind": "observation",
+      "statement": "During the November check-in, Robin needed prompts to compare fractions with unlike denominators.",
+      "qualifications": ["The March email reports this retrospectively and attributes it to the November check-in."],
+      "scope": {"anchor_ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000002"}, "applicability": "anchor_only"},
+      "entity_links": [
+        {"role": "subject", "ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000002"}},
+        {"role": "reporter", "ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000005"}},
+        {"role": "school_context", "ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000004"}}
+      ],
+      "topic_refs": [
+        {"family": "topic", "id": "topic_20000000-0000-4000-8000-000000000001"},
+        {"family": "topic", "id": "topic_20000000-0000-4000-8000-000000000002"},
+        {"family": "topic", "id": "topic_20000000-0000-4000-8000-000000000003"}
+      ],
+      "source_refs": [{"email_ref": {"family": "email", "id": "email_40000000-0000-4000-8000-000000000001"}, "part": "body", "location": "first math paragraph", "primary": true}],
+      "dates": [
+        {"state": "known", "value": "2025-11", "precision": "month", "meaning": "observation_period"},
+        {"state": "known", "value": "2026-03-12T08:15:23-07:00", "precision": "second", "timezone": "-07:00", "meaning": "original_email_date"}
+      ],
+      "action_disposition": "none",
+      "relationships": [],
+      "recorded_at": "2026-03-12T17:12:00Z"
+    },
+    {
+      "knowledge_id": "knowledge_60000000-0000-4000-8000-000000000002",
+      "knowledge_kind": "observation",
+      "statement": "Robin independently explained why two fractions were equivalent during the March small-group activity.",
+      "qualifications": ["The observation concerned one small-group activity."],
+      "scope": {"anchor_ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000002"}, "applicability": "anchor_only"},
+      "entity_links": [
+        {"role": "subject", "ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000002"}},
+        {"role": "reporter", "ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000005"}},
+        {"role": "school_context", "ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000004"}}
+      ],
+      "topic_refs": [
+        {"family": "topic", "id": "topic_20000000-0000-4000-8000-000000000001"},
+        {"family": "topic", "id": "topic_20000000-0000-4000-8000-000000000002"},
+        {"family": "topic", "id": "topic_20000000-0000-4000-8000-000000000003"}
+      ],
+      "source_refs": [{"email_ref": {"family": "email", "id": "email_40000000-0000-4000-8000-000000000001"}, "part": "body", "location": "second math paragraph", "primary": true}],
+      "dates": [
+        {"state": "known", "value": "2026-03-10", "precision": "day", "meaning": "observation_date"},
+        {"state": "known", "value": "2026-03-12T08:15:23-07:00", "precision": "second", "timezone": "-07:00", "meaning": "original_email_date"}
+      ],
+      "action_disposition": "none",
+      "relationships": [],
+      "recorded_at": "2026-03-12T17:13:00Z"
+    },
+    {
+      "knowledge_id": "knowledge_60000000-0000-4000-8000-000000000003",
+      "knowledge_kind": "guideline",
+      "statement": "Each Cedar Grove household must confirm its emergency-contact details once by March 20; one confirmation covers siblings in the same household.",
+      "qualifications": ["The PDF states that one household confirmation covers all enrolled siblings."],
+      "scope": {
+        "anchor_ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000004"},
+        "applicability": "members_at_effective_time",
+        "membership_role": "student"
+      },
+      "entity_links": [{"role": "school_context", "ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000004"}}],
+      "topic_refs": [{"family": "topic", "id": "topic_20000000-0000-4000-8000-000000000004"}],
+      "source_refs": [{"email_ref": {"family": "email", "id": "email_40000000-0000-4000-8000-000000000001"}, "part": "attachment", "attachment_group_ref": {"family": "attachment_group", "id": "attachment_group_41000000-0000-4000-8000-000000000001"}, "candidate_ref": "candidate_1", "location": "Contact-Confirmation.pdf, instructions paragraph", "primary": true}],
+      "dates": [
+        {"state": "known", "value": "2026-03-12", "precision": "day", "meaning": "effective_date"},
+        {"state": "known", "value": "2026-03-20", "precision": "day", "meaning": "school_deadline"},
+        {"state": "known", "value": "2026-03-12T08:15:23-07:00", "precision": "second", "timezone": "-07:00", "meaning": "original_email_date"}
+      ],
+      "action_disposition": "finite",
+      "relationships": [],
+      "recorded_at": "2026-03-12T17:14:00Z"
+    },
+    {
+      "knowledge_id": "knowledge_60000000-0000-4000-8000-000000000004",
+      "knowledge_kind": "fact",
+      "statement": "Morgan Reed is Robin's math teacher for the 2025–2026 school year.",
+      "qualifications": ["The relationship is stated in the fictional March class update."],
+      "scope": {"anchor_ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000002"}, "applicability": "anchor_only"},
+      "entity_links": [
+        {"role": "student", "ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000002"}},
+        {"role": "teacher", "ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000005"}},
+        {"role": "school_context", "ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000004"}}
+      ],
+      "topic_refs": [
+        {"family": "topic", "id": "topic_20000000-0000-4000-8000-000000000001"},
+        {"family": "topic", "id": "topic_20000000-0000-4000-8000-000000000003"}
+      ],
+      "source_refs": [{"email_ref": {"family": "email", "id": "email_40000000-0000-4000-8000-000000000001"}, "part": "body", "location": "class context sentence", "primary": true}],
+      "dates": [
+        {"state": "known", "value": "2025-08-25", "precision": "day", "meaning": "effective_start"},
+        {"state": "known", "value": "2026-06-12", "precision": "day", "meaning": "effective_end"},
+        {"state": "known", "value": "2026-03-12T08:15:23-07:00", "precision": "second", "timezone": "-07:00", "meaning": "original_email_date"}
+      ],
+      "action_disposition": "none",
+      "relationships": [],
+      "recorded_at": "2026-03-12T17:15:00Z"
+    }
+  ]
+}

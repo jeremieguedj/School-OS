@@ -5319,3 +5319,119 @@ requirements, then read this log from top to bottom.
 - Exact next action: finish documentation hygiene, commit/push and verify the
   snapshot/tag/release; create the implementation branch, retire legacy active
   paths, then delegate the complete approved MVP and integrate it.
+
+
+## 2026-09-16 — Documentation snapshot published; clean implementation branch
+
+- Published GitHub release **OrgoS Restart Documentation** with annotated tag
+  `orgos-restart-documentation`. Verified tag target and remote documentation
+  branch at `09f6be151cd549431343b9ebe44a1d03371d2f4f`; verified the release name,
+  tag, published state and documentation-prerelease designation.
+- Created `codex/restart-implementation` from that tag in the same directory;
+  working tree was clean at branch creation. No history rewrite or baseline-tag
+  movement occurred. No open PR from the snapshot branch was found.
+- Retired 230 tracked legacy files, including runtime/contract/schema/installer/
+  provider wrapper code and the legacy CI workflow. The workflow ran retired
+  package tests and was explicitly retired with that code, not silently bypassed.
+  Keep standalone privacy hygiene, existing private/untracked material, current
+  helper/operation material and frozen restart study files.
+- Replaced competing historical document entry points with snapshot/current-plan
+  pointers. Updated agent safeguards to retain raw private evidence, failure
+  classification, independent semantic expectations and truthful action coverage
+  without imposing retired packet/generation machinery.
+- Assigned three bounded implementation workers: storage/knowledge/query,
+  ingestion/extraction/continuation, and setup/task-sync/brief/shared adapters.
+  Coordinator owns integration, coverage, Git and any new architecture escalation.
+- Snapshot hygiene: zero privacy findings, 243 local document links/anchors
+  resolved and clean diff whitespace. This is publication hygiene, not testing.
+- Exact next action: integrate the complete retained MVP, review and publish it,
+  verify the exact remote revision, then begin the three authorized isolated
+  ingestion/audit trials. No functional test or ingestion has started.
+
+
+## 2026-09-16 — Retained operations authored; overflow representation escalated
+
+- Workers authored operational data/identity contracts, bounded storage,
+  knowledge/query, historical/daily ingestion, extraction and continuation,
+  task synchronization, setup/interview, completion review and brief procedures.
+  Added shared semantic mappings for Drive, Gmail, Sheets, Todoist and optional
+  ElevenLabs, and connected fictional data/ingestion examples.
+- Coordinator added startup/daily composition and an operation dependency index,
+  and prepared the exact isolated-trial protocol. No functional execution occurred.
+- Integration fixed a circular completion-review/ingestion gate: evaluate complete
+  source evidence within ingestion; save/read back Knowledge/Tasks before the
+  final fully-ingested flag. Ingestion-only trials do not project to task apps.
+- Cross-review identified a genuine missing approved shape: long-value segments
+  were required but their stored records/references were not defined. Prepared
+  SEGMENT-REPRESENTATION-PROPOSAL.md and asked the user to approve the narrow new
+  canonical representation. It remains unadopted; affected writes block honestly.
+  Do not reduce scope or begin the trials before the complete MVP prerequisite.
+- Private Site version 13 deployed successfully from source
+  `1d5ecbd22a0c1b351d2fb9c3f7a25ce0ad3b81c6`, recording final numbered-review approval
+  and linking documentary references to the snapshot. The subsequent Q10 escalation
+  is recorded here and in the active decision ledger, pending integration.
+- Exact next action: resolve cross-review findings, obtain the segment-format
+  answer while continuing independent approved work, integrate and publish the
+  retained MVP, then conduct the three authorized ingestion trials.
+
+
+## 2026-09-16 — Sol handoff and publication-hygiene review
+
+- Updated current continuity summaries to reflect the actual checkpoint: the
+  documentation snapshot is published and verified; retained operations,
+  contracts, adapters and fictional examples are authored but untested; and Q10
+  remains a publication-blocking architecture decision. Historical progress
+  entries were not rewritten.
+- Recorded the user's current staffing direction: bounded workers are Sol only,
+  no Astra worker is assigned, and the root agent primarily coordinates,
+  handles architecture and other escalations, integrates and owns publication.
+  The existing `ASTRA-HANDOFF.md` path remains only as a historical filename.
+- Clarified extraction's oversized-value guard. Until Q10's segment shape is
+  approved and added to the contract, the agent may save only bounded
+  `statement` values; an oversized substantive value blocks retention and full
+  ingestion and must never be truncated.
+- Focused static review found no new architecture gap in the current data,
+  storage and task material. The locator fallback order, window-specific
+  observed-Email directory chains, exact nested configuration/Email/coverage
+  shapes and task synchronization meanings are materially consistent. This is
+  review evidence only, not functional validation.
+- Publication hygiene found zero privacy findings and zero findings across 233
+  local document links/anchors; staged and unstaged whitespace checks passed.
+  The frozen metadata/MIME study paths have no staged or unstaged changes. Only
+  sample Git hooks are present. The legacy CI workflow is explicitly retired
+  with the legacy runtime and preserved in the documentation snapshot; no
+  replacement functional CI or disabled current check is claimed. This review
+  did not stage, commit, push or alter gitignored/private material.
+- No tests, simulations, helper execution/import, builds, connector/browser
+  probes, ingestion, sends, task-app effects or live operations ran. The three
+  seven-day isolated ingestion trials remain authorized only after the complete
+  implementation is published and its exact remote revision is verified.
+- Exact next action: obtain Q10 approval, integrate the approved segment shape,
+  finish static review and publication hygiene, commit/push the complete retained
+  MVP and verify its exact remote revision; only then begin the three authorized
+  isolated trials.
+- Final concurrent-state hygiene rerun: zero privacy findings and zero findings
+  across 265 local document links/anchors. A transient missing-anchor report
+  occurred while another owned HTML file was being written; the completed file
+  contains the target and the clean rerun supersedes that transient observation.
+
+
+## 2026-09-16 — Restart implementation checkpoint; Q10 remains open
+
+- Accepted the authored operating recipes, retained contracts, shared semantic
+  adapters, minimal helper references and fictional examples after bounded review.
+  These are untested; full MVP implementation remains incomplete until the
+  oversized-value representation is approved and integrated.
+- Website sources now distinguish approved Q1–Q9 from the single new Q10 question,
+  with a readable concrete segment proposal. No proposed segment schema has been
+  adopted or used to save instance data.
+- User requires no Astra workers. Both current bounded workers are explicitly Sol;
+  earlier workers were stopped. Root coordinates, handles architecture/escalations,
+  reviews integration and owns Git/publication.
+- Publishing this accepted-work checkpoint preserves progress; it does not satisfy
+  the complete-implementation prerequisite for the three ingestion trials. No
+  functional tests, simulations, probes, ingestion or external task/send effects
+  have run. The frozen studies and private material remain unchanged.
+- Exact next action: obtain the explicit Q10 decision, implement that approved
+  representation with Sol workers, publish and verify the complete retained MVP,
+  then conduct the three already-authorized isolated ingestion/audit trials.

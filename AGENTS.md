@@ -1,67 +1,55 @@
 # Agent instructions
 
-Read [START-HERE.md](START-HERE.md) before working in this repository.
+Read [START-HERE.md](START-HERE.md) before working in this repository. Follow its
+[development continuity](START-HERE.md#repository-development-continuity) and the
+[current restart plan](docs/plans/restart/PLAN.md). The snapshot
+`orgos-restart-documentation` preserves the former instructions and implementation.
 
-## Development continuity
+## Development and evidence
 
-For repository maintenance, follow the authoritative
-[repository development continuity](START-HERE.md#repository-development-continuity)
-requirements in `START-HERE.md`.
+The new project uses the approved restart contract and agent-led operations.
+Retired packet validators, generation runtimes, provider-derived IDs and the old
+release builder are historical evidence, not implementation dependencies.
 
-## School-OS developers only — live connector evidence discipline
+For School-OS development and the specifically authorized ingestion trials:
 
-This section governs development of School-OS and its provider/runtime adapters.
-It is not an operating procedure for parents or other regular users.
+1. Keep private instance material out of Git, patches, terminal output and chat.
+   Preserve complete connector receipts or thrown exceptions before normalization
+   in mode-0600 files under an admitted gitignored private directory. Publish only
+   synthetic examples and privacy-safe findings. Do not log real message content,
+   provider IDs, URLs, request arguments, credentials or unsanitized errors.
+2. Classify failures from evidence: local validation, dispatch, transport/no
+   response, provider error, or response normalization. A generic error is not
+   proof of throttling, auth failure, timeout, failure of a write, or success.
+3. Inspect complete response topology, types and conflicting duplicated values
+   before repairing a connector interpretation. Keep connector envelopes and
+   display metadata separate from canonical source evidence. Derive fictional
+   fixtures for observed shapes; a fixture invented from memory is not evidence.
+4. Distinguish supported equivalent empty forms from absent/unknown source data.
+   Do not normalize a missing inventory into a known-empty one. Compare actual
+   readback with intended values; echoed write requests are not readback proof.
+5. Preserve future failures and verification evidence privately. Normal reports
+   may include stage, response-observed state, supported status/reason, retry
+   advice and a private receipt path. If no reason/status is supplied, record
+   that absence. Unknown effects require available verification, not blind retry.
+6. Bind independent semantic expectations to the exact source evidence reviewed.
+   Developer receipt hashes may bind audit evidence privately; never use content
+   hashes as canonical email/attachment identity. Keep the expectation independent
+   of the tested agent's generated output; an empty extraction is a substantive
+   claim requiring source evidence, not a reusable default.
+7. Independently compare the saved knowledge/task inventory against the source
+   expectations, including finite, conditional and recurring action dispositions,
+   scope, qualifications and correction relationships. A self-audit copied from
+   output is insufficient. A zero-action result requires justification and must
+   not manufacture a task-provider action merely to advance a brief operation.
+8. Follow the active plan's execution boundary. Prepare meaningful fictional
+   checks without running them before implementation publication. Subsequent
+   testing authority covers only the named isolated ingestion/audit trials;
+   it does not authorize every historical suite, schedule or provider effect.
+   When a defect needs a repair, preserve the exact evidence and ensure the
+   targeted recheck is within authorization before executing it. Never report
+   an unexecuted check or a publication-hygiene check as functional validation.
 
-When a live connector response exposes a possible runtime defect:
-
-1. Preserve the complete raw connector result or thrown exception before
-   normalization in a mode-0600 file under an admitted gitignored private run
-   directory. Never put provider IDs, URLs, message text, request arguments, or
-   unsanitized errors in Git, patches, terminal output, or chat.
-2. Classify the failure boundary from evidence: local validation, dispatch,
-   transport/no response, provider error response, or response normalization.
-   Do not infer throttling, authorization failure, timeout, or provider success
-   from a generic tool error.
-3. Inspect the complete key topology, nesting, types, and duplicated values.
-   Do not implement from a summarized or truncated observation. Derive a
-   privacy-safe synthetic fixture that represents every relevant observed field,
-   including connector-only envelope metadata.
-4. Keep the adapter boundary explicit: project only the documented provider
-   result into School-OS, require duplicated declared values to agree, validate
-   any finite recognized transport annotations, and reject conflicts or unknown
-   surplus. Connector display/transport metadata is never canonical data.
-5. Before rebuilding a package or creating another live test root, replay the
-   exact ignored private receipt locally through the proposed repair, run
-   conflict and malformed-envelope tests, and pass the focused suite. A test
-   invented from memory is not evidence that the observed response is handled.
-6. Preserve future failures automatically. Normal logs may expose only
-   privacy-safe stage, response-observed state, HTTP status, provider reason and
-   domain, retry delay, connector code, and the private receipt path/hash. The
-   complete raw error remains private and durable enough for the next developer
-   to diagnose without repeating the provider effect.
-7. If upstream supplies no status or reason, record that absence. A retry or
-   cool-off policy must not be justified as rate-limit handling until rate-limit
-   evidence exists, and an unknown write outcome must be reconciled rather than
-   blindly retried.
-8. Test provider-equivalent empty values, not only populated fixtures. Native
-   tables and connector grids may spell the same empty cell as an omitted field,
-   `null`, or an empty string. Normalize only contract-equivalent empty forms at
-   the adapter boundary, then test immediate create/readback and the
-   lost-response recovery pass against the observed connector shape. A fixture
-   that echoes the write request verbatim cannot prove provider readback.
-9. Bind every private independent semantic expectation to the exact packet
-   hash and ordered segment identities/content hashes before it can generate an
-   interpretation or audit response. An empty candidate list is a substantive
-   zero-Fact decision, not a reusable default. Prove with a cross-packet test
-   that a zero-Fact expectation for one packet is rejected for every other
-   packet.
-10. Treat semantic flags as acceptance-critical content, not incidental
-    metadata. After all packet audits pass, independently compare the assembled
-    Fact inventory with the packet-bound source expectations, including finite
-    response requirements and their `is_action` disposition. A packet audit
-    cannot validate itself through an expectation copied from generated output,
-    and a zero-action aggregate must be explicitly justified before task sync is
-    accepted. Separately, the runtime must advance a genuinely action-free,
-    completely read task snapshot directly to the brief boundary without
-    attempting to authorize a nonexistent provider action.
+Do not adopt a new architecture while fixing a failure. Escalate a new decision
+with a concrete recommendation and tradeoffs; continue independent approved work.
+The coordinator owns Git/publication and manages at most three bounded workers.

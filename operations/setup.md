@@ -8,6 +8,11 @@ authorize ingestion, sending or task updates. If the parent explicitly requests
 an import or another operation at the same time, finish setup and then select and
 run that separately authorized operation under its own instructions.
 
+Read [the data contract](../contracts/data.md#instance-configuration),
+[Drive setup and storage](storage.md#bootstrap-an-instance) and the supplied
+[shared mappings](../adapters/README.md). Use their concrete references and page
+rules; do not copy an old instance or infer configuration from fictional examples.
+
 ## 1. Establish whether the instance is new or existing
 
 1. Ask for the parent-selected Drive location and the supplied School-OS
@@ -15,10 +20,16 @@ run that separately authorized operation under its own instructions.
 2. Check the selected location for an existing School-OS entry point and instance
    before creating anything. If one exists, read only its relevant D1
    configuration, operation instructions and selected adapters.
-3. For a genuinely new instance, use the supplied School-OS materials to create
-   the approved D1 bootstrap and `system`, `instance` and `extensions` areas at
-   the parent-selected location. Save the minimum setup configuration and verify
-   ordinary readback before presenting the instance as ready.
+3. For a genuinely new instance, follow the storage bootstrap procedure at the
+   parent-selected location. Create the readable entry point and D1 `system`,
+   `instance` and `extensions` areas. Copy the supplied current instructions,
+   contracts, helpers and shared mappings into `system`; keep configuration and
+   canonical pages in `instance`, and household-created recipes/mappings in
+   `extensions`. Preserve usable relative references, include the supplied product
+   principles, and identify the supplied published revision in the readable entry
+   point. Normal operations need no development plans, studies or prior chat.
+   Use only the supplied restart materials. No retired installer,
+   release manifest, migration or activation engine is involved.
 4. Preserve every existing explicit household choice and user-created extension.
    Ask again only when a value is missing, conflicting or the parent asks to
    change it; do not add an automatic reconfirmation gate.
@@ -41,8 +52,9 @@ final tool selection.
 - Does the parent want a task application, email delivery or optional audio?
   Record the need and any preferred tool; make the final selection after showing
   the available known options. Parent fields in a selected task app follow
-  approved D5 behavior. Audio selection, ordering and retention follow an
-  approved configuration when one exists; do not invent an unresolved default.
+  approved D5 behavior. Configured audio accompanies the email; a verified audio
+  failure permits email alone with a failure notice. School-OS retains no audio
+  archive after verified delivery.
 - Which existing parent-managed agents or jobs will use the instance? Record only
   the inputs needed by their operation configuration. D7's centralized job and
   scheduler register is outside the MVP.
@@ -81,8 +93,8 @@ Setup inspection is not, by itself, a connector probe: do not send email, mutate
 a task, read private source content merely to demonstrate access, or run a
 schedule. Report declared and previously observed evidence honestly. A future
 installed instance may perform separately authorized qualification under the
-applicable operation. During current repository development, all such execution
-remains stopped until the user's testing direction.
+applicable operation. Repository development follows the publication prerequisite
+and exact trial scope in the active plan; these instructions do not expand it.
 
 ## 4. Select or prepare one shared adapter per tool
 
@@ -110,11 +122,30 @@ if the requested tool cannot fit the existing School-OS semantics.
 
 ## 5. Save and hand off
 
-Save the confirmed household/source/output choices in the existing D1 instance
-configuration and make each selected adapter discoverable from that configuration
-and the readable entry point. Save user-authored mappings with their extension
-ownership. Use ordinary agent readback to confirm the values saved before calling
-setup complete. This is normal verification, not a new write framework.
+Assign School-OS-owned UUIDs for the instance and new Entity, Topic and Membership
+records using the data contract. Keep the parent-declared household, children,
+schools/classes and their dated relationships; an unknown enrollment date stays
+unknown. Names and current connection handles do not become record IDs.
+
+Save `instance_id`, `household_entity_ref`, `household_timezone`, the selected
+logical `source_accounts` and `entity_topic_roots` through the approved
+configuration. Include `selected_task_projection`, `selected_brief_recipes` and
+`authorized_destinations` only where applicable. Each source account retains its
+logical mailbox, configured school scope, import boundary and selected shared
+mail mapping. Keep private container handles and connection labels in instance
+configuration; never put them in a reusable mapping or this repository.
+
+Create the bounded family/page directories required for the selected configuration
+using the storage procedure. Read the entry point, configuration and referenced
+roots back. Check instance IDs, actual values, reference targets and page bounds;
+an empty directory is complete only when that empty inventory is established.
+Make every selected adapter and user-created recipe discoverable from those
+references. Do not report missing roots as an empty school history.
+
+When changing an existing instance, change only authorized configuration and
+preserve data and extensions. A new default does not silently move existing task
+projections to another account or create/rebind an external job. Report any
+separately needed task-tool switch instead of duplicating projections.
 
 Report to the parent:
 

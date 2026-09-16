@@ -4,7 +4,7 @@ This is the neutral entry point for a fresh agent. It is intentionally thin.
 
 ## Determine the mode
 
-1. Read `release.yaml` when working from a supplied release package.
+1. Read the supplied restart instructions. Packaged installation/upgrades are outside this MVP; do not run a retired release manifest or installer.
 2. Read `docs/product-principles.md`, `PLAN.md`, and `PROGRESS.md` when maintaining this repository.
 3. For a private installed instance, begin from that instance's stable Drive bootstrap and instance manifest.
 4. Select exactly one operation: onboarding, import, daily run, manual daily-brief request, task sync, brief generation, upgrade, audit, or maintenance.
@@ -28,7 +28,8 @@ Proceed with nonarchitectural work in the first two categories under the selecte
 The [product principles](docs/product-principles.md) are the source of truth and
 grounding for decisions not explicitly covered by approved plans. Follow the
 [current restart plan](docs/plans/restart/PLAN.md) and its
-[Astra handoff](docs/plans/restart/ASTRA-HANDOFF.md). Implement existing explicit
+[coordinator handoff](docs/plans/restart/ASTRA-HANDOFF.md) (the filename is
+historical). Implement existing explicit
 architecture approvals; obtain the user's approval before adopting any new or
 changed architecture decision.
 Apply the active plan's explicit MVP revisions: interrupted canonical-write
@@ -51,6 +52,13 @@ audio archive and combined email/audio with an audio-failure fallback. The user
 subsequently approved all remaining published recommendations: Q1/Q2 concrete
 data/index architecture, Q4 arrival-window discovery and Q6 completed-email reuse.
 See the current restart plan and its documentation snapshot checkpoint.
+The retained operations, contracts, adapters and fictional examples are now
+authored but untested. Q10's exact oversized-value segment representation is
+still awaiting approval; affected values must block rather than be truncated,
+and the retained MVP is not ready for publication or trials until it is resolved.
+For the remaining repository work, use bounded Sol workers only, never Astra.
+The root agent primarily coordinates, handles architecture and other escalations,
+integrates the result and owns publication.
 Setup now includes the approved [parent interview](operations/setup.md): offer
 known task tools available to the executing agent and ask for the parent's
 choice. Use or author one shared [tool-semantic adapter](operations/tool-adapters.md)

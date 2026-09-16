@@ -5,6 +5,11 @@ used by School-OS. One tool has one shared semantic adapter for the meanings it
 supports. Agents may reach that tool through different connectors, but they do
 not fork its School-OS semantics by agent, connector SDK or transport envelope.
 
+The [supplied mapping catalogue](../adapters/README.md) includes Drive, Gmail,
+Google Sheets, Todoist and optional ElevenLabs. These are operating documents,
+not connector implementations or evidence of live compatibility. Task operations
+use [task-sync.md](task-sync.md) and [the data contract](../contracts/data.md).
+
 ## What the adapter owns
 
 The adapter maps School-OS concepts to the tool's stable, user-visible or
@@ -52,6 +57,12 @@ tool task means parent confirmation only when the configured D5 mapping and
 readback establish that parent edit. If the tool supports neither status nor
 section, preserve the pending state in canonical Drive data and report the gap.
 Do not improvise a label, custom field or broader permission.
+
+Also preserve explicit parent rejection through
+`parent_state.completion_reviews`. Reusing the same source evidence must not
+reopen a rejected review. State which observed parent action communicates
+confirmation or rejection; moving a task or an absent status alone is not an
+unambiguous rejection unless the selected mapping explicitly establishes it.
 
 ## Reuse an existing mapping
 

@@ -1,0 +1,39 @@
+{
+  "instance_id": "inst_11111111-1111-4111-8111-111111111111",
+  "family": "membership",
+  "page_id": "page_90000000-0000-4000-8000-000000000005",
+  "schema_version": "1",
+  "content_revision": 1,
+  "records": [
+    {
+      "membership_id": "membership_21000000-0000-4000-8000-000000000001",
+      "subject_ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000002"},
+      "role": "student",
+      "container_ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000004"},
+      "valid_interval": {"start": {"state": "known", "value": "2025-08-25", "precision": "day", "meaning": "membership_start"}, "end_state": "ongoing"},
+      "origin": "parent_configuration",
+      "evidence_refs": [],
+      "recorded_at": "2026-03-12T17:04:00Z"
+    },
+    {
+      "membership_id": "membership_21000000-0000-4000-8000-000000000002",
+      "subject_ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000003"},
+      "role": "student",
+      "container_ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000004"},
+      "valid_interval": {"start": {"state": "known", "value": "2025-08-25", "precision": "day", "meaning": "membership_start"}, "end_state": "ongoing"},
+      "origin": "parent_configuration",
+      "evidence_refs": [],
+      "recorded_at": "2026-03-12T17:04:00Z"
+    },
+    {
+      "membership_id": "membership_21000000-0000-4000-8000-000000000003",
+      "subject_ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000005"},
+      "role": "teacher",
+      "container_ref": {"family": "entity", "id": "entity_10000000-0000-4000-8000-000000000004"},
+      "valid_interval": {"start": {"state": "known", "value": "2025-08-25", "precision": "day", "meaning": "membership_start"}, "end_state": "ongoing"},
+      "origin": "source_supported",
+      "evidence_refs": [{"family": "knowledge", "id": "knowledge_60000000-0000-4000-8000-000000000004"}],
+      "recorded_at": "2026-03-12T17:20:00Z"
+    }
+  ]
+}
