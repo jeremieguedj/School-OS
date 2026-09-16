@@ -5517,3 +5517,42 @@ requirements, then read this log from top to bottom.
   `744eaba2dd69e611f890ff488e83e8fb3a818ca1`. Document privacy/link hygiene
   passed; the working proposal remains unapproved and no functional execution
   occurred. The next action is the user's Q10 decision.
+
+## 2026-09-16 — Q10 rejected; retain one 64 KiB page maximum
+
+- The user rejected linked overflow pieces because of brittleness and Drive
+  I/O, and explicitly delegated the page-size decision after assessing likely
+  record sizes, ease of increasing the limit, retrieval quality and cost.
+- Sol workers updated the current contracts, operating guidance, plans and
+  website sources. The coordinator decided to retain 64 KiB (65,536 UTF-8
+  bytes) as the single maximum. Ordinary pagination splits collections between
+  whole records; no segment family, linked field pieces, fallback blob or
+  separate soft/hard limits are introduced. Oversized records remain visible
+  blockers with measured required size, never truncated or falsely complete.
+- Public primary-source research and fictional page sizes inform this starting
+  choice; neither establishes actual managed-connector limits or real school
+  record distributions. Larger packed pages can reduce file calls but increase
+  irrelevant transfer/context and whole-page save/readback volume. Downloaded
+  bytes, model-visible context and billed usage must be measured separately.
+- A future evidence-based increase changes one shared installed contract limit;
+  existing valid pages, IDs and references remain usable without eager migration
+  or merging. Every agent must read the updated contract; route compatibility
+  still needs evidence. See the [page-size assessment](docs/plans/restart/implementation/PAGE-SIZE-ASSESSMENT.md).
+- Prepared the requested page-size evaluation in the authorized trial protocol:
+  actual page/record bytes, Drive I/O, complete readback, retrieval accuracy,
+  preserved qualifications, latency and exposed token/cost evidence. A matched
+  64/128/256 KiB comparison uses the same saved records and source-grounded
+  questions in marked noncanonical areas within the existing trial roots.
+  Unexercised sizes and unavailable cost evidence remain explicit unknowns.
+- Q10 is resolved; no current architecture approval remains pending. No tests,
+  connector probes, model replays or ingestion have run. Private launch inputs
+  were prepared in ignored mode-0600 files without copying old instance state.
+- Next action: finish publication hygiene, commit/push the retained MVP and
+  verify the remote revision, publish the updated private guide, then begin only
+  the already-authorized three isolated ingestion/audit trials. Implementation
+  publication is not functional validation or whole-product qualification.
+
+- Final static integration review found no publication blocker. Diff, privacy and
+  local document-link hygiene passed; only sample Git hooks and no active
+  functional CI or matching pull request were present. Frozen studies are
+  unchanged. This establishes publication hygiene only, not tested behavior.

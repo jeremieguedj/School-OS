@@ -30,7 +30,11 @@ The [data contract](../contracts/data.md) defines the exact approved fields,
 references, scope, page envelopes, directories and indexes. [Storage](storage.md)
 explains normal bounded reads/writes and verification. [Knowledge](knowledge.md)
 separates saved school facts/guidelines/observations from actionable tasks and
-preserves individual, family and school scope.
+preserves individual, family and school scope. The one current encoded-page
+maximum is 64 KiB. Pagination keeps records whole; no linked-field format or
+per-instance limit is part of the MVP. If later observed whole-record size and
+route I/O/retrieval evidence supports an increase, update the shared installed
+contract as [storage](storage.md#increasing-the-shared-page-maximum) directs.
 
 The [helper guide](../helpers/README.md) describes the real Python standard-library
 [source_metadata.py](../helpers/source_metadata.py) functions for subject

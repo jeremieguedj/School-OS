@@ -9,10 +9,13 @@ email ingestion, canonical Knowledge, and Tasks are separate outcomes.
 
 1. Preserve each substantive claim, instruction, exception, condition, date,
    uncertainty, and action requirement. Keep wording lossless enough that
-   another agent does not need the raw message to recover meaning. Do not
-   truncate oversized text. The segment reference/record shape is unresolved;
-   until it is added to the data contract, report oversized retention as blocked
-   and do not mark the source fully ingested.
+   another agent does not need the raw message to recover meaning. Author the
+   statement as one complete string, and keep qualifications and relationships
+   as complete arrays on the same owning Knowledge record. Do not truncate or
+   invent a field-splitting format. If the complete record exceeds the data
+   contract's current page maximum even on an otherwise empty page, report its
+   observed encoded bytes and required minimum page size, and do not mark the
+   source fully ingested.
 2. Choose `knowledge_kind` from the source meaning:
    - `fact` for a supported proposition;
    - `guideline` for a rule or condition that may remain applicable;

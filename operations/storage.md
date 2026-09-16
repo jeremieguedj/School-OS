@@ -65,10 +65,15 @@ adding every page to the bootstrap.
      Window: their bounded family or source-account directory.
 3. Resolve the current page through the locator. Treat `page_hint` and handles
    only as read-saving aids. Verify the returned page and record IDs.
-4. If no page has room under both 64 KiB and family limits, allocate a new page,
-   link it through explicit continuation, and update the bounded directory.
+4. If no existing page has room under the data contract's current maximum
+   encoded page size and family limits, allocate a new page, link it through
+   explicit continuation, and update the bounded directory. Rollover and page
+   splitting occur only between complete records or entries.
 5. Keep one family per page. Never truncate content or silently drop records to
-   meet a limit.
+   meet a limit. If one complete required record cannot fit on an otherwise
+   empty page, follow the data contract's oversized-record rule: report the
+   observed encoded bytes and required minimum size, and leave the operation
+   incomplete.
 
 ## Normal save sequence
 
@@ -99,16 +104,34 @@ blindly retry a possible duplicate effect or claim interrupted-write recovery.
 
 ## Maintain bounded directories and pages
 
-- Keep every page at or below 64 KiB encoded UTF-8.
+- Keep every page at or below the data contract's current maximum encoded page
+  size.
 - Keep directory and index pages at 100 entries or fewer.
 - Follow and verify every explicit continuation. A short page is not exhausted
   unless its continuation says so.
-- When splitting a page, preserve every record exactly once, update locators,
-  update catalogue entries, then rebuild affected derived entries and coverage.
+- When splitting a page between complete records, preserve every record exactly
+  once, update locators, update catalogue entries, then rebuild affected derived
+  entries and coverage. Do not split one record's fields into separately linked
+  storage.
 - A locator maps canonical record ID to current page ID. A page catalogue maps
   canonical page ID to current content revision and Drive access aid. Neither is
   canonical record content.
 - A changed Drive handle updates only its access aid.
+
+## Increasing the shared page maximum
+
+After a page-budget decision, change the maximum by updating the authoritative
+installed data contract and ensuring every operating agent reads that same
+revision before it writes. Use one shared maximum, not separate soft and hard
+limits. Base an increase on observed whole-record bytes or I/O and retrieval
+evidence from routes that could completely write and read the tested pages; mark
+an unexercised size honestly.
+
+An increase adds no configuration field, schema variant, record ID, reference
+shape or automatic change engine. Existing valid smaller pages, IDs, directories
+and indexes remain valid and need no eager merge or rewrite. Apply the new maximum
+through ordinary future page writes and normal readback, and report any route that
+cannot completely transfer or verify a page at that size.
 
 ## Stale index fallback
 

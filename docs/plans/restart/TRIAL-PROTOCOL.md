@@ -13,9 +13,12 @@ that publication checkpoint is satisfied.
 The coordinator records one published implementation SHA and one exact seven-day
 arrival/received-time interval, ending at the start of the trial series, with
 explicit timezone, precision and boundary semantics. All three trials use those
-same values. Read the applicable source-account/school settings from the user's
-existing private configuration; use them only as input settings. Do not copy old
-knowledge, tasks, coverage, record IDs, bindings or inferred answers.
+same values. The current maximum encoded page size is 64 KiB (65,536 bytes), as
+defined by the published data contract. All three routes use that same maximum
+for their canonical instances; do not tune it per route. Read the applicable
+source-account/school settings from the user's existing private configuration;
+use them only as input settings. Do not copy old knowledge, tasks, coverage,
+record IDs, bindings or inferred answers.
 
 Locate and verify the user's existing tests parent folder. Create three distinct
 fresh child folders for:
@@ -116,6 +119,59 @@ configuration/entities resolved, directories/pages used where observable, cited
 claims and source references, relevant correction/coverage checks, answer and
 limitations. Request a concise explanation of supporting evidence, never private
 hidden reasoning. A persuasive explanation is not a substitute for correct data.
+
+## Page-size measurement and narrow comparison
+
+Measure page behavior during the authorized trials only after the implementation
+publication checkpoint. The canonical trial instances continue to use the one
+current contract maximum recorded above. The comparison does not change that
+maximum, create another trial root, or re-ingest source material.
+
+For each route, record these values privately when they are actually observable:
+
+- each encoded canonical page's byte count and complete-record count, together
+  with the sample count and maximum; report p50 and p95 only when the sample is
+  large enough for those percentiles to be meaningful, otherwise mark them not
+  meaningful;
+- any complete canonical record that cannot fit on an otherwise empty page,
+  including its encoded page bytes and minimum required page size; keep this
+  distinct from the bytes of a raw email attachment or temporary download;
+- Drive reads, writes, verification readbacks, any retries actually performed
+  and their reasons, and transferred bytes when the connector exposes them;
+- downloaded/source bytes and model-visible context separately when either is
+  exposed, because downloaded bytes do not establish how much content the model
+  could see; and
+- tokens and monetary cost only when the route exposes actual values. Otherwise
+  use `unknown`; label any separately useful calculation a rough estimate and
+  state its inputs and assumptions.
+
+After a route has produced its canonical records, prepare a narrow analytical
+comparison of 64 KiB, 128 KiB and 256 KiB maxima using the same ordered complete
+successfully saved records and the same common source-grounded queries. Keep the
+comparison pages clearly noncanonical and private in a marked evaluation area
+inside the existing assigned trial folder; do not connect them to the bootstrap,
+canonical directories or indexes. Do not create another School-OS instance or
+read the mailbox again. Pack only between complete records; do not truncate or
+introduce a field-splitting representation. Report a canonical record that did
+not save because of overflow separately rather than reconstructing it from raw
+source for this comparison.
+
+For each candidate, observe the page distribution and storage operations above,
+then fully read every comparison page through its exact encoded end and compare
+the reconstructed records with the same canonical input values. Run the same
+queries as actual retrievals from each candidate's comparison pages, and record
+the pages and records read. Compare that read evidence and each answer against
+the independently source-derived expected records. An answer remembered from the
+canonical query or an earlier candidate is not retrieval evidence. Assess answer
+correctness, retained source qualifications, omissions, and irrelevant records or
+bytes read. Record connector and model visibility limits, inference quality
+uncertainties and any cost unknowns. A larger candidate maximum permits fewer or
+larger pages; it does not require existing smaller pages to be merged or rewritten.
+If a trial never produces pages approaching a candidate maximum, or a route cannot
+completely write and read them, mark that candidate unexercised rather than
+claiming it qualified. The comparison supplies evidence for a later coordinator
+decision; it does not itself change the shared contract maximum or require another
+user approval checkpoint.
 
 ## Failures, changes and final report
 

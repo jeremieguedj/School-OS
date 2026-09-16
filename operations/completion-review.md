@@ -78,10 +78,12 @@ then perform the normal save readback required by the operation.
 Read prior review decisions before adding the entry. The same evidence already
 awaiting, confirmed or rejected does not create another suggestion. Materially
 new evidence may justify a new awaiting entry with its own references, without
-erasing a rejected decision. If review history outgrows its bounded Task page, do not truncate evidence or
-decisions. The data contract explicitly identifies the segment representation
-as unresolved; report the affected save as blocked until that representation
-is approved. Do not invent a local segment shape.
+erasing a rejected decision. Keep `completion_reviews` as one complete array on
+the owning Task record. If the complete Task cannot fit on an otherwise empty
+page under the data contract's current maximum, do not truncate reviews, split
+the field, or claim a partial save. Report the observed encoded bytes and
+required minimum page size, and leave the affected completion-review operation
+incomplete.
 
 If the canonical task is already parent-confirmed complete, retain and link the
 later evidence as appropriate, but do not reopen or downgrade the task merely

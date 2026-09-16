@@ -107,10 +107,12 @@ and saves remaining directory/work positions on Drive.
 Unknown-date observations stay in a separately discoverable pending-work area.
 Equivalent timezone presentations must reach the same source lookup partition.
 
-Default page limit: 64 KiB encoded JSON. Long substantive text is split at
-paragraph boundaries into numbered knowledge segments linked to the same claim;
-no truncation or raw-source storage. A single oversized paragraph is segmented
-without deleting text. The limits bound each transfer, not the total history.
+Page maximum: 64 KiB encoded JSON. Collections of ordinary records continue on
+additional pages; one canonical record remains whole. If that record cannot fit,
+retention blocks with evidence rather than truncating, segmenting, sharding a
+field or storing a fallback raw blob. The limits bound each transfer, not the
+total history. The [Q10 assessment](PAGE-SIZE-ASSESSMENT.md) records why this
+single maximum remains and how actual evidence could later justify changing it.
 Startup reads only the bootstrap, relevant configuration, selected operation,
 selected bindings and a bounded unfinished-work page. Queries can traverse more
 pages over multiple sessions and must report an unfinished search honestly.
@@ -121,8 +123,7 @@ Adapter-provided query/search may accelerate lookups; it cannot supply missing
 coverage evidence. A fresh agent can traverse the durable directory instead.
 
 Grounding: P1, P3–P9; catalog, query, replacement and upgrade use cases.
-Alternative: native Sheets rows/ranges, with a defined overflow representation
-for long knowledge. Sheets can offer convenient native bounded reads; JSON
+Alternative: native Sheets rows/ranges. Sheets can offer convenient native bounded reads; JSON
 keeps nested evidence and explicit unknown values together. JSON access may be
 less convenient in some managed connectors, and paged directories cost extra
 reads/writes. Neither route is qualified here. Choosing JSON requires qualifying

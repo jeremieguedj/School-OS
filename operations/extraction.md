@@ -71,11 +71,13 @@ do not copy the same claim under every child. Link child observations to that
 child so a later year-long subject query can find them without treating a
 sibling's result as evidence.
 
-Retain meaningful text in a bounded Knowledge `statement` as specified by
-[data](../contracts/data.md#page-envelope-and-limits). The linked-segment shape
-is still awaiting Q10 approval. Until it is approved and added to the contract,
-an oversized substantive value blocks retention and full ingestion. Never
-truncate the value or its qualifications to fit.
+Retain meaningful text as one complete Knowledge `statement`, with complete
+qualifications and relationships on the same owning record, as specified by
+[data](../contracts/data.md#page-envelope-and-limits). Never truncate or invent
+a field-splitting representation. If the complete required record exceeds the
+current page maximum even on an otherwise empty page, report the observed
+encoded bytes and required minimum page size, and keep the email
+`not_ingested`.
 
 ## Reconcile Knowledge and action
 

@@ -5,13 +5,14 @@ Updated 2026-09-16 from the [product principles](../../../product-principles.md)
 [historical lifecycle scenarios](../SIMULATION.md). The lifecycle model's
 mechanisms and old runtime do not supply missing architecture approvals.
 
-The [updated question list](OPEN-QUESTIONS.md) records the approved Q1–Q9
+The [updated question list](OPEN-QUESTIONS.md) records the settled Q1–Q10
 decisions. The [concrete data/index proposal](DATA-ARCHITECTURE-PROPOSAL.md)
 covers child/family/school scope, linked fields and query routes. Q1/Q2's exact
 data/index architecture, Q4 discovery and Q6 completed-email reuse are approved.
-Implementation review exposed one later question: Q10's exact representation for
-lossless oversized-value segments remains proposed, not approved. No generic D2
-framework is restored and no performance is qualified.
+For Q10, the user rejected linked pieces and delegated the size choice; the
+[assessment](PAGE-SIZE-ASSESSMENT.md) retains one 64 KiB maximum and explicit
+blocking for an oversized whole record. No generic D2 framework is restored and
+no performance is qualified.
 
 Status: requirements mapped; D1, the
 [query-coverage rule](ARCHITECTURE-PROPOSAL.md#approved-query-coverage-rule),
@@ -36,10 +37,9 @@ manual/audio policies are approved. Concrete data/index and discovery/reuse rule
 Supplier capability availability is user-reported, not independently qualified.
 The retained operations, contracts, shared adapter mappings and fictional
 examples are authored. They remain untested and do not qualify any connector or
-managed agent. Q10 blocks the complete retained MVP because oversized values
-must not be truncated or assigned an invented persisted shape. An accepted
-incomplete checkpoint may be published with that blocker stated; it is not the
-complete implementation publication required before the three authorized trials.
+managed agent. No current architecture question remains. Static integration and
+publication hygiene still precede the complete implementation publication and
+the three authorized trials.
 
 ## Current execution direction and explicit MVP exclusions
 
@@ -151,22 +151,21 @@ authored; actual delivery and later qualification remain unproven.
 ## Deliverables and approval dependencies
 
 The checkpoint sections and table identify the retained authored files. Authored
-means present for static review, not executed or qualified. Q10 is the one current
-architecture dependency; any other new canonical meaning, dependency or runtime
-behavior still needs approval.
+means present for static review, not executed or qualified. Q10 is resolved;
+any new canonical meaning, dependency or runtime behavior still needs approval.
 
 | ID / required area | Existing approved design | Concrete new deliverables | Dependencies | Implementation / testing |
 |---|---|---|---|---|
 | T1 Setup/startup | D1 entry point/separated areas; code-capable agents; approved parent interview, available tool choices and shared adapter reuse | [`operations/startup.md`](../../../../operations/startup.md), [`operations/setup.md`](../../../../operations/setup.md), and the operation index establish startup/configuration and tool choice | Setup/shared semantic adapter direction approved; no records-framework gate or new installer/registry | Retained instructions authored and untested; D8 package installer deferred |
-| T2 Canonical data/custody | Canonical Drive knowledge/tasks/indexes/coverage; originals at source; normal verified saves | [`contracts/data.md`](../../../../contracts/data.md), [`contracts/identity.md`](../../../../contracts/identity.md), [`operations/storage.md`](../../../../operations/storage.md), and [`examples/data/`](../../../../examples/data/README.md) define bounded records, routes, indexes, custody and readback | Q1/Q2, D1/D5/helpers approved; Q10 segment shape pending; generic framework explicitly deferred | Authored and untested; bounded values covered, oversized retention blocked pending Q10 |
-| T3 Historical/daily ingestion | Metadata recipe and separate coverage; one logical run with agent-managed resource work | [`operations/ingestion.md`](../../../../operations/ingestion.md), [`operations/extraction.md`](../../../../operations/extraction.md), Gmail/Drive mappings and [`examples/ingestion/`](../../../../examples/ingestion/README.md) cover discovery, content and binary completion | Q3–Q6 approved, including Q4 discovery and Q6 reuse; Q10 blocks oversized retained values | Authored and untested; no connector or ingestion run qualified |
-| T4 Knowledge/queries | D5 claims/relationships; query coverage checks and limited answers | [`operations/knowledge.md`](../../../../operations/knowledge.md) and [`operations/query.md`](../../../../operations/query.md) route extraction, relationships, indexes, fallback and qualified answers through the data/storage contracts | Q1/Q2, D1/D5/query rule approved; no records/save-framework prerequisite; Q10 pending | Authored and untested; no retrieval or semantic-accuracy qualification |
+| T2 Canonical data/custody | Canonical Drive knowledge/tasks/indexes/coverage; originals at source; normal verified saves | [`contracts/data.md`](../../../../contracts/data.md), [`contracts/identity.md`](../../../../contracts/identity.md), [`operations/storage.md`](../../../../operations/storage.md), and [`examples/data/`](../../../../examples/data/README.md) define bounded records, routes, indexes, custody and readback | Q1/Q2 and D1/D5/helpers approved; Q10 resolved by rejection and the delegated 64 KiB choice; generic framework explicitly deferred | Authored and untested; an oversized whole record blocks without truncation or a new format |
+| T3 Historical/daily ingestion | Metadata recipe and separate coverage; one logical run with agent-managed resource work | [`operations/ingestion.md`](../../../../operations/ingestion.md), [`operations/extraction.md`](../../../../operations/extraction.md), Gmail/Drive mappings and [`examples/ingestion/`](../../../../examples/ingestion/README.md) cover discovery, content and binary completion | Q3–Q6 approved; Q10 resolved by rejection and the delegated size decision | Authored and untested; no connector or ingestion run qualified |
+| T4 Knowledge/queries | D5 claims/relationships; query coverage checks and limited answers | [`operations/knowledge.md`](../../../../operations/knowledge.md) and [`operations/query.md`](../../../../operations/query.md) route extraction, relationships, indexes, fallback and qualified answers through the data/storage contracts | Q1/Q2, D1/D5/query rule approved; Q10 resolved by rejection and the delegated size decision; no records/save-framework prerequisite | Authored and untested; no retrieval or semantic-accuracy qualification |
 | T5 Tasks/synchronization | D5 tasks, parent fields, recurrence and three-way reconciliation; one shared tool mapping; task evidence requires parent confirmation | [`operations/task-sync.md`](../../../../operations/task-sync.md), [`operations/completion-review.md`](../../../../operations/completion-review.md), and Google Sheets/Todoist mappings implement retained instructions | D5, shared mappings and confirmation-pending behavior approved; automatic closure and expanded source scope are not | Authored and untested; no task connector or detection accuracy qualified |
 | T6 Briefs/delivery | Complete ingestion before ordinary daily brief; agent checks uncertain effects; arbitrary compatible recipes; approved starter and failed-sync disclosure | [`operations/daily.md`](../../../../operations/daily.md), [`operations/brief-recipes.md`](../../../../operations/brief-recipes.md), and Gmail/ElevenLabs mappings cover composition, manual freshness, audio fallback and truthful outcomes | All D6/Q7–Q9 choices approved; no recipe registry or effect engine | Authored and untested; no send/audio route qualified or authorized by publication |
 | T7 Tools/schedules | Approved setup choice and cross-agent reuse of per-tool semantic mappings; users/agents own nonconcurrent scheduling | [`operations/tool-adapters.md`](../../../../operations/tool-adapters.md) and mappings for Drive, Gmail, Sheets, Todoist and optional ElevenLabs | Shared-adapter architecture approved; D7 central register/control remains excluded | Authored and untested; no vendor compatibility claim; central scheduling/query features deferred |
-| T8 Continuation/replacement | Saved source/content progress and fresh-agent access; agent owns resource recovery | [`operations/continuation.md`](../../../../operations/continuation.md), startup and ingestion instructions cover fresh-agent continuation, missed work and explicit blockers without a batch scheduler | D4 direction approved; Q1–Q9 settled; no records-framework gate | Authored and untested; D2 canonical-write repair remains deferred |
+| T8 Continuation/replacement | Saved source/content progress and fresh-agent access; agent owns resource recovery | [`operations/continuation.md`](../../../../operations/continuation.md), startup and ingestion instructions cover fresh-agent continuation, missed work and explicit blockers without a batch scheduler | D4 direction approved; Q1–Q10 settled; no records-framework gate | Authored and untested; D2 canonical-write repair remains deferred |
 | T9 Extensions/upgrades | Approved D1 separation preserves future official/private/extension support | Preserve separated storage roles; canonical-data consumers remain possible | D1 approved; D8 installer/upgrade/compatibility/migration excluded from MVP | D8 capabilities deferred, not delivered / not run |
-| T10 Development/portability | Code-capable agents; small stdlib Python routines; shared semantic tool guidance independent of each connector; private developer evidence | Minimal helpers/prepared checks, operation index, contracts, adapter mappings and fictional data/ingestion examples provide portable handoff material | Minimal helpers and setup/shared-adapter direction approved; Q10 remains the only current architecture dependency | Retained materials authored and untested; actual vendor routes unqualified; full MVP blocked by Q10 |
+| T10 Development/portability | Code-capable agents; small stdlib Python routines; shared semantic tool guidance independent of each connector; private developer evidence | Minimal helpers/prepared checks, operation index, contracts, adapter mappings and fictional data/ingestion examples provide portable handoff material | Minimal helpers and setup/shared-adapter direction approved; Q10 resolved by rejection and the delegated size decision; no current architecture dependency | Retained materials authored and untested; actual vendor routes unqualified |
 
 ## Every design priority
 
@@ -247,10 +246,11 @@ documentation snapshot; no replacement functional CI is claimed. Recheck hooks,
 CI, diff, privacy, document links and Git state before publication. Do not
 silently disable a current check or substitute publication hygiene for testing.
 
-An accepted authored checkpoint may be committed/pushed with Q10 and the untested
-state reported. It must not be called the complete retained MVP or used to begin
-the trials. The complete handoff requires every T1–T10 item accounted for with
-the explicit D2/records-framework/D7/D8 exclusions, Q10 resolved and integrated,
+An accepted authored checkpoint may be committed/pushed with the untested state
+reported. It must not be used to begin the trials until the complete retained
+implementation is published and verified. The complete handoff requires every
+T1–T10 item accounted for with the explicit D2/records-framework/D7/D8 exclusions,
+the Q10 decision integrated,
 accepted changes published, the exact remote commit verified, current continuity
 documents and a clear **implemented but untested** report. After that publication,
 the already authorized context-free worker, Gemini Spark and ChatGPT Work

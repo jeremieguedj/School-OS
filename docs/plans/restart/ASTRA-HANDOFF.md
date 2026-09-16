@@ -23,13 +23,13 @@ GitHub documentation snapshot at `09f6be151cd549431343b9ebe44a1d03371d2f4f`.
 Continue on `codex/restart-implementation` in this directory, keeping legacy code
 recoverable in history but outside active runtime entry points. Retained
 operations, contracts, adapters and fictional examples are authored but untested.
-Q10's exact segment representation is still pending approval; oversized values
-block until it is settled and must never be truncated. Use no more than three
+Q10 is resolved: the user rejected linked pieces and the delegated assessment
+retains the single 64 KiB maximum. Oversized whole records block and must never
+be truncated or assigned an invented format. Use no more than three
 bounded Sol workers with clear file ownership. Root reviews product/principle
 conformance and does not silently reduce retained scope.
 
-After Q10 is approved, complete and publish implementation, verify its remote
-revision, then conduct
+Complete and publish implementation, verify its remote revision, then conduct
 only the newly authorized three isolated seven-day school-email ingestion trials:
 a fresh context-free worker, Gemini Spark through the user's browser, and ChatGPT
 Work through the browser. Each gets its own new Drive instance within the user's

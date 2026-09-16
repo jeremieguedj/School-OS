@@ -1,18 +1,22 @@
 # Final numbered decisions and recorded approvals
 
-Updated 2026-09-16 after implementation review exposed one narrow missing
-representation. The [active plan](../PLAN.md) remains the approval ledger.
+Updated 2026-09-16 after the user rejected linked overflow pieces and delegated
+the page-size choice. The [active plan](../PLAN.md) remains the approval ledger.
 
-All nine questions from the published review are settled. A new narrow implementation
-gap is described in Q10 below; it does not reopen those approvals. Q1/Q2 adopt the concrete linked-data and lookup contract. Q4 adopts the simpler arrival-boundary discovery policy. Q6 adopts binary email completion and the narrow fully-ingested reuse rule. The original numbering and rejected alternatives are preserved for review history.
+All ten questions are settled. Q1/Q2 adopt the concrete linked-data and lookup
+contract. Q4 adopts the simpler arrival-boundary discovery policy. Q6 adopts
+binary email completion and the narrow fully-ingested reuse rule. Q10 keeps the
+single 64 KiB page maximum and rejects linked overflow pieces. The original
+numbering and rejected alternatives are preserved for review history.
 
 The approved Q1–Q9 documentation is preserved at commit
 `09f6be151cd549431343b9ebe44a1d03371d2f4f` in the annotated tag
 `orgos-restart-documentation` and the published
 [OrgoS Restart Documentation release](https://github.com/jeremieguedj/School-OS/releases/tag/orgos-restart-documentation).
 Operational contracts, procedures, examples and shared semantic adapters have
-since been authored and remain untested. The next phase is to resolve Q10,
-finish the retained MVP, commit and push it, and verify the exact remote revision.
+since been authored and remain untested. The next phase is to finish static
+integration and publication hygiene, commit and push the retained MVP, and
+verify the exact remote revision.
 The three isolated last-seven-day ingestion trials are already authorized after
 that publication prerequisite; no further generic testing permission is needed.
 
@@ -28,7 +32,7 @@ See [the approved data architecture](DATA-ARCHITECTURE-PROPOSAL.md) and its [vie
 
 **Historical alternative and tradeoff:** Mostly free-text records are easier to improvise but make scope, filtering and cross-agent interpretation unreliable. Copying school facts per child creates duplicates and divergent updates. The approved structure adds a small amount of explicit metadata, with no generic write engine.
 
-**Decision / limits:** The exact record fields, references, dates, scope rules and task granularity are approved. The retained operational implementation is authored and untested; Q10 is the one missing representation needed for oversized values.
+**Decision / limits:** The exact record fields, references, dates, scope rules and task granularity are approved. The retained operational implementation is authored and untested. Q10 adds no overflow representation.
 
 ## Q2. How should the index find all relevant information about a child and topic over time?
 
@@ -120,7 +124,7 @@ When audio is properly configured, prepare it and send it with the email. If aud
 
 ## Boundaries
 
-D1 storage, D3 helpers/shared adapters, D5 knowledge/task meanings and prior approvals stay in force. The generic record/save and interrupted-write repair framework, central jobs/scheduler register and packaged lifecycle remain outside MVP. The retained field/index and operation material is authored but untested; Q10 prevents a whole-MVP completion claim.
+D1 storage, D3 helpers/shared adapters, D5 knowledge/task meanings and prior approvals stay in force. The generic record/save and interrupted-write repair framework, central jobs/scheduler register and packaged lifecycle remain outside MVP. The retained field/index and operation material is authored but untested; there is no current open architecture question.
 
 After the completed implementation is published and its remote SHA verified, the user has authorized three isolated ingestion trials over the last seven days:
 
@@ -136,33 +140,36 @@ outbound briefs, task-app effects, schedules or changes to existing instances.
 The recommendations serve source-linked lossless knowledge, simple parent workflows, efficient bounded access, explicit scope, fresh-agent portability and honest completion. The [coverage map](COVERAGE.md) retains the whole deliverable scope.
 
 
-## Q10. How are oversized values represented as linked pieces?
+## Q10. What happens when one complete record exceeds the page maximum?
 
-**New implementation gap — awaiting explicit approval.** D1 and Q1 already
-require lossless numbered segments, but do not define the segment record or
-reference shape. The [concrete recommendation](SEGMENT-REPRESENTATION-PROPOSAL.md)
-adds one bounded `record_segment` family and a first-reference/count descriptor
-for long Knowledge statements, relationship history and Task completion reviews.
+**Decided.** The user rejected the proposed linked-piece format and delegated
+the size choice. Keep 64 KiB encoded UTF-8 as the single page maximum. Split
+collections of ordinary records across existing continuation pages, but keep one
+canonical record whole. If it cannot fit, block retention with the observed size
+and private source evidence. Never truncate, shard fields, create a fallback blob, or
+invent an overflow family.
 
-The recommendation gives every segment its own School-OS ID, owner reference,
-field path, ordinal, JSON-text chunk and optional next reference. The owning
-Knowledge or Task stores the first reference and expected count. A changed value
-gets a complete new immutable chain with new IDs; readers verify and reconstruct
-the entire typed value before treating it as complete. See the
-[plain-language page](segment-representation.html) for the exact proposed shape
-and flow.
+The [page-size assessment](PAGE-SIZE-ASSESSMENT.md) found no real-instance
+overflow distribution supporting a speculative increase. Processed Knowledge is
+stored per claim and Tasks per independent action; raw long attachments are not
+copied into canonical pages. The public fictional pages merely illustrate the
+shape and are not a school-mail size distribution.
 
-This preserves the approved 64 KiB bound and lossless content without a writer or
-repair engine. The tradeoff is extra Drive reads and writes for oversized values,
-copy-on-change chains, and potentially unreachable old pieces with no automatic
-cleanup promise.
+Drive bytes and model-visible tokens are distinct. An agent may download and
+filter JSON in temporary code storage, while another connector may inject a
+whole page into context. A larger maximum can reduce page I/O but increase
+irrelevant context and whole-page rewrite/readback cost. Public upload and model
+context limits do not establish connector page-read behavior.
 
-**Alternatives:** separate segment families for each field are more
-self-describing but create three formats; raising the page limit reduces reads
-but changes D1 and may exceed managed-agent transfer limits; blocking oversized
-values avoids a new shape but fails the approved lossless requirement and leaves
-affected ingestion incomplete.
+**Future adjustment:** if an actual source-supported whole record exceeds
+64 KiB, or the authorized trial evaluation shows material I/O/query benefit,
+change the one maximum in the shared installed contract to 128 or 256 KiB.
+Existing pages, stable IDs and locators remain valid and need no eager migration;
+all agents must read the updated contract, and connector compatibility remains
+an observed property. The trial evaluation may compare marked noncanonical
+64/128/256 layouts using the same already-ingested records and questions. If no
+larger page is exercised, report 128/256 as unexercised.
 
-**Decision / limits:** explicit user approval is pending. Until decided,
-affected writes remain blocked and whole-MVP implementation is not claimed
-complete. This question does not reopen Q1–Q9 or authorize any execution.
+The rejected linked design remains as historical detail in
+[the former proposal](SEGMENT-REPRESENTATION-PROPOSAL.md), and the retained URL
+now presents the current [plain-language decision](segment-representation.html).

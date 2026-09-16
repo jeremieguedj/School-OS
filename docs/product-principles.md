@@ -58,8 +58,13 @@ one shared school statement to every child or duplicating one family obligation.
 The user subsequently explicitly approved the concrete retained schema and
 lookup/index architecture. The operational [data contract](../contracts/data.md)
 records it. New canonical meaning or representation beyond that approved design
-still needs explicit approval; the known oversized-value segment representation
-is being resolved separately and is not silently invented.
+still needs explicit approval. The user rejected a linked-piece representation
+for oversized record fields and delegated the page-budget choice. The current
+contract therefore uses one 64 KiB encoded-page maximum and keeps each Knowledge
+statement and required array on its owning record. Ordinary pagination occurs
+between complete records. A later evidence-based increase changes that one shared
+contract parameter for future writes; it adds no per-instance setting, new record
+shape or required rewrite of valid smaller pages.
 
 The daily input is all School-OS-pending mail in configured scope through run
 start; mailbox read status is not ingestion. Each email has one outcome: fully

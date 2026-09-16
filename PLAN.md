@@ -2,9 +2,10 @@
 
 **Current branch:** `codex/restart-implementation`, in the existing repository.
 **Status:** retained restart MVP operations, contracts, adapters, and examples
-are authored and under static integration review; they remain untested and
-unqualified. Q10 blocks complete implementation publication. Autonomous work is blocked
-awaiting the explicit Q10 decision; no trials may begin.
+are authored and statically reviewed; they remain untested and
+unqualified. Q10 is resolved: the linked-piece proposal was rejected and the
+delegated assessment retains the single 64 KiB page maximum. No trials may begin
+before complete implementation publication and remote verification.
 
 The authoritative [restart plan](docs/plans/restart/PLAN.md) records decisions,
 retained scope, explicit deferrals and the
@@ -15,10 +16,12 @@ principle/use case. The [progress log](PROGRESS.md) records completed work units
 All remaining published Q1/Q2 data/index, Q4 discovery and Q6 reuse recommendations
 are explicitly approved. Any new architecture still requires approval. D2 generic
 save/repair, D7 centralized jobs and D8 packaged lifecycle remain deferred.
-One implementation gap is now explicitly awaiting approval: the stored shape
-for oversized-value segments. See the [concrete recommendation](docs/plans/restart/implementation/SEGMENT-REPRESENTATION-PROPOSAL.md).
-The approved segmentation concept is not removed from scope; affected writes
-remain blocked until the representation is settled. Continue independent work.
+The current [page-size assessment](docs/plans/restart/implementation/PAGE-SIZE-ASSESSMENT.md)
+records the Q10 decision. A whole record that exceeds 64 KiB blocks without
+truncation or an invented overflow format; actual size, I/O and query evidence
+may later justify changing the one shared maximum to 128 or 256 KiB. The former
+[segment proposal](docs/plans/restart/implementation/SEGMENT-REPRESENTATION-PROPOSAL.md)
+is rejected history.
 
 Implement other retained features through clear agent procedures and the approved
 small Python standard-library helper subset; do not rebuild the retired runtime.
@@ -66,5 +69,5 @@ report it precisely. Broader qualification remains outside the named trial scope
 Accepted implementation material is published at
 `972ac4f1023be1aad4003af6a44ffbe527cb0c8f` on `codex/restart-implementation`;
 the exact remote revision was verified. This is an incomplete, untested
-checkpoint with Q10 pending, not the complete-MVP trial gate. The documentation
+checkpoint predating the Q10 decision, not the complete-MVP trial gate. The documentation
 snapshot remains separate and unchanged.

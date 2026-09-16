@@ -1,15 +1,15 @@
 # Agent execution guidance for the revised MVP
 
-Status: retained execution instructions authored from the approved Q1–Q9
-architecture and the user's D4/D6 directions. They are untested. Q10's exact
-oversized-value segment representation remains pending and blocks a complete MVP.
+Status: retained execution instructions authored from the approved Q1–Q10
+architecture and the user's D4/D6 directions. They are untested. Q10 retains
+one 64 KiB page maximum and no overflow representation.
 This document specifies outcomes and gives resource-management advice. It does
 not implement a batch controller, scheduler, environment-recovery engine or
 canonical-write repair system. D3 now selects minimal Python standard-library
 helpers and otherwise agent/tool work. The separate records/ordinary-save
 framework is excluded, not a prerequisite; preserve approved data meanings and
-normal verification. The [active plan](../PLAN.md) records Q10 and the publication
-boundary; there are no remaining Q1–Q9 decisions.
+normal verification. The [active plan](../PLAN.md) records the publication
+boundary; there are no remaining current architecture decisions.
 
 ## Authoritative operation routes
 
@@ -159,9 +159,10 @@ substantive information, qualifications and actions.
 
 Process all available required attachment candidates with honest inventory and
 read coverage. For large material, use an available supported reading route
-within actual limits. Q10's persisted segment shape is not approved. Until it is
-integrated, an oversized substantive value blocks retention and full ingestion.
-Do not invent a segmentation capability, truncate school information or mark
+within actual limits. Store processed meaning as focused Knowledge claims and
+Tasks rather than copying the raw attachment. A whole canonical record that
+cannot fit the 64 KiB maximum blocks retention and full ingestion with its exact
+observed size. Do not invent segmentation, truncate school information or mark
 unsupported content complete. Lack of access or usable content support is a
 blocker to full ingestion, not a reason to silently omit it.
 
@@ -249,11 +250,12 @@ guarantee is selected.
 
 These instructions are authored deliverables, not an executed recipe or proof of
 supplier capability. No early tests, simulations, probes, ingestion, sends or
-schedules are authorized. An accepted incomplete checkpoint may be published with
-Q10 and the untested state explicit, but it does not satisfy the trial prerequisite.
-After Q10 is approved and integrated, publish the complete retained MVP and verify
-its exact remote revision. Then conduct only the three already authorized isolated
+schedules are authorized. Finish integration, publish the complete retained MVP,
+and verify its exact remote revision. Then conduct only the three already authorized isolated
 seven-day school-email ingestion trials: a fresh context-free worker, Gemini Spark
 and ChatGPT Work, each in a separate new instance. That sequence needs no new
 permission round; it does not authorize outbound briefs, personal task-app writes,
-schedules, unrelated qualification or changes to existing instances.
+schedules, unrelated qualification or changes to existing instances. The
+requested page-size evaluation may use marked noncanonical 64/128/256 comparison
+pages from the same already-ingested records and questions; if no larger page is
+actually exercised, report 128/256 as unexercised.

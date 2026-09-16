@@ -2,188 +2,40 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A parent-facing explanation of the proposed School-OS representation for one oversized Knowledge or Task value. Q10 remains unapproved.">
-  <title>Q10 · One unusually large value · School-OS</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="School-OS Q10 decision: keep one 64 KiB page maximum and do not use linked overflow pieces.">
+  <title>Q10 · Page-size decision · School-OS</title>
   <style>
-    :root { --ink:#19312b; --muted:#596b65; --paper:#fffdf7; --surface:#fff; --line:#d4dfda; --green:#17634d; --wash:#edf5f1; --amber:#77500a; --amber-wash:#fff4d7; --blue:#245773; --blue-wash:#eef6fa; }
-    * { box-sizing:border-box; }
-    html { scroll-behavior:smooth; scroll-padding-top:1.5rem; }
-    body { margin:0; color:var(--ink); background:var(--paper); font:17px/1.68 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; }
-    a { color:var(--green); text-underline-offset:.17em; }
-    a:focus-visible, summary:focus-visible { outline:3px solid #bf8730; outline-offset:4px; }
-    header { padding:3.5rem max(1.25rem,calc((100vw - 1120px)/2)); background:linear-gradient(135deg,#e8f3ed,#fbf3df); border-bottom:1px solid var(--line); }
-    header p, main, footer { max-width:76ch; }
-    h1 { max-width:18ch; margin:.35rem 0 1rem; font:600 clamp(2.25rem,6vw,4.4rem)/1.02 Georgia,serif; letter-spacing:-.035em; }
-    h2 { margin:3.5rem 0 1rem; font:600 clamp(1.6rem,4vw,2.25rem)/1.2 Georgia,serif; }
-    h3 { margin:2rem 0 .65rem; font-size:1.15rem; }
-    .eyebrow { margin:0; color:var(--green); font-size:.78rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
-    .lead { font-size:1.2rem; }
-    .status { display:inline-block; margin-top:1rem; padding:.45rem .75rem; color:#654405; background:var(--amber-wash); border:1px solid #dfbd79; border-radius:999px; font-weight:750; }
-    .layout { display:grid; grid-template-columns:220px minmax(0,76ch); gap:3rem; max-width:1120px; margin:auto; padding:2rem 1.25rem 5rem; }
-    nav { position:sticky; top:1rem; align-self:start; font-size:.9rem; }
-    nav a { display:block; padding:.35rem 0; text-decoration:none; }
-    main { min-width:0; }
-    .notice, .plain, .tradeoff { padding:1.1rem 1.25rem; border-radius:10px; }
-    .notice { background:var(--amber-wash); border-left:4px solid #b27a1b; }
-    .plain { background:var(--blue-wash); border:1px solid #c8dce7; }
-    .tradeoff { background:var(--wash); border:1px solid var(--line); }
-    .compare { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin:1.4rem 0; }
-    .compare article, .piece, .owner { padding:1rem; background:var(--surface); border:1px solid var(--line); border-radius:10px; }
-    .compare h3 { margin:0 0 .4rem; color:var(--green); }
-    .page-stack { display:flex; align-items:center; gap:.45rem; margin-top:.8rem; font-size:.83rem; }
-    .page-stack span { flex:1; min-height:5rem; padding:.55rem; background:var(--wash); border:1px solid #bdd1c7; border-radius:6px; }
-    .oversize { margin-top:.8rem; padding:.7rem; border:2px dashed #b7791f; border-radius:6px; background:#fffaf0; font-size:.86rem; }
-    .chain { display:grid; grid-template-columns:1.25fr auto 1fr auto 1fr auto 1fr; align-items:stretch; gap:.5rem; margin:1.4rem 0; }
-    .owner { border-width:2px; border-color:#7ba895; }
-    .piece { font-size:.88rem; }
-    .arrow { display:flex; align-items:center; color:var(--green); font-size:1.4rem; font-weight:800; }
-    .flow { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.65rem; margin:1.5rem 0; counter-reset:step; }
-    .flow div { position:relative; padding:2.5rem .9rem .9rem; background:var(--surface); border:1px solid var(--line); border-radius:9px; font-size:.9rem; }
-    .flow div::before { counter-increment:step; content:counter(step); position:absolute; top:.65rem; left:.75rem; width:1.35rem; height:1.35rem; display:grid; place-items:center; color:#fff; background:var(--green); border-radius:50%; font-weight:800; }
-    details { margin:3rem 0 1rem; border:1px solid var(--line); border-radius:10px; background:#fff; }
-    summary { padding:1rem 1.15rem; cursor:pointer; font-weight:750; }
-    .technical { padding:0 1.15rem 1.2rem; }
-    pre { overflow:auto; padding:1rem; color:#ecf8f2; background:#17352e; border-radius:9px; font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace; }
-    code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
-    p code, li code, td code { padding:.08em .28em; background:#eef3ef; border-radius:4px; }
-    table { width:100%; border-collapse:collapse; font-size:.92rem; }
-    th, td { padding:.55rem .65rem; text-align:left; vertical-align:top; border-bottom:1px solid var(--line); }
-    li + li { margin-top:.65rem; }
-    footer { margin:auto; padding:1.5rem 1.25rem 3rem; color:var(--muted); border-top:1px solid var(--line); font-size:.9rem; }
-    @media (max-width:820px) { .layout { grid-template-columns:1fr; gap:.5rem; } nav { position:static; display:flex; flex-wrap:wrap; gap:.2rem 1rem; } .compare, .flow { grid-template-columns:1fr; } .chain { grid-template-columns:1fr; } .arrow { justify-content:center; transform:rotate(90deg); } }
-    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+    :root{--paper:#f7f3ea;--ink:#19332e;--muted:#52655f;--green:#17624f;--line:#cad6cf;--card:#fffdf8;--wash:#e8f1ed}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:18px/1.65 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:900px;margin:auto;padding:48px 26px 80px}h1,h2{font-family:Georgia,serif;font-weight:500;line-height:1.15}h1{font-size:clamp(38px,6vw,62px);margin:.2em 0}h2{font-size:30px;margin:1.8em 0 .5em}a{color:var(--green);text-underline-offset:4px}.eyebrow{color:var(--green);font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.lead{font-size:23px;max-width:760px}.status,.card{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:20px 22px;margin:26px 0}.status{border-left:6px solid var(--green);background:var(--wash)}ul{padding-left:1.25em}li{margin:.55em 0}code{background:#e5ece8;padding:2px 5px;border-radius:4px;font-size:.9em}.links{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}.links a{border:1px solid var(--green);border-radius:999px;padding:8px 14px;text-decoration:none}footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:15px}
   </style>
 </head>
-<body>
-  <header>
-    <p class="eyebrow">Q10 · one unresolved implementation decision</p>
-    <h1>When one saved item is too large for a file</h1>
-    <p class="lead">School-OS can add pages for more records. This proposal covers the different case where one permitted field is too large to fit on a page by itself.</p>
-    <span class="status">Proposal only · awaiting explicit user approval</span>
-  </header>
-  <div class="layout">
-    <nav aria-label="Page contents">
-      <a href="#gap">The problem</a>
-      <a href="#recommendation">Recommendation</a>
-      <a href="#shape">Fictional walkthrough</a>
-      <a href="#flow">Editing safely</a>
-      <a href="#tradeoffs">Tradeoffs</a>
-      <a href="#alternatives">Alternatives</a>
-      <a href="#decision">Approval requested</a>
-    </nav>
-    <main>
-      <section id="gap">
-        <div class="notice"><strong>This representation is not approved or adopted.</strong> The broader data architecture remains approved. Until Q10 is decided, a write that needs this format stays blocked rather than losing information or inventing a format.</div>
-        <h2>Start with the actual problem</h2>
-        <p>School-OS stores processed knowledge and tasks in many bounded JSON files on Google Drive. <strong>JSON is field-labelled structured text.</strong> A Knowledge record, for example, has a statement field, fields saying who or what it applies to, and fields linking it to its source. It is not a copy of the raw email or PDF.</p>
-        <p>School-OS chose a default limit of <strong>64 KiB, exactly 65,536 encoded bytes, for each JSON page</strong>. Field names, punctuation, escaped characters and the page's surrounding structure all count. This is a School-OS resource boundary. It is not an inherent JSON or Google Drive limit, and it does not cap the family's whole history.</p>
-        <div class="compare" role="group" aria-label="Difference between many ordinary records and one oversized field">
-          <article><h3>Many ordinary records</h3><p>Add more bounded pages.</p><div class="page-stack"><span>Page 1<br>A–F</span><b>→</b><span>Page 2<br>G–L</span><b>→</b><span>Page 3<br>M–R</span></div></article>
-          <article><h3>One unusually large field</h3><p>Another page for later records does not split this value.</p><div class="oversize"><strong>Record page</strong><br>ID, scope, source, dates …<br><mark>statement too large by itself</mark></div></article>
-        </div>
-        <p>A realistic case is a long, extracted school guideline whose conditions, exceptions and qualifications must be retained. This is the processed guideline, not a raw-source archive. Two histories can also grow: the evidence-backed links among corrected, supported, replaced or conflicting Knowledge, and the reviews of evidence that a Task may be complete. The proposal does not claim that ordinary school messages are all huge or that tests have established how often overflow happens.</p>
-        <div class="plain"><p><strong>Four useful definitions.</strong> <em>Knowledge</em> is one source-linked piece of retained information at its real child, family or school scope, not the entire year in one record. A <em>Task</em> is one action that may need completing. A <em>relationship</em> links two Knowledge records based on evidence. A <em>completion review</em> records evidence that a Task may be finished and the parent's response; evidence alone does not close the Task.</p></div>
-        <p>The short statements elsewhere in the documentation are artificial teaching examples. The approved design already requires meaningful information to remain lossless and says an oversized value should use numbered pieces. It never defined the exact owner, links, order, expected count or content format for those pieces. One GPT Work session could therefore improvise a shape that a later Gemini session cannot reliably read. We missed this representation detail. The broader architecture is not being reopened, but the user's architecture rule requires explicit approval of this exact shape.</p>
-      </section>
+<body><main>
+  <p class="eyebrow">Q10 · decided 16 September 2026</p>
+  <h1>Keep one 64 KiB page maximum</h1>
+  <p class="lead">School-OS will keep complete canonical records on one bounded JSON page. The proposed linked-piece format was rejected.</p>
 
-      <section id="recommendation">
-        <h2>Recommendation: one shared linked-piece format</h2>
-        <p>Keep the original Knowledge or Task record as the owner. It keeps its ID, scope, source, dates and other ordinary fields. Where the oversized value would have been, store a small pointer to the first piece and the number of pieces expected.</p>
-        <p>Each piece says which owner and field it belongs to, its numbered position, its part of the text and, except on the last piece, which piece comes next. Every piece is stored on an ordinary bounded page.</p>
-        <p>The only permitted fields are:</p>
-        <ol>
-          <li>Knowledge <code>statement</code>: the substantive information and qualifications;</li>
-          <li>Knowledge <code>relationships</code>: evidence-backed links to other Knowledge; and</li>
-          <li>Task <code>parent_state.completion_reviews</code>: the completion-evidence review history.</li>
-        </ol>
-        <p>Small values keep their existing form. All other non-oversized data stays unchanged. Pieces are storage belonging to the owner; they are not new Knowledge, Tasks, emails or source material.</p>
-      </section>
+  <div class="status"><strong>Current decision.</strong> Every encoded UTF-8 JSON page remains at or below 64 KiB. Collections of ordinary records continue across existing pages. If one complete record cannot fit, retention blocks with the observed size and private source evidence. It is never truncated or silently reshaped.</div>
 
-      <section id="shape">
-        <h2>A fictional field-trip guideline</h2>
-        <p>Suppose fictional Pine School publishes a detailed field-trip guideline. The Knowledge record says it applies at school scope and links to the original source. Its extracted statement preserves transport rules, medical exceptions and conditional pickup instructions. After JSON encoding, that one statement would make its page exceed 64 KiB.</p>
-        <div class="chain" role="group" aria-label="Knowledge owner points to three ordered pieces">
-          <div class="owner"><strong>Knowledge record</strong><br>ID · school scope · source · dates<br><br><strong>statement:</strong><br>first S1 · expect 3</div><div class="arrow">→</div>
-          <div class="piece"><strong>S1</strong><br>right owner + field<br>position 1 · text</div><div class="arrow">→</div>
-          <div class="piece"><strong>S2</strong><br>right owner + field<br>position 2 · text</div><div class="arrow">→</div>
-          <div class="piece"><strong>S3</strong><br>right owner + field<br>position 3 · text</div>
-        </div>
-        <p>To answer a question, a reader finds the Knowledge record through the approved index, follows the first pointer and checks that all three distinct pieces have the right owner, field and positions. It joins the text and decodes it once to recover the complete statement, then answers with its source. If S2 is missing, the statement is incomplete. The reader must not treat S1 and S3 as a shorter guideline.</p>
-        <p>The same process reconstructs either permitted history. The semantic index points to the owning Knowledge or Task; it does not present each piece as an independent result.</p>
-      </section>
+  <h2>Why start here</h2>
+  <p>School-OS stores processed Knowledge per claim and Tasks per independently completable action. It does not copy raw emails or long attachments into Drive. The fictional examples are small and only illustrate record shapes; no real-instance overflow distribution shows that the current maximum is too small.</p>
+  <p>One limit is simpler for fresh agents. It avoids segment IDs, cross-file reconstruction, extra verification, copy-on-change chains, unreachable old pieces, and additional Drive reads and writes.</p>
 
-      <section id="flow">
-        <h2>Editing means building a new chain first</h2>
-        <div class="flow" aria-label="Save sequence">
-          <div><strong>Build.</strong><br>Create a complete new chain with new School-OS IDs.</div>
-          <div><strong>Verify.</strong><br>Save and read back the pieces and their normal location entries.</div>
-          <div><strong>Switch.</strong><br>Change and read back the owner pointer, revision and required indexes.</div>
-        </div>
-        <p>This order reduces the chance that the owner points at pieces that were never saved. It is not a transaction and promises no recovery from an interrupted multi-file write. Old chains may remain unreachable after edits and consume storage. No automatic cleanup, repair service, checksum identity or generic write engine is added.</p>
-      </section>
+  <h2>What a larger page would change</h2>
+  <div class="card"><ul>
+    <li><strong>Possible benefit:</strong> fewer page reads for a scan, or room for a real whole-record outlier.</li>
+    <li><strong>Possible cost:</strong> more bytes for each whole-page rewrite and readback, plus more irrelevant records if a connector sends the complete page to the model.</li>
+    <li><strong>Route dependency:</strong> an agent may download and filter JSON in temporary code storage, while another connector may inject a whole file or retrieve indexed chunks. Drive bytes are not model-visible tokens.</li>
+  </ul></div>
+  <p>Public limits do not settle this. Gemini's warning concerns content that exceeds its context window, not a 256 KiB School-OS page (<a href="https://support.google.com/gemini/answer/14903178?hl=en-CA">Google</a>). Claude says aggregate Drive files added to a chat must fit its context, without publishing per-read connector granularity (<a href="https://support.claude.com/en/articles/10166901-use-google-workspace-connectors">Anthropic</a>). ChatGPT Work usage varies with model, environment, settings, task complexity, tools and frequency, while actual charges depend on the workspace agreement and credits (<a href="https://learn.chatgpt.com/docs/enterprise/chatgpt-work-usage-and-cost">OpenAI</a>). No upload or context limit guarantees connector behavior.</p>
 
-      <section id="tradeoffs">
-        <h2>What this provides, and what remains unknown</h2>
-        <div class="tradeoff"><p><strong>Benefit:</strong> fresh agents get one provider-independent way to reconstruct the complete permitted value while every page and the owner's pointer stay bounded.</p><p><strong>Cost:</strong> oversized values require extra Drive reads and writes. Replacing one copies its chain, old pieces may remain, and individual JSON-text chunks are awkward to inspect alone.</p></div>
-        <p>Only the reconstructed value has its original string or array meaning. We do not yet know the real frequency of overflow or the connector cost and reliability; later authorized trials may observe those. This format does not promise that every agent environment can process an arbitrarily large single field.</p>
-      </section>
+  <h2>Easy increase if evidence calls for it</h2>
+  <p>If an actual source-supported whole record exceeds 64 KiB, or the authorized evaluation shows a material I/O or query benefit, change the one maximum in the shared installed data contract to 128 or 256 KiB. No new configuration field or registry is needed. Existing pages, stable record IDs, locators, catalogues and references remain valid, so no eager migration is required. Older agents must read the updated contract, and the larger size still requires route-specific evidence.</p>
 
-      <section id="alternatives">
-        <h2>Alternatives considered</h2>
-        <ul>
-          <li><strong>Separate piece formats for each field.</strong> Pieces could be more specific, but agents would need to implement three parallel formats consistently.</li>
-          <li><strong>Raise the page limit or allow occasional large pages.</strong> This reduces reads but changes the approved resource bounds and may exceed managed-agent limits.</li>
-          <li><strong>Keep blocking oversized values.</strong> This avoids a new shape, but an affected email cannot be fully ingested without discarding required information.</li>
-        </ul>
-      </section>
+  <h2>Evaluation already prepared</h2>
+  <p>After complete implementation publication, the requested trial evaluation will use the prepared marked noncanonical 64/128/256 pages built in the same instance from the same already-ingested records and ask the same source-grounded questions. It will not reread the source or create another instance. Measure exact page and record bytes, observable I/O, model-visible tokens when exposed, query completeness, irrelevant context and latency. If no larger page is actually exercised, report 128/256 as <strong>unexercised</strong>.</p>
+  <p>The original “lost in the middle” study supports measuring distractors and evidence position, but its older model results do not prove current managed agents degrade at these sizes (<a href="https://arxiv.org/abs/2307.03172">Liu et al.</a>).</p>
 
-      <section id="decision">
-        <h2>The exact approval requested</h2>
-        <p><strong>For an oversized statement or either of the two histories listed above, use the linked, numbered pieces shown here, verify that the complete set is present, and write a new set when the value changes.</strong></p>
-        <p>Approval would define the format. It would not qualify performance, promise interrupted-write recovery or automatic cleanup, authorize another field, or start any trial.</p>
-        <p><a href="SEGMENT-REPRESENTATION-PROPOSAL.md">Markdown version</a> · <a href="architecture-guide.html#open-questions">Current decision guide</a> · <a href="data-architecture.html">Approved data architecture</a> · <a href="architecture-in-practice.html">Architecture in practice</a></p>
-      </section>
-
-      <details>
-        <summary>Technical reference: exact proposed JSON and field dictionary</summary>
-        <div class="technical">
-          <p>For a segmented Knowledge statement, the existing <code>segment_refs</code> field contains:</p>
-          <pre><code>{
-  "value_encoding": "json_text",
-  "first_ref": {"family": "record_segment", "id": "segment_&lt;uuid-v4&gt;"},
-  "segment_count": 2
-}</code></pre>
-          <p>For oversized <code>relationships</code> or <code>parent_state.completion_reviews</code>, replace the array with <code>{"state":"segmented","segment_refs": &lt;the same descriptor&gt;}</code>. This is a known segmented value, not an empty or unknown array.</p>
-          <p>A segment record, inside the normal D1 page envelope, is:</p>
-          <pre><code>{
-  "segment_id": "segment_&lt;uuid-v4&gt;",
-  "owner_ref": {"family": "knowledge", "id": "knowledge_&lt;uuid-v4&gt;"},
-  "field_path": "statement",
-  "ordinal": 1,
-  "text_chunk": "first part of the JSON-encoded value",
-  "next_ref": {"family": "record_segment", "id": "segment_&lt;another-uuid-v4&gt;"}
-}</code></pre>
-          <table>
-            <thead><tr><th>Field</th><th>Meaning</th></tr></thead>
-            <tbody>
-              <tr><td><code>segment_id</code></td><td>School-OS ID assigned once, never derived from content.</td></tr>
-              <tr><td><code>owner_ref</code></td><td>The owning Knowledge or Task.</td></tr>
-              <tr><td><code>field_path</code></td><td>Exactly one of the three permitted fields, valid for that owner family.</td></tr>
-              <tr><td><code>ordinal</code></td><td>One-based position.</td></tr>
-              <tr><td><code>text_chunk</code></td><td>One lossless portion of the whole JSON-encoded value.</td></tr>
-              <tr><td><code>next_ref</code></td><td>Next segment; omitted on the last.</td></tr>
-              <tr><td><code>first_ref</code></td><td>The owner's pointer to the first segment.</td></tr>
-              <tr><td><code>segment_count</code></td><td>The exact number of distinct segments expected.</td></tr>
-              <tr><td><code>value_encoding</code></td><td><code>json_text</code>; decode once after joining all chunks.</td></tr>
-            </tbody>
-          </table>
-          <p>Encode a statement as a JSON string and either history as a JSON array. Split losslessly at character boundaries, preferring paragraphs where possible. Every fully encoded containing page, including escaping and envelope overhead, remains at or below 64 KiB. Locate segments through the approved bounded family directory and locator mechanism.</p>
-          <p>A reader verifies owner, field, ordinal, distinct IDs, links and exact count before joining and decoding to the original type. A missing piece, cycle, duplicate ordinal, wrong owner, wrong type or unexpected continuation means incomplete data. Indexes use the reconstructed whole value. Whole-email ingestion cannot complete until all pieces are saved and checked. Verified segments are immutable; edits go through the owner by writing a new verified chain.</p>
-        </div>
-      </details>
-    </main>
-  </div>
-  <footer>Written proposal only. No test, connector operation, ingestion or live effect was performed.</footer>
-</body>
-</html>
+  <div class="links"><a href="PAGE-SIZE-ASSESSMENT.md">Full assessment</a><a href="OPEN-QUESTIONS.md#q10-what-happens-when-one-complete-record-exceeds-the-page-maximum">Decision ledger</a><a href="SEGMENT-REPRESENTATION-PROPOSAL.md">Rejected proposal history</a></div>
+  <footer>Architecture decision page. Operational material remains authored but untested. No probe, ingestion, model replay or functional test was run for this decision.</footer>
+</main></body></html>

@@ -1,11 +1,10 @@
 # School-OS restart: current plan and artifacts
 
-Updated 2026-09-15. Start here when resuming the restart. The current design is
-documented; a production replacement and cross-agent handoff are not yet
-implemented or qualified. Earlier experiments and the retired runtime are
-evidence, not an instruction to rebuild their architecture.
+Updated 2026-09-16. Start here when resuming the restart. The retained MVP
+implementation is authored but not yet qualified. Earlier experiments and the
+retired runtime are evidence, not an instruction to rebuild their architecture.
 
-The coordinator remains on `codex/restart-school-os`. The
+Use the active plan and progress log for the exact current revision and branch. The
 [coverage map](implementation/COVERAGE.md) separates original whole-product scope
 from current MVP delivery. D1, query coverage, D3’s minimal Python standard-library
 helpers with agent/tool operations, and D5 are approved. On 2026-09-15 the user replaced School-OS-managed
@@ -27,10 +26,15 @@ handoff or start of testing.
 For a guided review, open the [HTML architecture decision guide](implementation/architecture-guide.html).
 Its [single numbered section](implementation/architecture-guide.html#open-questions)
 and [decision inventory](implementation/OPEN-QUESTIONS.md) now record the user's
-Q3/Q5/Q7–Q9 decisions and binary email outcome. The
+numbered decisions and binary email outcome. The
 [concrete data/index proposal](implementation/DATA-ARCHITECTURE-PROPOSAL.md)
 explains child/family/school scope and history queries. Its fields/indexes and
-the narrow Q4/Q6 discovery/reuse rules await approval; other decisions are settled.
+the narrow Q4/Q6 discovery/reuse rules are approved. The later linked-piece Q10
+proposal was rejected: current pages use one shared 64 KiB maximum and keep
+records whole. The active plan and installed data contract supersede proposal or
+pending labels retained in historical review artifacts.
+The [page-size assessment](implementation/PAGE-SIZE-ASSESSMENT.md) records the
+decision, evidence limits and matched later evaluation.
 The [new operating instructions](../../../operations/README.md) cover the
 approved setup interview, reusable tool-semantic adapters and parent confirmation
 of detected completion. Agent-specific connectors own API/access mechanics;
@@ -49,17 +53,19 @@ approval ledger remain authoritative.
 The [product principles](../../product-principles.md#decision-authority) are the
 source of truth and grounding for uncovered decisions. Every new or changed
 architecture decision requires explicit user approval before adoption or
-implementation. The next coordinator must stop after publishing the agreed new
-project code; the user personally manages and oversees testing. No tests or
-pilots start automatically. The [Astra handoff](ASTRA-HANDOFF.md) is the copyable
-prompt for that session.
+implementation, except where the user has explicitly delegated a recorded choice.
+After publishing and verifying the agreed implementation revision, the active plan
+authorizes exactly three isolated seven-day ingestion/audit trials and the matched
+64/128/256 KiB page-size evaluation. No unrelated test or effect starts
+automatically. The [coordinator handoff](ASTRA-HANDOFF.md) has a historical
+filename; the active plan controls current authority.
 
 The assignment covers the [whole project](PLAN.md#whole-project-implementation-scope):
 retained ingestion, knowledge/tasks, queries, briefs, basic Drive startup and
 agent recipes, subject to the explicit D2/D7/D8 MVP deferrals. Email identity is one
 component with a detailed revised recipe. Requirements and lifecycle design
-exist across these areas; exact architecture choices, implementation and real
-agent qualification are distinct remaining work.
+exist across these areas; publication and real agent qualification remain
+distinct work.
 
 ## Current direction
 
@@ -91,7 +97,7 @@ personal computer or coding CLI is required by the target architecture.
 |---|---|---|
 | [Product principles](../../product-principles.md) | Product purpose, core use cases, source custody, portable agents, metadata-only identity, processing coverage and job visibility | Current product authority; updated with approved clarifications |
 | [Restart plan](PLAN.md) | Approved architecture choices, development sequence, qualification milestones and remaining limits | Current work plan; implementation milestones remain open |
-| [Astra coordinator handoff](ASTRA-HANDOFF.md) | Reading order, delegation, architecture approval and mandatory code-to-testing handoff | Current next-session prompt; no testing authorization |
+| [Coordinator handoff](ASTRA-HANDOFF.md) | Reading order, delegation, architecture approval and code-to-testing handoff; filename is historical | Active plan controls current trial authorization |
 | [Metadata and ingestion recipe](identity/METADATA-RECIPE.md) | Logical-email reuse, address/subject normalization, original Date, parent-bound attachment groups, replies and window-based recovery | Current detailed design; not a claim of implemented behavior |
 | [Corrected live-email findings](identity/metadata-stress/README.md) | Actual Gmail observations, original experiment results and the corrected interpretation of their product significance | Empirical evidence with explicit limitations |
 | [Root plan](../../../PLAN.md) and [progress log](../../../PROGRESS.md) | Active-plan routing, decisions, completed work and exact next actions | Repository continuity; older log entries preserve their historical interpretation |
@@ -125,12 +131,13 @@ was already implemented in the experiment; subject trimming is now approved for
 the next revision. Timestamp changes were not observed. Thread grouping is
 optional, and short pages with continuation require continued enumeration.
 
-The next implementation covers the retained MVP checklist, with the explicit
-deferrals and new architecture decisions recorded before dependent code. A finished identity model alone is not the completed project.
-Publish the agreed project code and stop for the user to direct testing.
-Actual file/table layout, attachment-group processing, complete discovery,
-scheduling, fresh-session handoff and execution cost remain qualification work;
-the proposed managed-agent/Drive pilot is not authorized to start automatically.
+The retained implementation covers the MVP checklist subject to its explicit
+deferrals. An identity model alone is not the completed project. Publish and
+verify the agreed project revision before running the three specifically
+authorized isolated trials. Actual route behavior, attachment-group processing,
+complete discovery, fresh-session handoff, page-size cost and retrieval remain
+qualification work; unrelated pilots, scheduling and external effects remain
+unauthorized.
 
 
 ## Final approval and documentation snapshot

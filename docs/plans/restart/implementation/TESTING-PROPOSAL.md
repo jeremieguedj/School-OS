@@ -1,12 +1,26 @@
 # Restart testing proposal
 
-Updated 2026-09-15. **PREPARED — NOT RUN.** The user directs testing after the
-agreed implementation publication checkpoint. No test, simulation, replay,
-build, probe, ingestion, scheduled job or live qualification was executed to
-prepare this inventory. Publication hygiene supplies no behavior evidence.
+Originally updated 2026-09-15. **HISTORICAL PREPARED INVENTORY — NOT RUN.** No
+test, simulation, replay, build, probe, ingestion, scheduled job or live
+qualification was executed to prepare this inventory. Publication hygiene
+supplies no behavior evidence.
+
+**Current supersession, 2026-09-16:** this document preserves the acceptance
+inventory and approval snapshot as they existed when authored. Its statements
+that minimum setup, D4 choices, D6 manual/audio behavior or later testing
+authorization remain pending are historical, not current gates. The active plan
+now records those decisions, rejects linked-field segmentation, keeps one shared
+64 KiB page maximum and authorizes exactly three isolated post-publication
+seven-day ingestion/audit trials. The current
+[trial protocol](../TRIAL-PROTOCOL.md) also prepares a matched 64/128/256 KiB
+evaluation using the same records and queries. It creates no qualification result
+until executed; failed or undersized candidates may remain unexercised.
+The [page-size assessment](PAGE-SIZE-ASSESSMENT.md) records why 64 KiB remains
+the one current maximum and what evidence could support a later shared change.
 
 The [active plan](../PLAN.md) governs current approvals, explicit MVP exclusions
-and the stop before testing. The [product principles](../../../product-principles.md)
+and the publication gate plus exact later trial authority. The
+[product principles](../../../product-principles.md)
 remain the long-term direction; the [metadata recipe](../identity/METADATA-RECIPE.md)
 governs source identity. The historical [lifecycle simulation](../SIMULATION.md)
 and [frozen metadata study](../identity/metadata-stress/README.md) are unchanged
@@ -54,10 +68,14 @@ add setup/tool choice, shared adapter reuse, pending parent confirmation, storag
 lookup and recipe-selection expectations. They do not modify the frozen studies
 or the 13-source/33-scenario inventory. All remain unexecuted. The proposed order
 is text review, fictional capability/mapping exercises, storage/query and task
-round trips, then complete ingestion/brief exercises. The user chooses and
-authorizes each testing stage; this document authorizes none.
+round trips, then complete ingestion/brief exercises. This document itself
+authorizes none; the active plan separately authorizes the exact three later
+trials and their page-size evaluation after implementation publication.
 
-## Current approvals and MVP boundary
+## Approval snapshot when authored
+
+This table is retained for provenance. Apply the current supersession note above
+and the active plan rather than treating a historical “pending” label as a gate.
 
 | Decision | Current treatment in prepared acceptance work |
 |---|---|
@@ -171,7 +189,7 @@ may still receive a coverage-qualified answer under the approved query rule.
 After an authorized capable route becomes available, reassess actual completion
 before ordinary briefing. The fixture does not guarantee such a route exists.
 
-## Whole-project traceability
+## Whole-project traceability at authoring
 
 All scenarios remain prepared and unexecuted. [COVERAGE.md](COVERAGE.md) records
 deliverable/approval status; a test mapping does not establish implementation.
@@ -208,11 +226,12 @@ deliverable/approval status; a test mapping does not establish implementation.
 | U6 New applications/workflows | Canonical-data use and D1 separation retained; schedules remain user/agent-owned |
 | U7 Supplied-package install/update | Deferred with D8; minimum setup separately undecided |
 
-## Proposed sequence for the user to direct
+## Historical proposed sequence
 
-Only the user's subsequent testing direction authorizes execution. Select the
-exact published revision, scenario subset, services and permitted effects first.
-Test safety stop conditions are not production School-OS per-run caps.
+This sequence records the proposal before the later trial authorization. Follow
+the current trial protocol for the three authorized post-publication trials;
+additional scenarios, services and effects still need their own scope. Test
+safety stop conditions are not production School-OS per-run caps.
 
 1. Review approvals, the implemented MVP and independent expectations. Resolve
    remaining minimum-setup/D4/D6 choices applicable to the selected trial; do
@@ -244,7 +263,12 @@ S13/early-loss S12, S01 package installation, S24 upgrades and S25 central
 register/control remain future inventory. They require renewed scope approval,
 resolved architecture and later testing direction; none is an MVP failure.
 
-## Remaining decisions and handoff
+## Historical remaining decisions and handoff
+
+The “remaining” labels below describe the 2026-09-15 snapshot. Minimum setup and
+the named D4/D6 choices were resolved later; consult the active plan and current
+operation recipes. The paragraph is retained to preserve the proposal's
+provenance rather than silently rewriting its earlier state.
 
 D5 approval settles its described semantic/task behavior, including the 14-day
 fallback. Small Python standard-library helpers and named script references in

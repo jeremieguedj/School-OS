@@ -44,6 +44,21 @@ trial scope remain governed by the active plan.
 | Incomplete index | A new canonical page is saved but its topic index is stale; a fractions observation lacks a math co-tag. | Detect recorded revision mismatch where observable, read appropriate canonical/entity candidates or disclose incomplete search. Fresh page indexing alone does not prove semantic classification completeness. No D2 repair guarantee. |
 | Parent task | Parent adds “Pack Robin’s snack” with no school requirement. | Preserve a parent-origin task and its planning state without inventing a school source or deadline. |
 
+## Page-size measurement cases — prepared, unexecuted
+
+Use the current published contract maximum for every canonical trial instance and
+the same value across all three routes. The later comparison uses the same ordered
+canonical records and queries at 64 KiB, 128 KiB and 256 KiB; it does not create a
+new test root, re-ingest source material or change the canonical instance.
+
+| Case | Fictional input | Expected behavior to inspect later |
+|---|---|---|
+| Ordinary rollover | Twenty complete fictional Knowledge records fill more than one page under the current contract maximum. | Roll over only between complete records. Record encoded bytes and record count for each page, full readback through the exact encoded end, and exact reconstructed values. A larger comparison maximum may reduce pages but does not require merging existing pages. |
+| One-record overflow | One complete fictional Knowledge record is larger than an otherwise empty page; a separate attachment download is larger still. | Report the canonical page's observed encoded bytes and minimum required size, distinct from raw attachment/download bytes. Do not truncate, split fields, claim a partial save or treat attachment size as record overflow evidence. |
+| Distribution and operations | A meaningful sample spans small, median and near-limit pages. | Report sample count and maximum plus p50/p95 only when meaningful. Record observed Drive reads, writes, verification readbacks, retries with reasons and bytes where exposed; mark unavailable measures unknown. |
+| Context and cost visibility | The connector exposes downloaded bytes but no model-context, token or price telemetry. | Keep downloaded bytes separate from model-visible context. Report context, tokens and money as unknown; any optional calculation is labelled a rough estimate with inputs and assumptions. |
+| Same-query comparison | Each 64/128/256 KiB comparison contains the same complete records, including a qualified fact, correction and scoped task source. | Perform identical queries as actual reads from each candidate and compare the observed pages/records and answers with independent expected records. A remembered earlier answer is not retrieval evidence. Check preserved sources and qualifications, omissions, and irrelevant records/bytes read. Document inference uncertainty. If pages never approach a candidate maximum or the route cannot completely write and read them, mark that candidate unexercised rather than qualified. |
+
 ## Additional task and adapter cases — prepared, unexecuted
 
 | Case | Fictional input | Expected behavior |

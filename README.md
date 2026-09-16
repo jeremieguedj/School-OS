@@ -23,9 +23,13 @@ is made by this repository state.
 - `scripts/privacy_scan.py`: independent development publication hygiene.
 
 Drive instances separate `system`, `instance` and `extensions`. Canonical data uses
-bounded JSON pages and owned IDs; provider handles only aid access. Agents use
-shared semantic adapters through their own connectors. No dedicated computer,
-persistent local runtime, coding CLI or central scheduler is required.
+bounded JSON pages and owned IDs; provider handles only aid access. The current
+shared maximum is 64 KiB per encoded page. Pages roll over between complete
+records; fields are not split into linked storage. Evidence from the later
+authorized trials may support changing the shared maximum without changing IDs,
+adding instance configuration or rewriting valid smaller pages. Agents use shared
+semantic adapters through their own connectors. No dedicated computer, persistent
+local runtime, coding CLI or central scheduler is required.
 
 The MVP defers generic interrupted-write repair, centralized jobs management and
 packaged installation/upgrades. Users and agents operate nonconcurrently on the

@@ -78,10 +78,12 @@ lock or repair protocol.
 ```
 
 The encoded page, including its envelope, remains at or below D1's approved
-64 KiB default. Directory and index pages contain at most 100 entries and use
+64 KiB maximum. Directory and index pages contain at most 100 entries and use
 explicit continuation. More pages extend capacity; these are not total-history
-limits. Long substantive text uses D1's numbered, lossless paragraph segments
-linked to one Knowledge ID rather than truncation.
+limits. One canonical record remains whole; if it cannot fit, retention blocks
+with private evidence rather than truncating or inventing an overflow representation.
+The [Q10 assessment](PAGE-SIZE-ASSESSMENT.md) records the delegated decision and
+the evidence needed for a possible later single-limit increase.
 
 ### IDs and references
 
@@ -571,7 +573,7 @@ Required Knowledge fields are:
 |---|---|
 | `knowledge_id` | Stable School-OS ID. |
 | `knowledge_kind` | One of the four meanings above. |
-| `statement` or `segment_refs` | Lossless substantive statement, with long text segmented under D1. |
+| `statement` | Complete substantive statement; the whole record must fit one bounded page. |
 | `qualifications` | Established exceptions, conditions and uncertainty; empty only when assessed as none. |
 | `scope` | True storage/applicability anchor, described below. |
 | `entity_links` | Relevant entities with roles such as subject, reporter or school context. |
@@ -822,8 +824,8 @@ evidence; the same evidence cannot silently reopen it. Materially new evidence
 may create a new awaiting entry, while the rejected decision remains in history.
 A confirmed review and the parent's checked completion flow through approved D5
 synchronization. A later receipt does not reopen or downgrade an already
-completed Task. If the review list outgrows a bounded Task page, D1-style numbered
-segments linked to the same Task ID preserve the history.
+completed Task. If the review list makes the whole Task exceed the page maximum,
+retention blocks with the observed size; do not truncate or invent another form.
 
 ```json
 {
@@ -1249,9 +1251,9 @@ directories and explicit alias decisions, but do not require a large ontology.
 A dedicated edge family handles very high relationship counts, but adds another
 directory and more reads. The recommendation stores one-way evidenced links on
 the newer Knowledge record and derives only the small incoming lookup needed for
-reverse discovery. If a link list would exceed its bounded page, the record may
-use D1-style numbered relationship segments linked to the same Knowledge ID; no
-generic graph service is needed.
+reverse discovery. If a link list makes the whole Knowledge record exceed its
+bounded page, retention blocks with the observed size; no generic graph service
+or overflow representation is added.
 
 ### Full scans only
 

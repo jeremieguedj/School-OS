@@ -27,17 +27,24 @@ fields:
   the declared family. A directory, catalogue, or derived-index page instead
   adds its contract-specific key or route, required bounded `entries`, and
   `continuation`; it does not also require `records`.
-- The encoded page, including the envelope, must not exceed 64 KiB.
+- The **current maximum encoded page size** is the shared contract parameter
+  `64 KiB` (65,536 bytes). Every encoded page, including its envelope, must
+  remain at or below that maximum.
 - Directory and index pages contain no more than 100 entries. They use a
   required `continuation` object: `{"state":"exhausted"}` or
   `{"state":"continues","next_page_id":"page_<uuid-v4>"}`.
-- Split pages before either bound is exceeded. More pages extend capacity; the
-  bounds are not history caps.
-- Never truncate meaning to fit a page. The approved contract reserves
-  `segment_refs` for numbered lossless segments linked to one record ID, but the
-  segment record/reference shape is not yet defined. Until that shape is
-  approved and added here, an oversized substantive value is an explicit
-  retention blocker and cannot be called saved or fully ingested.
+- Roll over or split pages between complete records or entries before either
+  bound is exceeded. More pages extend capacity; the bounds are not history
+  caps.
+- The maximum is an upper bound, not a target page size. A later increase would
+  permit larger pages; it would not require every page to be large or require
+  existing pages to be merged or rewritten.
+- Never truncate meaning or split a field away from its owning record to fit a
+  page. If one complete required record cannot fit on an otherwise empty page,
+  do not invent another representation or claim a partial save or completed
+  ingestion. Report the complete page's observed encoded byte count and the
+  minimum page size required to retain it, and leave the affected operation
+  incomplete under the current shared maximum.
 
 ## References and identity
 
@@ -497,8 +504,7 @@ A Knowledge record contains:
 ```text
 knowledge_id        required School-OS ID
 knowledge_kind      fact | guideline | update | observation
-statement           required bounded string for the current implemented shape
-segment_refs        reserved alternative; exact referenced shape unresolved
+statement           required complete string
 qualifications      required complete array
 scope               required applicability object
 entity_links        required complete array of {role,ref}
@@ -510,10 +516,11 @@ relationships        required complete array
 recorded_at          required authored instant
 ```
 
-Use `statement` for content that fits a bounded page. Do not author
-`segment_refs` until its referenced record shape is added to this contract; its
-approval as a field alternative did not define that shape. `scope` contains
-`anchor_ref` and one applicability mode:
+`statement` remains one whole string on its owning Knowledge record.
+`qualifications` and `relationships` remain complete arrays on that same record.
+The complete record is subject to the shared page maximum and its oversized-record
+rule; no linked-piece or field-segmentation format is part of this contract.
+`scope` contains `anchor_ref` and one applicability mode:
 
 - `anchor_only`: applies to the anchor itself;
 - `listed_entities`: requires a complete `listed_entity_refs` array, and every
@@ -566,7 +573,8 @@ per-child submission is one Task per child. A recurring series preserves the
 rule and interval; projected occurrences have independent IDs and state.
 
 `parent_state` contains `owner`, `planned_date`, `progress`, `completed`,
-`personal_notes`, and `completion_reviews`. A completion review contains
+`personal_notes`, and `completion_reviews`. `completion_reviews` is a complete
+array retained on the owning Task record. A completion review contains
 `evidence_refs`, `detected_at`, and `state`: `awaiting_confirmation`,
 `confirmed`, or `rejected`; decided reviews also preserve `decided_at` and an
 optional `parent_note`. Evidence does not itself compute pending completion.

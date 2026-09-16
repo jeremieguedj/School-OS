@@ -11,7 +11,7 @@ configuration. Raw email/attachment bytes stay at their source.
 | School-OS meaning | Drive representation and required observation |
 |---|---|
 | Entry point | Readable supplied instruction document identifying the instance and its configuration/directory roots. |
-| Canonical page | Full UTF-8 JSON file with the approved page envelope and family records, within D1's 64 KiB default. |
+| Canonical page | Full UTF-8 JSON file with the approved page envelope and family records, within the installed data contract's current 64 KiB maximum. |
 | Directory/index page | Bounded JSON entries with explicit School-OS continuation, at most 100 entries and within the byte limit. |
 | Page/record identity | School-OS IDs inside content; Drive file IDs, names and links are access aids. |
 | Successful save | Read back actual complete saved content, confirm instance/page/family/revision and intended values under the storage procedure. |

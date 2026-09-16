@@ -3,8 +3,9 @@
 Status: the user approved the corrected interpretation and operating choices on
 2026-09-14. The current [metadata recipe](identity/METADATA-RECIPE.md) defines
 logical-email reuse, normalization, parent-bound attachment lookup and durable
-search-window recovery. Retained implementation is authored and undergoing integration review; the
-Q10 overflow representation remains unresolved. Managed-agent qualification
+search-window recovery. Retained implementation is authored and statically reviewed; the
+user rejected linked overflow pieces and the delegated assessment retains one
+64 KiB page maximum. Managed-agent qualification
 has not started. The [artifact guide](README.md) separates current authority from frozen
 experiments and historical proposals.
 
@@ -26,28 +27,29 @@ that checkpoint. Retired runtime entry points, code and contracts remain
 recoverable from the snapshot and history; frozen restart studies remain intact.
 
 The retained operations, contracts, adapters and fictional examples are authored
-but untested. Implementation is incomplete while Q10 remains unresolved. Exact
-next action: obtain the segment-format decision, integrate the approved shape,
-finish static integration review and publication hygiene, then publish and verify
+but untested. Q10 is resolved with no new format: whole records remain bounded by
+the existing 64 KiB maximum, and oversize records block without truncation. Exact
+next action: finish static integration review and publication hygiene, then publish and verify
 the exact remote implementation revision before any authorized trial begins.
 
-### Implementation review escalation — exact overflow representation
+### Q10 decision — retain the single page maximum
 
-All nine published questions remain approved. Implementation exposed one missing
-shape: Q1 reserves `segment_refs`, and D1 requires lossless numbered pieces, but
-the published contract defines neither segment records nor their references.
-Fresh agents must not invent incompatible persistent formats. The coordinator
-has asked for approval of the narrow
-[record-segment representation](implementation/SEGMENT-REPRESENTATION-PROPOSAL.md).
-It is a proposal only; no new family is adopted yet. Oversized-value writes are
-explicitly blocked, not truncated or silently deferred from the required MVP.
-Independent implementation/review proceeds. The whole-MVP publication prerequisite
-for the authorized trials is not met while this required representation is open.
+The user rejected the linked-piece proposal and delegated the size choice. The
+[assessment](implementation/PAGE-SIZE-ASSESSMENT.md) keeps 64 KiB encoded UTF-8
+as the one page maximum because ordinary processed records are expected to be
+small and no real overflow distribution supports a speculative increase. A
+whole record that exceeds it blocks with evidence; no segmentation, truncation,
+fallback blob, field sharding, new family or configuration field is introduced.
+If actual whole-record sizes or trial I/O/query results justify it, the shared
+installed contract can later change the one maximum to 128 or 256 KiB without
+changing stable IDs, locators or existing pages. Older agents must read the new
+contract, and managed-connector compatibility still requires evidence.
 
 
 **Published accepted-work checkpoint:** `972ac4f1023be1aad4003af6a44ffbe527cb0c8f`
-on `codex/restart-implementation`, remote verified. This checkpoint is incomplete
-while Q10 awaits approval. Publishing it does not start or authorize early trials.
+on `codex/restart-implementation`, remote verified. This checkpoint predates the
+Q10 decision and is not the complete implementation publication. Publishing it
+does not start or authorize early trials.
 
 ## Current execution authorization
 
@@ -158,12 +160,14 @@ gate. No scenario, helper, connector operation or test was executed.
 **D1 approval scope:** adopt revision 2 D1 in full: a readable Drive bootstrap;
 `system`, `instance`, and `extensions` areas; multiple UTF-8 JSON record pages
 with the specified headers and routing; paged directories with explicit
-continuations; a default 64 KiB encoded-JSON limit per page and at most 100
-entries per directory page; lossless long-text segmentation; bounded startup,
-traversal and writes. These are per-page limits, not a fixed cap on total
-instance history: more pages can be added. Drive capacity and practical access
-cost remain constraints to qualify later. Exact record meanings, recovery,
-adapter contracts and the other D2–D8 mechanisms are not approved by D1.
+continuations; a 64 KiB encoded-JSON maximum per page and at most 100 entries per
+directory page; record collections continued across pages as they grow;
+bounded startup, traversal and writes. These are per-page limits, not a fixed
+cap on total instance history: more pages can be added. Q10 later rejected
+linked long-text pieces, so one complete record must fit one page or the write
+blocks with its exact observed size. Drive capacity and practical access cost
+remain constraints to qualify later. Exact record meanings, recovery, adapter
+contracts and the other D2–D8 mechanisms are not approved by D1.
 No production implementation or qualification is claimed by this approval.
 
 **Query-coverage approval scope:** on 2026-09-14 the user explicitly said
@@ -582,11 +586,14 @@ report before interpreting `wrong_association` or the earlier pass/failure total
   residual indistinguishability honestly without adding content-based identity.
   Code/checks are authored only; no model or test execution occurred. Its limited
   Date fixture domain does not approve the production threshold in D4.
-- [ ] Implement the whole-project delivery scope above with the explicit MVP
+- [x] Resolve Q10: reject linked pieces, retain the single 64 KiB maximum, and
+  keep oversized whole records explicit rather than truncating or inventing a
+  representation. Prepare page-size evaluation for the authorized trials.
+- [x] Author the retained whole-project delivery scope above with the explicit MVP
   interrupted-write-recovery exception, under the approved
-  architecture. Obtain approval for unresolved architectural choices before
-  their dependent code; Q10's segment representation is the current unresolved
-  dependency. Do not silently decide the Drive file/table layout.
+  architecture. Obtain approval for any newly discovered architectural choice
+  before dependent code; no current architecture question is open. Do not
+  silently change the Drive file/table layout.
   Prepare a proposed test inventory and fixtures without running them.
 - [ ] Publish the agreed code and updated continuity documents. Report the
   exact revision, coverage of every deliverable, pending decisions, known risks, tests not

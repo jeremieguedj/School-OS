@@ -53,10 +53,11 @@ subsequently approved all remaining published recommendations: Q1/Q2 concrete
 data/index architecture, Q4 arrival-window discovery and Q6 completed-email reuse.
 See the current restart plan and its documentation snapshot checkpoint.
 The retained operations, contracts, adapters and fictional examples are now
-authored but untested. Q10's exact oversized-value segment representation is
-still awaiting approval; affected values must block rather than be truncated,
-and the retained MVP is not ready for complete-implementation publication or
-trials until it is resolved. Transparently incomplete checkpoints may be published.
+authored but untested. The user rejected Q10's linked-piece representation and
+delegated the page-size decision; the assessment retains one 64 KiB maximum and
+allows a later single-limit increase if actual evidence justifies it. A whole
+record that exceeds the current limit blocks rather than being truncated or
+given an invented overflow format. No current architecture question remains.
 For the remaining repository work, use bounded Sol workers only, never Astra.
 The root agent primarily coordinates, handles architecture and other escalations,
 integrates the result and owns publication.
