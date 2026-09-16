@@ -5693,3 +5693,56 @@ requirements, then read this log from top to bottom.
 - Next: follow the same fresh-worker handle and inspect its actual result, then
   administer the independent common questions when ingestion is ready. Await
   explicit transfer approval before either browser launch.
+
+## 2026-09-16 — First-route setup blocked; live Drive state audited
+
+- The fresh context-free Sol worker finished its first-route attempt against the
+  pinned implementation. It created the assigned folder hierarchy and staged 28
+  pinned files locally, but no operating file was verified on Drive. Local
+  staging is not persistence or successful setup.
+- The connector upload receipt records an error with no structured result. Two
+  browser file-assignment calls did not return a completed result and were
+  interrupted. The retry requested explicit operation and tool timeouts, but
+  successful enforcement of those bounds was not established. This distinguishes
+  local preparation, connector response and browser intervention; it does not
+  establish a transport, provider, authorization, permission or authentication
+  root cause.
+- An independent read-only live Drive audit followed three returned direct-folder
+  references and 12 returned folder entries below the coordinator route. It
+  observed zero files in the returned items. The audit used
+  `google_drive_list_folder` with `url` and `top_k: 100`, not Drive search. Those
+  responses contain no continuation token or explicit exhaustion state, so the
+  short pages do not prove complete discovery. No bootstrap file, current system
+  document, canonical configuration, page file or exact product-principles target
+  was returned. Without a target reference, exact readback was unavailable and
+  existence remains unresolved rather than proven absent.
+- Setup did not reach mailbox reads or searches, ingestion, canonical indexes or
+  pages, retrieval questions, or the page-size comparison. None of those checks
+  is qualified by this attempt. The independently frozen source oracle remains
+  complete for its intended comparison scope: 17 observed bodies and 3/3 JPEGs,
+  with handwriting qualifications retained and no task/completion change.
+- Gemini Spark and ChatGPT Work remain unsubmitted pending explicit consent to
+  transfer their private v2 instructions. No alternate upload path or other
+  bypass was used. The original three-route trial objective remains unfinished.
+- Next: obtain explicit private-transfer approval and launch only the permitted
+  browser routes. Separately diagnose the first route's local upload path within
+  the existing architecture before any narrowly scoped setup recheck.
+
+- Coordinator correction: the browser retry had been allowed on an empty
+  returned listing. That response did not establish exhaustive discovery, so
+  the retry relied on insufficient absence evidence. Both upload effects remain
+  unresolved. The [trial report](docs/plans/restart/TRIAL-RESULTS.md) records this
+  execution defect separately from connector/runtime limitations; the approved
+  unknown-effect verification rule remains unchanged.
+
+- A read-only inspection of the browser extension's upload prerequisite was
+  blocked by browser security before opening a diagnostic tab. No settings were
+  changed. The setting and actual upload root cause remain unknown.
+- All workers have finished and there is no live trial process to wait on.
+  The repeated private-transfer approval blocker remains, after completing
+  independent source review, first-route observation and publication work.
+  Execution is blocked, not complete. Exact next action: the user authorizes
+  sharing the prepared mailbox, child/school and assigned-folder instructions
+  with Gemini Spark and ChatGPT Work; then continue those existing isolated
+  routes. Preserve the first attempt and resolve its upload capability and
+  uncertain effects before any narrowly scoped recheck.

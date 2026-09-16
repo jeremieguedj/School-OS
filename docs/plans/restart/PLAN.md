@@ -5,8 +5,8 @@ Status: the user approved the corrected interpretation and operating choices on
 logical-email reuse, normalization, parent-bound attachment lookup and durable
 search-window recovery. Retained implementation is authored and statically reviewed; the
 user rejected linked overflow pieces and the delegated assessment retains one
-64 KiB page maximum. Managed-agent qualification
-has not started. The [artifact guide](README.md) separates current authority from frozen
+64 KiB page maximum. Initial managed-agent setup qualification is blocked;
+ingestion and retrieval remain unexercised. The [artifact guide](README.md) separates current authority from frozen
 experiments and historical proposals.
 
 ## Current coordinator checkpoint — approved implementation
@@ -58,7 +58,7 @@ occurred. The next action is the already-authorized three isolated ingestion/aud
 trials at this fixed implementation revision, including page-size evaluation.
 This publication is not a claim of connector, agent or semantic qualification.
 
-**Trial preflight, 2026-09-16:** the goal is active again. The intended tests
+**Trial preflight, 2026-09-16:** the goal resumed before these attempts. The intended tests
 parent and three separate fresh route folders have been verified through live
 Drive metadata. The operating implementation remains pinned at
 `138ca7954bdb3b7e9de065199fdb4903d6a924a3`. Coordinator searches by both Gmail
@@ -88,15 +88,41 @@ been submitted and no live run handle exists. Automatic approval review rejected
 uploading the private v2 instructions to Gemini because they contain mailbox,
 child/school and Drive details. Explicit transfer approval for Gemini and ChatGPT
 Work is pending; do not bypass it. Independent source audit remains separate from
-tested-agent outputs. A retry successfully launched a context-free
-`gpt-5.6-sol` worker at high reasoning with no inherited turns. It is running the
-first-route setup and ingestion against only its assigned coordinator folder,
-using corrected v2 inputs and the pinned revision. It must not read oracle or
-other-route results and has no authority for outbound delivery, task-app, mailbox or
-schedule effects. Launch is not evidence that setup or ingestion succeeded; the
-same worker handle must be followed through its actual result. The earlier
-separate-task question is now moot. Private references and evidence remain
-outside Git.
+tested-agent outputs. A context-free `gpt-5.6-sol` worker at high reasoning and
+with no inherited turns completed the first-route attempt. It created the
+assigned folder hierarchy, but setup blocked before any operating file was
+verified on Drive. Twenty-eight pinned files were staged locally; local staging
+is not persistence. The upload connector returned an error without a structured
+result. Two browser file-assignment calls did not return a completed result and
+were interrupted; the retry requested explicit operation and tool timeouts, but
+successful enforcement of those bounds was not established. An independent live
+Drive audit followed 12 returned folder
+references below the route root and observed zero files in the returned items.
+It used `google_drive_list_folder` with `url` and `top_k: 100`; the responses
+exposed neither a continuation token nor explicit exhaustion. The short pages
+therefore do not prove a complete inventory. The exact `system/docs` target was
+not returned, so no target reference was available for readback and its existence
+remains unresolved. These observations do not establish a transport, provider,
+permission or authentication root cause.
+
+The first route therefore performed no mailbox search or read, ingestion,
+canonical page/index write, retrieval question or page-size comparison. Gemini
+Spark and ChatGPT Work remain unsubmitted while explicit private-transfer consent
+is pending. No browser-upload bypass is authorized. The original three-route
+trial goal remains unfinished. Private references and evidence remain outside
+Git. The current privacy-safe checkpoint is summarized in
+[trial results](TRIAL-RESULTS.md).
+
+**Current execution blocker:** the first worker and independent audit have
+finished; no trial process is still running. A read-only browser-extension
+prerequisite inspection was blocked by browser security, leaving that setting
+and the upload root cause unknown. The same private-transfer approval has
+remained pending across successive goal turns. Preserve the original instances
+and unresolved effects. Next action: obtain explicit consent for the prepared
+private instructions to Gemini Spark and ChatGPT Work, then launch those routes
+with their existing isolated folders and pinned inputs. A coordinator-route
+recheck also needs a working raw-file route and sufficient prior-effect evidence;
+do not restart it from an empty-looking, nonexhaustive listing.
 
 ## Current execution authorization
 
