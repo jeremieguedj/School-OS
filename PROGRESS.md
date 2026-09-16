@@ -5814,3 +5814,39 @@ requirements, then read this log from top to bottom.
 - This entry and links are a continuity-only publication after the source tag;
   they do not change the pinned starter contents or claim the overall trial goal
   is complete.
+
+
+## 2026-09-16 — Revised trials resumed under no-repair instruction
+
+- The user approved testing and uploads for all three agents, then explicitly
+  required results review before any bug is addressed. The goal tool now reports
+  active status. The prior turn was a user-directed wait; this turn resumed
+  preparation and created a fresh context-free Sol trial from the exact published
+  ZIP link plus “setup my schoolOS,” with no additional initial wrapper.
+- Sol reported starter discovery and asked the parent interview questions. No
+  configured Drive instance, ingestion or retrieval outcome is established yet.
+  The route was held before external writes while answers are prepared.
+- Browser inventory was initially rejected by approval review under the earlier
+  wait instruction. After rechecking active goal status, the same read-only
+  request succeeded. Opening a new Gemini tab was then rejected because review
+  still required a direct unblock. Root asked for clarification; no alternative
+  browser route or bypass was attempted. Neither browser trial was submitted.
+- A separate Sol evaluator is preparing private interview answers and an audit
+  plan without live calls or tested-agent output. Proposed common seven-day
+  received/arrival bounds are 2026-09-09T17:53:48Z inclusive through
+  2026-09-16T17:53:48Z exclusive; the older oracle covers a different interval.
+- Product material stays frozen at ba6bcc3bec96dfc542fd83cb792318ac8e54ce56.
+  No bug fix, product workaround, implementation edit or repair/retest is
+  authorized. Record findings and limits for joint user review after the trials.
+
+- Evaluator preparation completed without live calls. The private common answer
+  sheet and audit plan are mode 0600 under a mode-0700 ignored directory. They
+  preserve verified user settings only, not prior canonical state or route IDs.
+  Parent identity and new per-route destinations remain to be supplied/established;
+  actual capabilities must be observed. No tested-agent output informed source
+  expectations, and no new source oracle has been claimed.
+- The fresh Sol route's four private initial evidence files and directory modes
+  were verified. All workers are paused/finished; there is no live browser trial
+  process. Pending clarification is an authorization wait, not a running test.
+  This turn made launch/evidence/preparation progress; the overall goal remains
+  active and incomplete. No product implementation files changed.

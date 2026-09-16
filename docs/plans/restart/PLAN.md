@@ -11,7 +11,41 @@ untested. Trial
 ingestion and retrieval remain unexercised. The [artifact guide](README.md) separates current authority from frozen
 experiments and historical proposals.
 
-## Current checkpoint — one-link setup implementation and testing hold
+## Current testing authority — report findings, do not repair
+
+Following the starter readiness handoff, the user explicitly approved testing
+and uploads for all three agents. The user then added: report findings and review
+all results together; **do not implement or address bugs independently**. The
+goal resumed with active status on 2026-09-16. The pinned starter remains
+`ba6bcc3bec96dfc542fd83cb792318ac8e54ce56`; do not edit or republish it during
+these trials. Findings, private evidence and continuity records may be written;
+product fixes, defect workarounds and repair/retest loops are not authorized.
+
+The fresh context-free Sol route has received only the published ZIP link and
+“setup my schoolOS.” It reports reading the starter and has asked its setup
+interview questions. It is held before Drive writes pending those answers. This
+is a discovery/interview observation, not a successful persisted setup.
+
+Browser approval review accepted read-only inventory after the active goal was
+verified, but rejected opening a fresh Gemini Spark tab because it still treated
+the earlier wait-for-unblock instruction as unsatisfied. Root requested a direct
+clarification instead of bypassing the rejection. No Gemini or ChatGPT Work
+trial was submitted. This authorization issue is separate from product findings.
+Independent private interview/audit preparation may continue without live calls.
+
+Use three new isolated folders and the same starter/interval once launched;
+keep earlier failed instances and unknown effects intact. The current proposed
+common received/arrival interval is `[2026-09-09T17:53:48Z, 2026-09-16T17:53:48Z)`.
+It differs from the older source oracle, so that oracle cannot silently qualify
+the new interval. No source or task-tool mutation, outbound delivery or schedule
+is included. Current next action: resolve the browser authorization clarification,
+answer the Sol interview with authorized input, then observe the three fixed
+trials and report results without repairs.
+
+<a id="current-checkpoint--one-link-setup-implementation-and-testing-hold"></a>
+
+## Starter publication checkpoint (completed; subsequent testing authority above)
+
 
 The user's latest direction on 2026-09-16 explicitly adds a distributable fresh,
 unconfigured starter ZIP/folder and the first-use request **“setup my schoolOS.”**
@@ -182,10 +216,11 @@ do not restart it from an empty-looking, nonexhaustive listing.
 
 ## Current execution authorization
 
-The one-link setup checkpoint above requires publication and a readiness handoff,
-then a stop. Do not start revised source/Drive work or functional evaluation until
-the user directs testing. The following subsection preserves earlier authority
-and scope limits; it does not launch revised trials automatically.
+Use [the latest testing authority](#current-testing-authority--report-findings-do-not-repair)
+above: tests/uploads approved, implementation frozen, no bug fixes or defect
+workarounds. Respect unresolved runtime approval blockers and do not bypass them.
+The following subsection preserves the older guided-trial authority and scope;
+it is not a substitute for the current minimal setup handoff.
 
 ### Previous trial authorization (historical)
 

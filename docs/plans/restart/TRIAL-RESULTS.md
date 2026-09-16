@@ -1,5 +1,38 @@
 # Restart trial results
 
+## Revised one-link trial — initial observations
+
+Pinned starter: `ba6bcc3bec96dfc542fd83cb792318ac8e54ce56`. The user approved
+all three tests/uploads and explicitly requires findings review before any bug
+is addressed. No implementation fix or defect workaround is permitted.
+
+- **Fresh Sol:** launched with no inherited conversation and exactly the public
+  starter ZIP link plus “setup my schoolOS.” It reports downloading/reading the
+  package and asks for destination, household/school/timezone, source scope and
+  tool choices. It distinguishes setup from ingestion and external effects.
+  Initial sandbox download encountered a DNS failure; an approved escalated
+  download succeeded. This is an environment observation, not a School-OS bug
+  diagnosis or universal download qualification. Observed route/tool declarations
+  are not verified task or source capabilities.
+- **Preservation:** its opening prompt and observed read/download sequence are
+  saved in four ignored private evidence files. Coordinator verified directory
+  mode 0700 and file modes 0600. It is held before Drive writes pending interview
+  answers. No canonical instance or saved setup success is established.
+- **Gemini Spark / ChatGPT Work:** neither submitted. Approval review accepted
+  read-only browser inventory after the goal tool showed active status, but
+  rejected opening the new Gemini tab under the earlier wait instruction. Root
+  requested direct clarification and did not use an alternate browser path.
+  This is an authorization blocker, not a product failure.
+- **Not exercised:** persisted setup, email discovery/ingestion, saved knowledge
+  or tasks, query retrieval and page-size comparison. No new source/Drive or
+  outbound effect is established by these observations.
+
+The next safe action is the requested browser authorization clarification and
+normal parent interview answers, then independent trials without fixes. The
+older failed trial and oracle below remain separate historical evidence.
+
+## Earlier guided attempt (historical)
+
 Status: historical guided attempt preserved; revised one-link setup not yet tested.
 The original guided attempt used the pinned operating implementation
 `138ca7954bdb3b7e9de065199fdb4903d6a924a3`. The original three-route objective

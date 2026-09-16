@@ -1,8 +1,12 @@
 # Authorized three-agent ingestion trials
 
-Status: revised setup trial prepared; held until the user directs testing after
-the one-link starter publication/readiness handoff. Earlier guided-trial activity
-is preserved in [results](TRIAL-RESULTS.md); the revised setup flow has not run.
+Status: the user approved the revised tests and uploads after the published
+starter readiness handoff. Follow the active plan for current route authorization
+and any runtime approval blocker. The user explicitly requires observation and
+reporting only: **do not repair bugs or work around product defects**. Earlier
+guided-trial activity is preserved in [results](TRIAL-RESULTS.md). The fresh Sol
+route has reached the interview; no revised persisted setup or ingestion outcome
+is established. Neither browser route has been submitted.
 The [active plan](PLAN.md#current-execution-authorization) controls authorization.
 This evaluator protocol is never supplied as the agent's opening prompt. Use the
 [minimal handoff](TRIAL-PROMPTS.md); keep source values and instance links private.
@@ -184,11 +188,11 @@ user approval checkpoint.
 ## Failures, changes and final report
 
 A failed trial is evidence; do not erase its folder or quietly replace it. Keep
-first-attempt results distinct from any permitted repair/retry. Routine repairs
-must remain inside approved architecture; a new architecture decision requires the
-user's explicit approval. Preserve the exact failed evidence and targeted recheck
-boundary. A supported alternative connector is reported as an intervention, not
-attributed to the original route as a success.
+first-attempt results intact. The user has explicitly withheld authority to
+implement or address bugs during these trials. Preserve the exact failed evidence
+and report the blocked capability; do not fix, substitute a workaround or start a
+repair/retest loop. Continue independent unaffected cases only. Review all results
+with the user before proposing or implementing repairs.
 
 Keep detailed private audit artifacts separate from reusable public documentation.
 Publish sanitized failures, inefficiencies, coverage/results and implementation
