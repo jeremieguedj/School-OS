@@ -1,23 +1,201 @@
-# One remaining implementation gap: oversized values
+# Q10: when one saved item is too large for a file
 
-Status: concrete recommendation for approval, not adopted. The user approved the
-published data architecture. During implementation review we found that it reserves
-`segment_refs` and numbered lossless pieces but never defines their stored shape.
-That omission prevents different fresh agents from interoperating on oversized
-knowledge, relationship history and completion-review history. All other published
-architecture decisions remain approved.
+Status: proposal for explicit approval, not adopted. Q1–Q9 and the broader data
+architecture remain approved. This page explains one representation detail found
+during implementation review; it does not reopen those decisions.
 
-## Recommendation
+<a id="gap"></a>
+## The problem
 
-Use one narrow `record_segment` family for values that would make their owner's
-canonical JSON page exceed 64 KiB. Each segment is ordinary bounded Drive JSON,
-with its own School-OS ID, its owner, the field being split, its position and the
-next segment reference. A short descriptor on the owner tells the reader where
-to start and how many pieces to expect. No writer, service, queue or repair
-framework is added; the agent performs normal saves and readback.
+School-OS stores its processed knowledge and tasks in many bounded JSON files on
+Google Drive. **JSON is field-labelled structured text:** for example, a Knowledge
+record has a field for its statement, fields describing who or what it applies to,
+and fields linking it to its source. It is a readable storage format, not a copy of
+the original email or PDF.
 
-For a long Knowledge statement, keep the already-approved `segment_refs` field
-instead of `statement` and give it this concrete descriptor:
+School-OS chose a default limit of **64 KiB (65,536 encoded bytes) for each
+JSON page**, including field names, punctuation, escaping and the surrounding page
+structure. That is a School-OS resource boundary. It is not an inherent limit of
+JSON or Google Drive, and it is not a cap on the family's whole history.
+
+When there are many ordinary records, School-OS simply adds more bounded pages:
+
+```text
+Many ordinary records
+
+Page 1 (≤ 64 KiB)  →  Page 2 (≤ 64 KiB)  →  Page 3 (≤ 64 KiB)
+knowledge A–F          knowledge G–L          knowledge M–R
+```
+
+Q10 concerns a different case: **one field in one Knowledge or Task record is too
+large to fit even when that record has a page to itself.** Adding another page for
+later records does not split that one value.
+
+```text
+One unusually large field
+
+Record page (≤ 64 KiB)
+├─ ID, scope, source, dates … small enough
+└─ statement … too large to fit here by itself
+```
+
+A realistic example is a long, extracted school guideline whose conditions,
+exceptions and qualifications must be retained. This is the processed guideline,
+not a raw email or PDF archive. Two other values can grow over time: the list of
+evidence-backed links showing that later Knowledge corrects, supports, replaces or
+conflicts with earlier Knowledge; and the review history recording why a Task may
+be complete and what the parent decided. This proposal does not claim that typical
+school messages are huge or that testing has established how often overflow occurs.
+
+Some terms used below:
+
+- **Knowledge** is one source-linked piece of information School-OS retained, at
+  its real child, family or school scope. It is not the entire school year in one
+  record.
+- A **Task** is one action the parent or family may need to complete.
+- A **relationship** is an evidence-backed link between two Knowledge records,
+  such as “this later notice corrects that earlier notice.”
+- A **completion review** records evidence that a Task may be finished and the
+  parent's confirmation or rejection; evidence does not close the Task by itself.
+
+The tiny examples elsewhere in the documentation, such as a one-sentence lunch
+rule, are artificial teaching examples. They do not show the size of every real
+Knowledge record.
+
+The earlier approved design already said that School-OS must preserve all
+meaningful information and split an oversized value into lossless numbered pieces.
+It did not define the pieces' owner, links, order, expected count or content format.
+Without that definition, one GPT Work session could improvise a format that a later
+Gemini session cannot reliably reconstruct. We missed this representation detail;
+the broader architecture is not being reopened. Because every new architecture
+detail requires the user's explicit approval, the format remains unapproved and a
+write needing it remains blocked rather than truncated.
+
+<a id="recommendation"></a>
+## Recommendation: one shared linked-piece format
+
+For only the three fields named below, keep the original Knowledge or Task record
+as the owner. It retains its School-OS ID, scope, source links, dates and other
+ordinary fields. In place of the oversized value, it stores a small pointer to the
+first piece and the number of pieces expected.
+
+Each piece stores:
+
+- the owner record and the particular field it belongs to;
+- its numbered position;
+- part of the value as text; and
+- a pointer to the next piece, except on the last piece.
+
+Every piece is itself stored in an ordinary bounded JSON page. The allowed fields
+are exactly:
+
+1. Knowledge `statement` — the substantive information and its qualifications;
+2. Knowledge `relationships` — its evidence-backed links to other Knowledge; and
+3. Task `parent_state.completion_reviews` — its completion-evidence review history.
+
+No other field gains this representation by implication. Small values keep their
+existing form. Segments are storage pieces belonging to their owner; they are not
+new Knowledge, Tasks, emails or source material.
+
+<a id="shape"></a>
+## A fictional walkthrough
+
+Suppose Pine School publishes a detailed fictional field-trip guideline. The
+Knowledge record says it applies at school scope and links to the original source.
+Its extracted statement preserves many transport rules, medical exceptions and
+conditional pickup instructions. After JSON encoding, that single statement would
+make its page exceed 64 KiB.
+
+```text
+Knowledge record: “Field-trip guideline”
+┌──────────────────────────────────────────────────────────────┐
+│ ID · school scope · topic · dates · source reference         │
+│ statement pointer: first piece = S1, expected pieces = 3     │
+└──────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌────────────────────┐  ┌────────────────────┐  ┌────────────────────┐
+│ S1 · owner/field   │→ │ S2 · owner/field   │→ │ S3 · owner/field   │
+│ position 1 · text  │  │ position 2 · text  │  │ position 3 · text  │
+└────────────────────┘  └────────────────────┘  └────────────────────┘
+       bounded page             bounded page             bounded page
+```
+
+To answer a question, a reader finds the Knowledge record through the approved
+index, follows the first pointer, and checks that all three distinct pieces have
+the right owner, field and positions. It joins the text and decodes it once to
+recover the original complete statement. It then answers using that statement and
+its source. If piece 2 is missing, the statement is incomplete. The reader must not
+silently answer from pieces 1 and 3 as though it found a shorter guideline.
+
+The same process reconstructs the two permitted history arrays. The semantic index
+still points to the owning Knowledge or Task; it does not present each piece as an
+independent search result.
+
+<a id="flow"></a>
+## How an edit is saved
+
+When the logical value changes, the agent creates a complete new set of pieces with
+new School-OS IDs. It writes and reads back those pieces and their normal location
+entries first. Only then does it switch the owner to the new first pointer, update
+the owner revision and required derived indexes, and read those values back.
+
+```text
+write + verify new pieces → switch + verify owner pointer → readers use new chain
+```
+
+This order reduces the chance that the owner points to pieces that were never
+saved. It is not a transaction and does not promise recovery from an interrupted
+multi-file write. Old pieces may remain unreachable after an edit, which costs
+Drive storage. The proposal adds no automatic cleanup, repair service, checksum
+identity or generic write engine. Those limits match the existing MVP boundary.
+
+<a id="tradeoffs"></a>
+## Benefits, costs and unknowns
+
+The proposal gives fresh agents one provider-independent way to preserve and
+reconstruct the complete permitted value while every page remains bounded. The
+owner pointer stays small even if the chain grows, and the meaning, scope and source
+remain on the original record.
+
+The cost is extra Drive reads and writes for values that overflow. Replacing one
+copies its complete chain, and old pieces may consume storage. JSON-encoded chunks
+are awkward to inspect alone, though the reconstructed result has the original
+string or array type. We do not yet know how frequently real data will need this
+format or what its connector cost and reliability will be; those are matters for
+later authorized trials. This representation does not promise that any arbitrarily
+large single value can be processed in every agent environment.
+
+<a id="alternatives"></a>
+## Alternatives considered
+
+- **Use a separate piece format for each field.** Each piece could be more specific,
+  but School-OS would have three parallel formats and more instructions for agents
+  to implement consistently.
+- **Raise the page limit or allow occasional large pages.** That would reduce piece
+  reads, but it would change the approved bounded-access design and could exceed a
+  managed agent's transfer or working limits.
+- **Keep blocking these values in the MVP.** This avoids a new stored shape, but an
+  affected email cannot be fully ingested without discarding required information.
+
+<a id="decision"></a>
+## Exact approval requested
+
+The decision requested is: **for an oversized statement or either of the two
+histories listed above, use the linked, numbered pieces shown here, verify that
+the complete set is present, and write a new set when the value changes.**
+
+The optional technical reference below defines the exact shared format that this
+approval would cover.
+
+Approval would define the format; it would not qualify performance, promise
+interrupted-write recovery or automatic cleanup, authorize another field, or start
+any trial.
+
+<details>
+<summary><strong>Technical reference: exact proposed JSON and rules</strong></summary>
+
+For a segmented Knowledge statement, the existing `segment_refs` field contains:
 
 ```json
 {
@@ -27,11 +205,9 @@ instead of `statement` and give it this concrete descriptor:
 }
 ```
 
-For the other already-approved split histories, replace the oversized
-`relationships` or `parent_state.completion_reviews` array with
-`{"state":"segmented","segment_refs": <the same descriptor>}`. This explicitly
-adds one known alternative to those fields; it is not an empty or unknown array.
-Small values retain their existing shape. No other field is enabled by implication.
+For oversized `relationships` or `parent_state.completion_reviews`, replace the
+array with `{"state":"segmented","segment_refs": <the same descriptor>}`. This
+means a known segmented value, not an empty or unknown array.
 
 A segment record, inside the normal D1 page envelope, is:
 
@@ -46,70 +222,31 @@ A segment record, inside the normal D1 page envelope, is:
 }
 ```
 
-`next_ref` is omitted on the last segment. Allowed owner/field combinations are
-Knowledge `statement`, Knowledge `relationships`, and Task
-`parent_state.completion_reviews`. The last uses a Task owner reference. Ordinals
-start at 1. Segment IDs are assigned once, never derived from content. Segments
-are located through the same bounded family-directory/locator mechanism; they
-are not new source emails, claims or Tasks.
+Field dictionary:
 
-## Exact meaning and flow
+| Field | Meaning |
+|---|---|
+| `segment_id` | A School-OS ID assigned once, never derived from content. |
+| `owner_ref` | The owning Knowledge or Task record. |
+| `field_path` | Exactly `statement`, `relationships`, or `parent_state.completion_reviews`, valid for that owner family. |
+| `ordinal` | One-based position in the chain. |
+| `text_chunk` | One lossless portion of the whole field after the whole value is encoded as JSON text. |
+| `next_ref` | The next segment; omitted on the last segment. |
+| `first_ref` | The owner's pointer to the first segment. |
+| `segment_count` | The exact number of distinct segments the reader must find. |
+| `value_encoding` | `json_text`: decode once after concatenating every chunk. |
 
-1. Encode the whole field value as ordinary JSON text: a JSON string for a
-   statement or a JSON array for history. Split that text losslessly at character
-   boundaries, preferring paragraph boundaries where possible. Each segment's
-   fully encoded containing page must remain within 64 KiB, including escaping
-   and envelope overhead. No hashes or provider IDs define the pieces.
-2. Write a complete new chain with new segment IDs whenever the owning logical
-   value changes. Verified segment records are immutable; never rewrite the
-   currently referenced chain before changing its owner. Save and read back the
-   new pages and their locator/catalogue entries, then switch and read back the
-   owner descriptor and required derived indexes.
-   The owner revision changes when the logical field value changes. An index is
-   built from the reconstructed whole value, never just its first segment.
-3. A reader follows `first_ref`, verifies owner/field/ordinal on each segment,
-   follows `next_ref`, and expects exactly `segment_count` distinct segments.
-   Concatenate the chunks, decode the JSON once, and require the original field
-   type. A missing piece, cycle, duplicate ordinal, wrong owner, wrong type or
-   unexpected continuation is incomplete data, never a shortened fact or history.
-4. Edit through the owning record using a new verified chain. A segment is not
-   independently edited while leaving its owner's revision unchanged. Old chains
-   may remain unreachable; cleanup is not required for correctness and no garbage
-   collector or repair engine is introduced. Save/readback is non-atomic as already
-   accepted; this adds no recovery promise, checksum identity or repair engine.
-5. A large reference list does not grow on the owner: the first reference, count
-   and next links remain bounded while more segments extend capacity. Whole-email
-   ingestion cannot complete until all required pieces are saved and checked.
+Encode a statement as a JSON string and either history as a JSON array. Split at
+character boundaries, preferring paragraph boundaries where possible. Each fully
+encoded containing page, including JSON escaping and envelope overhead, must remain
+at or below 64 KiB. Locate segments through the approved bounded family directory
+and locator mechanism.
 
-A segment directory is canonical access machinery, not a semantic search index.
-Only the owning Knowledge/Task contributes a semantic result. A reader may obtain
-pieces in manageable units, but cannot call a partially read required value complete.
+A reader verifies owner, field, ordinal, distinct IDs, links and exact count before
+concatenating and decoding to the original type. A missing piece, cycle, duplicate
+ordinal, wrong owner, wrong type or unexpected continuation means incomplete data.
+Indexes are built from the reconstructed whole value. Whole-email ingestion cannot
+complete until all required pieces are saved and checked. Verified segments are
+immutable; edit only through the owning record by writing a new verified chain.
 
-## Why this choice
-
-This supports lossless retained knowledge (P1), bounded access (P4), fresh-agent
-portability and provider independence (P6/P9), and the existing fact/history and
-task-review use cases. It completes the already-approved segmentation concept
-without reinstating D2's generic writer or repair design.
-
-The cost is extra Drive reads/writes only for oversized values. Replacing an
-oversized value copies its chain and can leave old unreachable pieces, increasing
-storage; no automatic cleanup guarantee is proposed. JSON-encoded
-chunks are less convenient to read alone; the complete reconstructed value has
-the same original type and meaning. Standard JSON handling in the executing
-agent's existing environment is sufficient; no new dependency or permanent
-process is proposed.
-
-Credible alternatives:
-
-- **Separate segment families for each field.** More self-describing individual
-  pieces, but three parallel formats and more adapter/documentation work.
-- **Raise the page limit or allow oversized records.** Fewer reads, but changes
-  approved D1 resource bounds and may fail on managed-agent transfer limits.
-- **Block oversized values in the MVP.** No new shape, but cannot preserve the
-  approved long information/history requirement; affected ingestion stays incomplete.
-
-Remaining unknowns are actual connector cost and reliability, to be observed
-later. Approval of this representation does not qualify it or authorize a new
-unrelated test sequence. The three already authorized ingestion trials still
-follow completion and verified publication of the retained implementation.
+</details>

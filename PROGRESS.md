@@ -5494,3 +5494,20 @@ requirements, then read this log from top to bottom.
 - Exact next action on approval: use Sol workers to implement the approved Q10
   format, integrate and publish the complete retained MVP, verify the exact
   remote revision, then perform the three authorized isolated ingestion audits.
+
+
+## 2026-09-16 — Q10 rewritten as a standalone parent explanation
+
+- User asked for a self-contained explanation of what Q10 solves and why the
+  existing architecture left a gap. A Sol worker rewrote the Markdown proposal
+  and viewable brief; coordinator reviewed the unchanged proposed architecture.
+- Explain JSON, the chosen per-file byte bound, ordinary growth across more
+  pages versus one oversized field, and the missing cross-agent piece format.
+  A fictional guideline walkthrough and diagrams show saving, reconstruction,
+  missing-piece handling and later edits. Costs, unknowns and alternatives are
+  explicit; exact JSON now follows the explanation in an optional reference.
+- This is clarification only: Q10 remains unapproved and unimplemented. No
+  tests, probes, simulations, ingestion or external user-account effects ran.
+  The goal remains blocked on the explicit architecture decision.
+- Next action: publish this clearer explanation and retain the existing Q10
+  approval boundary before dependent implementation and the authorized trials.
