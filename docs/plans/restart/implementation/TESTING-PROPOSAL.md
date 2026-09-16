@@ -37,17 +37,27 @@ capacity. S32 describes a workload exceeding former limits but does not supply
 harness remain to be prepared against approved contracts. No bytes, packet
 hashes, semantic bindings or observed performance measurements were generated.
 
+The newly approved minimal helper work is separate:
+[helpers/source_metadata.py](../../../../helpers/source_metadata.py) supplies
+`normalize_subject`, `normalize_address_parts` for already extracted address
+parts, and `utf8_size`. Its
+[prepared unit checks](../../../../helpers/prepared_checks/check_source_metadata.py)
+are authored for later execution and remain **not run**. These mechanical
+helpers are neither the entire source adapter nor an identity/persistence
+engine. They do not complete the 33 lifecycle scenarios or the whole project.
+Recipes point to actual scripts; the agent and its tools perform the rest.
+
 ## Current approvals and MVP boundary
 
 | Decision | Current treatment in prepared acceptance work |
 |---|---|
 | D1 | Approved Drive layout and bounded pages/directories. Their per-page limits do not cap a logical ingestion run. |
-| D2 | Interrupted canonical-write repair remains outside MVP. Keep S13 and S12's interrupted-write branch deferred. Minimum record/ordinary-write definitions remain undecided. |
+| D2 and records/save framework | Interrupted canonical-write repair remains outside MVP. The separate records/ordinary-save framework is also deferred, with no schema/write-engine prerequisite or approval gate. Keep S13 and early-loss S12 deferred; normal agent saves, verification, coverage and cleanup remain required. |
 | Query coverage | Approved: check discovery/content coverage, process further only within authorization/capability/bounds, or answer with the actual limitation. S30–S31 remain applicable to questions. |
-| D3 | Code-capable agents required. Supplier availability is user-reported; language/runtime/adapter contracts and actual qualification remain unresolved. No personal machine, daemon or coding CLI is required. |
+| D3 | Code-capable agents and a minimal set of small Python standard-library routines are approved. Recipes name actual helpers while agents/tools do other work. Extra dependencies/new architecture are not implied; actual runtime qualification remains unestablished. No personal machine, daemon or coding CLI is required. |
 | D4 | One logical run completes all relevant unprocessed mail. The agent owns adaptive resource batching and resource recovery with School-OS guidance. Former School-OS per-run caps and batch scheduling are rejected. Remaining metadata/discovery/content choices are not blanket-approved. |
-| D5 | Approved in full: claims/relationships, parent fields, finite/recurring tasks, native recurrence or a 14-day occurrence fallback, three-way field reconciliation and missing projections. Exact record and adapter definitions remain dependencies. |
-| D6 | Agent validates uncertain actions through its available authorized means; ordinary daily brief requires complete ingestion. Recency/audio/output-record choices are not blanket-approved. No fixed School-OS effect engine is inferred. |
+| D5 | Approved in full: claims/relationships, parent fields, finite/recurring tasks, native recurrence or a 14-day occurrence fallback, three-way field reconciliation and missing projections. The deferred framework is not needed to reopen those approved meanings. |
+| D6 | Agent validates uncertain actions through authorized means; ordinary daily brief requires complete ingestion. Remaining content/recency/audio choices are not blanket-approved. No fixed effect engine or records/save framework is inferred. |
 | D7 | Centralized tools/jobs/capabilities register and scheduling control are out of MVP. Users/agents schedule nonconcurrently and select adapters from recipes. |
 | D8 | Package installer, upgrades, compatibility and migrations are deferred. D1 separation remains; minimum setup needs a separate decision. |
 
@@ -62,6 +72,13 @@ saved-window continuation and fresh-agent access remain in scope. A limited
 answer to a parent question under S30–S31 is distinct from the ordinary daily
 brief prohibited while its ingestion remains incomplete.
 
+The records/save-framework exclusion is an explicit scope exception, not removal
+of canonical Drive information or approved D1/D5 meanings. Routine work within
+those approvals may proceed without a separate framework review. Any actual
+new canonical architecture still needs approval; a delegated helper or recipe
+cannot quietly introduce it. Tests must not require a new schema engine simply
+to check normal saves or preserved meaning.
+
 | Existing scenario or branch | Classification after the latest direction |
 |---|---|
 | S01 package installation | Package admission/installer branch deferred; minimum setup undecided; startup from established D1 state remains relevant |
@@ -69,13 +86,14 @@ brief prohibited while its ingestion remains incomplete.
 | S06, S10–S11, S14, S23 bounded work | Keep identity/coverage/resource limits; supersede School-OS cap-driven successful stops or scheduled batches with agent-owned continuation/blocker handling |
 | S12 normal saves/readback/cleanup | In scope; no unverified completion claims |
 | S13 and S12 interrupted canonical-write recovery | Deferred post-MVP; retained written stimuli are not failed MVP tests |
-| S16–S17, S29 knowledge/tasks | Apply approved D5, including three-way sync, preserved parent state and the 14-day recurrence fallback |
-| S19–S21 uncertain task/send/audio outcomes | Agent validates through authorized means; remaining adapter/output contracts pending; no mandatory intent engine |
+| S16–S17, S29 knowledge/tasks | Apply approved D5 without a separate records/save-framework gate: three-way sync, preserved parent state and the 14-day recurrence fallback |
+| S19–S21 uncertain task/send/audio outcomes | Agent validates through authorized means; remaining D6 content/audio choices pending; no mandatory intent or records engine |
 | S20 ordinary brief with an unread relevant gap | Historical partial-brief branch superseded; apply the complete-ingestion gate in S33 |
 | S22 fresh-agent queries | Knowledge/coverage/startup remain applicable; centralized known-job query and binding assertions deferred |
 | S24 package upgrade | Deferred, including compatibility/migration/interruption branches |
 | S25 centralized job register/control | Deferred in full; external nonconcurrent scheduling is owned by user/agents |
 | S30–S31 limited questions | Approved query rule unchanged; no permission to send a normal incomplete daily brief |
+| Prepared helper checks | Mechanical subject/address-parts/UTF-8 examples only; authoring is not execution or whole-project acceptance |
 
 ## Grading rules for later authorized work
 
@@ -104,7 +122,8 @@ brief prohibited while its ingestion remains incomplete.
   exhaustive answer. Do not reveal a hidden fixture's contents to explain a gap.
 - Inspect normal readback for every required saved result. A source-index save
   does not prove knowledge/tasks/coverage also saved. Do not grade the deferred
-  canonical-write repair mechanism as present or missing MVP functionality.
+  canonical-write repair or separate records/save framework as present or
+  missing MVP functionality. Agent verification must still establish what saved.
 - For uncertain external actions, inspect the agent's actual authorized
   validation and evidence. A generic error establishes neither success nor
   failure, throttling nor safe retry. If uncertainty remains, report it rather
@@ -149,22 +168,22 @@ deliverable/approval status; a test mapping does not establish implementation.
 
 | Required area | Current acceptance inventory and explicit limits |
 |---|---|
-| T1 Setup/startup | S01/S02/S22 startup/capability branches; minimum setup pending; package installer deferred |
+| T1 Setup/startup | S01/S02/S22 startup/capability branches; minimal stdlib helpers approved; minimum setup pending; package installer deferred |
 | T2 Canonical data/custody | S12 normal verification/cleanup, S23 narrow access, S26 missing source; S13/early-loss S12 deferred |
-| T3 Ingestion | S03–S11 identities/coverage, S14–S15 extraction, S32 whole logical run, S33 blocker |
+| T3 Ingestion | S03–S11 identities/coverage, S14–S15 extraction, S32 whole logical run, S33 blocker; new mechanical helper checks are a small separate subset |
 | T4 Knowledge/queries | S15–S17/S22/S26–S27/S30–S31 and approved D5 relationships/coverage |
 | T5 Tasks/sync | S16–S19/S29: parent state, corrections, recurrence, field reconciliation and agent-validated effects |
 | T6 Briefs/audio | S18 zero-action progression; S20/S21 only under approved remaining contracts; S33 ingestion gate |
 | T7 Tools/schedules | Agent recipe selection in S02; centralized S25 and registry branches deferred |
 | T8 Continuation/replacement | S09–S11/S22–S23/S32 agent resource continuation from saved state; no canonical-write repair or School-OS batch scheduler |
 | T9 Extensions/upgrades | D1 separation remains inspectable; S24 upgrade/compatibility/migration acceptance deferred |
-| T10 Development/portability | S02/S22/S23/S28/S32; actual capable environment and private evidence, no local-host dependency |
+| T10 Development/portability | Minimal stdlib helpers/prepared checks plus S02/S22/S23/S28/S32; actual capable environment and private evidence, no local-host dependency |
 
 | Principle or core use case | Relevant evidence and current limits |
 |---|---|
 | P1 Losslessness/provenance | S12–S17/S26–S33; preserve substantive qualifications, source links and honest coverage |
-| P2 Determinism | S03–S11/S16–S19; explicit decisions and normal verification; deferred repair is not claimed |
-| P3 Simplicity | S01/S02/S22/S32; agent-owned execution, no central registry/scheduler or concurrency subsystem |
+| P2 Determinism | Mechanical helper checks and S03–S11/S16–S19; explicit decisions/normal verification; no deferred repair/framework claim |
+| P3 Simplicity | Small helpers and S01/S02/S22/S32; agent-owned execution; no schema/write engine, central registry/scheduler or concurrency subsystem |
 | P4 Efficiency | S10/S14/S23/S32; narrow storage and adaptive agent chunks, no School-OS cap ending successful ingestion early |
 | P5 Tool agnosticism | S03/S08/S19/S21/S22; canonical meaning independent of selected recipe adapter |
 | P6 Capability-led portability | S02/S14/S21–S23/S32/S33; capabilities and blockers evidenced, not inferred from vendor name |
@@ -173,8 +192,8 @@ deliverable/approval status; a test mapping does not establish implementation.
 | P9 Independence from brittle details | S03–S11/S19/S22; source metadata and saved knowledge, not mandatory handles/tokens/conversation |
 | U1 Catalog communications | S03–S18/S27/S29/S32/S33 |
 | U2 Query school information | S15–S17/S22/S26/S30/S31; coverage-qualified answers remain permitted |
-| U3 Known-job/sender queries | Central known-job query deferred; per-output attribution depends on remaining D6 records |
-| U4 Tasks and selected app | S16–S19/S29 under approved D5 and pending adapter/record definitions |
+| U3 Known-job/sender queries | Central known-job query deferred; preserve supported attribution without requiring a central registry or deferred records framework |
+| U4 Tasks and selected app | S16–S19/S29 under approved D5; no separate records/save-framework approval prerequisite |
 | U5 Email/audio briefs | S18/S20/S21/S33; complete ingestion required, other D6 contracts not blanket-approved |
 | U6 New applications/workflows | Canonical-data use and D1 separation retained; schedules remain user/agent-owned |
 | U7 Supplied-package install/update | Deferred with D8; minimum setup separately undecided |
@@ -186,8 +205,10 @@ exact published revision, scenario subset, services and permitted effects first.
 Test safety stop conditions are not production School-OS per-run caps.
 
 1. Review approvals, the implemented MVP and independent expectations. Resolve
-   minimum setup, record/ordinary-write and remaining adapter/policy contracts
-   before a harness or pilot can choose them by default.
+   remaining minimum-setup/D4/D6 choices applicable to the selected trial; do
+   not reinstate the deferred records/save framework as a gate. After explicit
+   testing direction, the small prepared helper checks may be a first focused
+   subset. Their result cannot substitute for lifecycle or connector evidence.
 2. Direct fictional metadata/coverage cases S03–S11. Include changing handles,
    original Date meaning, short pages, candidate groups and token-loss replay;
    report S05's information limit separately.
@@ -216,14 +237,18 @@ resolved architecture and later testing direction; none is an MVP failure.
 ## Remaining decisions and handoff
 
 D5 approval settles its described semantic/task behavior, including the 14-day
-fallback. It does not establish exact serialization or adapter capability.
-Minimum setup, normal record/write contracts, remaining D3 and unapproved
-parts of D4/D6 still need decisions. D6's agent-led validation must not quietly
-become the earlier fixed intent engine, and remaining recency/audio/output
-contracts must not be inferred from its complete-ingestion gate.
+fallback. Small Python standard-library helpers and named script references in
+recipes are approved. The separate records/ordinary-save framework is deferred;
+it is not a precondition for MVP coding or normal agent verification. Preserve
+canonical data and approved meanings without inventing a replacement framework.
+
+Minimum setup and unapproved D4 cutoff/identity and D6 content/audio choices
+remain decisions. D6's agent-led validation must not become the earlier fixed
+intent engine. Any actual new architecture still needs explicit approval;
+generic delegation and helper approval do not supply it.
 
 At the agreed implementation publication checkpoint, report the exact published
-revision, implemented scope with D2/D7/D8 exclusions, these prepared artifacts,
+revision, implemented scope with D2/records-framework/D7/D8 exclusions, these prepared artifacts,
 all tests not run and the next action awaiting user testing direction. Before
 then, report the actual architectural or publication blockers. Neither a blocker
 nor the new scope direction authorizes tests or indirect execution.

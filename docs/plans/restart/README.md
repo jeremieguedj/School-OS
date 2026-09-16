@@ -7,19 +7,22 @@ evidence, not an instruction to rebuild their architecture.
 
 The coordinator remains on `codex/restart-school-os`. The
 [coverage map](implementation/COVERAGE.md) separates original whole-product scope
-from current MVP delivery. D1, the query-coverage rule, required agent code
-capability and D5 are approved. On 2026-09-15 the user replaced School-OS-managed
+from current MVP delivery. D1, query coverage, D3’s minimal Python standard-library
+helpers with agent/tool operations, and D5 are approved. On 2026-09-15 the user replaced School-OS-managed
 batching with executing-agent guidance and complete logical-run ingestion,
 required agent-led uncertain-effect verification and ingestion-before-brief,
 and deferred D7 tools/jobs management and D8 packaged lifecycle. D2 canonical
-repair remains deferred. The [active plan](PLAN.md) records exact approval
-boundaries and pending contracts. The product principles retain the broader
+repair and the separately proposed records/ordinary-save framework are deferred. The [active plan](PLAN.md) records exact approval
+boundaries and remaining choices; the excluded record/save framework is not a
+prerequisite for retained work. The product principles retain the broader
 long-term scope; these explicit MVP exceptions take precedence for delivery.
 
 [Fictional scenarios and proposed tests](implementation/TESTING-PROPOSAL.md) and
 the [isolated development model](identity/revised-model/README.md) are authored
 preparation only. Frozen studies stay unchanged. No tests or models were run.
-This architecture checkpoint is not the whole-code handoff or start of testing.
+The [minimal helpers](../../../helpers/README.md) are authored with prepared
+checks, not executed. This subset/documentation checkpoint is not the whole-code
+handoff or start of testing.
 
 For a guided review, open the [HTML architecture decision guide](implementation/architecture-guide.html).
 It explains current decisions and remaining proposals with examples and flows.

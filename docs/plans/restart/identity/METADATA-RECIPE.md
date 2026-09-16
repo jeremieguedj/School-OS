@@ -1,6 +1,7 @@
 # Metadata-only logical email identity and resumable ingestion
 
-Status: current user-approved plan, updated 2026-09-14. This supersedes the
+Status: current user-approved plan; execution wording aligned with the 2026-09-15
+agent-managed complete-run direction. Identity rules are unchanged. This supersedes the
 content-assisted proposal and the strict provider-entry interpretation of the
 [live metadata study](metadata-stress/README.md). The frozen study does not
 implement every rule below. Production implementation and managed-agent
@@ -169,7 +170,10 @@ source Date alone is not proof that discovery has caught up; late-arriving or
 newly indexed material and the search route's time semantics need qualification.
 If a tool silently caps results, narrowing windows can reduce work but cannot
 prove completeness. Use an available complete listing route or leave the affected
-window's coverage explicit. Stop at the run's budget and persist remaining work.
+window's coverage explicit. The executing agent manages its resource batches and
+continues the logical run through the full agreed scope; save normal progress
+and report a real inability to complete. An arbitrary School-OS batch/run cap
+cannot turn unfinished ingestion into a completed daily run.
 
 ## Validation status
 

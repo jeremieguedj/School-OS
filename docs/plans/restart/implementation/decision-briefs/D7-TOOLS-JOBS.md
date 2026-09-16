@@ -73,8 +73,8 @@ accordingly; School-OS adds no locks, leases or conflict-resolution machinery.
 D2 interrupted canonical-write recovery also remains deferred. Agent ownership
 of execution does not promise repair of partially saved data. Normal verified
 saves, honest coverage, bounded discovery progress and the approved
-query-coverage rule remain required, with minimum records and ordinary-write
-contracts still needing their own decisions.
+query-coverage rule remain required. The separate records/ordinary-save
+framework is also outside MVP; those obligations stay with the agent/tools.
 
 The former D7 proposal is historical design context, not an MVP implementation
 instruction. Reintroducing centralized job management later would require an

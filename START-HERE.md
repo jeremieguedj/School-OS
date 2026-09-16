@@ -38,11 +38,14 @@ and nonconcurrent schedules; School-OS supplies guidance and completion rules.
 A logical run must complete its agreed ingestion before daily brief composition;
 a real blocker is incomplete work, not a completed partial daily brief. D5 is
 approved. The separate query-coverage rule remains required for knowledge answers.
-Preserve approved D1 separation for later installation/upgrade work. Remaining
-record/adapter/first-use contracts and named D4/D6 choices still need approval.
-School-OS agents must be able to execute code. This approved capability
-requirement does not select a language/runtime or require a personal computer,
-persistent process or coding CLI; see D3 in the active restart plan.
+Preserve approved D1 separation for later installation/upgrade work. The separate
+records/ordinary-save framework is also outside MVP and is not an approval gate.
+Canonical data, approved meanings, agent save verification and cleanup remain.
+School-OS starts with minimal Python standard-library routines; the agent and its
+tools perform the rest. Recipes name actual scripts when applicable; see
+[the helper guide](helpers/README.md). No Python version pin, external dependency,
+personal computer, persistent process or coding CLI is required by this choice.
+Named D4/D6 choices and any specific new architecture still need approval.
 
 For the next implementation handoff, publish the agreed new project code, then
 stop and check in with the user. The user personally manages and oversees the

@@ -1,65 +1,30 @@
-# Remaining foundation — records and normal saving
+# Records and normal saving — obligations without a framework
 
-Status: **undecided dependency; D2 interrupted-write recovery remains outside MVP.** This explanatory note does not reopen the deferred recovery design. It explains the smaller record and ordinary-write choices needed by the remaining decisions. No schema or write mechanism is approved here.
+**Approved MVP scope direction, 2026-09-15:** do **not** create a separate “minimum records and ordinary-write framework” deliverable or approval gate. The user has excluded that open dependency from this MVP, alongside D2’s general interrupted canonical-write repair engine. This note keeps the obligations that already apply; it does not propose a replacement schema, transaction system, UUID format, locator inventory or persistence engine. The [active plan](../../PLAN.md) is the approval ledger. The earlier catalogue and small write-intent proposal remain historical in [D2](../ARCHITECTURE-PROPOSAL.md#d2--canonical-record-meanings-and-write-recovery) and Git revision `62070eb`.
 
-## Why this still appears in the guide
+D1 is already approved: canonical instance data uses multiple bounded JSON pages and paged directories on Drive, with readable bootstrap and separate `system`, `instance` and `extensions` areas. D5 is approved: preserve source-linked school claims and qualifications; evidence-supported corrections/conflicts; finite, conditional and recurring tasks; school deadlines distinct from parent plans/completion; and three-way synchronization when a task app is configured. The source-metadata identity recipe requires School-OS-owned logical email/attachment identities and treats provider handles as replaceable access aids. Coverage remains distinct from identity and from saved knowledge. The approved query rule checks relevant coverage before claiming exhaustive answers.
 
-D1 approved many bounded JSON pages on Drive. D2 originally bundled two subjects: what records mean, and how to repair interrupted writes. You skipped D2 and excluded interrupted-write recovery from the MVP. The system still needs to know what goes inside its knowledge, task, coverage and operation-configuration records. D7 now defers
-the centralized tools/jobs register; D8 defers package/upgrade machinery.
+**Excluding a framework does not mean “do not save.”** The agent still saves substantive information, tasks, source references and the actual processing state to Drive, verifies ordinary successful persistence, and only then discards accessible temporary raw copies. If an authorized route cannot establish what saved or which material was read, the agent reports the specific incomplete outcome; it does not mark it complete. D4 now places one logical ingestion run and internal resource/batch decisions with the executing agent, not a School-OS batch controller. D6 has that agent inspect its own authorized tools/APIs to validate uncertain external effects. Neither direction brings back a central write/effect engine.
 
-For example, a deadline must not accidentally become a parent's preferred working date. Defining those fields is necessary even if the MVP does not resume a half-written update.
+## A wholly fictional meaning check
 
-## A fictional example from email to saved information
+> Cedar School: “Return Robin’s museum permission slip by September 19 at 17:00. If Robin is not attending, reply instead.”
 
-> From: Cedar School Office <office@example.org>
->
-> Subject: Museum permission
->
-> Please return Robin's permission slip by September 19 at 17:00. If Robin is not attending, reply to us instead.
+> Parent: “I plan to respond on September 17.”
 
-The parent says: “I'll do it on September 17.” A conceptual representation would keep these meanings separate:
+An agent saving this source-linked information must keep **September 19 as the school deadline** and **September 17 as the parent’s plan**. The alternative reply condition remains visible. The email record’s School-OS-owned identity and its source metadata locate the claim; a current provider handle merely helps retrieve the original. Separate coverage says what was actually read and verified. Those meanings come from approved product and D5 direction; this is a conceptual written example, not a new JSON field list or executed save.
 
-| Information | Illustrative saved meaning |
+The implementation can use concise records inside D1 pages without first publishing a whole-project record-family catalogue. The agent may prepare only values needed for the selected operation, with clear recipe instructions for their meanings and verification. It must not silently replace approved distinctions: an absent attachment inventory is not an empty one; a received timestamp cannot become original sending Date; a parent’s completion is not reset by replay; an unread candidate cannot inherit another candidate’s verified flag. A new canonical field meaning or cross-operation contract incompatibility is a **new architecture choice** requiring explicit approval under the [product decision authority](../../../../product-principles.md#decision-authority), not an opportunity to smuggle in a framework piecemeal.
+
+## What the deferral does and does not promise
+
+| Retained for MVP | Excluded or unapproved |
 |---|---|
-| Email/source reference | The original mailbox, sender, subject and Date, with replaceable access information. |
-| Knowledge | The school's permission request, deadline, and alternative for non-attendance, linked to the email. |
-| Canonical task | The action to respond to that request, linked to the supporting knowledge. |
-| Parent state | Planned date September 17; completion not yet established. |
-| Coverage | What source content was actually read and what resulting data was verified as saved. |
+| Canonical Drive knowledge/tasks/configuration as needed for selected operations, with School-OS-owned identities and source links | D2’s proposed complete typed-record inventory, UUID representation and separate locator-record structure as a blanket adoption |
+| Separate discovery/content coverage and parent task state, using approved meanings | A new centralized schema registry, event engine, atomic whole-instance snapshot or general small-write-intent mechanism |
+| Normal agent verification of successful saving and honest reporting when saving is unknown/incomplete | Automatic discovery, repair or resumption of interrupted sets of canonical writes |
+| D1 bounded JSON pages and directories; temporary source custody rules | D7 centralized tool/job register and D8 package/update machinery, both deferred from MVP |
 
-These are readable labels, not an exact approved JSON schema. Multiple records can occupy a bounded page; a record type does not mean one whole-app file.
+The MVP cannot claim that a half-written canonical update will be reconstructed by School-OS after environment loss. The executing agent may use its own available continuity for its task, but that is not an installed D2 repair guarantee. If normal saving fails, avoid a false completion claim and preserve any privacy-safe known gap; do not infer that a generic error means success, rate limit or a safe retry. The exact connector capability and ordinary readback evidence remain for later user-directed qualification. No test, helper, build, connector probe, ingestion or live write was executed through this note.
 
-## The earlier inventory, narrowed for the MVP
-
-| Record area from the earlier proposal | Its purpose |
-|---|---|
-| Configuration | Retain children/classes, timezone, source scope and selected operation/destinations as needed. Do not revive School-OS per-run resource quotas or a package manager. |
-| Email | Allowed original/normalized metadata, association state and coverage links. |
-| Attachment/group | Parent email, original filename, candidate group and independent read coverage. |
-| Knowledge | Substantive claims, qualifications, source support and relationships. |
-| Task/parent state | Required action, school deadline, parent owner/planning/completion and synchronization state. |
-| Discovery window | Search scope, time meaning and evidence that listing is unfinished or exhausted. |
-| Processing coverage | What has been read, what is incomplete and what has been verified. |
-| Work/progress | Normally saved discovery/coverage progress remains; agent batch queues and runtime resource orchestration are not School-OS features. D2 write repair is deferred. |
-| Tool/connection/adapter register | Deferred with D7. Operation configuration and adapter requirements remain, without a central management register. |
-| Job register | Deferred with D7. The user and agents manage their schedules. |
-| Operation/output evidence | Retained minimum source/result attribution remains to shape. D6 assigns uncertain-action verification to the executing agent; no general persisted-effect engine or D7 job-history requirement. |
-| Provider locator | Replaceable access handles for records identified by School-OS IDs. |
-
-The proposed UUID format, separate locator-record representation and exact fields remain undecided. School-OS-owned identity and provider handles as access aids are already part of the approved direction.
-
-## What normal saving needs to establish
-
-On a successful, uninterrupted operation, the agent must persist the intended substantive knowledge, source links and coverage, then verify what saved before treating it as complete or discarding temporary raw material. That existing requirement does not dictate a particular new transaction or recovery system.
-
-The remaining ordinary-write contract must specify which records and links constitute a successful operation, how readback establishes that, and how consumers distinguish supported verified information from unknown or incomplete information. It must also state the MVP's limitations if writing fails. Choosing a failure policy or partial-update visibility mechanism is architecture, not a routine coding choice.
-
-We have not approved “retry everything,” “discard partial writes,” a manual repair engine, or automatic reconstruction. This note does not adopt any of them. The MVP cannot promise repair/resumption of interrupted canonical writes, and D6 agent verification must not quietly restore that guarantee. D8 is now deferred.
-
-## Recommended review boundary — still unapproved
-
-Present a small, separate proposal containing the minimum fields for the retained features and the successful-write/readback contract. Keep D2's durable write-intent repair machinery outside that proposal. This makes it possible to assess the data the MVP actually needs without treating recovery as a prerequisite for every design discussion.
-
-Alternatives include approving the broader original record catalogue, or defining separate schemas as each operation is implemented. A broader catalogue resolves more upfront but is harder to review; isolated per-operation definitions risk inconsistent meanings unless they share a canonical contract. The recommendation is one small shared contract for the MVP, but its contents have not been selected here.
-
-Before dependent production code, approve the minimum fields and relationships, ID/locator representation, normal verification/visibility rules, and explicit unsupported failure outcomes. No dependent code or tests are implemented by these examples.
+The earlier note treated a new minimum record/write contract as a prerequisite for **all** dependent code. That gate is now superseded. D3’s small Python standard-library routines may support mechanical transformations, and operation recipes should mention the actual callable when applicable; neither requires building a general record framework. Any genuinely new architecture surfaced during implementation still returns for approval, while routine in-scope representation choices proceed under existing approved meanings.

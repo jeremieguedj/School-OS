@@ -177,7 +177,9 @@ creating individual occurrences, but depends on the selected app's capabilities.
 Asking the parent about every edit avoids automatic merges but adds routine work.
 
 Those D5 mechanisms, including the stated missing-entry/identity behavior, are
-approved; do not resubmit them. Exact record/ordinary-write and remaining D3
-adapter contracts are separate dependencies. D6 now directs the executing agent
+approved; do not resubmit them. The user has also approved minimal standard-library
+Python helpers and excluded the separate records/ordinary-save framework.
+Preserve approved meanings through agent/tool operations; new architecture still
+requires specific approval, not a blanket framework gate. D6 now directs the executing agent
 to validate uncertain external outcomes through its available authorized means. Semantic interpretation, recurrence mappings and answer quality
 remain untested. Code capability does not establish them. Testing remains reserved.

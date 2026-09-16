@@ -20,11 +20,12 @@ design priorities, seven core use cases, other mandatory principle sections and
 ten implementation areas. Requirements are already established; the remaining
 blocker is approval of concrete architecture, not renewed product discovery.
 
-The [architecture proposal, revision 7](implementation/ARCHITECTURE-PROPOSAL.md)
-records recommendations and explicit decisions. **D1, query coverage, D3 code
-capability and D5 are approved. D4/D6 now use the approved agent-led directions
+The [architecture proposal, revision 8](implementation/ARCHITECTURE-PROPOSAL.md)
+records recommendations and explicit decisions. **D1, query coverage, D3 minimal
+Python standard-library helpers with agent/tool operations, and D5 are approved. D4/D6 now use the approved agent-led directions
 below. D2 interrupted-write recovery, D7 and D8 are outside the MVP. Remaining
-record/runtime and named D4/D6 choices are pending.**
+named D4/D6 choices remain pending; the separate record/save framework is
+also outside MVP and must not be reinstated as an approval gate.**
 On 2026-09-14 the user explicitly replied "D1 approved"
 after the explanation of multiple JSON pages and per-page capacity limits.
 Approval releases only work whose architecture dependencies are also approved.
@@ -35,11 +36,11 @@ ledger here remains authoritative.
 | Decision | Proposal subject | Approval status |
 |---|---|---|
 | D1 | Physical Drive layout, bounded pages and directories | Approved explicitly, 2026-09-14 |
-| D2 | Canonical records and verified write recovery | Review skipped for now; interrupted-write recovery outside MVP; approved query rule retained |
-| D3 | Agent execution and supplied adapter routes | Code-execution capability required, approved 2026-09-14; language/runtime/adapter choices pending |
+| D2 | Earlier canonical-record and write framework | Repair and separate records/ordinary-save framework outside MVP; existing data meanings and query rule retained |
+| D3 | Minimal standard-library Python helpers, otherwise agent/tool operations | Approved explicitly, 2026-09-15; recipes name actual scripts; no runtime version pin/SDK selected |
 | D4 | Complete logical run; agent owns resources/batching; School-OS supplies guidance | Direction approved, 2026-09-15; finite scope/cutoff and remaining identity/discovery choices pending |
 | D5 | Knowledge relationships, recurring/finite tasks and parent synchronization | Approved explicitly, 2026-09-15 |
-| D6 | Agent verifies uncertain effects; complete ingestion before daily composition | Verification/timing approved, 2026-09-15; selection/audio/minimum output contracts pending |
+| D6 | Agent verifies uncertain effects; complete ingestion before daily composition | Verification/timing approved, 2026-09-15; selection/task-app freshness/audio choices pending |
 | D7 | Capabilities/tools/jobs register and scheduler management | Deferred outside MVP, 2026-09-15; user and agents own nonconcurrent jobs |
 | D8 | Packaged installation, compatibility and upgrades | Deferred outside MVP, 2026-09-15; preserve D1 separation for future work |
 
@@ -83,23 +84,48 @@ bounded discovery/window continuation and fresh-agent access to saved knowledge
 remain in scope. D6 now relies on executing-agent verification; D8 upgrades are separately
 deferred. Neither may silently reinstate a School-OS D2 repair engine.
 
-Deferring D2 is not approval of its bundled record schemas, UUID format, locator
-records, or a replacement persistence design. The required canonical data remains
-in scope. Present a minimum record and ordinary-write proposal separately before
-dependent code, without reintroducing interrupted-write recovery into the MVP.
-No testing is authorized. This exception and the later D7/D8 deferrals govern
-the whole-project checklist and older broader wording below.
+The user subsequently also excluded the separate records/ordinary-save dependency
+from the MVP on 2026-09-15. Do not require that framework, a generic writer or its
+schema catalogue before retained work. This deferral does not delete canonical
+Drive knowledge/tasks/configuration/coverage or approve a replacement format.
+Preserve existing D1/D5/source/coverage meanings and normal agent verification;
+new architecture still requires approval if a specific need arises. Do not
+recreate a blanket record-framework approval gate under another label.
 
 **D3 approval scope, 2026-09-14:** the user explicitly requires an agent to be
 able to execute code and reports confirmation from all major personal-agent
 suppliers. Adopt code-execution capability as a prerequisite; the earlier
 proposal to support agents without it is superseded. The confirmation is
 user-reported, not an independently observed runtime/adapter qualification.
-No programming language/version, dependency, SDK, code entry point or adapter
-contract is selected by this decision. No personal computer, persistent process
-or coding CLI becomes required. Remaining D3 decisions stay pending; no tests
-or supplier probes are authorized. This supports repeatable processing while
-retaining the capability-led portability and simplicity principles.
+That initial decision selected no language. The later 2026-09-15 direction now
+selects **small Python standard-library routines**, a minimal estimated helper
+set and otherwise agent/tool operations. Recipes must name the actual script
+and applicable step; agents use it when suitable. No Python version pin, external
+library, provider SDK, persistent process, personal computer or coding CLI is
+selected. No supplier probe or functional execution is authorized.
+
+### Minimal helpers and record-framework deferral, 2026-09-15
+
+The user said to assume small standard-library Python routines, begin with the
+minimal useful code set and leave all other work with agents/tools, with actual
+scripts mentioned in the instructions. The user also said to keep “open dependency
+records and ordinary save” outside MVP. Adopt both directions explicitly.
+
+The initial bounded code deliverable is
+[`helpers/source_metadata.py`](../../../helpers/source_metadata.py), with
+subject normalization, normalization of reliably extracted address parts, and
+UTF-8 text-size measurement. It implements mechanical pieces of approved rules;
+it does not match emails, infer dates, define persisted records, write Drive,
+schedule batches or repair writes. Its [guide](../../../helpers/README.md) and
+[prepared checks](../../../helpers/prepared_checks/check_source_metadata.py)
+are part of the authored deliverable. They are unexecuted and unqualified.
+
+The agent follows the recipes for discovery, content interpretation, tasks,
+Drive saves/readback and effects. Existing approved data meanings and persistence
+verification remain; the separate record/schema/ordinary-save framework is not
+an MVP feature or prerequisite. This does not permit silently adopting a new
+schema, UUID/locator scheme or persistence engine. Address only a specific new
+architecture need if retained implementation exposes one.
 
 Independent approved preparation includes fictional lifecycle scenarios, a
 [proposed testing sequence](implementation/TESTING-PROPOSAL.md), and a new
@@ -126,8 +152,8 @@ After the detailed review, the user explicitly directed:
   presented in revision 6: source-linked claims and evidence-based relationships,
   finite/conditional/recurring actions with the 14-day projection fallback,
   separate parent planning/completion, and field-level three-way task sync.
-  Minimum schemas and adapter contracts still need decisions before dependent
-  coding; do not ask for the approved D5 behavior again.
+  The separate record/save framework is now deferred. Preserve approved meanings
+  through agent instructions; do not ask for D5 behavior approval again.
 - **D6:** the executing agent assesses its available means and validates uncertain
   external actions with its authorized connectors/APIs. Do not select the former
   general School-OS persisted-effect engine. First validate that all intended
@@ -135,7 +161,8 @@ After the detailed review, the user explicitly directed:
   an incomplete operation and must be reported; a partial normal daily brief
   cannot substitute for the required completed ingestion. The approved qualified
   knowledge-query rule remains separate. Selection by verification time, audio
-  retention/order and minimum output/evidence contracts are not blanket-approved.
+  retention/order and specific new output meanings are not blanket-approved;
+  no record/save framework is an MVP prerequisite.
 - **D7:** remove the centralized tools/capability/jobs register, scheduler control,
   binding manager and register-backed known-job/sender queries from the MVP.
   Users and agents manage their own jobs, read recipes and select needed adapters.
@@ -144,8 +171,8 @@ After the detailed review, the user explicitly directed:
 - **D8:** defer packaged installation and upgrade/compatibility/migration machinery.
   Keep the project ready for later lifecycle work using approved D1 separation of
   system, instance and extensions; do not adopt another package/activation design.
-  Minimum usable Drive startup/configuration remains necessary and its first-use
-  setup contract is still unresolved. Repository preservation/cleanup continuity
+  Usable Drive startup/configuration remains necessary through agent instructions
+  following approved D1; any new architecture still needs a specific decision. Repository preservation/cleanup continuity
   and the testing stop remain required.
 
 These directions explicitly reduce the original whole-project MVP scope,
@@ -165,11 +192,13 @@ The coordinator asked for explicit approval. This defines a finite snapshot
 without chasing new arrivals forever; a later cutoff captures more arrivals but
 can extend work. No answer is recorded yet. This interpretation/cutoff must not
 be adopted silently. Remaining D4 precision/search/repeated-appearance details,
-D6 selection/audio, D3 and minimum normal-record/write/first-use contracts remain
-pending. Existing source-metadata and coverage invariants remain authoritative.
+D6 selection/audio and specific remaining architecture choices remain pending.
+D3’s minimal Python/agent split is approved; the record/save framework is deferred. Existing source-metadata and coverage invariants remain authoritative.
 
 Exact next action: resolve the finite daily scope/cutoff and those remaining
-small MVP contracts with the user, without rebuilding deferred infrastructure.
+MVP choices with the user, without rebuilding deferred infrastructure or
+reopening the excluded record/save framework. Continue approved helper and
+instruction work independently; do not execute it.
 Implement approved retained deliverables and prepare their unexecuted checks.
 Commit/push the agreed MVP code and continuity, verify the exact remote revision,
 then stop for the user's testing direction. This architecture/document update is

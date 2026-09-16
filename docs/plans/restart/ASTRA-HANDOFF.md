@@ -16,18 +16,29 @@ canonical-write recovery is outside the MVP. Preserve its proposal and prepared
 cases for future work. The approved query-coverage rule, verified persistence,
 bounded discovery/window continuation and fresh-agent access remain required.
 Do not treat this deferral as approval of D2's bundled schemas or a replacement
-write design. Separately resolve minimum record/ordinary-write
-choices before dependent implementation. This exception overrides broader
+write design. The later user direction also excludes the separate records/
+ordinary-save framework and its blanket approval gate; preserve existing data
+meanings and actual agent save verification without rebuilding that framework. This exception overrides broader
 interrupted-write recovery wording below. Apply the later D4–D8 scope revisions
 next; the mandatory stop before testing remains unchanged.
 
 Current D3 decision, approved 2026-09-14: an agent must be able to execute code.
 The user reports confirming this with all major personal-agent suppliers. Do not
 claim independently observed runtime/adapter qualification from that report.
-The earlier no-code-agent support proposal is superseded. Language/version,
-dependencies, SDKs and adapter contracts remain undecided; no personal machine,
-persistent process or coding CLI is required. Remaining D3 contracts and minimum
-record/ordinary-write/first-use choices still need approval.
+The earlier no-code-agent support proposal is superseded. The later 2026-09-15
+D3 decision selects small Python standard-library routines and a minimal useful
+helper set. All remaining work is agent/tool operations; recipes name actual
+helper scripts/callables when applicable. No version pin, third-party dependency,
+SDK, personal machine, persistent process or coding CLI is selected. The authored
+helpers/source_metadata.py and its prepared checks must not be executed yet.
+
+Current additional MVP exclusion, 2026-09-15: the separate records/ordinary-save
+framework is outside MVP. Do not make a full schema catalogue, generic writer,
+verification/visibility engine or their approval a prerequisite for retained work.
+Canonical Drive data, D1/D5 meanings, owned identity, coverage, normal agent
+save verification and temporary-source cleanup remain. No replacement schema,
+UUID/locator scheme or write engine is approved; surface only a specific new
+architecture need if it arises during otherwise authorized implementation.
 
 Current MVP revisions, approved 2026-09-15:
 - D4: one logical run must complete all intended unread/unprocessed school mail.
@@ -42,13 +53,13 @@ Current MVP revisions, approved 2026-09-15:
   tools/APIs. Validate complete intended ingestion before creating the daily brief.
   If blocked, report incomplete ingestion rather than a finished partial brief.
   Do not restore the former generic persisted-effect engine. Recency/audio/minimum
-  output contracts remain undecided; qualified knowledge questions remain allowed.
+  output architecture remains subject to explicit decisions; qualified knowledge questions remain allowed.
 - D7: tools/capabilities/jobs register, scheduler management and register-based job/
   sender queries are outside MVP. Users/agents manage their own jobs, read recipes
   and select adapters. Assume no concurrent same-data use; add no locking service.
 - D8: package/installer/version/upgrade/migration/compatibility machinery is outside
-  MVP. Preserve approved D1 separation for future work and resolve only the minimum
-  first-use Drive setup needed for retained features. Repository history/baseline,
+  MVP. Preserve approved D1 separation for future work; agent/tool instructions
+  perform the first-use setup needed for retained features under that layout. Repository history/baseline,
   privacy and continuity safeguards still apply.
 These are explicit exceptions to the original broader checklist and product
 principles. Keep principles as the long-term authority; do not claim deferred

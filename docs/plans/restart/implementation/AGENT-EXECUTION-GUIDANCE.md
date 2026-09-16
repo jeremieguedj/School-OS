@@ -3,8 +3,10 @@
 Status: instructions grounded in the user's explicit 2026-09-15 D4/D6 directions.
 This document specifies outcomes and gives resource-management advice. It does
 not implement a batch controller, scheduler, environment-recovery engine or
-canonical-write repair system. Exact record, adapter and first-use contracts
-remain subject to the [active plan](../PLAN.md).
+canonical-write repair system. D3 now selects minimal Python standard-library
+helpers and otherwise agent/tool work. The separate records/ordinary-save
+framework is excluded, not a prerequisite; preserve approved data meanings and
+normal verification. The [active plan](../PLAN.md) records remaining decisions.
 
 ## Responsibility
 
@@ -41,6 +43,27 @@ identity or completion. Another capable agent can read already saved knowledge.
 - The user and agents manage schedules and avoid concurrent operation on the
   same instance data. School-OS adds no scheduler register or locking service.
 
+## Use the actual helper when it applies
+
+The initial helper script is
+[`helpers/source_metadata.py`](../../../../helpers/source_metadata.py), documented
+in [its guide](../../../../helpers/README.md). It is authored but untested; the
+current development session must not run it. During later authorized operation,
+an agent with suitable execution access can use these pure routines:
+
+| Recipe step | Actual callable | Required boundary |
+|---|---|---|
+| Prepare subject comparison | `normalize_subject` | Supply the observed subject with its known `raw_header` or `decoded` representation; retain the original separately. Do not infer representation from encoded-looking text. Unsupported input stays explicit, never lossy-decoded into a guessed identity. |
+| Prepare address comparison | `normalize_address_parts` | Supply already reliably extracted local part and domain. It does not parse an arbitrary display label, infer an address or discard local-part spelling. |
+| Respect D1 page size | `utf8_size` | Measure the exact final text intended for the page. It does not create records, serialize JSON, split pages or save them. |
+
+These helpers perform mechanical steps of approved rules. They do not decide
+email identity or whether processing is complete. Dates, recipient roles,
+source account, discovery, attachment reading, meaning, tasks, saving/readback
+and external actions remain agent/tool operations. Follow the same approved
+procedure through available tools when a helper is not applicable; do not invent
+new semantics or require a new execution/persistence framework.
+
 ## Advice for managing resources
 
 Choose practical batch sizes for the current tools, context, memory and time
@@ -49,7 +72,7 @@ This is advice for the agent, not a mandatory batch-size algorithm or threshold.
 
 Keep only the current source material and necessary canonical pages in temporary
 working storage. Preserve useful normally saved progress and accurate coverage
-on Drive under the eventual approved record/write contract. Leave enough room
+on Drive with the already approved data meanings and source/coverage distinctions. Leave enough room
 to verify persistence before releasing temporary raw copies. Do not use a local
 processing cache as the only record of completion.
 
@@ -77,7 +100,7 @@ content support is a blocker to full ingestion, not a reason to silently omit it
 Before composing the ordinary daily brief, verify that the entire agreed input
 scope has been discovered and processed, that required source/attachment coverage
 is complete, and that extracted knowledge/tasks/source links are saved and
-verified under the approved normal-write contract. Tool-call success, matching
+verified by the executing agent against the intended saved values. Tool-call success, matching
 metadata, provider entry counts and finished batches do not independently prove
 this result.
 

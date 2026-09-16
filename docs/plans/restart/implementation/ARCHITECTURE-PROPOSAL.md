@@ -1,13 +1,13 @@
 # Restart implementation decisions for approval
 
-Updated 2026-09-15, revision 7: records agent-managed complete-run processing,
-D5 approval, agent-led effect verification and ingestion-before-brief, and explicit
-D7/D8 MVP deferrals. **D1, query coverage, D3 code capability and D5 approved;
-D4/D6 directions revised and approved as stated below; D2 recovery, D7 and D8
-deferred. Remaining contracts and named choices are pending.** No
-production code depends on these choices yet. Approval of requirements in the
-[active plan](../PLAN.md) does not approve these mechanisms. Approval of this
-document would authorize the choices stated here, not unspecified later changes.
+Updated 2026-09-15, revision 8: approves small Python standard-library routines
+and a minimal helper/agent split; defers the separate records-and-ordinary-save
+framework from the MVP. **D1, query coverage, D3's minimal Python direction and
+D5 are approved; D4/D6 use the recorded agent-led direction. D2 repair, the
+separate record/save framework, D7 and D8 are deferred.** The helper subset may
+be authored within this scope; it is not a complete production implementation.
+New architecture still requires explicit approval, without reopening a deferred
+framework as a blanket prerequisite for retained operations.
 Testing remains reserved to the user after publication of the implementation.
 
 The [coverage map](COVERAGE.md) maps the complete product to deliverables. The
@@ -15,7 +15,7 @@ recommendations below now distinguish retained MVP work from the explicit D2,
 D7 and D8 deferrals. They do not propose reducing it
 to an identity model, a local CLI, or a single managed-agent demonstration.
 
-The [detailed decision briefs](decision-briefs/README.md) explain remaining D3
+The [detailed decision briefs](decision-briefs/README.md) explain the approved D3 direction
 and D4–D8 through fictional emails, flows, parent-visible results, alternatives
 and implications. Their additional recommendations are explicitly unapproved.
 Written examples are not executed simulations or qualification evidence.
@@ -25,11 +25,11 @@ Written examples are not executed simulations or qualification evidence.
 | Decision | Recommendation | Main alternative | Approval |
 |---|---|---|---|
 | D1 Storage | Small JSON record pages and paged directories in Drive, with a readable bootstrap | Native Sheets tables, with separately bounded long text | Approved, 2026-09-14 |
-| D2 Records and persistence | Retained proposal: typed records and verified small write intents | Immutable whole-instance generations or an event engine | Review deferred; interrupted-write recovery outside MVP; query rule remains approved |
-| D3 Execution and adapters | Code-capable agents required; exact code/runtime and adapter contracts remain proposed | Earlier support for agents without code execution is superseded | Code-execution requirement approved, 2026-09-14; remaining D3 pending |
+| D2 Records and persistence | Earlier typed-record/write framework retained for later review | Agent/tool operations preserve already approved data meanings and verify actual saves | Repair and the separate records/ordinary-save framework outside MVP; query rule retained |
+| D3 Execution and adapters | Small Python standard-library helpers for a minimal useful subset; recipes name actual scripts; the agent/tools perform the rest | A larger installed runtime or provider SDK layer is not selected | Minimal Python and agent/tool split approved explicitly, 2026-09-15; no version pin or external dependencies selected |
 | D4 Ingestion | One logical run completes relevant unprocessed mail; the executing agent owns batching, resources and runtime continuity; School-OS supplies guidance | Former School-OS-managed per-run caps were rejected | Execution direction approved, 2026-09-15; scope/cutoff and remaining identity/discovery details pending |
 | D5 Knowledge and tasks | Source-supported claims and relationships; parent fields separate; three-way task-field reconciliation | Mutable summaries and one-way task export | Approved explicitly, 2026-09-15 |
-| D6 Briefs and effects | Executing agent verifies uncertain effects using available tools; validate complete ingestion before daily composition | Former generic persisted-effect engine is not selected | Verification/timing directions approved, 2026-09-15; selection/audio and minimum output contracts pending |
+| D6 Briefs and effects | Executing agent verifies uncertain effects using available tools; validate complete ingestion before daily composition | Former generic persisted-effect engine is not selected | Verification/timing directions approved, 2026-09-15; selection/task-app freshness/audio choices pending |
 | D7 Tools and schedules | User and agents manage their own jobs and select adapters from recipes; assume nonconcurrent use | Central register and scheduler control retained for possible later work | Outside MVP by explicit user direction, 2026-09-15 |
 | D8 Packages and upgrades | Retain approved D1 separation so installation/upgrades can be added later | Original ZIP, activation, compatibility and migration machinery retained as future proposal | Outside MVP by explicit user direction, 2026-09-15 |
 
@@ -53,12 +53,16 @@ incomplete coverage, normal verified persistence, bounded discovery/window
 continuation and fresh-agent access to saved knowledge. The MVP cannot claim
 that an interrupted set of canonical writes will be repaired or completed.
 
-D2 also bundled record schemas, UUID representation and locator structure.
-Skipping its review does not approve those choices or remove the canonical
-knowledge/tasks/configuration/register requirements. Present the minimum record
-and ordinary-write design separately before dependent code; do not substitute a
-new persistence mechanism silently. Remaining D3 and minimum record/ordinary-write
-contracts are still pending, now narrowed to retained MVP features.
+On 2026-09-15 the user also excluded the separately presented “open dependency
+records and ordinary save” from the MVP. Do not implement its schema catalogue,
+generic writer/verification/visibility framework or make approval of that package
+a gate for retained work. Do not silently replace it with another framework.
+Canonical Drive data, D1 storage rules, D5 meanings, source metadata/coverage,
+owned identities and normal verified saving remain required. The agent and its
+authorized tools carry out those operations from the agreed instructions. No
+UUID format, locator schema or new canonical representation is approved by this
+deferral. Surface a specific new architectural need if it actually arises; do
+not demand the excluded framework as a whole in advance.
 
 The 2026-09-15 directions supersede the former D4/D6/D7/D8 implementation
 recommendations as stated in their sections. Do not restore the rejected batch
@@ -121,9 +125,10 @@ be proposed later, without silently changing canonical formats.
 
 ## D2 — Canonical record meanings and write recovery
 
-**Deferred review.** Interrupted canonical-write recovery below is outside the
-MVP by explicit user direction. The record inventory and ID/locator choices are
-retained undecided; they are not adopted through D1 or through this deferral.
+**Historical proposal, outside MVP.** Both interrupted canonical-write recovery
+and the separately proposed records/ordinary-save framework are deferred. The
+record inventory and ID/locator choices below are retained for possible later
+review, not active implementation instructions or MVP approval prerequisites.
 Only the separately approved query-coverage rule at the end of this section
 remains an accepted D2 decision. See the [MVP exception](#mvp-exception--interrupted-writes).
 
@@ -239,68 +244,67 @@ deferred interrupted-write recovery procedure or approve recovery triggers.
 
 ## D3 — Runtime, adapter contracts and first supplied routes
 
-**Approved requirement, 2026-09-14:** a School-OS agent must be able to execute
-code in its available execution environment. The user reports having confirmed
-this capability with all major personal-agent suppliers. Record that as
-user-reported supplier confirmation, not an independently observed qualification
-result. Do not require a supported operating path for agents that cannot execute
-code. The earlier D3 proposal to accommodate such agents is superseded.
+**Approved direction, 2026-09-15:** use small Python standard-library routines
+and start with the minimal set reasonably estimated to be useful. All remaining
+work belongs to the agent and its actual tool operations. Recipes mention the
+real script and relevant routine so a capable agent can use it for that step.
+Do not build a larger runtime simply because the agent can execute code.
 
-This requirement does not select Python or another language, versions, libraries,
-SDKs, code entry points, or runtime/provider contracts. It does not require every
-operation to use code, a dedicated personal computer, persistent local process,
-or coding CLI. The agent still reasons over explicit procedures and uses
-replaceable adapters. No capability probes or tests are authorized here.
+This extends the 2026-09-14 code-capability approval. The user's supplier
+confirmation remains user-reported, not an independent qualification result.
+There is no approved Python version pin, third-party dependency, provider SDK,
+network requirement, CLI dependency or persistent process. The agent may use
+its native tools alongside these small routines.
 
-The remaining proposal is authoritative Markdown operation recipes and JSON
-contracts/examples, with small callable code for normalization, record
-preparation and bounded record access. Agent resource/batch planning is guidance,
-not a School-OS orchestration engine. Python standard-library helpers remain a
-candidate implementation choice awaiting approval. Record and ordinary-write
-mechanisms remain undecided, and D2 interrupted-write recovery stays outside
-the MVP. Instructions must explain the selected code and tool operations clearly.
+The initial implementation subset is
+[`helpers/source_metadata.py`](../../../../helpers/source_metadata.py):
 
-Generic adapter operations cover storage list/read/write, source enumeration,
-individual metadata/content/attachment reading, task snapshot/apply/readback,
-email delivery/lookup and audio generation/retrieval. D7 scheduler management
-and durable capability/register contracts are deferred.
-Each operation returns a small contract with observed data, scope/completeness,
-capability limits and outcome. Tool envelopes and provider aliases are projected
-at the adapter boundary; conflicting duplicated fields remain errors. Unknown
-capabilities and transport-with-no-response stay distinct from provider errors.
-No inferred throttle, authorization failure or successful write from a generic
-error. Credentials remain in the runtime's authorized store.
+- `normalize_subject`: the approved source-subject normalization, preserving
+  meaningful case, spacing and reply/forward prefixes. The caller must distinguish
+  a known raw header from an already-decoded subject to avoid double decoding.
+- `normalize_address_parts`: normalize already reliably extracted address parts;
+  preserve local-part spelling/dots/plus tags and lowercase the domain. Parsing
+  unknown connector/display forms remains with the agent/tool route.
+- `utf8_size`: measure the exact text's UTF-8 byte length so the agent can respect
+  D1 page limits. It does not choose record fields, serialize pages or write them.
 
-Ship initial adapter procedures and mapping helpers for Drive JSON storage,
-Gmail source/email, Google Sheets and Todoist task projections, agent execution
-guidance informed by managed environments, and ElevenLabs optional audio. This
-remaining proposed route set needs approval; scheduler profiles/control are no
-longer an MVP deliverable. Profiles declare required operations and unsupported/unknown
-states; naming a vendor is not a capability or qualification claim. Runtime tool
-names are supplied by discovered mappings, not embedded as canonical contracts.
-Unknown runtimes can supply the same operations. Local Codex is a development
-surface, not a required household runtime. No live adapter probes occur now.
+These are pure local helpers, not canonical schemas, source identity decisions
+or a provider adapter. Their local function arguments/results are ordinary
+implementation interfaces, not a new persisted record contract. Preserve original
+metadata outside the normalized return value. Do not convert unsupported helper
+input into an invented source value or a reason to use content/provider IDs for
+identity. No helper selects the pending Date sufficiency threshold or establishes
+that content was processed.
 
-For future developer live connector defects, follow [AGENTS](../../../../AGENTS.md)
-exactly: preserve the complete raw result or exception before normalization in
-a mode-0600 file under an admitted gitignored private run directory. Retain the
-complete observed topology and private evidence for later user-directed replay.
-Installed agents persist sanitized failure/coverage facts and source access
-references on Drive; this proposal adds no installed raw-error archive. Raw
-processing material follows the temporary-source policy. An inability to export
-a diagnostic receipt is explicit, never fabricated evidence of an outcome.
-Public diagnostics follow AGENTS' privacy-safe allowlist. Private development
-receipts are not prerequisites for canonical installed-instance recovery.
+The agent remains responsible for source discovery, actual metadata extraction,
+Date meaning/precision, attachment/content reading, substantive interpretation,
+canonical knowledge/tasks, source coverage, save/readback and external effects.
+It also manages resources/continuation and follows D4/D6 completion obligations.
+The [helper guide](../../../../helpers/README.md) names the routines and their
+limits; operation instructions refer to that actual file rather than promising
+an unspecified helper. A capable agent uses an applicable routine or carries
+out the same approved procedure through its available tools. A routine's presence
+does not establish that it is usable in every managed environment.
 
-Grounding: P2–P9; install, all applications, extensions and agent replacement.
-The approved code capability supports repeatable mechanical operations across
-personal-agent environments. The earlier alternative of native-tool-only support
-would avoid requiring code capability but adds a second operating path; the user
-has selected code-capable agents. The tradeoff is a capability prerequisite,
-without a chosen language or execution contract yet. Exact file/network access,
-libraries, limits and adapter behavior remain unqualified. A mandatory persistent
-runtime service is neither required nor approved. Provider-specific contract
-changes will be surfaced if they change this architecture.
+Existing adapters remain small tool mappings/procedures preserving source
+meaning and observed capabilities. Choose available authorized routes for the
+operation; this approval does not select an entire fixed provider SDK/profile
+set. No centralized capability/job register, scheduler controller or installed
+write engine is required. Any specific new provider/canonical architecture must
+still be surfaced for approval when needed.
+
+For later developer connector evidence, retain [AGENTS](../../../../AGENTS.md)
+privacy safeguards and complete private receipts. No live connector probing,
+replay or private-source collection occurs now. The prepared helper checks are
+written only; do not import, execute, compile or smoke-run the new helpers before
+the user directs testing after the agreed code publication checkpoint.
+
+Grounding: explicit repeatable source rules, simplicity, efficient execution,
+capability-led portability and source independence. The small helper subset
+supports those principles without becoming an orchestration or persistence
+framework. The alternative of a larger program with provider SDKs would expand
+dependencies and execution assumptions; it is not selected. Python availability,
+input edge cases and actual agent use remain unqualified until directed testing.
 
 ## D4 — Production association, discovery and content coverage
 
@@ -478,10 +482,8 @@ but may miss newly learned older deadlines. This selection rule has not been
 explicitly approved by the verification/timing direction.
 
 Source-linked updates, relevant guidelines and tasks remain the product goal.
-Historical import does not implicitly authorize sending a backlog. The original
-proposal for manual reporting intervals, treatment of task-sync failure and
-output occurrence identity needs review as a concrete small MVP contract; it
-cannot depend on the deferred D7 job register. A completely read action-free
+Historical import does not implicitly authorize sending a backlog. The remaining manual reporting/selection and task-sync-failure choices need
+review; they do not require the deferred record/save framework or D7 job register. A completely read action-free
 snapshot must not attempt a nonexistent task write.
 
 Optional supported audio is still in scope, but its exact service route,
@@ -491,7 +493,7 @@ until parent deletion and disclose unsupported audio. Alternatives include an
 explicit retention period or no retained artifact. Sending email first reduces
 waiting; waiting for audio can provide a combined delivery but creates a new
 dependency. Neither ordering is chosen. These are derived outputs, not raw school
-attachments. Minimum operation/output source attribution is still required;
+attachments. Operation/output source attribution remains required through agent instructions;
 register-backed job history and known-sender queries are deferred with D7.
 
 Grounding: source-linked useful briefs, clear completion evidence, simplicity,
@@ -536,8 +538,8 @@ Use the already approved D1 separation of official system files, private instanc
 records and compatible additions; keep reusable recipes/contracts/code distinct
 from household data. This direction does not approve a new directory schema,
 manifest, version pin, migration or activation protocol. Basic Drive startup and
-configuration remain necessary for the retained use cases; their minimum first-use
-setup method still needs a concrete approved contract. Do not silently substitute
+configuration remain necessary for the retained use cases; first-use setup follows the approved layout through agent/tool instructions;
+any specific new architecture still needs approval. Do not silently substitute
 a new installer for the deferred package design.
 
 Repository preservation and continuity still apply: retain Git history and the
@@ -563,8 +565,8 @@ On 2026-09-15 the user approved D5, replaced D4's batch manager with
 agent-managed complete-run execution, directed agent-led effect verification and
 ingestion-before-brief under D6, and deferred D7/D8 from the MVP. The active plan
 records these exact boundaries. Resolve the daily scope/cutoff, remaining D4
-identity/discovery choices, D6 selection/audio, D3 contracts and minimum records/
-normal writes/first-use setup before dependent implementation. Do not ask for
+identity/discovery choices, D6 selection/audio, specific remaining architectural choices before their dependent implementation.
+The records/ordinary-save framework is excluded, not an MVP gate. Do not ask for
 approved D5 mechanisms again or rebuild deferred infrastructure as a dependency.
 Publish the agreed MVP code and continuity, verify the remote revision, then
 stop for the user's testing direction. No test, simulation, replay, build, probe,

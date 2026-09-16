@@ -29,19 +29,19 @@ or installer. It also does not turn the approved `extensions` area into an
 automatic compatibility or upgrade service. Preserving room for a future
 feature is different from delivering that feature now.
 
-## Minimum first use still needs a concrete decision
+## First use follows the approved separation
 
 The MVP still needs a usable Drive instance. For example, a parent who asks an
 agent to catalog fictional Juniper School mail must be able to identify the
 Drive starting point, configure the relevant source account and school scope,
 and save the resulting knowledge and coverage.
 
-Those needs remain. The exact first-use procedure is unresolved. Before
-dependent implementation, the coordinator must present the minimum setup and
-ordinary-save proposal: how the agent obtains the instructions, establishes
-the approved Drive areas, records necessary configuration and verifies required
-initial saves. This must not quietly recreate a ZIP installer, package manifest,
-version selector or general recovery engine.
+Those needs remain as agent/tool operations under approved D1 instructions.
+The user has excluded the separate records/ordinary-save framework as an MVP
+deliverable or gate. Do not recreate a ZIP installer, manifest, version selector
+or general writer under the label of minimum setup. Preserve the existing
+approved layout, data meanings and normal verification; surface any specific
+new architectural choice if one is actually needed.
 
 The parent should eventually receive a clear account of what was configured
 and what remains unavailable. This brief does not invent a setup-complete
@@ -51,8 +51,8 @@ required work is actually done.
 Raw emails and attachments remain at their sources. Only temporary processing
 copies are used, then discarded after verified persistence. Private information
 and credentials do not belong in the reusable repository. The approved agent
-code-execution requirement remains, while exact runtime/adapter contracts are
-still separate decisions.
+small Python standard-library helper direction remains; other work belongs to
+the agent and tools. New architectural dependencies still need specific approval.
 
 ## What the MVP will not claim
 

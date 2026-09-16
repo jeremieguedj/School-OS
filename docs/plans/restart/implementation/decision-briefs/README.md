@@ -14,9 +14,9 @@ Each Markdown brief also has a readable HTML companion:
 | D5 | Approved knowledge, corrections, tasks and parent edits | [D5](D5-KNOWLEDGE-TASKS.md) | [Read D5](D5-KNOWLEDGE-TASKS.html) |
 | D6 | Agent verification and ingestion before the brief | [D6](D6-BRIEFS-EFFECTS.md) | [Read D6](D6-BRIEFS-EFFECTS.html) |
 | D7 deferred | Agent-owned schedules; no MVP central job manager | [D7](D7-TOOLS-JOBS.md) | [Read D7](D7-TOOLS-JOBS.html) |
-| D8 deferred | Package/upgrade management deferred; first-use setup unresolved | [D8](D8-INSTALL-UPGRADES.md) | [Read D8](D8-INSTALL-UPGRADES.html) |
-| Remaining D3 | How code and connected tools work together | [D3](D3-EXECUTION-ADAPTERS.md) | [Read remaining D3](D3-EXECUTION-ADAPTERS.html) |
-| Undecided dependency | Minimum records and ordinary verified saves | [Records](RECORDS-AND-NORMAL-WRITES.md) | [Read the dependency](RECORDS-AND-NORMAL-WRITES.html) |
+| D8 deferred | Package/upgrade management deferred; preserve D1 separation | [D8](D8-INSTALL-UPGRADES.md) | [Read D8](D8-INSTALL-UPGRADES.html) |
+| D3 approved direction | Minimal Python helpers; otherwise agent and tools | [D3](D3-EXECUTION-ADAPTERS.md) | [Read D3](D3-EXECUTION-ADAPTERS.html) |
+| Deferred framework | Existing data/save obligations without a framework gate | [Records](RECORDS-AND-NORMAL-WRITES.md) | [Read the scope note](RECORDS-AND-NORMAL-WRITES.html) |
 
 The current scope is:
 
@@ -30,25 +30,26 @@ The current scope is:
   directions. Remaining detailed choices are still pending; removing D7 does
   not remove verification or allow unknown effects to be called successful.
 - **D2:** interrupted canonical-write recovery is deferred. The separately
-  approved query rule and ordinary verified saves remain required; minimum
-  record and ordinary-write contracts are still undecided.
+  approved query rule and ordinary verified saves remain required. The separate
+  records/ordinary-save framework is outside MVP, not an approval gate.
 - **D7:** centralized tools/jobs registration and scheduler management are
   deferred. Users and capable agents own schedules and execution, read School-OS
   recipes and select the adapters needed for each operation. The MVP assumes
   no concurrent use of the same Drive data and introduces no locks.
 - **D8:** packaged installation, version/upgrade/migration/compatibility and
   extension-management machinery are deferred. D1's separation remains, and
-  minimum first-use Drive setup still needs an explicit proposal.
+  first-use operations follow approved D1 through the agent and tools.
 
 The [active plan](../../PLAN.md#current-coordinator-checkpoint--architecture-approval-pending)
 is the approval ledger; the [architecture proposal](../ARCHITECTURE-PROPOSAL.md)
 and [product principles](../../../../product-principles.md) supply the design context.
 
-The immediate unresolved foundations are the remaining D3 runtime/adapter
-contracts, minimum records and ordinary-save semantics, and minimum first-use
-Drive setup. Resolve remaining D4/D6 choices within the user-approved direction.
-Do not restore deferred recovery, a centralized scheduler or an upgrade manager
-as hidden dependencies of those decisions.
+D3’s minimal Python standard-library/agent-tool direction is approved. The
+[actual helper guide](../../../../../helpers/README.md) names the authored
+routines and prepared unexecuted checks. Remaining D4/D6 choices still need
+review. Do not restore the excluded records/ordinary-save framework, recovery,
+central scheduler or upgrade manager as hidden dependencies. Specific new
+architecture still needs explicit approval; routine work follows approved meanings.
 
 Earlier D7/D8 proposals are historical context, not current implementation gates.
 Their deferral explicitly narrows the original whole-project assignment; the

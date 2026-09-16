@@ -5022,3 +5022,55 @@ requirements, then read this log from top to bottom.
   breaks. Hooks are inactive samples, CI triggers are unchanged and the restart
   branch has no open PR. No checks were disabled and these inspections provide
   no functional validation or qualification.
+
+## 2026-09-15 — Minimal Python helpers; separate save framework deferred
+
+- Recorded the user's explicit D3 direction: start with minimal useful Python
+  standard-library routines, name actual scripts in the recipes, and leave all
+  remaining work to the executing agent and its authorized tools. No Python
+  version pin, external dependency, SDK, persistent service or fixed provider
+  set is selected. Specific new architecture still requires explicit approval.
+- The user excluded the open records/ordinary-save framework dependency from
+  MVP. Removed that blanket approval prerequisite throughout the current plan,
+  coverage map, briefs, fixtures and guide. Preserve canonical Drive data, D1/D5
+  meanings, normal agent save verification, coverage and cleanup. Do not replace
+  the excluded framework with another schema registry, writer or repair engine.
+- Authored three isolated pure functions in `helpers/source_metadata.py`:
+  `normalize_subject`, `normalize_address_parts` and `utf8_size`. Subject input
+  must explicitly distinguish raw headers from already-decoded values; static
+  review identified and corrected a possible double-decoding ambiguity. Address
+  parts must already be reliably extracted. The helper guide states supported
+  input limits and agent/tool alternatives without changing canonical meaning.
+- Prepared ten fictional check methods in
+  `helpers/prepared_checks/check_source_metadata.py`, without importing or
+  executing them or the new helper. These support later user-directed testing;
+  they are not evidence of correctness or portability. The existing fictional
+  inventory remains 13 source cards and 33 scenarios with scope annotations.
+- Focused workers owned helper authoring, two decision briefs and traceability
+  updates; a separate bounded static review inspected the helper text. The
+  coordinator integrated their work and owns all Git/artifact publication.
+  Frozen studies, retired runtime and the committed preservation tag are intact.
+  The current identity recipe's old run-budget wording now follows the approved
+  agent-managed complete-run direction; identity evidence rules are unchanged.
+- Updated the viewable guide to revision 8 and all seven companion pages. The
+  helper subset is authored, not installed or tested. It does not complete the
+  retained whole-project deliverables. D2 repair, the separate record/save
+  framework, D7 central management and D8 packaged lifecycle remain excluded.
+- Publication hygiene found no privacy issues, 315 local document links/anchors
+  resolve and diff whitespace checks pass. Hooks are inactive samples; CI only
+  starts on main pushes, pull requests or manual dispatch, and this restart
+  branch has no open PR. No checks were disabled. These are publication checks,
+  not functional validation. Static guide authoring/packaging is separate from
+  School-OS application execution.
+- No tests, simulations, model replays, imports/compilation of new helpers,
+  application builds, smoke runs, connector probes, pilots, ingestion, scheduled
+  jobs or live School-OS effects ran. No revised-architecture qualification claim
+  is made.
+- Exact next action: obtain the still-pending D4 finite daily scope/cutoff and
+  identity/discovery decisions and D6 selection/task-app freshness/audio choices,
+  while continuing independent approved recipe work. The unanswered cutoff
+  question remains pending; this D3 approval does not answer it. Implement all
+  retained agreed deliverables, prepare unexecuted checks, publish code and
+  continuity to `codex/restart-school-os`, verify the exact remote revision,
+  then stop for the user's testing direction. This helper/documentation update
+  is an intermediate publication, not the completed whole-project handoff.
