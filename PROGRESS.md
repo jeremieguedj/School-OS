@@ -5613,3 +5613,33 @@ requirements, then read this log from top to bottom.
   or the user's answer about a separate Sol task; no experienced worker has
   been substituted. Next: launch browser trials, preserve their actual handles,
   and audit the three routes without cross-instance contamination.
+
+## 2026-09-16 — Trial source preflight and private-transfer approval pending
+
+- The operating implementation remains pinned at
+  `138ca7954bdb3b7e9de065199fdb4903d6a924a3`. Coordinator searches by both Gmail
+  identifier and metadata observed 17 matching message entries in the fixed
+  interval, with no continuation. These are provider-entry observations and
+  must not be treated as a count of canonical logical emails.
+- The independent oracle read all 17 observed message bodies. Review of the
+  visual semantics in three image attachments remains in progress, so the
+  source audit does not yet establish complete content coverage.
+- The first private launch-input preparation mistakenly retained only one of
+  two configured school-sender domains. The frozen v1 evidence is preserved.
+  Corrected v2 inputs contain both domains while retaining the same common
+  scope, fixed interval and separate verified route folders.
+- The exact cause of every earlier empty query remains unestablished. Current
+  observations do not justify an endpoint-failure conclusion or attribute all
+  prior empties to the local input error.
+- Neither browser trial was submitted and no live run handle exists. Automatic
+  approval review rejected uploading the private instructions to Gemini because
+  they contain mailbox, child/school and Drive details. Explicit transfer
+  approval for both Gemini and ChatGPT Work is pending; no alternate transfer,
+  partial prompt or other bypass was used.
+- A fresh context-free worker remains unavailable because the current session
+  is at its agent-thread limit. The separate Sol-task question is still pending,
+  and no experienced worker or existing task was substituted.
+- The goal remains active. Next: complete the independent image/source audit,
+  await explicit upload approval and the fresh-task answer, then launch only the
+  permitted routes and record their actual handles. This checkpoint is preflight
+  evidence, not functional product qualification.

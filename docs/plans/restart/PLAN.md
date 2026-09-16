@@ -51,19 +51,35 @@ contract, and managed-connector compatibility still requires evidence.
 `138ca7954bdb3b7e9de065199fdb4903d6a924a3` on
 `codex/restart-implementation`, pushed and remote revision verified on 2026-09-16.
 The [coverage map](implementation/COVERAGE.md) covers every principle/use case
-and T1–T10 with explicit D2/D7/D8 deferrals. No functional test or ingestion has
-run. The next action is the already-authorized three isolated ingestion/audit
+and T1–T10 with explicit D2/D7/D8 deferrals. At that publication checkpoint, no
+functional test or ingestion had run. Subsequent authorized preflight and source
+audit have begun, but no trial-instance ingestion or product qualification has
+occurred. The next action is the already-authorized three isolated ingestion/audit
 trials at this fixed implementation revision, including page-size evaluation.
 This publication is not a claim of connector, agent or semantic qualification.
 
 **Trial preflight, 2026-09-16:** the goal is active again. The intended tests
 parent and three separate fresh route folders have been verified through live
-Drive metadata. Browser trial prompts are being prepared with the same fixed
-seven-day interval and published revision. Independent source audit is separate
-from tested-agent outputs. The session's agent-thread limit currently prevents
-spawning the first context-free worker; a separate Sol task was proposed to the
-user, without silently substituting an existing worker. Browser routes can
-proceed independently. Private references and evidence remain outside Git.
+Drive metadata. The operating implementation remains pinned at
+`138ca7954bdb3b7e9de065199fdb4903d6a924a3`. Coordinator searches by both Gmail
+identifier and metadata observed 17 matching message entries in the fixed
+interval and no continuation; this is an observed provider-entry inventory, not
+a count of canonical logical emails. The independent oracle has read those 17
+bodies, while the visual meaning of three image attachments remains under review,
+so source coverage is not yet complete.
+
+The first private launch-input preparation mistakenly retained only one of two
+configured school-sender domains. That version is frozen as evidence; corrected
+v2 inputs preserve both domains, the common fixed interval and separate verified
+route folders. The exact cause of every earlier empty query is not established,
+and the evidence does not establish endpoint failure. Neither browser trial has
+been submitted and no live run handle exists. Automatic approval review rejected
+uploading the private v2 instructions to Gemini because they contain mailbox,
+child/school and Drive details. Explicit transfer approval for Gemini and ChatGPT
+Work is pending; do not bypass it. Independent source audit remains separate from
+tested-agent outputs. The session's agent-thread limit still prevents spawning
+the fresh context-free worker; the separate Sol-task question remains pending and
+no substitute was used. Private references and evidence remain outside Git.
 
 ## Current execution authorization
 
