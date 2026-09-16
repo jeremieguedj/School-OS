@@ -7,6 +7,10 @@ source links, scope, dates and qualifications.
 
 ## Set up a fresh School-OS
 
+[Download the clean starter ZIP](https://github.com/jeremieguedj/School-OS/releases/download/school-os-starter-2026-09-16/School-OS-setup.zip)
+from the dedicated unqualified prerelease. Use this asset, not the repository
+source-code archive.
+
 Give a new agent session one accessible link to the fresh School-OS ZIP or folder
 and say only: **“setup my schoolOS.”** The agent starts with
 [START-HERE.md](START-HERE.md), reads [AGENTS.md](AGENTS.md), and follows the one

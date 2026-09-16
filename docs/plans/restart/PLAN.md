@@ -6,7 +6,8 @@ logical-email reuse, normalization, parent-bound attachment lookup and durable
 search-window recovery. Retained implementation is authored and statically reviewed; the
 user rejected linked overflow pieces and the delegated assessment retains one
 64 KiB page maximum. The earlier guided setup attempt blocked; the revised
-one-link setup flow is being prepared for publication and is untested. Trial
+one-link setup flow is published and ready for user-directed testing; it remains
+untested. Trial
 ingestion and retrieval remain unexercised. The [artifact guide](README.md) separates current authority from frozen
 experiments and historical proposals.
 
@@ -29,7 +30,7 @@ and `extensions/` areas. Setup creates real configured records after the intervi
 
 Deliverables: the dedicated [setup guide](../../../operations/setup.md), entry
 files, clean [starter archive preparation](../../setup-bundle.md), and revised
-[trial handoff](TRIAL-PROMPTS.md). The archive will be published from a pinned commit
+[trial handoff](TRIAL-PROMPTS.md). The archive is published from a pinned commit
 through an agent-accessible release link; it contains no legacy runtime, private
 configuration, developer trial instructions, tests or evaluator answers.
 
@@ -48,9 +49,21 @@ reuse their state. Keep private disclosure permissions, source expectations and
 page-size auditing separate from the user-facing opening prompt. Historical
 results below remain evidence, not qualification of this revised flow.
 
-Publication details are recorded in PROGRESS.md and the starter release. Until
-that publication is verified, readiness is not claimed. No new architecture
-approval is pending for this expressly requested setup change.
+**Verified publication / ready for testing:** starter source revision
+`ba6bcc3bec96dfc542fd83cb792318ac8e54ce56` on `codex/restart-implementation`, pinned by
+`school-os-starter-2026-09-16`. The [clean ZIP](https://github.com/jeremieguedj/School-OS/releases/download/school-os-starter-2026-09-16/School-OS-setup.zip)
+is published on the [dedicated prerelease](https://github.com/jeremieguedj/School-OS/releases/tag/school-os-starter-2026-09-16).
+Remote tag/branch resolution and the asset's 98,205-byte size and SHA-256 digest
+match the reviewed local artifact. It contains 30 operating/entry files and nine
+directory entries, with empty `instance/` and `extensions/` folders.
+
+No revised-flow test, ingestion, smoke run or connector probe ran. Only static
+publication/archive hygiene was performed. The earlier Drive upload failure
+remains unresolved; publication does not establish any agent's download or save
+capability. No architecture approval is pending for this setup change. **Stop
+here; the exact next action is the user's direction to begin revised testing.**
+This revision is the package source; later continuity-only commits do not alter
+or silently repin the published artifact.
 
 ## Previous implementation and trial checkpoint (historical)
 

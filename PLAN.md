@@ -7,9 +7,10 @@ unqualified. Q10 is resolved: the linked-piece proposal was rejected and the
 delegated assessment retains the single 64 KiB page maximum. Implementation revision
 `138ca7954bdb3b7e9de065199fdb4903d6a924a3` is published and remote verified.
 The earlier guided setup trial blocked before ingestion; its evidence is
-preserved. Current work adds a fresh starter ZIP and minimal one-link setup.
-Next: publish the starter, report readiness and stop until the user directs
-revised-flow testing.
+preserved. The fresh starter ZIP and minimal one-link setup are now published from
+`ba6bcc3bec96dfc542fd83cb792318ac8e54ce56` under `school-os-starter-2026-09-16`.
+Remote revision and asset digest/size were verified. **Ready for testing; stop
+until the user directs the revised flow.** No revised-flow functional test ran.
 
 The authoritative [restart plan](docs/plans/restart/PLAN.md) records decisions,
 retained scope, explicit deferrals and the

@@ -8,8 +8,9 @@ They do not duplicate the setup procedure.
 
 ## Publication channel
 
-The starter is published as the `School-OS-setup.zip` asset on the dedicated
-`school-os-starter-2026-09-16` GitHub prerelease. Use that asset, not GitHub's
+The starter is published as [School-OS-setup.zip](https://github.com/jeremieguedj/School-OS/releases/download/school-os-starter-2026-09-16/School-OS-setup.zip)
+on the dedicated [school-os-starter-2026-09-16 prerelease](https://github.com/jeremieguedj/School-OS/releases/tag/school-os-starter-2026-09-16).
+Its verified source commit is `ba6bcc3bec96dfc542fd83cb792318ac8e54ce56`. Use that asset, not GitHub's
 source-code ZIP: a repository archive includes development/history material and
 is not the clean unconfigured starter. The existing documentation snapshot and
 old release assets are preserved. PLAN and PROGRESS record publication status;

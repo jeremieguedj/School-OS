@@ -5779,3 +5779,38 @@ requirements, then read this log from top to bottom.
 - Privacy scan, relative document links/anchors and diff hygiene are clean. Hook
   inspection found only sample hooks, no core.hooksPath override and no active
   workflow; no check was disabled. Functional setup/ingestion remains untested.
+
+
+## 2026-09-16 — Fresh starter published; readiness stop
+
+- Source revision `ba6bcc3bec96dfc542fd83cb792318ac8e54ce56` is committed and pushed on
+  `codex/restart-implementation`; the remote branch was verified at that exact
+  SHA. The annotated `school-os-starter-2026-09-16` tag peels to the same SHA.
+  The OrgoS Restart Documentation snapshot, old releases and frozen evidence
+  remain unchanged.
+- Published [School-OS-setup.zip](https://github.com/jeremieguedj/School-OS/releases/download/school-os-starter-2026-09-16/School-OS-setup.zip)
+  on the [dedicated prerelease](https://github.com/jeremieguedj/School-OS/releases/tag/school-os-starter-2026-09-16). The archive is 98,205 bytes,
+  with 30 operating/entry files and nine directory entries. `instance/` and
+  `extensions/` are empty; no private configuration, canonical IDs, retired
+  runtime, developer trials, tests or expected answers are included.
+- The archive was prepared from the exact committed revision. Privacy, member,
+  relative-link, archive byte/CRC and Git hygiene completed. GitHub's uploaded
+  asset size and digest match the reviewed archive:
+  `ebbfbe0d13145a26c765f0ac9eaa52bb22e40b3856c567b1396fbae8f0438ad4`.
+  This hash binds a public distribution artifact only, never source identity.
+- No new setup trial, ingestion, connector probe, smoke run, helper test or
+  functional evaluation ran. Publication hygiene is not product qualification.
+  Prior Drive upload failures/unknown effects remain unresolved and retained;
+  actual download/setup/write capabilities are matters for the directed trials.
+- Ready for the user's testing phase. All routes will begin with the same ZIP
+  link plus “setup my schoolOS,” discover the guide, interview for missing
+  choices/options, establish separate new test instances and verify setup.
+  Ingestion is then a separate scoped request with a common seven-day interval;
+  independent question audits and the 64/128/256 KiB comparison follow.
+- Exact next action: **stop and wait for the user to direct revised testing**.
+  Do not submit the historical private v2 prompts or reuse previous trial roots.
+  Future private interview answers still require the applicable disclosure
+  authority. No architecture decision remains open for this setup change.
+- This entry and links are a continuity-only publication after the source tag;
+  they do not change the pinned starter contents or claim the overall trial goal
+  is complete.
