@@ -6251,3 +6251,80 @@ requirements, then read this log from top to bottom.
 - The controller issued no prompt, coaching, retry or ingestion request, then
   released browser control with no call in flight. Root assigned the next bounded
   observation to Spark. Both providers continue their own setup procedures.
+
+## 2026-09-16 — Spark claims completion; saved-state audit begins
+
+- Spark made a final setup/configuration-complete claim and asked to begin
+  ingestion. Its isolated controller held the request and released UI control.
+  No ingestion permission or request was sent.
+- Root independently listed only the assigned Spark root, fetched its actual
+  entrypoint and listed its system/instance children, preserving four complete
+  connector receipts privately before interpretation. The root observation shows
+  expected top-level areas and native-document entry files. Returned counts do
+  not prove exhaustive inventory; format conversion alone is not corruption.
+- Spark controller now audits only its own preserved/read-back setup against
+  its interview and pinned neutral contracts, with no browser calls or writes.
+  It receives no Work results or prior evaluator findings. Root retains the
+  ingestion-stage decision. Work has the exclusive browser lease for its own
+  progress observation; it last reported 50 of 64 saves with readback pending.
+
+## 2026-09-16 — Work claims completion; both setups held for audit
+
+- Work now claims 64 installed files and actual byte/reference readback for
+  34 private pages plus START-HERE. It reports Drive qualified, Gmail selected
+  but untested, and no ingestion or outbound effects. These remain provider
+  claims until independent saved-state comparison; a different file count alone
+  is not a defect where contract-compliant packing differs.
+- A bounded browser observation timed out and reset the controller CUA session,
+  losing older in-memory raw snapshots. The controller used the authorized
+  read-only retry to reattach its saved exact tab, without restarting the provider
+  task, submitting a duplicate prompt or repeating writes. Final state is in
+  memory and sanitized logs/handles are durable. Keep the evidence-loss limit.
+- Root independently captured Work's root listing, actual entrypoint fetch and
+  system/instance listings. Expected top-level areas are observed; no list
+  exhaustion is inferred. All four complete receipts are private.
+- Each fresh controller now audits only its own provider's saved setup against
+  its authorized answers and pinned neutral contracts. Neither holds a browser
+  lease, receives other-route results, reads an oracle or changes an instance.
+  Both provider tasks remain awaiting ingestion; root will decide the next stage
+  from saved-state evidence, without repairs or hidden coaching.
+
+## 2026-09-16 — Second Spark setup fails saved-route audit
+
+- Independent actual Drive readbacks resolve all 18 page IDs exposed by Spark's
+  entrypoint, but only one is a page catalogue. Its route names `catalogue_root`,
+  which is not a canonical family. Required Email, Attachment Group, Ingestion
+  Coverage and Knowledge source/month and pending catalogue routes are not
+  reachable. An exhausted generic empty catalogue cannot establish those empty
+  inventories. This is a semantic structure failure, not merely a file-count
+  disagreement or a write-echo inference.
+- The audit stopped at that decisive defect. Spark ingestion remains blocked;
+  no fixes, rewritten prompts, source reads or further Spark browser operations
+  are authorized by this finding. The saved instance is preserved.
+- Root checked the local published starter's exact digest and independently
+  compared its data contract, storage procedure and setup procedure with the
+  pinned Git objects: all bytes match. That does not prove what Spark read or
+  copied; no unsupported cause is assigned to the failure.
+- Work's own saved-state audit continues separately. It receives no Spark
+  findings or context. Root will decide its ingestion gate independently.
+
+## 2026-09-16 — Work passes setup gate; separate ingestion authorized
+
+- Work's independent required setup audit returned pass with limits: 160 checks
+  cover the configured entrypoint, all 24 required roles, 34 bounded JSON pages,
+  identities, references, routes and authorized household/source/tool choices.
+  All 26 reusable system files and three unchanged root instruction files match
+  the supplied ZIP exactly. No ingestion records or canonical tasks were present.
+- Empty derived entity-index coverage requires the existing canonical Membership
+  fallback. Folder-list counts still lack exhaustion evidence; every required
+  referenced target was fetched separately. No universal compatibility or
+  complete outside-scope effect audit is claimed.
+- Audit cost was 77 direct Drive reads, with 76 complete envelopes preserved plus
+  four coordinator receipts. A local encoder failure lost one initial listing;
+  one read-only repeat was preserved. No connector-reported errors. Keep this
+  separate from provider setup cost and the earlier browser evidence-loss limit.
+- Root accepted the setup gate and gave only Work the exclusive browser lease
+  to submit its own unchanged ingestion request once. No audit findings, oracle,
+  expected record counts or Spark context go into that provider message. Spark
+  stays preserved at its failed setup. Exact next action: observe Work's separate
+  ingestion, then audit actual saved meaning and questions without fixes.

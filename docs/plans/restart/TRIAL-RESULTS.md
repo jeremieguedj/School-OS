@@ -9,13 +9,54 @@ Root serializes their browser-action leases and does not operate either tab.
 No controller receives the other's transcript, outcomes or evaluator oracle.
 Controlled transient retries are authorized; product fixes remain prohibited.
 The starter and fixed seven-day interval are unchanged. Setup must be verified
-before ingestion. Both providers have launched, asked their ordinary setup interviews and received
-only their own authorized answers. Work is visibly using GPT-5.6 Sol Light. No
-setup-complete or ingestion outcome is established yet. Full browser AX states
-remain in separate controller REPL memories; the supported API exposes no durable
-raw-AX export. Disk logs retain action/status/handle observations, not full raw
-UI receipts. Preserve that evaluator limitation and use direct Drive readbacks
-for independently verifiable saved-state claims.
+before ingestion. Both providers completed their ordinary interviews and claimed
+setup success. Work visibly uses GPT-5.6 Sol Light.
+
+| Route | Independent setup audit | Next stage |
+| --- | --- | --- |
+| Gemini Spark, second attempt | Failed: required canonical catalogue routes are missing | Ingestion blocked; preserve instance for review |
+| ChatGPT Work, second attempt | Pass with documented limits | Separate fixed-scope ingestion authorized; completion pending |
+
+**Spark's confirmed defect:** its sole page catalogue uses the invalid
+canonical-family route `catalogue_root`, with no reachable Email, Attachment
+Group, Ingestion Coverage or Knowledge source/month and pending catalogue routes.
+All 18 referenced page handles resolve, belong to the observed instance folder
+and carry the configuration's instance ID. This is a saved-meaning/reachability
+failure, not merely a file-count difference or proof that files were never
+written. The audit stopped at this first decisive defect. Installed reusable
+system bytes were not compared in that stopped audit. A separate local check
+confirmed that the published ZIP and its data, storage and setup files match the
+pinned source; that does not establish what Spark read or copied, or the cause
+of the defect. Spark ingestion remains blocked.
+
+**Work's verified setup:** actual readbacks passed 160 bounded structural and
+configuration checks. The configured entrypoint exposes all 24 required roles;
+34 JSON pages have consistent instance identity, unique valid owned page IDs,
+resolving references, correct family/route/revision relationships and sizes
+within 64 KiB. Household relationships and source/time/tool choices match the
+authorized interview. No ingested source or task records were present. All 26
+reusable system files and three unchanged root instruction files match the ZIP
+byte-for-byte. Derived entity-index coverage is empty, requiring the documented
+canonical Membership fallback until valid derived coverage exists. Listing
+counts do not prove exhaustion; required references were fetched individually.
+
+This independent audit made 77 direct Drive read calls and preserved 76 of their
+complete envelopes, plus four earlier coordinator envelopes. One initial list
+response was lost to a local encoder failure; a single read-only repeat was
+preserved. No connector-reported error occurred. These are evaluator audit costs,
+not measured provider setup costs. Root accepted the required setup gate and
+authorized only the separate, unchanged seven-day ingestion request. No successful
+ingestion or retrieval outcome is yet established.
+
+**Controller evidence limitation:** one Work read-only observation timed out
+and reset the controller runtime. A controlled reattachment retry preserved the
+provider task, without a repeated setup prompt or write, but earlier in-memory
+AX snapshots were lost. Full browser AX states otherwise remain in separate
+controller REPL memories; the supported API exposes no durable raw-AX export.
+Disk logs retain action/status/handle observations, not full raw UI receipts.
+Direct Drive readbacks are durably preserved and support the independent
+saved-state findings. Separate controller contexts and tabs do not establish
+separate signed-in browser profiles or erase provider account memory.
 
 ## First-attempt outcome
 

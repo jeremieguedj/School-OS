@@ -2,16 +2,19 @@
 
 Status: the approved restart implementation and fresh starter are published. The
 user subsequently authorized the three isolated setup/ingestion trials and
-requires reporting only, with no fixes before joint review. The current trial
-has one persisted ingestion with material semantic defects, one failed setup,
-and one failed browser launch. No broad product qualification is claimed. See
+requires reporting only, with no fixes before joint review. The first trial
+had one persisted ingestion with material semantic defects, one failed setup,
+and one failed browser launch. Two subsequent browser attempts are now under
+review: Spark failed its saved-setup audit; Work passed the required setup gate
+with documented limits and may begin its separate seven-day ingestion. No
+second-attempt ingestion result is established. No broad product qualification is claimed. See
 [trial results](TRIAL-RESULTS.md) for evidence and limitations; earlier checkpoints
 below are historical. The [artifact guide](README.md) distinguishes the active
 contract from frozen studies and superseded proposals.
 
 ## Current testing authority — report findings, do not repair
 
-## Second browser attempts authorized — isolated controllers
+### Second browser attempts authorized — isolated controllers
 
 The user subsequently directed: proceed with Spark and ChatGPT Work, with each
 controller completely isolated from the other's browser interaction and context.
@@ -42,8 +45,13 @@ Each route must pass actual saved-state setup review before its separate ingesti
 request. Retain the same fixed seven-day interval and independent source reference
 for comparability. Audit saved questions afterward, without coaching or filling
 missing knowledge from the oracle. New destinations and raw metadata receipts
-are private. Exact next action: launch both isolated controllers, verify each
-setup, then continue the authorized ingestion/query audit or report its blocker.
+are private. Both providers completed their interviews and claimed setup success.
+Spark's saved catalogue does not expose the required canonical routes; preserve
+that failed instance and do not ingest into it. Work's required saved-state audit
+passed with documented evidence limits. Exact next action: submit its unchanged
+separate ingestion request, observe completion, then audit saved source meaning
+and requested question results. Preserve and report any blocker. Neither route may
+receive product fixes or coaching from the evaluator's expected answers.
 
 ## Previous completed trial authority and outcomes
 
@@ -62,7 +70,7 @@ Source access is read-only; external task writes, outbound email/audio, schedule
 and changes to earlier instances are excluded. Evidence stays private; only
 sanitized findings and continuity records may be published.
 
-### Current route outcomes
+### First-attempt route outcomes
 
 - **Fresh Sol:** core setup and subsequent ingestion persisted with actual
   readbacks. Saved output includes 17 Email, three Attachment Group, 21 Knowledge,
