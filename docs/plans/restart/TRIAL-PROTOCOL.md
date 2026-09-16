@@ -5,6 +5,8 @@ retained MVP implementation is committed, pushed and its remote revision verifie
 The [active plan](PLAN.md#current-execution-authorization) is the authority. This
 protocol does not authorize broader qualification, messages, task-app writes or
 schedules. Source values and instance links belong in private evidence only.
+Use the ready-to-fill [isolated trial handoff prompts](TRIAL-PROMPTS.md) only after
+that publication checkpoint is satisfied.
 
 ## Fixed inputs and isolation
 

@@ -5458,3 +5458,22 @@ requirements, then read this log from top to bottom.
 - Site version 14 deployed successfully at the existing owner-private guide,
   with source revision recorded above. The current open-question section links
   the concrete Q10 representation; no testing was triggered by publication.
+
+
+## 2026-09-16 — Isolated trial handoffs prepared, still unexecuted
+
+- Rechecked the clean restart branch and exact remote checkpoint
+  `f69bde273a8c4d96345e5388ef7862a629d46522`; the documentation snapshot still
+  targets `09f6be151cd549431343b9ebe44a1d03371d2f4f`. Prior goal work made
+  concrete progress by publishing the implementation checkpoint and guide.
+- A context-free Sol author prepared TRIAL-PROMPTS.md and linked it from the
+  trial protocol. The templates supply the same final revision and seven-day
+  scope, separate assigned folders, route-specific fresh task wrappers,
+  explicit effect limits, and common source-grounded query handoffs. Filled
+  private inputs and independent evaluator expectations stay out of Git.
+- No prompt was dispatched to a tested agent. No connector/browser probe,
+  functional test, ingestion, send, task-app change or schedule ran.
+- Q10 remains unanswered and unadopted. Trial preparation does not satisfy
+  the complete-implementation prerequisite. Exact next action remains explicit
+  approval of the segment representation, Sol implementation, full publication
+  and remote verification, then the three already-authorized isolated trials.

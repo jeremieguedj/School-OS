@@ -55,7 +55,8 @@ See the current restart plan and its documentation snapshot checkpoint.
 The retained operations, contracts, adapters and fictional examples are now
 authored but untested. Q10's exact oversized-value segment representation is
 still awaiting approval; affected values must block rather than be truncated,
-and the retained MVP is not ready for publication or trials until it is resolved.
+and the retained MVP is not ready for complete-implementation publication or
+trials until it is resolved. Transparently incomplete checkpoints may be published.
 For the remaining repository work, use bounded Sol workers only, never Astra.
 The root agent primarily coordinates, handles architecture and other escalations,
 integrates the result and owns publication.
