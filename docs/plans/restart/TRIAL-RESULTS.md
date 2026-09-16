@@ -9,7 +9,13 @@ Root serializes their browser-action leases and does not operate either tab.
 No controller receives the other's transcript, outcomes or evaluator oracle.
 Controlled transient retries are authorized; product fixes remain prohibited.
 The starter and fixed seven-day interval are unchanged. Setup must be verified
-before ingestion. No second-attempt outcome is established yet.
+before ingestion. Both providers have launched, asked their ordinary setup interviews and received
+only their own authorized answers. Work is visibly using GPT-5.6 Sol Light. No
+setup-complete or ingestion outcome is established yet. Full browser AX states
+remain in separate controller REPL memories; the supported API exposes no durable
+raw-AX export. Disk logs retain action/status/handle observations, not full raw
+UI receipts. Preserve that evaluator limitation and use direct Drive readbacks
+for independently verifiable saved-state claims.
 
 ## First-attempt outcome
 

@@ -6184,3 +6184,70 @@ requirements, then read this log from top to bottom.
   Setup must be independently verified before ingestion is requested.
 - Next: launch the isolated controllers, preserve complete private observations,
   and continue setup/ingestion/query cases within each approved boundary.
+
+## 2026-09-16 — Isolated Spark launch observed; Work lease granted
+
+- Fresh Spark controller reports successful creation of its own new browser tab
+  and submission of the exact Drive ZIP/minimal setup opening. Provider is
+  retrieving package metadata; no interview or persisted setup outcome yet.
+  No retry, evaluator handoff or ingestion request was sent.
+- Spark controller marked its tab for handoff and explicitly released browser
+  control. The Work controller verified only its own private packet and made no
+  browser calls while waiting. Root then granted Work the exclusive UI lease.
+- No tab was shared, no root UI operation occurred, and no transcript/results
+  passed between controllers. Both remain confined to their own route data.
+  Next: observe Work launch, then alternate bounded interview observations while
+  provider tasks run independently.
+
+## 2026-09-16 — Both provider tasks launched in isolated sessions
+
+- Work controller confirmed ChatGPT Work with GPT-5.6 Sol Light, submitted its
+  exact minimal opening once in a new owned tab, and observed an active response.
+  No error or retry at this checkpoint. This establishes launch only, not setup.
+- Work released the browser-action lease and marked its tab for handoff. Root
+  granted Spark the next bounded observation/interview lease. Provider tasks
+  continue independently; controllers never operate the browser concurrently.
+- No source ingestion, external task write, output send or schedule has been
+  requested. Setup readback remains the gate before the next stage.
+
+## 2026-09-16 — Both interviews answered; browser evidence limitation recorded
+
+- Each controller answered its provider's ordinary interview from only its own
+  authorized packet and established destination/isolation before writes. Both
+  providers are working; no setup success or ingestion is yet established.
+- Controllers confirmed a supported-runtime limitation: full emit:false AX
+  observations remain in their separate persistent REPL memories; no documented
+  filesystem/export API is available for durable raw-AX copies. Private disk
+  logs contain action/status metadata and handles, not full raw UI receipts.
+  Earlier intended durable capture must not be reported as achieved.
+- Do not bypass the API restriction, use global clipboard or expose raw private
+  states. Preserve each CUA session, report this process-evidence limitation, and
+  use independently preserved direct Drive connector readbacks for saved-state
+  qualification. This is evaluator evidence handling, not a product repair.
+- Root continues alternating exclusive browser leases. No controller has operated
+  the other's tab or received its transcript/output. Provider tasks may progress
+  in parallel inside distinct instances. Next: obtain completed setup claims and
+  inspect their actual saved state before authorizing ingestion.
+
+## 2026-09-16 — Spark activity changes observed during isolated setup
+
+- Controller compared successive full snapshots in memory and observed changed
+  task activity. Expanding only the owned task's activity exposed package reading,
+  assigned-folder creation, saves and verification activity. These are visible
+  provider activity claims, not independent saved-state qualification.
+- Spark remains active without a final setup claim, additional interview or
+  supported error. No prompt, reload, retry or ingestion was issued.
+- Spark released the lease with no call in flight; Work received the next bounded
+  activity inspection. Continue allowing independent provider execution, then
+  apply the saved-state review gate after a final setup report.
+
+## 2026-09-16 — Work entered its Drive-save phase
+
+- Isolated Work activity changed and reports local instance generation complete
+  plus an in-progress 64-file Drive-save set. It was uploading entity
+  configuration at observation time and reported no error. Actual complete
+  persistence/reference readback remains pending; the reported count is not
+  independently verified setup completeness.
+- The controller issued no prompt, coaching, retry or ingestion request, then
+  released browser control with no call in flight. Root assigned the next bounded
+  observation to Spark. Both providers continue their own setup procedures.
