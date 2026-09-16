@@ -31,8 +31,15 @@ grounding for decisions not explicitly covered by approved plans. Follow the
 [Astra handoff](docs/plans/restart/ASTRA-HANDOFF.md). Implement existing explicit
 architecture approvals; obtain the user's approval before adopting any new or
 changed architecture decision.
-Apply the active plan's explicit MVP scope exceptions: interrupted canonical-write
-recovery is deferred; the approved query-coverage rule remains required.
+Apply the active plan's explicit MVP revisions: interrupted canonical-write
+recovery, centralized tools/jobs management and packaged installation/upgrades
+are deferred. The executing agent manages its own resources, batching, continuity
+and nonconcurrent schedules; School-OS supplies guidance and completion rules.
+A logical run must complete its agreed ingestion before daily brief composition;
+a real blocker is incomplete work, not a completed partial daily brief. D5 is
+approved. The separate query-coverage rule remains required for knowledge answers.
+Preserve approved D1 separation for later installation/upgrade work. Remaining
+record/adapter/first-use contracts and named D4/D6 choices still need approval.
 School-OS agents must be able to execute code. This approved capability
 requirement does not select a language/runtime or require a personal computer,
 persistent process or coding CLI; see D3 in the active restart plan.

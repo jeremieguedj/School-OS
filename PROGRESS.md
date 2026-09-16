@@ -4970,3 +4970,55 @@ requirements, then read this log from top to bottom.
   dependencies explicitly before dependent coding. After agreed MVP implementation,
   commit/push, verify the exact remote revision and stop for the user's testing
   direction. This documentation publication preserves that mandatory stop.
+
+## 2026-09-15 — Agent-managed execution and a smaller MVP
+
+- Recorded the user's explicit D5 approval and revised D4/D6 directions in the
+  active approval ledger and architecture proposal revision 7. D4 withdraws the
+  proposed School-OS 25-processing/100-listing/8 MiB caps and batch manager. One
+  logical run must complete its intended ingestion; the capable executing agent
+  owns resource-aware batches, continuation and its runtime recovery using the
+  authored guidance. D1's bounded data pages remain approved.
+- D6 now assigns uncertain-effect validation to the executing agent through its
+  available authorized means. Verify complete intended ingestion before composing
+  the ordinary daily brief; blocked ingestion is incomplete work, not a finished
+  partial daily result. Separate coverage-qualified knowledge questions remain
+  supported. No generic School-OS persisted-effect or D2 repair engine is selected.
+- The user explicitly deferred D7 centralized tools/jobs/capability management,
+  scheduler control and registry-backed queries, and D8 package/installer/upgrade/
+  compatibility/migration machinery. Users and agents manage their own jobs under
+  nonconcurrent-instance assumptions. D1 system/instance/extensions separation
+  remains for future lifecycle work; minimum first-use setup remains unresolved.
+  Repository history/baseline, frozen evidence and privacy safeguards are retained.
+- These are explicit MVP exceptions to the original whole-product assignment and
+  broader product principles. The principles were not rewritten. Updated root/
+  restart plans, entry point, coordinator handoff, coverage mapping, decision
+  briefs and the viewable guide to prevent deferred features returning as hidden
+  prerequisites. D5's approved behavior is not being resubmitted for approval.
+- Authored `implementation/AGENT-EXECUTION-GUIDANCE.md`: practical resource advice,
+  complete-ingestion obligation, evidence-led agent verification and clear limits
+  without an orchestration engine. Three bounded workers updated separate briefs
+  and coverage/testing artifacts; the coordinator owns integration and publication.
+- Prepared inventory now includes 13 fictional source cards and 33 scenarios.
+  S32 describes one logical run beyond former caps without executing or generating
+  a large workload; S33 describes a blocked ingestion preventing normal briefing.
+  Existing IDs/stimuli remain with explicit current/deferred scope annotations.
+  No tests, simulations, replays, builds, probes, ingestion, schedules or live
+  School-OS actions were executed. The small development model and frozen studies
+  remain unchanged. Static guide preparation provides no functional evidence.
+- Asked for explicit approval of a finite daily boundary: all relevant mail not
+  yet fully processed by School-OS through run start, including backlog/attachments
+  even if the mailbox marks it read, with later arrivals in the next run. No answer
+  is recorded yet; it remains a proposal. Remaining D4 identity/discovery details,
+  D6 selection/task-app-freshness/audio choices, D3 and minimum record/normal-write/
+  first-use contracts remain to resolve. Agent validation does not require inventing
+  a central evidence table, retry service or notification subsystem.
+- Exact next action: resolve those remaining retained-MVP choices, implement only
+  approved scope, prepare unexecuted checks, commit/push the agreed code and
+  continuity, verify the exact remote revision, and stop for the user's testing
+  direction. This decision/documentation publication is not the code handoff.
+- Publication hygiene: no privacy findings and all 282 local document links and
+  anchors resolve. Diff whitespace checks pass after correcting Markdown hard
+  breaks. Hooks are inactive samples, CI triggers are unchanged and the restart
+  branch has no open PR. No checks were disabled and these inspections provide
+  no functional validation or qualification.

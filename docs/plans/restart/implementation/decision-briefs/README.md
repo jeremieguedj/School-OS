@@ -1,39 +1,58 @@
-# Detailed architecture decision briefs
+# Architecture briefs and current MVP scope
 
-Prepared 2026-09-15 for review. These are explanatory artifacts with fictional
-email examples, step-by-step flows, implications, alternatives and open choices.
-No example was executed. They do not approve architecture or qualify behavior.
+Updated 2026-09-15 with the user's decisions and scope reductions. These briefs
+explain the approved direction, remaining choices and deferred features in plain
+English. Their fictional examples are written illustrations; none was executed.
+An explanation is not architecture approval or product qualification.
 
 Start with the [viewable guide](../architecture-guide.html#detailed-briefs).
 Each Markdown brief also has a readable HTML companion:
 
 | Decision | Plain-language subject | Detailed brief | Viewable page |
 |---|---|---|---|
-| D4 | Finding and reading mail; when a run stops | [D4](D4-INGESTION.md) | [Read D4](D4-INGESTION.html) |
-| D5 | School information, corrections, tasks and parent edits | [D5](D5-KNOWLEDGE-TASKS.md) | [Read D5](D5-KNOWLEDGE-TASKS.html) |
-| D6 | Brief selection, audio and uncertain delivery | [D6](D6-BRIEFS-EFFECTS.md) | [Read D6](D6-BRIEFS-EFFECTS.html) |
-| D7 | Tools, accounts, agents, jobs and attribution | [D7](D7-TOOLS-JOBS.md) | [Read D7](D7-TOOLS-JOBS.html) |
-| D8 | Installation, upgrades and compatible extensions | [D8](D8-INSTALL-UPGRADES.md) | [Read D8](D8-INSTALL-UPGRADES.html) |
+| D4 | Agent-owned complete-run processing and resource batching | [D4](D4-INGESTION.md) | [Read D4](D4-INGESTION.html) |
+| D5 | Approved knowledge, corrections, tasks and parent edits | [D5](D5-KNOWLEDGE-TASKS.md) | [Read D5](D5-KNOWLEDGE-TASKS.html) |
+| D6 | Agent verification and ingestion before the brief | [D6](D6-BRIEFS-EFFECTS.md) | [Read D6](D6-BRIEFS-EFFECTS.html) |
+| D7 deferred | Agent-owned schedules; no MVP central job manager | [D7](D7-TOOLS-JOBS.md) | [Read D7](D7-TOOLS-JOBS.html) |
+| D8 deferred | Package/upgrade management deferred; first-use setup unresolved | [D8](D8-INSTALL-UPGRADES.md) | [Read D8](D8-INSTALL-UPGRADES.html) |
 | Remaining D3 | How code and connected tools work together | [D3](D3-EXECUTION-ADAPTERS.md) | [Read remaining D3](D3-EXECUTION-ADAPTERS.html) |
 | Undecided dependency | Minimum records and ordinary verified saves | [Records](RECORDS-AND-NORMAL-WRITES.md) | [Read the dependency](RECORDS-AND-NORMAL-WRITES.html) |
 
-D1, the query-coverage rule and the agent code-execution prerequisite remain
-approved. D2 interrupted canonical-write recovery remains outside the MVP.
+The current scope is:
+
+- **D1, query coverage and the code-execution prerequisite:** remain approved.
+  The Drive layout does not approve a record schema or installer.
+- **D4:** agents own completion of the requested run and use resource-aware
+  batching as guidance. Batching is not an arbitrary School-OS rule to abandon
+  the daily task after one batch. Remaining specifics need their own approval.
+- **D5:** approved. Its knowledge, task and parent-state behavior remains in scope.
+- **D6:** agent verification and ingestion before brief generation are approved
+  directions. Remaining detailed choices are still pending; removing D7 does
+  not remove verification or allow unknown effects to be called successful.
+- **D2:** interrupted canonical-write recovery is deferred. The separately
+  approved query rule and ordinary verified saves remain required; minimum
+  record and ordinary-write contracts are still undecided.
+- **D7:** centralized tools/jobs registration and scheduler management are
+  deferred. Users and capable agents own schedules and execution, read School-OS
+  recipes and select the adapters needed for each operation. The MVP assumes
+  no concurrent use of the same Drive data and introduces no locks.
+- **D8:** packaged installation, version/upgrade/migration/compatibility and
+  extension-management machinery are deferred. D1's separation remains, and
+  minimum first-use Drive setup still needs an explicit proposal.
+
 The [active plan](../../PLAN.md#current-coordinator-checkpoint--architecture-approval-pending)
 is the approval ledger; the [architecture proposal](../ARCHITECTURE-PROPOSAL.md)
 and [product principles](../../../../product-principles.md) supply the design context.
 
-The expanded explanation makes these missing decisions visible before coding:
+The immediate unresolved foundations are the remaining D3 runtime/adapter
+contracts, minimum records and ordinary-save semantics, and minimum first-use
+Drive setup. Resolve remaining D4/D6 choices within the user-approved direction.
+Do not restore deferred recovery, a centralized scheduler or an upgrade manager
+as hidden dependencies of those decisions.
 
-- D4/D6/D7: who launches continuation, total catch-up budget, daily freshness,
-  unfinished-work escalation and whether a brief waits or reports partial coverage.
-- D6: email/audio ordering and the exact boundary for unknown external effects
-  after D2's exclusion.
-- D8: installation/upgrade interruption behavior without silently restoring D2.
-- Remaining D3 and minimum records: executable contracts, supplied routes and
-  normal save/verification semantics still need concrete approval.
-
-The options in the briefs support review. Unspecified numeric budgets, policies,
-schemas and follow-up mechanisms are not approved by an explanation request.
-All required implementation areas remain open with the explicit D2 exception;
-this documentation checkpoint is not the whole-project code handoff.
+Earlier D7/D8 proposals are historical context, not current implementation gates.
+Their deferral explicitly narrows the original whole-project assignment; the
+broader principles are not silently rewritten. Repository/history/privacy
+safeguards remain. Implementation and later qualification must be reported
+separately. The code-publication handoff and mandatory stop before user-directed
+testing remain in force.

@@ -1,16 +1,18 @@
 # Restart implementation decisions for approval
 
-Updated 2026-09-15, revision 6: adds detailed decision walkthroughs and identifies
-unresolved completion, scheduling and MVP recovery dependencies. No new approval.
-**D1, query-coverage rule and D3 code-execution requirement approved; D2 skipped;
-remaining D3 and D4–D8 pending.** No
+Updated 2026-09-15, revision 7: records agent-managed complete-run processing,
+D5 approval, agent-led effect verification and ingestion-before-brief, and explicit
+D7/D8 MVP deferrals. **D1, query coverage, D3 code capability and D5 approved;
+D4/D6 directions revised and approved as stated below; D2 recovery, D7 and D8
+deferred. Remaining contracts and named choices are pending.** No
 production code depends on these choices yet. Approval of requirements in the
 [active plan](../PLAN.md) does not approve these mechanisms. Approval of this
 document would authorize the choices stated here, not unspecified later changes.
 Testing remains reserved to the user after publication of the implementation.
 
 The [coverage map](COVERAGE.md) maps the complete product to deliverables. The
-recommendations below serve that whole scope. They do not propose reducing it
+recommendations below now distinguish retained MVP work from the explicit D2,
+D7 and D8 deferrals. They do not propose reducing it
 to an identity model, a local CLI, or a single managed-agent demonstration.
 
 The [detailed decision briefs](decision-briefs/README.md) explain remaining D3
@@ -25,15 +27,17 @@ Written examples are not executed simulations or qualification evidence.
 | D1 Storage | Small JSON record pages and paged directories in Drive, with a readable bootstrap | Native Sheets tables, with separately bounded long text | Approved, 2026-09-14 |
 | D2 Records and persistence | Retained proposal: typed records and verified small write intents | Immutable whole-instance generations or an event engine | Review deferred; interrupted-write recovery outside MVP; query rule remains approved |
 | D3 Execution and adapters | Code-capable agents required; exact code/runtime and adapter contracts remain proposed | Earlier support for agents without code execution is superseded | Code-execution requirement approved, 2026-09-14; remaining D3 pending |
-| D4 Ingestion | Exact zoned original Date for automatic association; bounded received-time discovery where supported; process appearances independently | Admit coarser Dates automatically; reuse content coverage from metadata alone | Pending |
-| D5 Knowledge and tasks | Source-supported claims and explicit relationships; parent fields separate; three-way task-field reconciliation | Mutable summaries and one-way task export | Pending |
-| D6 Briefs and effects | Persist intent before external effects, reconcile unknown outcomes, brief selection by newly verified knowledge | Retry uncertain sends; source-Date-only brief selection | Pending |
-| D7 Tools and schedules | Capability and binding register; externally managed jobs with desired/observed state | One fixed scheduler/runtime | Pending |
-| D8 Packages and upgrades | Versioned ZIP, isolated official/instance/extension areas, staged pin changes | In-place replacement or migration on every update | Pending |
+| D4 Ingestion | One logical run completes relevant unprocessed mail; the executing agent owns batching, resources and runtime continuity; School-OS supplies guidance | Former School-OS-managed per-run caps were rejected | Execution direction approved, 2026-09-15; scope/cutoff and remaining identity/discovery details pending |
+| D5 Knowledge and tasks | Source-supported claims and relationships; parent fields separate; three-way task-field reconciliation | Mutable summaries and one-way task export | Approved explicitly, 2026-09-15 |
+| D6 Briefs and effects | Executing agent verifies uncertain effects using available tools; validate complete ingestion before daily composition | Former generic persisted-effect engine is not selected | Verification/timing directions approved, 2026-09-15; selection/audio and minimum output contracts pending |
+| D7 Tools and schedules | User and agents manage their own jobs and select adapters from recipes; assume nonconcurrent use | Central register and scheduler control retained for possible later work | Outside MVP by explicit user direction, 2026-09-15 |
+| D8 Packages and upgrades | Retain approved D1 separation so installation/upgrades can be added later | Original ZIP, activation, compatibility and migration machinery retained as future proposal | Outside MVP by explicit user direction, 2026-09-15 |
 
-No option proposes changing metadata-only identity, source custody, unrestricted
-agent/job counts, or the exclusion of concurrent same-data writes. Those are
-already approved and are not being resubmitted for approval.
+Metadata-only identity, source custody, unrestricted agent/job counts and the
+exclusion of concurrent same-data writes remain approved. D7 defers centralized
+management and register-backed visibility, not the ability to use several agents.
+D8 defers lifecycle machinery, not D1’s approved separation. These are explicit
+MVP exceptions to the broader product principles, which remain unchanged.
 
 ## MVP exception — interrupted writes
 
@@ -53,14 +57,15 @@ D2 also bundled record schemas, UUID representation and locator structure.
 Skipping its review does not approve those choices or remove the canonical
 knowledge/tasks/configuration/register requirements. Present the minimum record
 and ordinary-write design separately before dependent code; do not substitute a
-new persistence mechanism silently. Continue with D4 after recording the D3
-code-execution requirement; remaining D3 contracts are still pending.
+new persistence mechanism silently. Remaining D3 and minimum record/ordinary-write
+contracts are still pending, now narrowed to retained MVP features.
 
-Remaining D3 and D4–D8 remain proposals. References to D2 intents in external-effect handling,
-installation and upgrades must be reconciled during their review; they cannot
-silently restore the deferred recovery mechanism. This exclusion does not itself
-decide D6's unknown-send/task outcomes or D8's upgrade behavior. No tests are
-authorized by this scope change.
+The 2026-09-15 directions supersede the former D4/D6/D7/D8 implementation
+recommendations as stated in their sections. Do not restore the rejected batch
+controller, deferred D2 repair, D7 register or D8 upgrader through another name.
+The executing agent's own continuity and recovery are relied upon for its work;
+canonical identity, verified knowledge and completion evidence still belong on
+Drive. No blanket guarantee of complete environment-loss recovery is selected.
 
 ## D1 — Physical Drive layout and bounded access
 
@@ -249,14 +254,16 @@ replaceable adapters. No capability probes or tests are authorized here.
 
 The remaining proposal is authoritative Markdown operation recipes and JSON
 contracts/examples, with small callable code for normalization, record
-preparation and bounded planning. Python standard-library helpers remain a
+preparation and bounded record access. Agent resource/batch planning is guidance,
+not a School-OS orchestration engine. Python standard-library helpers remain a
 candidate implementation choice awaiting approval. Record and ordinary-write
 mechanisms remain undecided, and D2 interrupted-write recovery stays outside
 the MVP. Instructions must explain the selected code and tool operations clearly.
 
 Generic adapter operations cover storage list/read/write, source enumeration,
 individual metadata/content/attachment reading, task snapshot/apply/readback,
-email delivery/lookup, audio generation/retrieval, and scheduler management/readback.
+email delivery/lookup and audio generation/retrieval. D7 scheduler management
+and durable capability/register contracts are deferred.
 Each operation returns a small contract with observed data, scope/completeness,
 capability limits and outcome. Tool envelopes and provider aliases are projected
 at the adapter boundary; conflicting duplicated fields remain errors. Unknown
@@ -265,9 +272,10 @@ No inferred throttle, authorization failure or successful write from a generic
 error. Credentials remain in the runtime's authorized store.
 
 Ship initial adapter procedures and mapping helpers for Drive JSON storage,
-Gmail source/email, Google Sheets and Todoist task projections, a generic managed
-scheduler plus ChatGPT Work and Claude managed-runtime profiles, and ElevenLabs
-optional audio. Profiles declare required operations and unsupported/unknown
+Gmail source/email, Google Sheets and Todoist task projections, agent execution
+guidance informed by managed environments, and ElevenLabs optional audio. This
+remaining proposed route set needs approval; scheduler profiles/control are no
+longer an MVP deliverable. Profiles declare required operations and unsupported/unknown
 states; naming a vendor is not a capability or qualification claim. Runtime tool
 names are supplied by discovered mappings, not embedded as canonical contracts.
 Unknown runtimes can supply the same operations. Local Codex is a development
@@ -296,83 +304,88 @@ changes will be surfaced if they change this architecture.
 
 ## D4 — Production association, discovery and content coverage
 
-Implement the current metadata recipe unchanged in its approved meaning.
-The remaining exact acceptance threshold needs a decision: recommend automatic
-reuse/new-record creation only with verified mailbox, original subject, normalized
-sender and the individual original Date with known timezone and second-or-finer
-declared precision. Equivalent zoned instants agree. Preserve every original
-precision and never invent missing seconds. Minute/day evidence, missing timezone
-or unclear time meaning can narrow candidates but remains pending after one
-available richer metadata read. Received time supports comparison; it never
-replaces the original Date. Optional comparable contradictory metadata prevents
-reuse. Multiple compatible existing records remain unresolved.
+### Approved execution direction, 2026-09-15
 
-Alternative: allow agreeing minute-precision Dates or permit source-grounded
-agent judgment in more cases. That can reduce pending work, but would require
-an explicit decision table for what sufficient evidence means. The historical
-second-resolution evaluator is not approval of this production threshold.
+The user rejected a School-OS-managed partial daily run capped at 25 processing
+appearances, 100 listing entries or 8 MiB per transfer. Those proposed application
+ceilings and the associated batch/continuation manager are withdrawn from the MVP.
+A single logical agent run must process all relevant unread/unprocessed emails
+in its agreed scope. Reaching an agent-selected batch boundary is internal
+progress, not successful completion or a reason to leave the remainder for a
+later ordinary daily run.
 
-For discovery, recommend separate historical and daily tracks over half-open
-windows in a declared source search-time basis. Prefer documented received-time
-listing for arrival discovery, while using original Date only for identity.
-Never relabel a provider's internal timestamp as received time. If the adapter
-only offers another understood listing basis, record that basis and its limits.
-Default historical window is seven days; daily overlap is seven days; start
-date/school scope and timezone are instance configuration. Catch up all missed
-windows under the budget. Newly imported older mail requires a supported change
-route or explicitly requested historical rescan; overlap does not promise it.
+The executing agent owns resource assessment, batch sizes, pagination sequencing,
+working-context management and its runtime's continuation/recovery. School-OS
+supplies [guidance](AGENT-EXECUTION-GUIDANCE.md), explicit source/coverage procedures
+and completion obligations. It does not implement or manage an agent batch queue,
+catch-up scheduler, per-run message cap or generic runtime recovery service.
+The user explicitly relies on capable personal agents and their normal continuity;
+named environments are context, not a new independent qualification claim.
 
-Default run budget is 25 individual-message processing observations, 100 listing
-entries and 8 MiB per content transfer, stopping sooner when the runtime limit
-requires it. These are configurable planning ceilings, not throughput claims.
-Continuation follows every available page, including short pages, until explicit
-exhaustion or a saved unfinished window. An unavailable token causes replay.
+The approved D1 page/directory limits remain: they bound individual data access,
+not how much the logical run must finish. Raw material is processed in manageable
+units and discarded after verified persistence. Search exhaustion, individual
+reply coverage, attachments and semantic extraction cannot be replaced by a
+count of provider entries or by a mailbox read flag. The agent must verify the
+whole intended ingestion before daily brief composition under revised D6.
+If access or content support prevents that, the task is blocked/incomplete, not
+a successfully finished partial daily brief. D2 canonical-write repair remains
+deferred; agent-owned runtime recovery does not implement that feature.
 
-Processing each discovered appearance is separate from associating its logical
-email. Recommend reading each appearance admitted for processing even when its
-metadata reuses an existing record; retained knowledge is reconciled semantically.
-Do not declare new unread material processed from a prior matching record.
-This may repeat work in overlap/replay and is an explicit efficiency tradeoff.
-Do not introduce body hashes or provider-entry IDs to avoid it.
-Discovery and content work advance separately: persist an inventory-pass work
-record and its admitted observations before spending the processing budget;
-finish its pending content work before starting another overlap pass over the
-same completed discovery interval. A replayed unfinished listing follows its
-continuations through the old prefix to new work within the listing budget.
-If the budget cannot reach new work, narrow the unfinished time window where
-possible or record a no-progress/budget limitation for review. Do not loop on the
-same prefix or claim exhaustion from narrowing. Work/pass IDs describe saved
-processing assignments, not permanent provider-entry identities.
+### Remaining scope and discovery choices
 
-For same-parent/same-name attachments, retain the candidate group and read all
-available candidates within the current bounded inventory pass. Preserve facts
-with group-qualified provenance if exact attachment association is unavailable;
-report that limitation. Coverage states what this pass actually read and the
-scope of the inventory. A later reordered/changed/uncertain inventory does not
-inherit per-candidate completion from position, handle or matching name. Unnamed
-images and unsupported/oversized content remain visible work. Content structure
-may guide extraction and reading, but never identity or thread association.
+The proposed interpretation of unread is **not yet fully processed by School-OS**,
+including already-opened mailbox items and attachments still lacking coverage.
+The recommended finite daily boundary is all relevant pending mail through the
+start of the run, including backlog, with later arrivals handled next time.
+This scope/cutoff has been presented for explicit approval and remains pending.
+It favors a complete finite snapshot; an end-of-run or repeatedly refreshed
+cutoff includes newer arrivals but can extend the task indefinitely. The scope
+must be fixed before claiming all mail is covered. Search-time semantics and
+late indexing remain limitations to describe, not assumed completeness.
 
-Grounding: P1–P6/P9; catalog, historical/daily processing and recovery. Remaining
-unknowns: available metadata precision, complete listing bases, delayed indexing,
-candidate reading and real transfer limits. The fictional model will illustrate
-these decisions separately from frozen studies; it cannot qualify adapters.
+The source-metadata recipe, durable completed/unfinished search windows,
+follow-through after short pages, and token-loss replay remain required. Actual
+window partitioning and resource-sized processing belong to the agent. The
+former fixed seven-day historical/overlap defaults and saved inventory-pass
+orchestration are not newly approved by the user's direction. Exact production
+search/coverage and repeated-appearance rules still need approval where the
+existing recipe does not settle them. Metadata association cannot confer content
+coverage; the agent must establish what it actually read.
 
-### Open completion and continuation choices
+### Remaining automatic-association threshold
 
-D4's proposed limits apply per execution/transfer, not to total stored history
-or a guaranteed daily completion quota. A run can end with successfully saved
-unfinished work. A saved backlog does not launch another execution. The current
-proposal does not select an automatic continuation trigger, daily aggregate
-budget, freshness target, no-progress escalation or brief timing policy.
-Resolve these with D6/D7 before promising a daily service outcome. The
-[D4 brief](decision-briefs/D4-INGESTION.md) explains the 40-admitted/25-read/15-unread
-case and alternatives. Its added policy directions remain proposals, not a
-change to the existing 25-per-run draft or an approval of deferred D2 repair.
+The approved metadata recipe remains unchanged. The still-pending recommendation
+for automatic reuse/new-record creation is verified mailbox, original subject,
+normalized sender and individual original Date with known timezone and declared
+second-or-finer precision, without comparable contradiction and with adequate
+lookup coverage. Equivalent zoned instants agree; preserve originals and precision.
+One available richer individual metadata read can clarify an ambiguous listing
+Date. Missing timezone, minute/day precision or unclear meaning stays pending
+under this recommendation. Received time never replaces original Date; multiple
+compatible existing records remain unresolved.
+
+A credible alternative admits coarser Dates under an explicit sufficiency table
+or source-grounded agent judgment. That can reduce pending work but increase
+incorrect joins. The frozen second-resolution evaluator does not qualify either
+production choice. Same-parent/same-filename attachment groups and independent
+candidate coverage remain required; positions/handles/names do not prove a
+candidate was read. Unread, unsupported or ambiguous content remains explicit.
+
+Grounding: losslessness/provenance, simple agent-led procedures, efficient bounded
+access, managed-agent portability and independence from brittle identifiers.
+The revised complete-run obligation is a required outcome, not an assertion that
+a connector can expose inaccessible mail or that every source is supported.
+Implementation and user-directed qualification remain separate.
 
 ## D5 — Substantive knowledge, queries and task reconciliation
 
-Recommend claim-level substantive records, preserving instructions, conditions,
+**Approved explicitly, 2026-09-15:** the user said “Regarding D5, I approve the
+plan.” This approves the D5 mechanisms below, including the 14-day recurrence
+fallback and three-way synchronization; remaining record/runtime/adapter
+contracts are dependencies, not reasons to ask for D5 approval again.
+
+Use claim-level substantive records, preserving instructions, conditions,
 exceptions, dates, applicability and explicit finite-action disposition. Related
 claims can share a topic without losing independent source support. Repeated
 content does not overwrite provenance. A correction needs an explicit evidenced
@@ -387,8 +400,7 @@ or incomplete search. No source access is needed merely to repeat already saved
 verified knowledge. If a question needs uncataloged detail, use an authorized
 content route or explain the gap; do not invent it.
 Apply the [approved query-coverage rule](#approved-query-coverage-rule) when
-deciding whether the answer can claim completeness. Its approval does not
-approve the other D5 knowledge/task mechanisms.
+deciding whether the answer can claim completeness. D5 is now independently approved; the earlier query-rule approval remains valid.
 
 Finite actionable requests create canonical tasks. Non-actionable guidelines do
 not. A recurring required action remains an actionable canonical task with its
@@ -403,7 +415,7 @@ identity. Explicit corrections, reminders, completion and reopen evidence are
 recorded separately. Replay does not reset parent completion or a planned date.
 School deadlines remain source evidence, separate from parent working plans.
 
-Recommend parent-editable owner, planned date, progress, completion and personal
+Preserve parent-editable owner, planned date, progress, completion and personal
 notes. School action/context/deadline remain source-supported; a parent's proposed
 change is a recorded override or conflict, not altered school evidence. Parent-
 origin tasks can be added with their origin explicit. Reopening a completed task
@@ -431,123 +443,109 @@ canonical email/attachment identity. This does not authorize executing an audit.
 
 ## D6 — Brief selection, delivery, audio and unknown effects
 
-Recommend selecting a daily/recent update by the interval when knowledge was
-first verified or substantively corrected in Drive. Display original school
-dates separately; late-processed historical information is labeled as such.
-Include relevant outstanding tasks and disclose incomplete ingestion. Historical
-import does not automatically deliver a backlog: delivery is an explicit
-operation or configured job. A manual recent brief takes an explicit interval.
-Task-sync failure is disclosed and does not erase canonical tasks or automatically
-block a knowledge brief; a completely read action-free snapshot proceeds directly
-to brief composition.
+### Approved agent verification and ingestion gate, 2026-09-15
 
-Email contains source-linked substantive updates, relevant guidelines and tasks;
-optional audio narrates the same selected canonical information. Save generated
-audio as a derived output artifact on Drive with input references and attribution;
-keep it until the parent explicitly deletes it. Raw email/attachment custody is
-unchanged. Unsupported audio is disclosed and email remains usable.
+The executing agent determines whether its authorized connectors/APIs/tools can
+validate an uncertain action and uses the available means to inspect the actual
+result. For example, inspect the sent message when checking an email send or
+read the selected task application's saved task when checking its update. Merely
+having a connector or receiving a generic error does not prove the action's
+outcome. Report the evidence and any remaining inability to verify. Do not
+blindly repeat an uncertain action. This uses the existing evidence discipline;
+School-OS does not select the former generic persisted-effect intent/reconciliation
+engine as its MVP implementation. No D2 partial-write repair is reinstated.
 
-Recommend one external-effect procedure for task writes, schedule changes, email
-and audio requests: persist and verify intended operation, owned effect ID,
-targets and exact intended projection; mark dispatch outcome unknown durably
-before dispatch; then reconcile observed output. Provider receipt alone is not
-canonical verification. Use School-OS markers where supported and complete
-provider reads of relevant target content to adopt a single matching result.
-If outcome cannot be established, retain unknown and stop that effect. Retry
-only with evidence it was not applied, or a parent's explicit decision after
-the duplicate risk is explained. No blind resend after a timeout or empty search.
+Before composing the daily brief, the agent first validates that **all intended
+emails and content have been ingested**, with complete relevant discovery and
+verified processing/persistence. The revised D4 finite scope/cutoff still needs
+approval. An agent's batch boundary is not this gate. If ingestion is blocked or
+unverifiable, report the blocker rather than creating the normal daily brief
+from a knowingly incomplete selection. This is stricter than a general knowledge
+question: the approved query rule still allows a useful answer with coverage
+limits. It is not permission to deliver a partial daily brief as complete.
 
-The brief occurrence is identified by job/operation plus requested reporting
-interval and variant. A repeat run reconciles that occurrence before sending.
-Save historical job, generator, selected configuration, sender service/account,
-destination, artifact/delivery reference and verification time with each output.
-Changing defaults never rewrites that attribution.
+This resolves the prior question of wait-versus-partial daily delivery. The user
+and executing agent own schedules and runtime continuation under the D7 deferral.
+The instruction does not itself approve actual sends, scheduled jobs or testing.
 
-Grounding: P1/P2/P5/P6/P9; briefs, task applications and sender queries.
-Alternatives: source-Date-only recency misses newly processed old information;
-automatic retry improves apparent availability but risks duplicate effects.
-Unknown: services' searchable evidence, eventual visibility, audio artifacts and
-unattended authorization. No guarantee of exactly-once external effects.
+### Remaining content and audio choices
+
+Still recommend selecting recent updates by when knowledge was first verified
+or substantively corrected in Drive, showing original school dates separately.
+That includes late-processed older information and avoids announcing unchanged
+rereads again. Alternative: use original source Date alone, which is simpler
+but may miss newly learned older deadlines. This selection rule has not been
+explicitly approved by the verification/timing direction.
+
+Source-linked updates, relevant guidelines and tasks remain the product goal.
+Historical import does not implicitly authorize sending a backlog. The original
+proposal for manual reporting intervals, treatment of task-sync failure and
+output occurrence identity needs review as a concrete small MVP contract; it
+cannot depend on the deferred D7 job register. A completely read action-free
+snapshot must not attempt a nonexistent task write.
+
+Optional supported audio is still in scope, but its exact service route,
+retention and order relative to email remain pending. The existing recommendation
+is to narrate the same canonical information, retain the derived audio on Drive
+until parent deletion and disclose unsupported audio. Alternatives include an
+explicit retention period or no retained artifact. Sending email first reduces
+waiting; waiting for audio can provide a combined delivery but creates a new
+dependency. Neither ordering is chosen. These are derived outputs, not raw school
+attachments. Minimum operation/output source attribution is still required;
+register-backed job history and known-sender queries are deferred with D7.
+
+Grounding: source-linked useful briefs, clear completion evidence, simplicity,
+capability-led agent reasoning and truthful external outcomes. Real readback,
+eventual visibility and unattended permission remain unqualified. A sent-folder
+observation can establish a sent item, not that a recipient read it. An agent
+without sufficient evidence leaves the outcome unverified instead of assuming
+failure or resending automatically. No exactly-once guarantee is claimed.
 
 ## D7 — Register, capability discovery and schedules
 
-Recommend capability entries per actual runtime/adapter/connection combination,
-with supported/unsupported/unknown disposition, observed limits, authorization
-location and verification time. Discovery starts with declared tools and user
-bindings; testing them is a separate authorized activity. A scheduled operation
-needs known authorization for its required effects; a job launching does not
-prove unattended write capability.
+**Outside MVP by explicit user direction, 2026-09-15.** Do not implement the
+centralized tools/connections/capability/job register, scheduler creation/change/
+pause/reconciliation, pinned-job binding manager or register-backed known-job
+and sender queries. The original proposal is retained in
+[revision 6](https://github.com/jeremieguedj/School-OS/blob/62070ebf39f79bb316c0f009a1d9ba49be98f151/docs/plans/restart/implementation/ARCHITECTURE-PROPOSAL.md#d7--register-capability-discovery-and-schedules).
 
-Store operation defaults separately from pinned per-job bindings. Job creation,
-change and pause use the D6 effect procedure. Desired settings stay pending until
-the external scheduler is inspected and the observed settings recorded. There
-is no single active-agent slot and no automatic job rebinding on default changes.
-Each scheduled prompt names the Drive bootstrap, installed operation, scope,
-budget and output destinations. Missed invocations recover from Drive windows,
-not a scheduler's remembered conversation or local process.
+Users and their agents manage their own scheduled jobs. Each executing agent
+reads the selected School-OS recipe, determines which adapters/capabilities it
+needs, and manages its execution using the project rules. Several agents/jobs
+may use the instance, on the explicit assumption that they do not operate on
+the same Drive data concurrently. Do not implement locks, leases, a single-agent
+slot or another scheduling service. Ordinary operation configuration and adapter
+requirements remain necessary; they do not become a hidden substitute register.
 
-A fresh reader can list known jobs, runtime, location, trigger, bindings, outputs,
-last observed status and verification freshness. It can identify a recorded
-brief's generator and sender without management access to that scheduler. It
-must not claim discovery of unknown/unregistered jobs or live verification from
-stale register values.
-
-Grounding: P3–P9; known-jobs/sender query, automation and replacement.
-Alternative: one fixed scheduler simplifies configuration but violates the user's
-choice of agents/jobs. Actual schedule control and unattended permissions remain
-unknown per runtime; the initial package includes the procedures and contracts,
-with qualifications left explicitly unestablished.
+This is a stated MVP exception to the product's broader tools/schedules/visibility
+requirements and core known-jobs use case. Fresh agents can still use canonical
+knowledge and applicable recipes, but the MVP cannot promise a centralized answer
+about all known jobs, their live status or a historical job's sender.
 
 ## D8 — Package format, upgrades, extensions and legacy retirement
 
-Recommend a ZIP containing a release manifest, readable entry point, operation
-recipes, versioned record/adapter contracts, default configuration examples,
-code artifacts subject to remaining D3 decisions, reference adapter mappings,
-extension guide and license.
-An optional standard-library builder writes that archive; it will be prepared
-but not executed during this implementation phase. Package hashes verify
-official package integrity; private developer receipt/expectation hashes retain
-their separate AGENTS role. None becomes source identity or thread association.
+**Outside MVP by explicit user direction, 2026-09-15.** Defer the packaged
+installer, ZIP builder/manifest machinery, version compatibility manager,
+staging/activation/upgrader, migrations and managed extension-preservation
+workflow. Keep their
+[earlier proposal](https://github.com/jeremieguedj/School-OS/blob/62070ebf39f79bb316c0f009a1d9ba49be98f151/docs/plans/restart/implementation/ARCHITECTURE-PROPOSAL.md#d8--package-format-upgrades-extensions-and-legacy-retirement)
+as future design, not MVP code or acceptance work.
 
-The manifest records package version, compatible schema/contract major versions,
-file inventory and qualification status. The initial restart remains explicitly
-unqualified. Installation from a supplied archive saves official files and
-configuration, verifies their persistence, then activates the bootstrap pin.
-No live GitHub access is required for routine installed operation.
+The project must remain easy to extend with installation and upgrades later.
+Use the already approved D1 separation of official system files, private instance
+records and compatible additions; keep reusable recipes/contracts/code distinct
+from household data. This direction does not approve a new directory schema,
+manifest, version pin, migration or activation protocol. Basic Drive startup and
+configuration remain necessary for the retained use cases; their minimum first-use
+setup method still needs a concrete approved contract. Do not silently substitute
+a new installer for the deferred package design.
 
-Recommend semantic major/minor/patch versions for package/contracts. Additive
-optional fields can be compatible; changing meaning or required fields needs a
-major version and separately approved migration. Compatible extensions declare
-their supported contract major version, own namespace and file inventory under
-`extensions`. Upgrades must not overwrite private data/configuration/extensions.
-
-Upgrade stages a new official version, records a Drive upgrade intent, checks
-declared compatibility and verifies copied files before changing the installed
-pin. The prior package stays available. If interruption precedes activation,
-continue the prior pin and retain pending upgrade work; if activation outcome is
-unknown, read the bootstrap and reconcile. Rolling back code after incompatible
-data changes is not promised. This restart does not migrate retired instances:
-provide clear fresh-install and migration-not-yet-authorized instructions, not
-an implicit import or destructive rewrite.
-
-Retire old runtime/instruction/schema/template/adapter/test trees from active use
-after the preserved baseline tag. Keep current principles, restart design and
-frozen studies, history, continuity and privacy safeguards. Historical documents
-link to baseline source where they refer to removed files. Update generic entry
-points to prevent retired instructions being selected. Preserve the existing CI
-triggers and prepare a replacement `scripts/validate.py` entry point for the new
-nonempty test inventory, refusing an empty/unknown suite. Prepare it without
-execution. Recheck actual hooks, final CI and remote PR state before publishing
-the dedicated branch/tag; do not open a PR or dispatch the workflow in this phase.
-The preserved baseline is tag `restart-baseline-2026-09-14`, targeting
-`39d752c364a1cf404e5a6fc5739148b7d35a6b35`. Frozen executable/result bytes stay
-unchanged; a local tag alone does not establish its publication.
-
-Grounding: P3/P6–P9; supplied-package install/upgrade and compatible expansion.
-Alternative: in-place overwrites are smaller but harder to recover and risk
-extensions; migration on every update imposes needless work. Unknown: initial
-archive handling in managed apps and compatibility in practice. Preparing the
-builder and upgrade procedures does not qualify or execute them.
+Repository preservation and continuity still apply: retain Git history and the
+committed baseline tag before any retirement, keep principles/current design,
+frozen evidence and privacy safeguards, and remove retired instructions only
+within accepted implementation cleanup. The D8 deferral is not authorization to
+delete unrelated or uncommitted material. The user-owned testing checkpoint
+still follows publication of the agreed MVP code, not a package build or pilot.
 
 ## Approval record and next action
 
@@ -561,8 +559,13 @@ and excluded interrupted-write recovery from the MVP**. Keep the retained D2
 proposal deferred. The user approved required code-execution capability under
 D3 and supplied confirmation of its availability from personal-agent suppliers.
 That does not approve the rest of D3 or qualify particular runtime/adapter routes.
-Continue with D4–D8; resolve remaining D3 and the minimum record and
-ordinary-write design before its dependent implementation. A partial
-approval releases only its independent scope. Any new choice not covered above
-returns for approval rather than being labeled an
-implementation detail. No testing permission is requested by this proposal.
+On 2026-09-15 the user approved D5, replaced D4's batch manager with
+agent-managed complete-run execution, directed agent-led effect verification and
+ingestion-before-brief under D6, and deferred D7/D8 from the MVP. The active plan
+records these exact boundaries. Resolve the daily scope/cutoff, remaining D4
+identity/discovery choices, D6 selection/audio, D3 contracts and minimum records/
+normal writes/first-use setup before dependent implementation. Do not ask for
+approved D5 mechanisms again or rebuild deferred infrastructure as a dependency.
+Publish the agreed MVP code and continuity, verify the remote revision, then
+stop for the user's testing direction. No test, simulation, replay, build, probe,
+ingestion, scheduled operation or live qualification is authorized now.

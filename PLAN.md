@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: restart preparation is active on `codex/restart-school-os`; whole-project requirements are mapped. D1, the query-coverage rule and required agent code-execution capability are approved. D2 is skipped and interrupted-write recovery is outside the MVP; remaining D3 and D4–D8 await approval. Production implementation and managed-agent qualification remain pending.
+Status: restart preparation remains on `codex/restart-school-os`. D1, query coverage, required code capability and D5 are approved. D4 now requires agent-managed complete-run ingestion; D6 requires agent verification and complete ingestion before the daily brief. D2 canonical-write recovery, D7 central tools/jobs management and D8 packaged lifecycle are outside MVP. Remaining small contracts/choices await approval; production implementation and qualification remain pending.
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 Decision authority: [product principles](docs/product-principles.md#decision-authority)
@@ -22,18 +22,22 @@ restart branch and preserved baseline commit
 `restart-baseline-2026-09-14` before cleanup. See the
 [coverage map](docs/plans/restart/implementation/COVERAGE.md) and
 [architecture decisions and approval status](docs/plans/restart/implementation/ARCHITECTURE-PROPOSAL.md).
-The active restart plan records the approval ledger. Prepared fictional fixtures,
-test proposals and a separate development model do not establish production
-implementation or test results. The [expanded decision briefs](docs/plans/restart/implementation/decision-briefs/README.md)
-now explain all remaining decisions through fictional email flows; none were
-executed. Exact next action is their review, starting with D4's per-run bounds
-and unresolved continuation/daily-completion policy, followed by D5–D8; remaining
-D3 runtime/adapter choices and minimum record and
-ordinary-write choices must be presented separately before
-dependent coding. The implementation/publication handoff follows the explicit
-MVP exception recorded in the active plan; testing remains reserved to the user. The accepted
-query-coverage rule requires coverage checks alongside verified knowledge and
-explicit limitations when missing processing cannot be completed within scope.
+The active restart plan records the approval ledger. The
+[updated decision briefs](docs/plans/restart/implementation/decision-briefs/README.md)
+and [agent guidance](docs/plans/restart/implementation/AGENT-EXECUTION-GUIDANCE.md)
+record the user's 2026-09-15 revisions. School-OS supplies recipes, identity,
+coverage and completion obligations; the executing agent manages resources,
+batching, normal continuity and its own schedules. One logical run must finish
+its intended ingestion before daily brief composition. Blocked ingestion is not
+a successfully completed partial daily brief. General knowledge questions retain
+the approved rule permitting useful answers with explicit coverage limits.
+
+Exact next action: resolve the proposed finite daily scope/cutoff, remaining D4
+identity/discovery and D6 selection/audio choices, and D3/minimum record/write/
+first-use contracts before dependent implementation. D5 behavior is approved and
+must not be resubmitted. Deferred D7/D8 infrastructure is not a prerequisite for
+retained features. Prepare meaningful unexecuted checks, publish the agreed MVP
+code/continuity, verify the remote revision and stop for user-directed testing.
 
 Follow [the restart architecture and simulation plan](docs/plans/restart/PLAN.md)
 and the updated [product principles](docs/product-principles.md). The user has
@@ -42,8 +46,10 @@ knowledge and operational records, unrestricted agent choice, and no current
 solution for simultaneous same-data Drive writes. No dedicated personal machine
 or coding CLI may be required by the architecture.
 The assignment covers the [whole-project implementation checklist](docs/plans/restart/PLAN.md#whole-project-implementation-scope),
-including installation, ingestion, knowledge/tasks, queries, briefs, tools/jobs,
-recovery, agent replacement and extensible upgrades. The detailed email recipe
+with explicit current MVP exceptions: centralized tools/jobs visibility and
+control, packaged installation/upgrades and general interrupted-write repair are
+deferred. Retained ingestion, knowledge/tasks, queries, briefs, basic Drive
+startup and agent recipes still require implementation. The detailed email recipe
 and its development model are one component, not the entire restart deliverable.
 The latest user direction removes content inspection from email identity and
 thread association. Follow the [metadata-only recipe](docs/plans/restart/identity/METADATA-RECIPE.md);

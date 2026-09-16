@@ -7,10 +7,17 @@
     "code_execution_requirement": "The user explicitly approved that School-OS agents must be able to execute code. This does not require a dedicated personal machine, persistent process or coding CLI.",
     "supplier_availability_report": "The user reports confirmation of code execution from all major personal-agent suppliers. This report has not been independently qualified in these fixtures or this documentation update.",
     "code_execution_approval_limit": "No programming language, Python dependency/version, network access, SDK, adapter contract or full D3 architecture is approved by the code-execution requirement.",
-    "deferred_post_mvp": "The user skipped D2 review and excluded recovery of interrupted canonical writes from the MVP. S13 and S12's interrupted-write recovery branch are retained as future prepared scenarios, not failed or missing MVP functionality.",
-    "still_applicable": "Normal verified persistence and privacy, metadata identity, bounded discovery and continuation from saved window progress, normal fresh-agent queries, and the approved S30–S31 query-coverage rule remain applicable.",
-    "separate_pending_decisions": "D6 external-effect handling and D8 upgrade behavior are not deferred by skipping D2. D2 record-schema choices remain unresolved; no alternative persistence mechanism has been approved. The remainder of D3 and D4–D8 keep their separate pending architecture status.",
-    "interpretation_of_continuation": "Unless a case is explicitly retained as deferred canonical-write recovery, continuation starts from normally verified saved records; it does not promise to reconcile an interrupted canonical write."
+    "updated": "2026-09-15; written scope reconciliation only, no execution.",
+    "deferred_post_mvp": "D2 interrupted canonical-write repair, D7 centralized tools/jobs/capabilities register and scheduling control, and D8 package installer/upgrades/compatibility/migrations are outside MVP. Preserve original stimuli and expectations as historical/deferred where noted.",
+    "d4_execution_direction": "One logical run completes all relevant unprocessed mail in its authorized scope. The actual agent owns adaptive resource batching and resource recovery with School-OS guidance. Former School-OS 25-message/100-listing-entry/8-MiB per-run or transfer caps and School-OS batch scheduling are rejected; D1 per-page storage limits remain approved.",
+    "d5_approval": "D5 is approved in full: substantive claims and relationships; finite/recurring tasks; separate parent fields and completion; native recurrence or next-14-day occurrence fallback with continuation; three-way task-field reconciliation; missing projections do not cancel canonical tasks. Exact record and adapter definitions remain dependencies.",
+    "d6_direction": "The agent validates uncertain actions through its available authorized means. Complete ingestion is required before an ordinary daily brief. A blocked run reports incomplete coverage and its blocker; it does not issue an ordinary partial daily brief. Remaining recency/audio/output-record contracts are not blanket-approved, and no fixed School-OS intent/effect engine is inferred.",
+    "d7_direction": "Users and agents own nonconcurrent scheduling and choose adapters from recipes. No centralized School-OS capability/tool/job register, scheduler, schedule control or known-job query is required in MVP.",
+    "d8_direction": "D1 system/instance/extensions separation remains approved for future support. Package installer, upgrades, compatibility and migrations are deferred; minimum setup still needs a separate decision.",
+    "still_applicable": "Normal verified persistence and privacy, metadata identity, bounded source/storage access, saved-window continuation, fresh-agent queries, and the approved S30–S31 query-coverage rule remain applicable. Limited answers to questions do not override the ordinary daily-brief completion gate.",
+    "separate_pending_decisions": "Minimum setup and record/ordinary-write definitions, remaining D3 contracts and unapproved parts of D4/D6 remain unresolved. No alternative persistence mechanism, central registry or batch scheduler is approved by these written scenarios.",
+    "interpretation_of_continuation": "Agent-managed resource continuation and source-window replay use normally verified saved state and do not promise interrupted canonical-write repair or authorize a School-OS continuation scheduler.",
+    "historical_preservation": "Scenario IDs, source cards and original given/events/expectations remain retained. New scope_note, current_acceptance_guidance and scope_status fields override older branches where the latest user direction supersedes them; historical_scope_note preserves earlier scope wording. No old stimulus is execution permission."
   },
   "fictional_notice": "Every person, institution, mailbox, communication, job, output and event below is invented. example.org is used only for fictional addresses. Source-card labels are test references, not canonical record IDs or provider handles.",
   "separation_rules": [
@@ -128,6 +135,7 @@
     {
       "id": "S01",
       "title": "Install a supplied package and start from Drive",
+      "scope_note": "Package admission and installer branches are post-MVP/deferred under D8. Existing-instance D1 startup and code-capability expectations remain relevant, but minimum setup is undecided. Retained package stimuli do not require an MVP installer.",
       "areas": ["installation", "configuration", "capabilities", "portability"],
       "given": ["A wholly fictional empty private instance and a user-supplied packaged release.", "Two separately verified logical mailboxes and the school/date scope chosen by the fictional parent.", "A managed agent able to execute code within its temporary environment, with no dedicated personal machine, daemon or coding CLI required."],
       "events": ["Read the approved package instructions and discover actual capabilities.", "Create the approved instance entry point and configuration only if authorized and supported.", "End the session, then start a new capable agent from the durable Drive entry point."],
@@ -137,6 +145,7 @@
     {
       "id": "S02",
       "title": "Capabilities are incomplete or approval-dependent",
+      "scope_note": "The actual agent checks available authorized means and selects adapters from recipes. D7's centralized capabilities/tools registry is outside MVP. Capability limitations remain honest; no central registration step is required.",
       "areas": ["capabilities", "tools", "portability"],
       "given": ["Reader A can execute code, read Drive knowledge and list message summaries but cannot obtain an individual original Date.", "Reader B can execute code and access individual metadata but cannot read meaningful images.", "Writer C can execute code and exposes Drive writes that require a human approval unavailable to a scheduled run.", "In one separate focused branch, Agent D can read displayed text but has no capability to execute code."],
       "events": ["Each agent selects an operation and inspects its available capabilities.", "Attempt only operations whose actual capabilities and authorization suffice."],
@@ -183,6 +192,7 @@
     {
       "id": "S06",
       "title": "Existing duplicates and incomplete candidate lookup stay unresolved",
+      "scope_note": "Preserve the ambiguity and incomplete-lookup expectations. A resource or authorization boundary can leave work blocked, but an old School-OS per-run quota cannot declare the logical ingestion run successfully complete. The agent owns adaptive continuation; see S32–S33.",
       "areas": ["email identity", "uncertainty", "bounded lookup"],
       "given": ["Two existing School-OS records each have knowledge and supported metadata compatible with a new observation.", "In a separate branch of the scenario, the relevant candidate lookup stops early because of its budget."],
       "events": ["Present candidate records in opposite orders.", "Attempt association after the incomplete lookup."],
@@ -227,6 +237,7 @@
     {
       "id": "S10",
       "title": "Short listing pages must continue",
+      "scope_note": "The original content-budget-stop wording is historical if interpreted as a School-OS per-run cap. Continue within one logical run through agent-managed resource chunks; a genuine inability to finish is an explicit blocker, not successful completion or permission for an ordinary daily brief. Provider pagination remains distinct from School-OS batching.",
       "areas": ["enumeration", "bounded work", "coverage"],
       "given": ["A fictional complete listing route offers at most three results per page within a configured bounded window."],
       "listing_story": [
@@ -239,6 +250,7 @@
     {
       "id": "S11",
       "title": "Lose a pagination token, miss a daily run, and retain capped coverage",
+      "scope_note": "Source-window replay and missed-input coverage remain relevant. The user/agent owns any invocation or resource recovery; this case authorizes no School-OS scheduler, central job register or canonical interrupted-write repair. A silently capped provider route cannot establish complete ingestion or release the ordinary daily brief.",
       "areas": ["enumeration", "recovery", "missed work"],
       "given": ["September 1–3 enumeration is durably complete; September 4 is unfinished with some accepted logical messages.", "An old attachment from September 3 remains unread.", "The prior temporary page token and conversation are lost, and the next daily invocation was missed."],
       "events": ["A fresh agent reads the recorded mailbox, scope, date-boundary meaning and unfinished window from Drive.", "Repeat the unfinished window and then handle the recorded missed interval within the budget.", "In a separate branch, the only available listing route reports a silent-cap possibility and cannot prove exhaustion.", "A late-indexed message with an older original Date appears in a later bounded discovery operation."],
@@ -258,7 +270,8 @@
       "id": "S13",
       "title": "Interrupt every relevant persistence boundary",
       "scope_classification": "POST-MVP/DEFERRED — interrupted canonical-write recovery was explicitly excluded from the MVP. All original interruption stimuli and proposed recovery expectations are retained for future work; not failed or missing MVP functionality.",
-      "scope_note": "Normal readback verification and honest incomplete-status safeguards remain applicable outside this deferred recovery trial. This case does not classify task-app, email, audio or scheduler effects, whose D6 handling remains separately pending.",
+      "historical_scope_note": "Normal readback verification and honest incomplete-status safeguards remain applicable outside this deferred recovery trial. This case does not classify task-app, email, audio or scheduler effects, whose D6 handling remains separately pending.",
+      "scope_note": "This canonical-write recovery trial remains deferred. Normal readback and honest incomplete-status safeguards still apply. Task/send/audio outcomes follow the new agent-led validation direction with remaining contracts unresolved; centralized scheduler control is separately excluded under D7.",
       "areas": ["recovery", "canonical persistence", "coverage"],
       "source_refs": ["mail-trip", "mail-club"],
       "interruptions": ["Before any canonical write", "After the source index but before substantive knowledge", "After some knowledge but before canonical task work", "After task content but before coverage/unfinished-work confirmation", "After a provider accepted a write but before its response reached the agent", "After readback exposes a contradictory or missing value"],
@@ -268,6 +281,7 @@
     {
       "id": "S14",
       "title": "Unread visuals and oversized material stay visible",
+      "scope_note": "Temporary-resource handling is chosen adaptively by the actual agent, not a School-OS per-run cap. If no authorized capable route can finish relevant content, preserve the gap and block the ordinary daily brief under S33; supported partial knowledge remains usable for coverage-qualified questions.",
       "areas": ["content extraction", "capabilities", "bounded processing"],
       "source_refs": ["mail-image", "mail-handbook", "mail-club"],
       "given": ["The initial reader supports body text, cannot read the meaningful sports image, cannot access the club attachment, and cannot process the whole handbook within its temporary budget."],
@@ -294,6 +308,7 @@
     {
       "id": "S16",
       "title": "An explicit correction survives replay of the original",
+      "scope_note": "D5's evidence-supported correction/relationship behavior is now approved in full. Exact serialization remains dependent on minimum record definitions; the retained approval_dependencies wording must not be read as reopening the approved behavior.",
       "areas": ["knowledge", "tasks", "corrections", "provenance"],
       "source_refs": ["mail-trip", "mail-trip-correction"],
       "events": ["Process the original, then its explicit correction.", "Replay the original after the correction has been accepted."],
@@ -303,6 +318,8 @@
     {
       "id": "S17",
       "title": "Parent completion and planning state belong to the intended task",
+      "scope_note": "D5 parent-state and three-way task-field reconciliation behavior is approved. Exact schema/adapter definitions remain dependencies; source deadlines are not parent planning fields.",
+      "current_acceptance_guidance": ["For a separate open-task branch, the last shared owner is Alex and planned date is September 7. Drive changes planned date to September 8 while the task app changes owner to Sam. Reconcile both independent field edits without changing the school deadline.", "For a separate conflict branch, the last shared planned date is September 7; Drive changes it to September 8 and the app changes it to September 9. Preserve the divergent same-field edits for parent review, rather than arbitrarily picking a winner.", "A deleted app entry is a missing projection, not canonical task cancellation or completion. Missing School-OS task identity does not authorize matching by title alone."],
       "areas": ["canonical tasks", "parent state", "source replay"],
       "source_refs": ["mail-trip-correction", "mail-trip-reminder", "mail-finite-response"],
       "events": ["Alex explicitly records museum consent returned on September 5 at 18:00 school time with a fictional receipt note.", "Alex separately chooses September 7 at 19:00 as a personal planning time for the pickup survey.", "Process the museum reminder and replay the survey source."],
@@ -320,7 +337,8 @@
     {
       "id": "S19",
       "title": "Unknown task-app write and provider-equivalent empty readback",
-      "scope_note": "D6 external-effect handling is separately pending; the D2 canonical-write recovery deferral does not defer this scenario or approve its mechanism.",
+      "historical_scope_note": "D6 external-effect handling is separately pending; the D2 canonical-write recovery deferral does not defer this scenario or approve its mechanism.",
+      "scope_note": "The actual agent validates uncertain task writes using available authorized means. Evidence and honest unknown outcomes remain required; no fixed School-OS durable-intent/effect engine is required by this scenario. Remaining adapter/readback/record contracts stay undecided, and D2 canonical-write repair remains deferred.",
       "areas": ["task synchronization", "recovery", "adapter boundary"],
       "source_refs": ["mail-finite-response"],
       "given": ["The fictional parent selected Task Board A for this operation and the pickup survey is a verified canonical task.", "A create request was dispatched; its response is unavailable.", "Later native readback either provides supported matching evidence, exposes a conflicting task, or remains inaccessible."],
@@ -331,7 +349,9 @@
     {
       "id": "S20",
       "title": "Daily brief recency, delivery uncertainty and historical attribution",
-      "scope_note": "Delivery is an external effect whose D6 handling remains separately pending; it is not deferred by skipping interrupted canonical-write recovery.",
+      "historical_scope_note": "Delivery is an external effect whose D6 handling remains separately pending; it is not deferred by skipping interrupted canonical-write recovery.",
+      "scope_note": "The original registered-job stimulus is historical under D7's exclusion. The partial ordinary-daily-brief branch is superseded wherever the unread image is relevant to the ingestion scope: block that brief until ingestion completes, as in S33. Do not infer irrelevance from source age. Agent validates uncertain sends using authorized means; recency/audio/output-record contracts remain pending. Retained stimuli do not require a central register or fixed effect engine.",
+      "current_acceptance_guidance": ["An ordinary daily brief starts only after evidence establishes all relevant unprocessed mail in its authorized ingestion scope has been processed and normally verified.", "An unresolved relevant gap produces a blocker/status explanation through an authorized surface, not a normal partial daily brief.", "When an authorized send outcome is uncertain, inspect the available evidence using the agent's authorized means; report remaining uncertainty and do not treat a generic error as safe retry.", "A user/agent-owned invocation may identify its sender without requiring D7's centralized registry; exact output attribution records remain pending D6 decisions."],
       "areas": ["briefs", "delivery", "attribution"],
       "source_refs": ["mail-trip-correction", "mail-trip-reminder", "mail-news"],
       "given": ["A fictional registered daily job runs as Agent Pine through Scheduler Meadow and sends using School Updates <updates@example.org>.", "Canonical knowledge contains the museum correction, old trip facts and current parent completion.", "The selected recent-update scope is explicit and a historical image gap remains open."],
@@ -342,7 +362,8 @@
     {
       "id": "S21",
       "title": "Optional audio depends on observed support",
-      "scope_note": "Audio generation/delivery external-effect handling remains separately pending under D6; the D2 deferral does not remove it or approve its mechanism.",
+      "historical_scope_note": "Audio generation/delivery external-effect handling remains separately pending under D6; the D2 deferral does not remove it or approve its mechanism.",
+      "scope_note": "Apply the ordinary daily-brief complete-ingestion gate to its audio version too. The agent validates uncertain audio actions through available authorized means. Audio selection, retention, ordering and exact output contracts remain pending; no fixed recovery engine or centralized capability register is implied.",
       "areas": ["audio", "capabilities", "briefs", "attribution"],
       "given": ["The fictional parent has selected an optional audio recap.", "Branch A has a capable authorized audio service; branch B lacks generation or artifact delivery; branch C loses the generation response."],
       "independent_expectations": ["Use the same accepted canonical facts/tasks and current correction semantics as the selected brief scope.", "Record generating agent/service and supported artifact or delivery attribution when evidence exists.", "State audio unavailability or unresolved outcome when capability/effect evidence is missing; text knowledge queries remain usable.", "Do not infer an audio artifact exists from a request, configuration record or fictional fixture.", "Actual audio content, pronunciation and audibility require an authorized native-artifact trial."],
@@ -351,13 +372,14 @@
     {
       "id": "S22",
       "title": "A fresh second agent queries and resumes without predecessor state",
-      "scope_note": "Normal fresh-agent queries and continuation from already verified saved source-window/content progress remain in scope. This case does not assume recovery from an interrupted canonical write.",
+      "historical_scope_note": "Normal fresh-agent queries and continuation from already verified saved source-window/content progress remain in scope. This case does not assume recovery from an interrupted canonical write.",
+      "scope_note": "Knowledge queries, startup and agent-managed source continuation remain in scope from normally saved state. Centralized known-job register/query/binding expectations are deferred under D7. Output-attribution representation remains pending D6; no interrupted canonical-write repair is assumed.",
       "areas": ["queries", "agent replacement", "recovery", "registry"],
       "given": ["Only the approved Drive entry point is supplied to a fresh Agent Birch that can execute code in its managed temporary environment and has the other capabilities needed for the selected operation.", "No predecessor conversation, local files, pagination token or permanent provider handle is available.", "Known facts and jobs are persisted; the club timetable remains unread in the first branch."],
       "questions": [
         {"question": "Where and when do I collect Robin after robotics?", "before_read": "The timetable is unread/unavailable, so no robotics time or collection place may be asserted.", "after_supported_read": "September 12, 17:00, east entrance, linked to the processed club timetable."},
         {"question": "What is the current museum consent deadline, and have I done it?", "expected": "September 10 at 17:00 school time; Alex recorded consent returned September 5 at 18:00, with separate school and parent provenance."},
-        {"question": "What are the known jobs, who runs them, and where are they managed?", "expected": "Report the durable known register, job bindings, observed status and verification time; disclose freshness/access limits."},
+        {"question": "What are the known jobs, who runs them, and where are they managed?", "scope_status": "Historical/post-MVP: D7 centralized register and this query are excluded from MVP.", "expected": "Report the durable known register, job bindings, observed status and verification time; disclose freshness/access limits."},
         {"question": "Who sent the earlier daily brief?", "expected": "Use the stored output's job/generator/sender attribution, not today's defaults."}
       ],
       "events": ["Answer using bounded relevant records.", "Resume the recorded unfinished window and later process an individually dated reply through a supported replacement adapter."],
@@ -366,6 +388,7 @@
     {
       "id": "S23",
       "title": "Growing history does not make startup or work unbounded",
+      "scope_note": "Retain narrow storage reads and actual resource/safety boundaries. The original School-OS cap-driven stopping interpretation is superseded: agent-managed resource chunks advance one logical ingestion run to completion, or report a genuine blocker. This case cannot justify a School-OS batch scheduler or ordinary daily briefing before relevant ingestion completes.",
       "areas": ["bounded storage", "efficiency", "portability"],
       "given": ["The conceptual history has many school years; the selected operation concerns a small date/school scope.", "The later authorized trial will set explicit read, transfer, processing and elapsed-work budgets."],
       "events": ["Start a routine operation and a targeted handbook query.", "Exhaust a chosen work budget with one source and one discovery window unfinished."],
@@ -375,7 +398,8 @@
     {
       "id": "S24",
       "title": "A supplied upgrade preserves private data and compatible extensions",
-      "scope_note": "D8 upgrades, including their proposed interruption behavior, remain a separate pending architecture decision; skipping D2 neither defers D8 nor approves a canonical-write recovery mechanism through an upgrade scenario.",
+      "historical_scope_note": "D8 upgrades, including their proposed interruption behavior, remain a separate pending architecture decision; skipping D2 neither defers D8 nor approves a canonical-write recovery mechanism through an upgrade scenario.",
+      "scope_note": "Post-MVP/deferred by the user's latest D8 direction: package installer, upgrades, compatibility and migrations, including this interruption branch. Preserve all original stimuli and expectations for future scope. D1 separation remains approved, but does not establish upgrade support; minimum setup is separately undecided.",
       "areas": ["package updates", "extensions", "configuration"],
       "given": ["A fictional installed release contains processed knowledge, parent task state, configured adapters and unfinished work.", "The parent added a compatible term-cost-view application and a conformant alternate task adapter using the canonical layer.", "A user-supplied newer package is available; a separate branch contains an incompatible change whose treatment is not already approved."],
       "events": ["Inspect package compatibility and apply only the approved update procedure.", "Resume from the instance after the update or a budget interruption."],
@@ -385,7 +409,8 @@
     {
       "id": "S25",
       "title": "Known jobs retain bindings, desired/observed status and provenance",
-      "scope_note": "D6 external schedule-effect handling remains separately pending; the D2 canonical-write recovery deferral does not remove these cases or approve their mechanisms.",
+      "historical_scope_note": "D6 external schedule-effect handling remains separately pending; the D2 canonical-write recovery deferral does not remove these cases or approve their mechanisms.",
+      "scope_note": "Post-MVP/deferred in full under D7: centralized tools/jobs/capabilities register, desired/observed schedule control and known-job queries. User/agents own nonconcurrent scheduling and select adapters from recipes. This retained historical scenario must not introduce an MVP School-OS registry or scheduler.",
       "areas": ["registry", "schedules", "selected adapters", "attribution"],
       "given": ["Daily catalog job: Agent Pine, Scheduler Meadow, school scope in mailbox-alex and mailbox-sam, configured daily trigger in America/Los_Angeles, Source Adapter A, Task Board A, email output.", "Weekly recap job: Agent Birch, Scheduler Ridge, canonical knowledge input, optional Audio Service B.", "A third backup recap is separately registered; any further number of jobs is allowed."],
       "events": ["Record last observed enabled status and verification time for the first two schedules.", "Change the instance's default source adapter without editing those jobs.", "Record the parent's desired pause for the weekly job while external scheduler access is unavailable.", "In a separate branch, external schedule creation loses its response and later inspection is either sufficient or unavailable.", "Query the register from a reader that cannot access either scheduler."],
@@ -423,6 +448,8 @@
     {
       "id": "S29",
       "title": "Recurring required kit differs from an advisory bag guideline",
+      "scope_note": "D5 recurrence behavior is approved in full. The earlier statement that representation/horizon is unchosen is historical: retain the canonical recurring requirement and occurrence/completion history; use supported native recurrence or explicit occurrences for the next 14 days with continuation. Exact serialization and adapter support remain dependencies.",
+      "current_acceptance_guidance": ["Use the source recurrence, term bounds and October 29 exception regardless of projection route.", "If the selected task adapter supports the required recurrence, it may project it natively; otherwise prepare occurrences within the next-14-day planning horizon and retain continuation without dropping the rest of the source requirement.", "Completing one occurrence does not complete later occurrences or erase parent state on replay."],
       "areas": ["semantic extraction", "canonical tasks", "recurrence", "applicability"],
       "source_refs": ["mail-weekly-kit"],
       "given": ["The configured fictional child Robin is in Cedar class.", "The source explicitly makes swimming kit and a towel required on a recurring schedule, while recommending a lightweight bag without making its weight or color compulsory."],
@@ -433,6 +460,7 @@
     {
       "id": "S30",
       "title": "An unread email may contain tomorrow's required action",
+      "scope_note": "The approved limited-query rule is unchanged. Its bounded answer branches are not ordinary daily briefs and do not waive D6's complete-ingestion gate. Older pending-status wording below is historical where D5 is now approved or D7/D8 are deferred; minimum record/setup and remaining D3/D4/D6 choices stay pending.",
       "areas": ["queries", "discovery coverage", "processing coverage", "canonical tasks"],
       "source_refs": ["mail-news", "mail-tomorrow-unread"],
       "given": ["The query occurs on September 6, 2031 in America/Los_Angeles: What do I need to do for school tomorrow, September 7?", "Verified processed knowledge contains the informational library notice and no known September 7 action.", "Discovery coverage exposes mail-tomorrow-unread within the configured school scope, but its body has not been processed. The answering agent can see its neutral subject and unread status, not its source-card content."],
@@ -444,6 +472,7 @@
     {
       "id": "S31",
       "title": "A bounded coverage lookup cannot establish query completeness",
+      "scope_note": "Retain the approved bounded-question behavior and actual authorization/resource boundaries. This is not a School-OS message-cap policy or permission to issue an ordinary daily brief with incomplete ingestion. Older pending-status wording is historical where superseded by current_scope.",
       "areas": ["queries", "bounded storage access", "discovery coverage", "processing coverage"],
       "source_refs": ["mail-trip-correction", "mail-finite-response", "mail-tomorrow-unread"],
       "given": ["A fresh capable agent is asked on September 6, 2031: List all remaining school actions due September 7; if there are none, say so.", "The bounded verified-knowledge read returns museum consent due September 10 and the pickup survey due September 11, and no September 7 action.", "The approved bounded coverage access route reaches its authorized budget before it can establish discovery and processing completeness for the question's scope. The returned portion has no known gaps, but additional relevant coverage remains unexamined.", "The independent fixture includes the unprocessed contact-request email; its presence/content is not exposed to the answering agent by the unfinished coverage lookup."],
@@ -451,6 +480,29 @@
       "independent_expectations": ["An absence of gaps in the retrieved portion is not proof that the complete applicable coverage has no gaps.", "An empty September 7 task result does not justify saying no actions are due, no relevant emails exist, or the returned list is exhaustive.", "State that the bounded lookup could not establish complete discovery/processing coverage, so the answer is limited to verified knowledge examined so far.", "Do not invent the hidden email, its action or its exact count to explain the limitation; distinguish unknown completeness from an actually observed unread item.", "Stop within the authorized budget and leave or report the remaining coverage work through the approved procedure; do not require an unbounded history scan.", "After a later authorized continuation, claim completeness only if the evidence for the declared scope establishes it, and otherwise preserve the limitation."],
       "approval_basis": "The user explicitly approved limited answers when discovery/processing coverage cannot establish completeness, including bounded lookup limits.",
       "approval_dependencies": ["No new completeness flag, coverage-index schema, lookup algorithm, budget value or continuation-persistence contract is adopted. D1 and the query-coverage rule remain approved; D2 record-schema choices are unresolved and interrupted canonical-write recovery is deferred outside the MVP. D3's code-execution prerequisite is approved; the remainder of D3 and D4–D8 remain separately pending."]
+    },
+    {
+      "id": "S32",
+      "title": "One logical run exceeds former caps with agent-managed resource work",
+      "areas": ["ingestion", "adaptive resource work", "completion", "brief gate"],
+      "given": ["The written fictional workload stipulates 120 independently labeled logical school emails within the configured authorized ingestion scope. Native per-email fixtures are not yet instantiated; provider-entry counts are not the logical ground truth.", "Relevant qualifications and an explicit correction occur after the formerly proposed 25-message and 100-listing-entry thresholds.", "One relevant document is larger than the former 8 MiB ceiling, and this branch explicitly assumes a qualified authorized route that can read its complete content in manageable chunks. No actual large artifact or capacity measurement has been produced."],
+      "events": ["The actual code-capable agent selects resource chunks appropriate to its observed environment and follows all available source continuations within one logical run.", "It adapts its resource handling as necessary while preserving already normally verified source and content progress.", "Only after all relevant input is processed and required normal persistence verified does it reach the ordinary daily-brief boundary."],
+      "independent_expectations": ["Do not stop successfully at 25 messages, 100 listing entries or a School-OS 8 MiB ceiling; those proposed caps were rejected.", "Retain approved D1 per-page limits and narrow storage access; they do not limit total ingestion history or logical-run scope.", "Read substantive qualifications and the late correction rather than producing a brief from an early prefix.", "Agent-managed resource chunks are not permanent source identities and do not require a School-OS batch scheduler, central job register, fixed message quota or automatically created continuation job.", "A real capability/authorization failure must be reported as a blocker, not assumed away or labeled complete; S33 covers that outcome.", "No guarantee of interrupted canonical-write repair is introduced by agent resource recovery."],
+      "preparation_limit": "Written acceptance guidance only. No corpus expansion, native large file, harness, simulation, throughput measurement or agent run was performed.",
+      "approval_basis": "User-directed one logical run for all relevant unprocessed mail; actual agent owns adaptive resource batching/recovery with School-OS guidance. No School-OS per-run cap/batch scheduler.",
+      "approval_dependencies": ["Remaining source/adapter/record contracts and exact supported complete-read routes; user-directed test authorization before any execution."]
+    },
+    {
+      "id": "S33",
+      "title": "Blocked complete ingestion prevents an ordinary daily brief",
+      "areas": ["ingestion", "coverage", "brief gate", "agent validation"],
+      "source_refs": ["mail-image", "mail-club", "mail-trip-correction"],
+      "given": ["Some school knowledge is normally saved and verified, but relevant source work for the ordinary daily run is incomplete.", "Branch A has an unread relevant image or club attachment that no available authorized route can read.", "Branch B has an unfinished or silently capped listing route that cannot establish discovery exhaustion.", "The agent has no authorization to create a new scheduler, notification channel or source-access route merely to finish this run."],
+      "events": ["The actual agent examines its available authorized means and attempts only supported work within that authority.", "When complete ingestion remains blocked, it reports the known blocker and incomplete coverage on an authorized surface.", "In a later expressly authorized branch, a capable route becomes available; the agent completes the remaining ingestion and reassesses the brief gate from actual evidence.", "Separately, the parent may ask a school question while the gap remains."],
+      "independent_expectations": ["Do not produce or send the ordinary daily brief while relevant ingestion remains incomplete; an ordinary audio brief cannot bypass that gate.", "Do not call a partial prefix complete, silently assume unavailable material irrelevant, or invent content from the fixture expectations.", "A blocker/status explanation is distinct from the ordinary daily brief and does not authorize a new delivery channel, scheduled retry or central School-OS scheduler.", "A separately requested question can receive verified facts with a truthful coverage limitation under the already approved query rule; do not claim an exhaustive answer.", "After the supported authorized completion branch, release ordinary briefing only when discovery, content reading and required normal saves establish completion for the relevant declared scope.", "No scenario assumption guarantees a missing route can be found or that interrupted canonical writes will be repaired."],
+      "preparation_limit": "Written illustrative branches only; no live route check, source read, send, audio request, simulation or test was executed.",
+      "approval_basis": "User requires complete ingestion before an ordinary daily brief and agent-led validation using available authorized means; query-coverage approval remains separate.",
+      "approval_dependencies": ["Minimum record/ordinary-write and remaining source/output contracts; recency/audio choices are not approved by this completion gate."]
     }
   ]
 }

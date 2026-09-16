@@ -16,7 +16,10 @@ Give the agent three complementary things:
 2. **Small callable code:** mechanical operations such as normalizing addresses, comparing allowed metadata, preparing a bounded JSON page, or selecting a directory page.
 3. **Adapters:** a thin translation between School-OS requests and the tools available in this particular agent environment.
 
-The agent still reads school information and reasons about meaning. A program can normalize a date reliably; that does not mean a date parser can decide whether a school email cancels a trip or merely corrects the departure time. D5 covers those meanings.
+Under the approved D4 direction, the executing agent also owns resource use,
+internal batching and continuation until its logical run is complete; the project
+provides advice rather than a batch controller. The agent still reads school
+information and reasons about meaning. A program can normalize a date reliably; that does not mean a date parser can decide whether a school email cancels a trip or merely corrects the departure time. D5 covers those meanings.
 
 The candidate implementation language is Python using its standard library. That language/dependency choice remains unapproved. The optional in-memory development model already in the repository is preparation, not a decision that Python must be the installed runtime.
 
@@ -80,11 +83,11 @@ If a connection can list subject lines but cannot expose individual original Dat
 | Canonical storage | Drive JSON files | Bounded file reads/writes/listing and readback behavior. |
 | Email source and delivery | Gmail | Individual metadata, attachment access, listing semantics and delivery evidence. |
 | Task application | Google Sheets and Todoist projections | Stable School-OS marker storage, supported parent fields and readback. |
-| Scheduling | Generic scheduler contract, with selected managed-agent profiles | Available schedule management and unattended permissions. |
+| Scheduling | Deferred from the MVP under D7 | Users and agents own their jobs; no School-OS scheduler contract/controller is required. |
 | Runtime profiles | ChatGPT Work and Claude managed environments as initial examples | Exact operation mapping for each execution surface. |
 | Optional audio | ElevenLabs | Generation, artifact retrieval, authorized delivery and outcome evidence. |
 
-This is a proposed starting set, not a closed vendor list or a compatibility certificate. Unknown capable agents and conformant extensions remain possible. Requiring both task adapters initially versus selecting one affects delivery scope and still needs a decision.
+The retained integration rows are a proposed starting set, not a closed vendor list or a compatibility certificate. D7 scheduler management and D8 package machinery are deferred, not prerequisites. Unknown capable agents and conformant extensions remain possible. Requiring both task adapters initially versus selecting one affects delivery scope and still needs a decision.
 
 ## Implications, alternatives and unknowns
 

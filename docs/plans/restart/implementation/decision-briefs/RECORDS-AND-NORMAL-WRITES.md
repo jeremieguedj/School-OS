@@ -4,7 +4,8 @@ Status: **undecided dependency; D2 interrupted-write recovery remains outside MV
 
 ## Why this still appears in the guide
 
-D1 approved many bounded JSON pages on Drive. D2 originally bundled two subjects: what records mean, and how to repair interrupted writes. You skipped D2 and excluded interrupted-write recovery from the MVP. The system still needs to know what goes inside its knowledge, task, configuration and register records.
+D1 approved many bounded JSON pages on Drive. D2 originally bundled two subjects: what records mean, and how to repair interrupted writes. You skipped D2 and excluded interrupted-write recovery from the MVP. The system still needs to know what goes inside its knowledge, task, coverage and operation-configuration records. D7 now defers
+the centralized tools/jobs register; D8 defers package/upgrade machinery.
 
 For example, a deadline must not accidentally become a parent's preferred working date. Defining those fields is necessary even if the MVP does not resume a half-written update.
 
@@ -28,21 +29,21 @@ The parent says: “I'll do it on September 17.” A conceptual representation w
 
 These are readable labels, not an exact approved JSON schema. Multiple records can occupy a bounded page; a record type does not mean one whole-app file.
 
-## The full inventory still to shape
+## The earlier inventory, narrowed for the MVP
 
 | Record area from the earlier proposal | Its purpose |
 |---|---|
-| Configuration | Children/classes, timezone, source scope, budgets, destinations and installed version. |
+| Configuration | Retain children/classes, timezone, source scope and selected operation/destinations as needed. Do not revive School-OS per-run resource quotas or a package manager. |
 | Email | Allowed original/normalized metadata, association state and coverage links. |
 | Attachment/group | Parent email, original filename, candidate group and independent read coverage. |
 | Knowledge | Substantive claims, qualifications, source support and relationships. |
 | Task/parent state | Required action, school deadline, parent owner/planning/completion and synchronization state. |
 | Discovery window | Search scope, time meaning and evidence that listing is unfinished or exhausted. |
 | Processing coverage | What has been read, what is incomplete and what has been verified. |
-| Work/progress | Normally saved bounded-operation progress; the former interrupted-write intent/repair mechanism is deferred. |
-| Tool/connection/adapter | Capabilities, bindings, management locations and last verification. |
-| Job | A scheduled or triggered assignment and its desired/observed external settings. |
-| Run/output/effect | One execution, produced artifacts and external-action outcomes; D6 behavior is still pending. |
+| Work/progress | Normally saved discovery/coverage progress remains; agent batch queues and runtime resource orchestration are not School-OS features. D2 write repair is deferred. |
+| Tool/connection/adapter register | Deferred with D7. Operation configuration and adapter requirements remain, without a central management register. |
+| Job register | Deferred with D7. The user and agents manage their schedules. |
+| Operation/output evidence | Retained minimum source/result attribution remains to shape. D6 assigns uncertain-action verification to the executing agent; no general persisted-effect engine or D7 job-history requirement. |
 | Provider locator | Replaceable access handles for records identified by School-OS IDs. |
 
 The proposed UUID format, separate locator-record representation and exact fields remain undecided. School-OS-owned identity and provider handles as access aids are already part of the approved direction.
@@ -53,7 +54,7 @@ On a successful, uninterrupted operation, the agent must persist the intended su
 
 The remaining ordinary-write contract must specify which records and links constitute a successful operation, how readback establishes that, and how consumers distinguish supported verified information from unknown or incomplete information. It must also state the MVP's limitations if writing fails. Choosing a failure policy or partial-update visibility mechanism is architecture, not a routine coding choice.
 
-We have not approved “retry everything,” “discard partial writes,” a manual repair engine, or automatic reconstruction. This note does not adopt any of them. The MVP cannot promise repair/resumption of interrupted canonical writes, and D6/D8 must not quietly restore that guarantee through their own descriptions.
+We have not approved “retry everything,” “discard partial writes,” a manual repair engine, or automatic reconstruction. This note does not adopt any of them. The MVP cannot promise repair/resumption of interrupted canonical writes, and D6 agent verification must not quietly restore that guarantee. D8 is now deferred.
 
 ## Recommended review boundary — still unapproved
 

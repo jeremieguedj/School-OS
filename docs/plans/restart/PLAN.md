@@ -20,10 +20,11 @@ design priorities, seven core use cases, other mandatory principle sections and
 ten implementation areas. Requirements are already established; the remaining
 blocker is approval of concrete architecture, not renewed product discovery.
 
-The [architecture proposal, revision 6](implementation/ARCHITECTURE-PROPOSAL.md)
-contains recommendations, alternatives, tradeoffs and unknowns. **D1 and the
-D2 query-coverage rule and D3 code-execution requirement are approved; D2 review
-is deferred, and remaining D3 and D4–D8 are pending.**
+The [architecture proposal, revision 7](implementation/ARCHITECTURE-PROPOSAL.md)
+records recommendations and explicit decisions. **D1, query coverage, D3 code
+capability and D5 are approved. D4/D6 now use the approved agent-led directions
+below. D2 interrupted-write recovery, D7 and D8 are outside the MVP. Remaining
+record/runtime and named D4/D6 choices are pending.**
 On 2026-09-14 the user explicitly replied "D1 approved"
 after the explanation of multiple JSON pages and per-page capacity limits.
 Approval releases only work whose architecture dependencies are also approved.
@@ -36,11 +37,11 @@ ledger here remains authoritative.
 | D1 | Physical Drive layout, bounded pages and directories | Approved explicitly, 2026-09-14 |
 | D2 | Canonical records and verified write recovery | Review skipped for now; interrupted-write recovery outside MVP; approved query rule retained |
 | D3 | Agent execution and supplied adapter routes | Code-execution capability required, approved 2026-09-14; language/runtime/adapter choices pending |
-| D4 | Precise association threshold, discovery budgets and content coverage | Pending |
-| D5 | Knowledge relationships, recurring/finite tasks and parent synchronization | Pending |
-| D6 | Brief selection, audio artifacts and external-effect recovery | Pending |
-| D7 | Capabilities, known tools/jobs and scheduler management | Pending |
-| D8 | Packaged installation, compatibility, upgrades and retirement | Pending |
+| D4 | Complete logical run; agent owns resources/batching; School-OS supplies guidance | Direction approved, 2026-09-15; finite scope/cutoff and remaining identity/discovery choices pending |
+| D5 | Knowledge relationships, recurring/finite tasks and parent synchronization | Approved explicitly, 2026-09-15 |
+| D6 | Agent verifies uncertain effects; complete ingestion before daily composition | Verification/timing approved, 2026-09-15; selection/audio/minimum output contracts pending |
+| D7 | Capabilities/tools/jobs register and scheduler management | Deferred outside MVP, 2026-09-15; user and agents own nonconcurrent jobs |
+| D8 | Packaged installation, compatibility and upgrades | Deferred outside MVP, 2026-09-15; preserve D1 separation for future work |
 
 **D1 approval scope:** adopt revision 2 D1 in full: a readable Drive bootstrap;
 `system`, `instance`, and `extensions` areas; multiple UTF-8 JSON record pages
@@ -79,15 +80,15 @@ takes precedence for the MVP; the principles themselves remain unchanged.
 The MVP must not claim to repair or complete interrupted canonical writes.
 Normal verified persistence, honest incomplete coverage, the approved query rule,
 bounded discovery/window continuation and fresh-agent access to saved knowledge
-remain in scope. D6 external-effect outcomes and D8 upgrade behavior retain their
-separate pending status; their references to D2 must be reconciled before adoption.
+remain in scope. D6 now relies on executing-agent verification; D8 upgrades are separately
+deferred. Neither may silently reinstate a School-OS D2 repair engine.
 
 Deferring D2 is not approval of its bundled record schemas, UUID format, locator
 records, or a replacement persistence design. The required canonical data remains
 in scope. Present a minimum record and ordinary-write proposal separately before
 dependent code, without reintroducing interrupted-write recovery into the MVP.
-No testing is authorized. This exception governs the whole-project checklist
-and old recovery wording below; all other required areas remain in scope.
+No testing is authorized. This exception and the later D7/D8 deferrals govern
+the whole-project checklist and older broader wording below.
 
 **D3 approval scope, 2026-09-14:** the user explicitly requires an agent to be
 able to execute code and reports confirmation from all major personal-agent
@@ -107,24 +108,72 @@ directory. Its code and fictional checks are authored, not executed. These are n
 replacement runtime, canonical schema or managed-agent qualification. Every
 functional test, model run, simulation, build and live operation remains stopped.
 
-On 2026-09-15 the user requested detailed, concrete explanations of D4 and all
-remaining decisions. The [detailed briefs](implementation/decision-briefs/README.md)
-now explain fictional emails, flows, parent-visible results, implications and
-alternatives. No new architecture approval was supplied. D4's per-run limits do
-not cap total history or guarantee daily completion. Its automatic continuation
-trigger, aggregate catch-up budget, freshness target and partial-versus-complete
-brief timing are unresolved D4/D6/D7 choices. D6's email/audio order and effect
-persistence, and D8's interruption boundary, also need explicit decisions;
-neither can assume deferred D2 repair. Record/ordinary-write structure remains
-an undecided dependency, explained separately without reopening D2 recovery.
+### User-approved MVP revisions, 2026-09-15
 
-Exact next action: review the expanded D4 brief, then D5–D8 and their named open
-choices with the user. Resolve remaining D3 and
-the minimum record/ordinary-write decisions before their dependent code.
-Implement the approved T1–T10 scope with the explicit MVP exception and prepare
-its in-scope tests. Publish the whole
-implementation, verify the remote commit and stop for the user's testing direction.
-Publishing this preparation checkpoint alone does not satisfy that code handoff.
+After the detailed review, the user explicitly directed:
+
+- **D4:** reject a School-OS-managed partial run and its fixed 25-processing,
+  100-listing and 8 MiB application ceilings. One logical run must process all
+  relevant unread mail. The capable executing agent owns adaptive resource use,
+  batching, continuation and its own runtime recovery, with School-OS advice and
+  guidance. School-OS does not implement/manage that batching. D1 bounded data
+  access, source custody, honest coverage and source-metadata identity remain.
+  The user relies on normal agent continuity; full environment-reset recovery
+  and School-OS canonical-write repair are not MVP guarantees. This is an explicit
+  MVP qualification of the broader fresh-agent recovery direction, not a new
+  dependence on chat/provider handles as canonical identity or completion proof.
+- **D5:** “Regarding D5, I approve the plan.” Adopt the complete D5 proposal as
+  presented in revision 6: source-linked claims and evidence-based relationships,
+  finite/conditional/recurring actions with the 14-day projection fallback,
+  separate parent planning/completion, and field-level three-way task sync.
+  Minimum schemas and adapter contracts still need decisions before dependent
+  coding; do not ask for the approved D5 behavior again.
+- **D6:** the executing agent assesses its available means and validates uncertain
+  external actions with its authorized connectors/APIs. Do not select the former
+  general School-OS persisted-effect engine. First validate that all intended
+  mail/content is ingested, then create the daily brief. A real blocker remains
+  an incomplete operation and must be reported; a partial normal daily brief
+  cannot substitute for the required completed ingestion. The approved qualified
+  knowledge-query rule remains separate. Selection by verification time, audio
+  retention/order and minimum output/evidence contracts are not blanket-approved.
+- **D7:** remove the centralized tools/capability/jobs register, scheduler control,
+  binding manager and register-backed known-job/sender queries from the MVP.
+  Users and agents manage their own jobs, read recipes and select needed adapters.
+  Assume no concurrent operation on the same Drive data; do not add locks or a
+  replacement scheduler. Operation configuration/capability needs remain required.
+- **D8:** defer packaged installation and upgrade/compatibility/migration machinery.
+  Keep the project ready for later lifecycle work using approved D1 separation of
+  system, instance and extensions; do not adopt another package/activation design.
+  Minimum usable Drive startup/configuration remains necessary and its first-use
+  setup contract is still unresolved. Repository preservation/cleanup continuity
+  and the testing stop remain required.
+
+These directions explicitly reduce the original whole-project MVP scope,
+particularly the tools/schedules/visibility and packaged-lifecycle core use cases.
+The broader product principles remain unchanged. Do not claim full original
+T1–T10/U1–U7 delivery when the deferred areas are absent. The
+[coverage map](implementation/COVERAGE.md) separates retained and deferred work.
+
+The [agent execution guidance](implementation/AGENT-EXECUTION-GUIDANCE.md) and
+[updated briefs](implementation/decision-briefs/README.md) describe these boundaries.
+They are authored instructions and review artifacts, not executed validation.
+
+**Pending daily boundary:** recommend all relevant school mail not yet fully
+processed by School-OS through run start, including backlog and attachments, even
+if already marked read in the mailbox; later arrivals belong to the next run.
+The coordinator asked for explicit approval. This defines a finite snapshot
+without chasing new arrivals forever; a later cutoff captures more arrivals but
+can extend work. No answer is recorded yet. This interpretation/cutoff must not
+be adopted silently. Remaining D4 precision/search/repeated-appearance details,
+D6 selection/audio, D3 and minimum normal-record/write/first-use contracts remain
+pending. Existing source-metadata and coverage invariants remain authoritative.
+
+Exact next action: resolve the finite daily scope/cutoff and those remaining
+small MVP contracts with the user, without rebuilding deferred infrastructure.
+Implement approved retained deliverables and prepare their unexecuted checks.
+Commit/push the agreed MVP code and continuity, verify the exact remote revision,
+then stop for the user's testing direction. This architecture/document update is
+not the completed code handoff or authorization to test.
 
 ## Decision authority and user checkpoints
 
@@ -160,6 +209,10 @@ managed-agent pilots or release qualification. The
 [copyable Astra handoff](ASTRA-HANDOFF.md) carries the same boundaries.
 
 ## Approved architecture and operating choices
+
+Read the broader baseline below subject to the explicit current MVP revisions
+above. In particular, the tools/jobs register and packaged lifecycle are deferred;
+resource batching belongs to the executing agent, and D2 repair is excluded.
 
 - Google Drive holds the instance's instructions/configuration, processed
   knowledge and tasks, source/attachment index and coverage, unfinished work,
@@ -203,16 +256,21 @@ managed-agent pilots or release qualification. The
 
 ## Whole-project implementation scope
 
+This original whole-product checklist is retained for traceability. The current
+MVP implements only its retained areas under the explicit D2/D7/D8 deferrals and
+D4/D6 agent-led direction above; it must not be represented as all delivered.
+
 The restart covers the complete reusable School-OS project described by the
 product principles and core use cases. Email identity is one component, with the
 most recently refined procedure; completing its development model alone does
 not complete the restart. The earlier wording "agreed initial project-code
 scope" did not enumerate that full scope and must not be used to narrow it.
 
-The [explicit MVP exception](#user-approved-mvp-exception--interrupted-writes)
-removes interrupted canonical-write recovery from the current delivery. The
-remaining whole-project areas stay required; T8 cannot be reported fully delivered
-against the original scope without naming this deferral.
+The [current MVP revisions](#user-approved-mvp-revisions-2026-09-15) and
+[D2 exception](#user-approved-mvp-exception--interrupted-writes) remove central
+D7 management, D8 lifecycle machinery and interrupted canonical-write repair from
+current delivery. The original checklist below is traceability, not a direction
+to implement those deferred mechanisms. The coverage map states the retained work.
 
 The following is a delivery checklist drawn from existing requirements, not
 approval of new schemas, storage layouts, contracts or runtime mechanisms.

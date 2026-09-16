@@ -1,6 +1,6 @@
 # D5 — Remembering school information and managing tasks
 
-Prepared 2026-09-15. **D5 remains proposed, not approved.** This brief explains
+Updated 2026-09-15. **D5 is explicitly approved:** “Regarding D5, I approve the plan.” This brief explains
 [the current D5 proposal](../ARCHITECTURE-PROPOSAL.md#d5--substantive-knowledge-queries-and-task-reconciliation)
 through wholly fictional correspondence. No operations or tests were executed.
 
@@ -94,7 +94,7 @@ recurrence, its adapter may use it. Otherwise, the proposed default prepares
 explicit occurrences for the **next 14 days**, with continuation on Drive.
 Starting September 15 exposes September 16 and 23; it does not discard later
 Wednesdays. Completing September 16 does not complete the whole series.
-The recurrence mechanism and 14-day default still require approval.
+The recurrence mechanism and 14-day default are included in the D5 approval.
 
 ## Synchronization compares three versions
 
@@ -164,7 +164,7 @@ unread material is irrelevant. Missing processing stays within authorization,
 capability and budget. Verified facts remain usable with completeness limits.
 An unavailable original limits rechecking without erasing saved knowledge.
 
-## Choices still needing approval
+## Approved choices and remaining implementation dependencies
 
 The recommendation remains source-linked claims and explicit relationships,
 separate parent fields, recurring tasks with a 14-day fallback horizon, and
@@ -176,8 +176,8 @@ cannot faithfully bring parent edits back. App-native recurrence alone avoids
 creating individual occurrences, but depends on the selected app's capabilities.
 Asking the parent about every edit avoids automatic merges but adds routine work.
 
-Approval is needed for those D5 mechanisms, including missing app entries and
-identity handling. The minimum record/ordinary-write design and remaining D3
-adapter contracts are separate dependencies; D6 still owns unknown external
-write outcomes. Semantic interpretation, recurrence mappings and answer quality
+Those D5 mechanisms, including the stated missing-entry/identity behavior, are
+approved; do not resubmit them. Exact record/ordinary-write and remaining D3
+adapter contracts are separate dependencies. D6 now directs the executing agent
+to validate uncertain external outcomes through its available authorized means. Semantic interpretation, recurrence mappings and answer quality
 remain untested. Code capability does not establish them. Testing remains reserved.

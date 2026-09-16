@@ -18,16 +18,41 @@ bounded discovery/window continuation and fresh-agent access remain required.
 Do not treat this deferral as approval of D2's bundled schemas or a replacement
 write design. Separately resolve minimum record/ordinary-write
 choices before dependent implementation. This exception overrides broader
-interrupted-write recovery wording below; other project areas and the mandatory
-stop before testing remain unchanged.
+interrupted-write recovery wording below. Apply the later D4–D8 scope revisions
+next; the mandatory stop before testing remains unchanged.
 
 Current D3 decision, approved 2026-09-14: an agent must be able to execute code.
 The user reports confirming this with all major personal-agent suppliers. Do not
 claim independently observed runtime/adapter qualification from that report.
 The earlier no-code-agent support proposal is superseded. Language/version,
 dependencies, SDKs and adapter contracts remain undecided; no personal machine,
-persistent process or coding CLI is required. Explain/review D4 next; retain the
-remaining D3 architecture approvals and the testing boundary.
+persistent process or coding CLI is required. Remaining D3 contracts and minimum
+record/ordinary-write/first-use choices still need approval.
+
+Current MVP revisions, approved 2026-09-15:
+- D4: one logical run must complete all intended unread/unprocessed school mail.
+  The capable executing agent owns resource limits, batching and its runtime
+  continuity/recovery; School-OS supplies advice, recipes and completion/coverage
+  requirements, not a batch manager, fixed per-run caps or catch-up scheduler.
+  The proposed School-OS-pending/run-start cutoff awaits explicit approval;
+  remaining metadata threshold/search details are not blanket-approved.
+- D5: approved in full, including recurring tasks/14-day fallback, separate parent
+  state and three-way task sync. Do not ask for these mechanisms again.
+- D6: executing agent validates uncertain effects through its available authorized
+  tools/APIs. Validate complete intended ingestion before creating the daily brief.
+  If blocked, report incomplete ingestion rather than a finished partial brief.
+  Do not restore the former generic persisted-effect engine. Recency/audio/minimum
+  output contracts remain undecided; qualified knowledge questions remain allowed.
+- D7: tools/capabilities/jobs register, scheduler management and register-based job/
+  sender queries are outside MVP. Users/agents manage their own jobs, read recipes
+  and select adapters. Assume no concurrent same-data use; add no locking service.
+- D8: package/installer/version/upgrade/migration/compatibility machinery is outside
+  MVP. Preserve approved D1 separation for future work and resolve only the minimum
+  first-use Drive setup needed for retained features. Repository history/baseline,
+  privacy and continuity safeguards still apply.
+These are explicit exceptions to the original broader checklist and product
+principles. Keep principles as the long-term authority; do not claim deferred
+areas implemented. The active plan and coverage map record retained scope.
 
 The previous implementation is retired as the foundation. Preserve the existing
 repository and Git history, but build the new project from the approved restart
@@ -70,7 +95,8 @@ scope. Continue independent approved work while awaiting an architectural answer
 PRESERVE THE APPROVED PRODUCT DIRECTION
 
 - Drive is canonical for processed knowledge/tasks, source and attachment
-  indexes, coverage, configuration, unfinished work and known tools/jobs/runs.
+  indexes, coverage, configuration and normally saved unfinished work; the MVP
+  defers the centralized tools/jobs/runs register.
   Raw email and attachments stay at their source. Temporary processing copies
   are discarded after verified persistence. Work and startup stay bounded.
 - Use simple replaceable adapters and agent reasoning over explicit procedures.
@@ -91,10 +117,10 @@ PRESERVE THE APPROVED PRODUCT DIRECTION
 - Preserve bounded search-window progress on Drive and follow continuation after
   short pages. Lost tokens permit replay of unfinished windows. Unsupported or
   incomplete discovery/content remains visible, never silently marked complete.
-- Allow any number of agents, adapters and jobs. Track their locations, bindings,
-  known status, last verification and output/sender attribution. Any capable new
-  agent can query that register. Concurrent updates to the same Drive data are
-  outside scope; do not build locking or conflict-resolution infrastructure.
+- Allow any number of agents, adapters and jobs. Users/agents manage scheduling
+  and adapter selection under the recipes; central job/register management and
+  related queries are deferred. Assume no concurrent operation on the same Drive
+  data; do not build locking or conflict-resolution infrastructure.
 
 The Gmail study did not establish that two entries with identical allowed
 metadata were different logical emails or that information was lost. Preserve
@@ -110,8 +136,8 @@ useful evidence and continuity documents; protect unrelated or uncommitted work.
 Identify legacy instruction conflicts explicitly. Propose any architectural
 replacement for approval; retain applicable privacy and continuity safeguards.
 
-Your assignment covers the whole reusable School-OS project, as enumerated in
-the plan's whole-project implementation scope:
+Your assignment covers the retained reusable School-OS MVP. The original areas
+below remain the traceability checklist, subject to the explicit deferrals above:
 - Installation, Drive startup/configuration and capability discovery.
 - Canonical knowledge/tasks, source indexes, coverage and bounded storage access.
 - Historical and daily ingestion, email/reply/attachment identity, temporary
@@ -129,7 +155,8 @@ deliverables and any unresolved architecture approvals before dependent coding.
 The broader requirements and lifecycle design already exist; do not restart
 their discovery or treat only email identity as defined. The revised small
 development model is one component and cannot satisfy the whole assignment.
-Do not silently defer required areas or declare a partial implementation complete.
+Do not silently defer retained areas or claim the original whole product complete.
+The user has explicitly deferred D2 repair, D7 and D8 as stated above.
 Bring blockers and any proposed scope reduction to me explicitly. This checklist
 does not approve new architecture; resolve missing approvals before implementing
 their dependent parts. Keep implementation and later qualification status separate.

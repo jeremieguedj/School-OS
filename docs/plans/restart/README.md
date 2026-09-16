@@ -1,26 +1,30 @@
 # School-OS restart: current plan and artifacts
 
-Updated 2026-09-14. Start here when resuming the restart. The current design is
+Updated 2026-09-15. Start here when resuming the restart. The current design is
 documented; a production replacement and cross-agent handoff are not yet
 implemented or qualified. Earlier experiments and the retired runtime are
 evidence, not an instruction to rebuild their architecture.
 
-The coordinator is now working on `codex/restart-school-os`. The
-[whole-project coverage map](implementation/COVERAGE.md) is complete;
-[D1 and the query-coverage rule are approved](implementation/ARCHITECTURE-PROPOSAL.md);
-D2 review is deferred and interrupted-write recovery is outside the MVP by
-explicit user direction. D3 now requires code-execution capability, based on the
-user's explicit decision and reported supplier confirmation. Remaining D3 and
-D4–D8 await approval. The required record structures
-remain undecided; deferral is not approval of a replacement persistence design.
-[Fictional scenarios and proposed tests](implementation/TESTING-PROPOSAL.md)
-are preparation only. This is an architecture checkpoint, not the whole-code
-handoff or the start of testing.
-The [new isolated development model](identity/revised-model/README.md) and its
-fictional checks are also authored but unexecuted; frozen studies stay unchanged.
+The coordinator remains on `codex/restart-school-os`. The
+[coverage map](implementation/COVERAGE.md) separates original whole-product scope
+from current MVP delivery. D1, the query-coverage rule, required agent code
+capability and D5 are approved. On 2026-09-15 the user replaced School-OS-managed
+batching with executing-agent guidance and complete logical-run ingestion,
+required agent-led uncertain-effect verification and ingestion-before-brief,
+and deferred D7 tools/jobs management and D8 packaged lifecycle. D2 canonical
+repair remains deferred. The [active plan](PLAN.md) records exact approval
+boundaries and pending contracts. The product principles retain the broader
+long-term scope; these explicit MVP exceptions take precedence for delivery.
+
+[Fictional scenarios and proposed tests](implementation/TESTING-PROPOSAL.md) and
+the [isolated development model](identity/revised-model/README.md) are authored
+preparation only. Frozen studies stay unchanged. No tests or models were run.
+This architecture checkpoint is not the whole-code handoff or start of testing.
 
 For a guided review, open the [HTML architecture decision guide](implementation/architecture-guide.html).
-It explains the proposal with an overview, examples and expandable detail.
+It explains current decisions and remaining proposals with examples and flows.
+The [agent execution guidance](implementation/AGENT-EXECUTION-GUIDANCE.md) gives
+resource-management advice without implementing an agent batch controller.
 The guide mirrors the approval status; the written proposal and active-plan
 approval ledger remain authoritative.
 
@@ -33,8 +37,8 @@ pilots start automatically. The [Astra handoff](ASTRA-HANDOFF.md) is the copyabl
 prompt for that session.
 
 The assignment covers the [whole project](PLAN.md#whole-project-implementation-scope):
-installation, ingestion, knowledge, tasks, queries, briefs, tools/schedules,
-recovery, agent replacement and extensible upgrades. Email identity is one
+retained ingestion, knowledge/tasks, queries, briefs, basic Drive startup and
+agent recipes, subject to the explicit D2/D7/D8 MVP deferrals. Email identity is one
 component with a detailed revised recipe. Requirements and lifecycle design
 exist across these areas; exact architecture choices, implementation and real
 agent qualification are distinct remaining work.
@@ -42,11 +46,13 @@ agent qualification are distinct remaining work.
 ## Current direction
 
 Google Drive is the durable home for processed school knowledge, source and
-attachment references, coverage, configuration, unfinished work and the known
-tools/jobs/runs register. Original emails and attachments stay in their source
+attachment references, coverage, configuration and normally saved unfinished work.
+The centralized tools/jobs/runs register is deferred from the MVP. Original emails and attachments stay in their source
 systems and are downloaded temporarily for processing. An agent reads the
-instance's relevant records, selects available adapters, performs bounded work,
-verifies persistence and leaves sufficient state for another session or agent.
+instance's relevant records, selects usable adapters, manages its own processing
+resources and verifies the complete intended ingestion before a daily brief.
+Normally saved canonical knowledge remains available to another capable agent;
+School-OS does not promise generic recovery of interrupted canonical writes.
 
 Logical email identity uses normalized source metadata and School-OS-owned
 record IDs. Attachments belong to their parent email; replies use their own
@@ -55,9 +61,10 @@ observed presentation and pagination issues. Provider entries are not an
 independent count of logical emails. Content processing has separate coverage
 and is never an identity fallback.
 
-Users may have multiple agents and jobs. Known schedules retain their location,
-executing agent, selected adapters, scope, verification and output attribution.
-Concurrent updates to the same Drive data remain outside scope. No dedicated
+Users may have multiple agents and jobs. Users and agents manage them outside
+School-OS; each run follows its recipe and selects the necessary adapters. The
+MVP assumes they do not operate concurrently on the same Drive data and provides
+no schedule register, scheduler controller or locking mechanism. No dedicated
 personal computer or coding CLI is required by the target architecture.
 
 ## Current authority and reading order
@@ -100,9 +107,8 @@ was already implemented in the experiment; subject trimming is now approved for
 the next revision. Timestamp changes were not observed. Thread grouping is
 optional, and short pages with continuation require continued enumeration.
 
-The next implementation covers the whole-project checklist, including a revised
-small development model, with new architecture decisions approved before
-implementation. A finished identity model alone is not the completed project.
+The next implementation covers the retained MVP checklist, with the explicit
+deferrals and new architecture decisions recorded before dependent code. A finished identity model alone is not the completed project.
 Publish the agreed project code and stop for the user to direct testing.
 Actual file/table layout, attachment-group processing, complete discovery,
 scheduling, fresh-session handoff and execution cost remain qualification work;
