@@ -80,9 +80,15 @@ been submitted and no live run handle exists. Automatic approval review rejected
 uploading the private v2 instructions to Gemini because they contain mailbox,
 child/school and Drive details. Explicit transfer approval for Gemini and ChatGPT
 Work is pending; do not bypass it. Independent source audit remains separate from
-tested-agent outputs. The session's agent-thread limit still prevents spawning
-the fresh context-free worker; the separate Sol-task question remains pending and
-no substitute was used. Private references and evidence remain outside Git.
+tested-agent outputs. A retry successfully launched a context-free
+`gpt-5.6-sol` worker at high reasoning with no inherited turns. It is running the
+first-route setup and ingestion against only its assigned coordinator folder,
+using corrected v2 inputs and the pinned revision. It must not read oracle or
+other-route results and has no authority for outbound delivery, task-app, mailbox or
+schedule effects. Launch is not evidence that setup or ingestion succeeded; the
+same worker handle must be followed through its actual result. The earlier
+separate-task question is now moot. Private references and evidence remain
+outside Git.
 
 ## Current execution authorization
 

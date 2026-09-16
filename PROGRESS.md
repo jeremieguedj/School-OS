@@ -5647,3 +5647,24 @@ requirements, then read this log from top to bottom.
   actual handles. Preserve the independent image-review gap unless a supported
   route exposes the images. This checkpoint is preflight and source-audit
   evidence, not functional product qualification.
+
+## 2026-09-16 — Fresh first-route worker launched
+
+- A retry successfully launched the fresh context-free worker as
+  `gpt-5.6-sol` at high reasoning with no inherited turns. The prior separate
+  Sol-task approval question is therefore moot; the earlier capacity history is
+  retained above as chronology.
+- The worker is assigned the actual first-route Drive setup and ingestion, pinned
+  to `138ca7954bdb3b7e9de065199fdb4903d6a924a3` and corrected v2 inputs. It may
+  use only its assigned coordinator route folder, must not read oracle or
+  other-route results, and has no authority for outbound delivery, task-app,
+  mailbox or schedule effects.
+- The worker is running. Its launch does not establish that setup, ingestion or
+  any functional behavior succeeded, and no product qualification is claimed.
+- Gemini Spark and ChatGPT Work trials remain unsubmitted. Automatic approval
+  review rejected the Gemini upload; both private uploads await explicit transfer
+  consent. No alternate channel or bypass has been used. The independent source
+  audit's image-evidence gap also remains open.
+- Next: follow the same fresh-worker handle and inspect its actual result. When
+  ingestion is ready, administer the independent common questions against that
+  route. Separately await explicit consent before either browser prompt upload.
