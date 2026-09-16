@@ -124,8 +124,8 @@ The proposed result is a visible choice, not an arbitrary winner:
 > task app. Choose the date to keep. The school deadline remains noon on
 > September 18.
 
-Other unconflicted fields remain usable. The exact conflict representation is
-part of the still-pending record design.
+Other unconflicted fields remain usable. Preserve the conflicting values and
+their meaning without requiring the excluded standalone record framework.
 
 Deleting an app task does not prove the school request was cancelled or
 completed. School-OS would show a missing app entry while retaining the canonical

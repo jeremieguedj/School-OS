@@ -5074,3 +5074,48 @@ requirements, then read this log from top to bottom.
   continuity to `codex/restart-school-os`, verify the exact remote revision,
   then stop for the user's testing direction. This helper/documentation update
   is an intermediate publication, not the completed whole-project handoff.
+
+## 2026-09-15 — Architecture in practice: diagrams and seven walkthroughs
+
+- The user requested a new page on the existing architecture website explaining
+  the layers/components and everyday use cases in plain language. Authored
+  `docs/plans/restart/implementation/architecture-in-practice.html` with a layered
+  diagram, Drive layout, discovery/content/persistence coverage diagram, task
+  synchronization flow, audio flow and two-agent shared-Drive diagram. Linked it
+  from the existing overview and restart/brief indexes.
+- Seven fictional walkthroughs cover first setup, a fact question, task-app
+  parent edits, daily email ingestion, vaccination-form completion evidence,
+  optional audio and a fresh Gemini Spark manual email brief after GPT Work.
+  Actor names are illustrative, with actual authorization/capabilities assumed;
+  the page does not claim provider support or a finished/qualified product.
+- Explained mailbox read status versus School-OS processing coverage; each reply
+  and attachment candidate's independent coverage; metadata-only identity;
+  normal save verification; temporary-copy cleanup; bounded pages without a
+  whole-history cap; synchronization timing; and fresh-agent use of Drive rather
+  than prior chat. The ordinary daily brief still requires complete ingestion.
+- The task-app parent-completion path is approved D5 and is not resubmitted.
+  The walkthrough exposes two narrower unresolved policies in the active plan:
+  when email evidence may automatically close a task, and whether an explicitly
+  requested manual brief may be sent with disclosed coverage gaps. Each has a
+  concrete recommendation, alternative, tradeoffs and remaining unknowns. Neither
+  is adopted; no sent-mail scope, monitoring service or new task state machine
+  is introduced. Removed stale wording in the D5 explanation that implied the
+  excluded records framework remained an approval prerequisite.
+- Two workers performed focused read-only source review and a third reviewed
+  the completed page for design accuracy. The coordinator owns the authored
+  page, integration, continuity, Git and private Site publication. Existing
+  frozen studies, scenarios, helper/runtime code and product principles were
+  unchanged. Page diagrams are explanatory HTML/CSS, not simulations.
+- Publication hygiene: privacy and local document-link checks found no issues;
+  diff whitespace checks pass. Applicable hooks/CI are inspected before push;
+  no checks are disabled and no PR or workflow is created. Static document
+  authoring and packaging do not execute the School-OS application. No browser
+  testing, functional tests, model replays, helper imports, builds, connector
+  probes, ingestion, scheduling, task updates, email sends or audio generation
+  were performed. This is documentation publication, not qualification.
+- Exact next action: review the page's pending D4/D6 and task-completion/manual-
+  brief policy choices with the user, keep specific architecture decisions
+  unadopted until explicitly approved, and continue independent approved work.
+  The full agreed MVP must still be committed/pushed with its remote revision
+  verified before the mandatory stop for user-directed testing. This explanatory
+  page is not the completed whole-project implementation checkpoint.

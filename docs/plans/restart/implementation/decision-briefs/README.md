@@ -6,6 +6,8 @@ English. Their fictional examples are written illustrations; none was executed.
 An explanation is not architecture approval or product qualification.
 
 Start with the [viewable guide](../architecture-guide.html#detailed-briefs).
+For layers, data flow and seven everyday scenarios, read
+[How School-OS works](../architecture-in-practice.html).
 Each Markdown brief also has a readable HTML companion:
 
 | Decision | Plain-language subject | Detailed brief | Viewable page |

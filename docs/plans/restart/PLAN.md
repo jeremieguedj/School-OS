@@ -32,6 +32,35 @@ Approval releases only work whose architecture dependencies are also approved.
 The [HTML decision guide](implementation/architecture-guide.html) provides a
 readable walkthrough of the decisions and mirrors this approval ledger; the
 ledger here remains authoritative.
+The [architecture in practice page](implementation/architecture-in-practice.html)
+adds diagrams and seven fictional household walkthroughs. It makes the following
+two specific boundaries visible for review; neither is adopted or implemented:
+
+- **Email evidence to task completion:** D5 already accepts unconflicted parent
+  completion from a correctly mapped task app and preserves source-linked
+  completion evidence. It does not select when incoming acknowledgments or
+  parent-sent email automatically change an open task to completed. Recommend
+  automatic completion only when clear observed evidence satisfies the correctly
+  linked obligation; preserve ambiguity and seek clarification otherwise.
+  Alternatively require parent confirmation for every email-inferred completion.
+  The first reduces routine interruptions but risks semantic mistakes; the second
+  reduces automatic mistakes but adds parent work. This serves provenance, task
+  accuracy and simplicity. Exact sufficiency, partial fulfillment and authorized
+  source scope (including any sent-mail discovery) remain unknown. No new state
+  machine, source scope or background monitoring is approved by the walkthrough.
+- **Manual briefs with incomplete coverage:** the approved complete-ingestion
+  gate explicitly governs ordinary daily briefs; the qualified-query rule does
+  not by itself authorize a partial manual email send. Recommend permitting a
+  clearly qualified manual brief only when the parent explicitly requests that
+  output despite known gaps. Alternatively require complete relevant ingestion
+  before every manual send. The first supports useful parent-directed access;
+  the second is simpler but can delay useful output. Disclosure and task-app
+  freshness must remain explicit. The complete-coverage fresh-agent example
+  assumes usable authorized routes and does not establish provider support.
+
+This explanation changes no approval status. The record/write framework remains
+outside MVP; these are specific product-policy choices, not a reinstated schema
+gate. No scenario, helper, connector operation or test was executed.
 
 | Decision | Proposal subject | Approval status |
 |---|---|---|

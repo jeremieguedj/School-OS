@@ -46,7 +46,7 @@
 <p>Each changed field has one clear new value. The combined result preserves both edits. The school deadline is still September 18 at noon.</p>
 <p><strong>Example with a conflict:</strong> starting from planned date September 16, one parent changes it to September 17 through School-OS and another changes it to September 18 in the app. Both differ from the baseline and from each other. The proposed result is a visible choice, not an arbitrary winner:</p>
 <blockquote><p>Consent has two planned dates: September 17 on Drive and September 18 in the task app. Choose the date to keep. The school deadline remains noon on September 18.</p></blockquote>
-<p>Other unconflicted fields remain usable. The exact conflict representation is part of the still-pending record design.</p>
+<p>Other unconflicted fields remain usable. Preserve the conflicting values and their meaning without requiring the excluded standalone record framework.</p>
 <p>Deleting an app task does not prove the school request was cancelled or completed. School-OS would show a missing app entry while retaining the canonical task. It must not silently recreate or delete it without the agreed handling. The proposed adapter carries a School-OS task ID in a managed field and verifies it. If that identity is missing, title similarity alone cannot safely reconnect the task. Exact adapter support remains unqualified.</p>
 <h2 id="what-is-saved-and-what-a-question-can-honestly-answer">What is saved and what a question can honestly answer</h2>
 <p>Under approved D1, the proposed knowledge and tasks would live in bounded JSON pages on Drive. The remaining record definitions are not approved merely by choosing that storage format.</p>
