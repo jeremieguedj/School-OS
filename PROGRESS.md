@@ -5876,3 +5876,31 @@ requirements, then read this log from top to bottom.
   implementation fix, workaround or retest occurred. Continue the existing
   trials only after the pending authorization issue is resolved; keep all
   results for joint review with the user.
+
+
+## 2026-09-16 — Explicit start confirmation; live trials and audit proceed
+
+- User directly confirmed: “The goal is unblocked. Start all three tests and
+  uploads now.” This clears the preceding runtime authorization ambiguity. The
+  no-fix/no-defect-workaround instruction remains in force. The fresh Gemini page
+  opened successfully; no further generic testing approval is needed.
+- A bounded Sol browser operator owns the two new browser tasks, exact minimal
+  opening prompt, private observable evidence and requested interview replies.
+  It must stop at verified setup or a concrete blocker before ingestion.
+- A separate Sol evaluator began the independent read-only source audit for the
+  common fixed received/arrival interval, without reading tested-agent results.
+  All expectations and raw receipts stay private; no new oracle completion is
+  claimed until its actual report.
+- Coordinator created three new route destination folders under the verified
+  tests parent. Metadata readback confirmed each identity/name/type/parent.
+  One URL-form metadata read returned INVALID_ARGUMENT; actual readback using
+  that folder's returned ID succeeded. No repeated create or product patch was
+  performed. Complete raw receipts are preserved privately.
+- Three private interview replies contain common household/source/tool choices,
+  distinct assigned destinations and isolation/no-effect/no-repair limits.
+  The parent display name comes from the observed signed-in profile; no legal
+  identity was inferred. No evaluator answers or prior canonical state are sent.
+- The attempt to resume the same initial Sol trial handle hit the agent-thread
+  capacity limit. It was not replaced or relaunched as a new trial. Continue
+  that same route when a bounded worker finishes. Current browser/source workers
+  remain active; do not infer a stopped provider task from observation timeout.

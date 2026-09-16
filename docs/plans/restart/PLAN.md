@@ -13,6 +13,29 @@ experiments and historical proposals.
 
 ## Current testing authority — report findings, do not repair
 
+**Latest direct start confirmation:** the user said, “The goal is unblocked.
+Start all three tests and uploads now.” The earlier runtime authorization blocker
+is cleared. A new Gemini Spark page opened successfully; a bounded Sol browser
+operator is launching both browser tasks from the exact minimal prompt and will
+supply only requested interview answers. A separate Sol evaluator is performing
+an independent read-only source audit for the fixed interval below. These workers
+must preserve evidence and stop affected work on defects, without fixes.
+
+Three separate new Drive destination folders have been created under the
+verified tests parent and individually verified by metadata readback. Private
+route-specific interview replies include those destinations and isolation limits.
+One URL-form readback failed with INVALID_ARGUMENT; verification through the
+same folder's returned ID succeeded. No folder creation was retried. Record this
+coordinator connector observation without changing product code or contracts.
+
+Resuming the same initial Sol trial worker encountered an agent-capacity error;
+no new Sol trial was spawned and no successful continuation is claimed. Resume
+that same recorded route when capacity is available, preserving its already
+reported repository-instruction exposure. Do not replace it silently.
+
+The historical authorization-blocker paragraphs below describe the preceding
+checkpoint, not a current reason to ask the user to approve testing again.
+
 Following the starter readiness handoff, the user explicitly approved testing
 and uploads for all three agents. The user then added: report findings and review
 all results together; **do not implement or address bugs independently**. The
