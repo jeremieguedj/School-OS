@@ -3,7 +3,8 @@
 **Current branch:** `codex/restart-implementation`, in the existing repository.
 **Status:** retained restart MVP operations, contracts, adapters, and examples
 are authored and under static integration review; they remain untested and
-unqualified. Q10 blocks complete implementation publication.
+unqualified. Q10 blocks complete implementation publication. Autonomous work is blocked
+awaiting the explicit Q10 decision; no trials may begin.
 
 The authoritative [restart plan](docs/plans/restart/PLAN.md) records decisions,
 retained scope, explicit deferrals and the

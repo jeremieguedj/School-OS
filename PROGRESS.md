@@ -5477,3 +5477,20 @@ requirements, then read this log from top to bottom.
   the complete-implementation prerequisite. Exact next action remains explicit
   approval of the segment representation, Sol implementation, full publication
   and remote verification, then the three already-authorized isolated trials.
+
+
+## 2026-09-16 — Autonomous goal blocked on Q10 approval
+
+- Verified clean `codex/restart-implementation` at published checkpoint
+  `75bc4ef6d3608b5681444f28031b8f6ed71ce727`. The preceding goal turn made
+  concrete progress by publishing the isolated-trial prompt templates.
+- The same explicit-approval blocker has persisted for three consecutive goal
+  turns. Q10 remains a proposal; no user answer has adopted its new stored
+  representation. Independent implementation, review and trial preparation
+  are preserved; further meaningful execution depends on that answer.
+- Mark the autonomous goal blocked rather than repeatedly polling for approval
+  or adopting a new canonical schema without authorization. No tests, connector
+  probes or ingestion trials have run. The full objective remains unfinished.
+- Exact next action on approval: use Sol workers to implement the approved Q10
+  format, integrate and publish the complete retained MVP, verify the exact
+  remote revision, then perform the three authorized isolated ingestion audits.
