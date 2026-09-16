@@ -5276,3 +5276,20 @@ requirements, then read this log from top to bottom.
   hooks only; CI remains limited to main pushes, pull requests or manual dispatch.
   This restart branch has no open pull request. No checks were disabled and no
   testing will be triggered by this documentation publication.
+
+- Publication completed: commit
+  `1aa7af7bfa2cec07ac3c8c4d4fb7ccaa9fbb4440` was pushed and verified on the
+  remote `codex/restart-school-os` branch. Site source
+  `9df687217aca4395c1a3c833473a1e15f9488ec5` was pushed and packaged as static
+  HTML; version 12 deployment reports success. Ten published pages include
+  https://school-os-architecture-guide.jeremieg.chatgpt.site/data-architecture.html.
+  Existing owner-private access was preserved. All 173 local Site links/anchors
+  resolved and the static pages had zero privacy findings. No browser test or
+  deployed-page probe was performed.
+- The skill-advertised packaging path became unavailable after authoring; the
+  installed Sites static packaging helper successfully produced the same-source
+  archive. No application build or test was substituted.
+- Exact next action is now Q1/Q2 proposal review and the narrow Q4/Q6 decisions,
+  then dependent implementation after explicit approval. Publication of this
+  proposal/instruction subset is complete; the whole MVP and user-directed
+  testing handoff are still ahead. No schema/index approval is inferred.

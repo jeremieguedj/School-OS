@@ -33,9 +33,10 @@ a successfully completed partial daily brief. General knowledge questions retain
 the approved rule permitting useful answers with explicit coverage limits.
 
 The [updated decision review](docs/plans/restart/implementation/OPEN-QUESTIONS.md)
-records the user's answers. Exact next action: publish the concrete
+records the user's answers. The concrete
 [Q1/Q2 data/index proposal](docs/plans/restart/implementation/DATA-ARCHITECTURE-PROPOSAL.md)
-and updated instructions, then obtain approval of that proposal and the narrow
+and updated instructions are published. Exact next action: obtain approval of
+that proposal and the narrow
 Q4/Q6 discovery/reuse rules before dependent implementation. Do not re-request
 settled policies or revive deferred infrastructure.
 D3’s minimal Python/agent split and shared tool-semantic adapters are approved.

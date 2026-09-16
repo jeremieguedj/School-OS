@@ -19,8 +19,11 @@ separate these decisions from the unapproved Q1/Q2 fields/indexes and the narrow
 Q4 discovery and Q6 completed-email reuse proposals. No schema/index design is
 adopted merely by publishing it.
 
-Exact next action: publish the concrete proposal and updated decision record,
-then obtain explicit answers on those remaining choices before dependent
+Published proposal/instruction commit:
+`1aa7af7bfa2cec07ac3c8c4d4fb7ccaa9fbb4440`, verified on the remote restart branch.
+The existing private Site deployed version 12 successfully, including
+[the concrete data architecture](https://school-os-architecture-guide.jeremieg.chatgpt.site/data-architecture.html).
+Exact next action: obtain explicit Q1/Q2 and Q4/Q6 answers before dependent
 implementation. Continue independent approved work. The whole agreed MVP still
 needs implementation; tests remain reserved for the user after its verified
 publication. No functional validation or provider compatibility is claimed.
@@ -266,8 +269,8 @@ otherwise-supported automatic association. Q6 adopts a binary email result.
 The exact simpler discovery policy and reuse of a fully ingested email on a
 later appearance remain narrow proposals in the numbered review.
 
-Exact next action: publish the concrete Q1/Q2 data/index proposal and updated
-review, then resolve those proposals plus Q4/Q6 before dependent implementation.
+The concrete Q1/Q2 data/index proposal and updated review are published.
+Exact next action: resolve those proposals plus Q4/Q6 before dependent implementation.
 Continue independent approved work; preserve existing D1/D5 and deferred scope.
 Publish the whole agreed MVP code/continuity, verify the remote revision, then
 stop for the user's testing direction. This proposal publication is not that
