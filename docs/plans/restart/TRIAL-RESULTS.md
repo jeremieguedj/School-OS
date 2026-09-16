@@ -1,6 +1,47 @@
 # Restart trial results
 
-## Revised one-link trial — initial observations
+## Current outcome
+
+The starter is implemented, but these trials do not qualify it for routine use.
+All three setup attempts were launched. Only Sol reached ingestion; its saved
+output contains material semantic defects despite verified persistence. Spark
+failed setup, and ChatGPT Work failed before its interview. No product fixes,
+cleanup or replacement attempts were made. The size comparison is the final
+active evaluation; joint review follows its publication.
+
+| Route | Setup | Ingestion | Saved-data questions | Key limit or failure |
+| --- | --- | --- | --- | --- |
+| Fresh Sol | Core setup verified, with limits | Persisted; semantic audit failed | Six pass, one qualified pass | Seven semantic finding instances; broad retrieval; repository instructions were available before ZIP discovery |
+| Gemini Spark | Failed | Unexercised | Unexercised | Wrong bootstrap; reported test object independently found outside assigned folder |
+| ChatGPT Work, Sol Light | Launch failed before interview | Unexercised | Unexercised | UI network error; cause and durable task handle unknown |
+
+The source audit covers the fixed seven-day interval and 17 observed messages.
+It does not establish a year of trends, universal connector compatibility, or
+fresh attachment-pixel correctness. Task-app synchronization, completion-review
+writes, audio, outbound briefs, schedules and upgrades were not exercised.
+
+**Most important findings for joint review:**
+
+1. Saved completion flags are too strong for the observed result: one substantive
+   update was missing from Knowledge/Task content, despite all 17 observed emails
+   being marked fully ingested.
+2. Task extraction changes meaning in several cases: two unexpected canonical
+   tasks, lost conditional/recurring state, and per-individual work represented
+   by family-level completion. Good question answers sometimes compensate by
+   reading supporting prose; they do not repair those Task fields.
+3. The seven-question retrieval used 83 file reads and six folder listings,
+   including all 48 index shards. Efficient selective retrieval was not shown.
+4. Spark's preserved state includes a confirmed object outside the assigned
+   folder and a bootstrap that does not match the approved contract. Its own
+   further claims of missing procedures/conversion remain only partly audited.
+5. Work's first response failed before setup. An unexercised capability is not
+   a passing or failing ingestion result, and the recorded UI error does not
+   establish its underlying cause.
+
+Detailed source-bound audits and answers are private, outside Git. The sections
+below preserve the observations, interventions and strength of each conclusion.
+
+## Revised one-link trial — observations and audit
 
 Pinned starter: `ba6bcc3bec96dfc542fd83cb792318ac8e54ce56`. The user approved
 all three tests/uploads and explicitly requires findings review before any bug
@@ -37,8 +78,8 @@ is addressed. No implementation fix or defect workaround is permitted.
   resumed with ordinary interview answers and reached its assigned Drive root.
   It subsequently reported exact actual readback of the entry point and 37
   instance JSON files, plus public system inventory and folder checks. Independent
-  setup review is in progress. The separate ingestion request is now supplied;
-  no ingestion outcome is yet established.
+  setup review subsequently completed as described below. The same instance
+  then received the separate ingestion request; see its current results below.
 - **Independent Sol setup review:** actual content receipts support exact
   readback for the configured entry point and all 37 instance JSON pages. Page
   schema, references, UUIDs, bounds and configuration scope match the approved
@@ -63,8 +104,9 @@ is addressed. No implementation fix or defect workaround is permitted.
 - **Gemini Spark:** reported that external downloading was unavailable and asked
   for uploaded starter material before any setup interview. The user explicitly
   requested a Drive ZIP link. Root uploaded the unchanged release ZIP, verified
-  returned metadata and supplied its link to the same task. Continued setup is
-  under observation; the original GitHub-link path did not succeed unaided.
+  returned metadata and supplied its link to the same task. The original
+  GitHub-link path did not succeed unaided; subsequent setup failed as detailed
+  below.
   Spark then asked the ordinary household/source/location/tool interview. Root
   answered it under the user's explicit personal-data authority, including the
   standard starter brief template as configuration only. No ingestion requested.
@@ -117,19 +159,76 @@ is addressed. No implementation fix or defect workaround is permitted.
   search responses were lost on local receipt-sink failures; subsequent preserved
   reads followed a sink self-check. This evaluator intervention and incomplete
   initial receipt chain must remain in the audit.
-- **Not yet established:** complete email ingestion and saved knowledge/tasks
-  by the tested agents, query retrieval and page-size comparison.
+- **Still under evaluation:** page-size comparison and its independent review.
+  The saved semantic output has confirmed material defects as described below.
   Coordinator source reads and folder creation are distinct from those outcomes.
   No mailbox mutation or outbound effect was authorized or performed.
 
-Next: finish or record blockers for the three setup attempts, then send the
-separate common ingestion request after verified setup. Continue the independent
-output audit without fixes. The older attempt and oracle below remain separate
-historical evidence.
+### Sol ingestion, semantic audit and query stage
+
+Sol exhausted the fixed search with 17 observations, read all 17 messages and
+reported processing three required attachment groups. Saved output is 17 Email,
+three Attachment Group, 21 Knowledge, 10 Task, 17 Topic and one source-established
+Entity record. Actual readbacks establish core page persistence; the tester also
+reports final derived indexes, coverage and completed discovery state saved and
+read back, with 17/17 marked fully ingested. Folder counts remain nonexhaustive
+observations. Fresh attachment-pixel semantics remain independently unqualified.
+
+The independent audit compared the six core page readbacks with expectations
+bound to source evidence before seeing the generated output. All six byte
+comparisons match. All 17 saved source identities bind to the reference metadata,
+with original Date instants preserved through UTC normalization, and all saved
+Knowledge and Task source references resolve. These structural passes coexist
+with seven material semantic findings:
+
+1. One expected substantive meaning is absent across every saved Knowledge
+   statement/qualification and Task action/context, regardless of source links.
+   A coarse topical cue in Email metadata does not preserve that meaning.
+2. One canonical Task was created from a source whose frozen expectation explicitly
+   justified no action.
+3. Another canonical Task represents a conditional/guidance case classified as a
+   noncanonical candidate in the frozen source reference.
+4. One recurring/standing action became a finite Task.
+5. One conditional action became a finite Task; its condition survives only in
+   supporting Knowledge prose.
+6. One action requiring separate completion for applicable individuals became a
+   household-level completion unit.
+7. A second action has the same individual-to-household completion-unit collapse.
+
+These are distinct finding instances, not seven different bug classes. Private
+findings retain exact source/record/receipt references. The source oracle remains
+unchanged. An earlier evaluator summary saying “zero zero-action messages” was
+incorrectly broad; the frozen reference already had an explicitly justified
+`none` disposition. The audit corrects that summary rather than changing its
+expectations to match the tested output. Persisted fully-ingested flags therefore
+do not establish substantive completeness.
+
+The same tester answered all seven common source-derived questions after actual
+Drive retrieval. Independent receipt review confirms 89 non-error operations: six folder lists
+and 83 file reads comprising configuration, ten canonical pages, 12 directories,
+eight catalogues, four index roots and 48 shards. All 83 local query-cache files
+match decoded read receipts; they are not additional calls. This was a broad
+full-layout retrieval, with 14 canonical records cited across the answers. It
+does not demonstrate efficient selective lookup. Independent grading is six
+passes and one qualified pass, with zero incorrect main answers. All seven
+disclose a relevant scope, applicability, completion or evidence limitation.
+Three correct answers recover conditions or separate completion units from
+saved prose despite canonical Task defects, so answer accuracy does not validate
+Task storage. The qualified answer reaches the supported negative conclusion
+about corrections but cites its ancillary relationships imprecisely; broad
+retrieval evidence is not a substitute for a precise claim-level citation. No expected answer was supplied, no mailbox was reopened,
+and no record was repaired. The separate 64/128/256 KiB comparison is now running
+only against already-saved records in the assigned Sol instance's private,
+noncanonical evaluation area. Spark and Work cannot exercise those dependent
+stages because their initial attempts failed.
+
+Next: complete size assessment and independent review, publish the sanitized audit,
+and stop for joint review with the user. Do not fix, clean up or restart failed
+routes. The earlier guided attempt and its oracle below remain historical.
 
 ## Earlier guided attempt (historical)
 
-Status: historical guided attempt preserved; revised one-link setup not yet tested.
+Status: historical guided attempt preserved; current revised-flow results are above.
 The original guided attempt used the pinned operating implementation
 `138ca7954bdb3b7e9de065199fdb4903d6a924a3`. The original three-route objective
 is unfinished, and no functional product qualification is claimed.

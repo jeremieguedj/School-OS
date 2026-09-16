@@ -6034,3 +6034,73 @@ requirements, then read this log from top to bottom.
   or failed-effect retry occurred. Spark is a failed setup outcome with later
   ingestion/query/page-size stages unexercised. Sol ingestion continues; Work
   remains at its un-retried launch/network failure.
+
+## 2026-09-16 — Sol ingestion reported complete; saved-data queries begin
+
+- Sol reports final persistence/readback complete, including 46 non-coverage
+  indexes, coverage page/locator/catalogue/index and completed discovery window.
+  Saved outcome is 17 Email, three Attachment Group, 21 Knowledge, 10 Task,
+  17 Topic and one source-established Entity record, with 17/17 ingestion flags.
+  Folder counts remain nonexhaustive observations under the known connector limit.
+- It reports initial attachment download transport/DNS failures before response,
+  then successful authorized escalated reads. Temporary raw copies and bearer
+  configurations were removed after persistence; private audit receipts remain.
+  No mailbox mutation, external task write, outbound delivery or schedule.
+- The independent source evaluator is comparing actual saved core readbacks
+  against its frozen source-bound expectations. It has not been shown query
+  answers and must not adapt expectations to the tested output or repair data.
+- Root supplied the seven common questions only after reported ingestion
+  completion, using the private question-only artifact. Answers must come from
+  actual saved-Drive retrieval, with source/record support and coverage limits;
+  no mailbox reread, memory-based gap filling, record repair or external effect.
+- User asked about missing Spark interview text after refresh. Saved full views
+  show it present after cancel but absent from a later view before refresh, in
+  the same task/tab; no root Edit invocation is recorded. UI hiding versus
+  provider transcript replacement remains unknown. User chose to investigate;
+  root ended that inquiry and continued testing without resending answers.
+- Next: grade the seven answers against preserved source and saved-record
+  evidence, then perform the authorized size assessment where the actual data
+  makes it meaningful. Preserve all failed routes and do not implement fixes.
+
+## 2026-09-16 — Semantic defects confirmed; independent query grading starts
+
+- Independent source comparison verified six core saved pages and all 17 source
+  associations, but found seven material semantic instances: one substantive
+  omission, two unexpected canonical tasks, recurring and conditional actions
+  flattened into finite tasks, and two individual completion units collapsed
+  to household completion. Exact evidence stays private; no fix was made.
+- The omission was checked against all Knowledge/Task text, not merely source
+  links. The evaluator corrected its earlier overly broad zero-action summary;
+  the frozen reference already contained a justified no-action disposition and
+  was not changed to match the tested output.
+- Sol answered all seven questions from actual saved-Drive retrieval and
+  preserved 89 read receipts. The independent evaluator now grades answers,
+  source support, limitations and retrieval efficiency. It must not expose
+  expected answers to the tester or repair records.
+- Authorized the separate 64/128/256 KiB evaluation using only complete saved
+  records in a private noncanonical area of the same Sol root. No new instance,
+  mailbox read, synthetic padding, field splitting or contract-limit change.
+  Candidates not approached by real page sizes must remain unexercised.
+- Reconciled the active plan's top section with current outcomes; superseded
+  launch/approval holds remain historical. Next: finish the two audits, publish
+  and verify sanitized continuity, then stop for joint review without fixes.
+
+## 2026-09-16 — Seven query answers independently graded
+
+- Independent grading found six passes and one qualified pass, with no incorrect
+  main answers. All seven include a relevant limitation. Three answers recover
+  conditions or individual completion units from supporting prose despite the
+  weaker canonical Task fields. Good answers do not erase storage defects.
+- The qualified answer supports its main negative correction conclusion, with
+  an ancillary relationship citation gap recorded privately. Different source
+  aliases were assessed for their actual support, not rejected merely because
+  they differed from the reference inventory. The oracle remains frozen.
+- All 89 reported operations have non-error receipts: six folder lists and 83
+  file reads. The corresponding 83 cache files exactly match receipt payloads.
+  Retrieval swept the full layout, including all 48 index shards, for answers
+  citing 14 canonical records; selective retrieval efficiency is not established.
+- Size comparison's initial packing preserves all 105 ordered complete records
+  and ten family/routing boundaries. All candidates have the same ten-page
+  partition; the largest remains approximately 46.6 KB. Near-limit behavior is
+  unexercised. Continue the already-authorized exact readback/query comparison,
+  then review the evidence and publish results without repairs.

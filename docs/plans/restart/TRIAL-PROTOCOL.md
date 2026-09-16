@@ -6,10 +6,12 @@ and any runtime approval blocker. The user explicitly requires observation and
 reporting only: **do not repair bugs or work around product defects**. Earlier
 guided-trial activity is preserved in [results](TRIAL-RESULTS.md). The fresh Sol
 route reports persisted setup with exact readback and has received the separate
-ingestion request; an independent setup-evidence audit is underway. No ingestion
-outcome is established. Both browser opening prompts
-are submitted: Work returned a network error; Spark continues using a Drive ZIP
-link at the user's explicit direction. The independent source
+ingestion request. Core setup evidence passed with documented verification gaps.
+Sol has persisted ingestion with material semantic defects established by the
+independent audit. Independent grading of seven saved-data queries is complete: six passes and
+one qualified pass. The separate size comparison and its review are underway. Both browser opening prompts
+were submitted: Work returned a network error; Spark's user-directed Drive ZIP
+route failed setup and is preserved without repair. The independent source
 audit has prepared questions, with fresh attachment-pixel semantics unverified.
 The [active plan](PLAN.md#current-execution-authorization) controls authorization.
 This evaluator protocol is never supplied as the agent's opening prompt. Use the

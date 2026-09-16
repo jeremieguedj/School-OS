@@ -1,129 +1,97 @@
 # School-OS restart architecture and simulation
 
-Status: the user approved the corrected interpretation and operating choices on
-2026-09-14. The current [metadata recipe](identity/METADATA-RECIPE.md) defines
-logical-email reuse, normalization, parent-bound attachment lookup and durable
-search-window recovery. Retained implementation is authored and statically reviewed; the
-user rejected linked overflow pieces and the delegated assessment retains one
-64 KiB page maximum. The earlier guided setup attempt blocked; the revised
-one-link setup flow is published and ready for user-directed testing; it remains
-untested. Trial
-ingestion and retrieval remain unexercised. The [artifact guide](README.md) separates current authority from frozen
-experiments and historical proposals.
+Status: the approved restart implementation and fresh starter are published. The
+user subsequently authorized the three isolated setup/ingestion trials and
+requires reporting only, with no fixes before joint review. The current trial
+has one persisted ingestion with material semantic defects, one failed setup,
+and one failed browser launch. No broad product qualification is claimed. See
+[trial results](TRIAL-RESULTS.md) for evidence and limitations; earlier checkpoints
+below are historical. The [artifact guide](README.md) distinguishes the active
+contract from frozen studies and superseded proposals.
 
 ## Current testing authority — report findings, do not repair
 
-**Latest direct start confirmation:** the user said, “The goal is unblocked.
-Start all three tests and uploads now.” The earlier runtime authorization blocker
-is cleared. A new Gemini Spark page opened successfully; a bounded Sol browser
-operator is launching both browser tasks from the exact minimal prompt and will
-supply only requested interview answers. A separate Sol evaluator is performing
-an independent read-only source audit for the fixed interval below. These workers
-must preserve evidence and stop affected work on defects, without fixes.
+The user explicitly said, “The goal is unblocked. Start all three tests and
+uploads now,” and subsequently authorized needed personal-data uploads to Drive
+and the named agents. The user also requires joint review of all findings before
+any bug is addressed. Do not implement fixes, defect workarounds, cleanup,
+replacement trials or repair/retest loops. Product source and the starter stay
+pinned to `ba6bcc3bec96dfc542fd83cb792318ac8e54ce56`.
 
-Three separate new Drive destination folders have been created under the
-verified tests parent and individually verified by metadata readback. Private
-route-specific interview replies include those destinations and isolation limits.
-One URL-form readback failed with INVALID_ARGUMENT; verification through the
-same folder's returned ID succeeded. No folder creation was retried. Record this
-coordinator connector observation without changing product code or contracts.
+All three routes received the same initial ZIP link and “setup my schoolOS.”
+Ordinary interview answers supplied separate new Drive destinations under the
+verified tests parent. The common received/arrival interval is
+`[2026-09-09T17:53:48Z, 2026-09-16T17:53:48Z)`, start inclusive and end exclusive.
+Source access is read-only; external task writes, outbound email/audio, schedules
+and changes to earlier instances are excluded. Evidence stays private; only
+sanitized findings and continuity records may be published.
 
-The same initial Sol trial resumed after the source evaluator finished. Its
-ordinary interview answers were supplied. It reports verified setup: exact
-content readback for the entry point and all 37 instance JSON files, plus public
-system inventory and folder checks. An independent evidence review is underway;
-write/readback equality is distinct from full semantic correctness. Independent
-review confirms the configured entry point and 37 JSON pages, schema/references,
-scope and bounds (maximum setup page 5,795 bytes). It flags missing exhaustive
-folder-list evidence and absent content readback for 29 public system files;
-presence/size checks do not establish complete public-file contents or empty
-extensions. Preserve these limits without repair. The separate
-common ingestion request has now been supplied to this same instance. Ingestion
-success is not yet established. Preserve its repository-instruction exposure;
-no replacement trial was spawned.
+### Current route outcomes
 
-The browser operator could not bind the coordinator-owned empty Spark tab; two
-native-app selection calls stalled and were interrupted without a submitted
-prompt. Root took over UI and submitted both exact minimal opening requests.
-ChatGPT Work's UI identified GPT-5.6 Sol Light. Its first response was a network
-error before the interview; a durable server task handle is unconfirmed and
-Retry remains untouched under the no-repair boundary.
-Spark reported an external-download limitation. The user then specifically
-directed use of a Google Drive ZIP link for Spark. Root uploaded the unchanged
-98,205-byte starter under the verified tests parent, verified metadata, and sent
-its returned link to the same Spark task. This is an explicit distribution
-intervention, not a clean first-link success or an unreported replacement trial.
-Spark then reached its ordinary setup interview and claimed the ZIP had been
-unpacked as a fresh unconfigured starter, with no earlier Drive writes. Root
-supplied the authorized destination, household/source/tool choices and standard
-starter brief-template preference. Spark is setting up the instance; ingestion
-has not been requested.
+- **Fresh Sol:** core setup and subsequent ingestion persisted with actual
+  readbacks. Saved output includes 17 Email, three Attachment Group, 21 Knowledge,
+  10 Task, 17 Topic and one source-established Entity record. Coverage marks
+  17/17 observed emails fully ingested. This is a persisted state, not proof of
+  semantic completeness. Independent source comparison found one substantive
+  knowledge/task-content omission, two tasks outside the frozen canonical-task
+  inventory, one recurring-to-finite flattening, one conditional-to-finite
+  flattening, and two household-level completion-unit collapses. Seven queries
+  have been independently graded: six pass and one qualified pass, with no
+  incorrect main answer. Three answers recover meaning from prose despite the
+  weaker canonical Tasks. The separate page-size comparison remains underway. Do not repair the instance or coach the
+  tester with evaluator expectations.
+- **Gemini Spark:** failed setup after the user-directed change to a Drive ZIP
+  link in the same task. Root stopped the response on uncertain-effect claims
+  and requested a read-only report. Independent exact-handle metadata confirms
+  a reported test JSON currently exists directly under My Drive/root, outside
+  the assigned instance. Actor and deletion history remain self-reported.
+  Actual entrypoint readback confirms 18 logical roles and one generic catalogue
+  root, failing the approved 24-role/eight-catalogue bootstrap. Other reported
+  missing procedures, file counts and conversion problems are not independently
+  qualified by that bounded check. Ingestion, questions and page-size comparison
+  remain unexercised. Preserve the state; do not clean up or resume writes.
+- **ChatGPT Work:** the UI selected GPT-5.6 Sol Light; the first response was a
+  network error before interview. No durable server task handle is established,
+  and the cause is unknown. Retry was not clicked. Setup and all dependent stages
+  remain unexercised.
 
-**Current Spark hold:** while still running, Spark claimed setup writes and
-completion without visible readback, and its progress mentioned retries,
-conversion/decoding issues and deletion of a test file with no observed target
-or outcome. Root stopped that response and requested only a read-only account
-of existing saved state and uncertain effects. No repair, cleanup, replacement
-setup or ingestion is authorized by this intervention. Preserve the distinction
-between progress claims and verified provider effects. Sol ingestion continues.
-Spark's final read-only report is now received. Independent exact-handle metadata
-checks confirm the reported test JSON exists under My Drive/root, outside its
-assigned instance. Actor/deletion history remains self-reported. A direct fetch
-confirms the saved Google Doc entrypoint has 18 roles and one generic catalogue
-root, failing the approved 24-role/eight-catalogue bootstrap. Spark setup is
-failed and ingestion remains unexercised; preserve its state for joint review.
-No repair, deletion or further Spark operation is authorized by these findings.
+### Evidence and evaluation limits
 
-Approval review initially rejected Sol's configured bootstrap upload for needing
-specific personal-data authority. The user subsequently authorized personal-data
-uploads to Drive and the agents needed for this goal. This clears that consent
-hold for the assigned instances and interviews; no duplicate effect or product
-repair is thereby authorized. Continue the same Sol attempt after establishing
-that the rejected request was not dispatched.
+The independent source reference exhausted two domain searches and read 17
+observed messages. Distinct permitted-metadata signatures support the reported
+associations; provider-entry count is not logical-email ground truth. Three JPEG
+fetches succeeded, but fresh pixels were not model-visible. Earlier visual
+material is supplementary only; fresh image equality and semantics remain
+unqualified. None of the seven questions depends on those images. Two initial
+search receipts were lost on local sink failures before later preserved reads;
+retain that evaluator limitation. The frozen reference includes an explicitly
+justified zero-action source; an earlier broad “zero zero-action messages”
+summary was corrected without changing the source expectations.
 
-The independent source audit observed 17 provider entries, read all 17 message
-bodies and exhausted both domain searches for the fixed interval. It prepared
-seven source-supported questions independently of tested-agent output. Three
-JPEG fetches succeeded, but fresh pixels were not model-visible; prior visual
-evidence is supplementary only, with fresh pixel equality unverified. Two early
-search responses were lost on local receipt-sink failures before subsequent
-preserved reads. Keep both evaluator limitations in the report; this is not full
-fresh attachment qualification or a flawless receipt chain.
+Sol read repository instructions before the starter, so this trial cannot
+qualify discovery from the bundle alone. Its configured entrypoint and 37 setup
+JSON pages passed actual readback and contract checks; 29 public system files
+have presence/size evidence only. Folder-list counts lack exhaustion evidence.
+Observed setup activity was 135 attempts: 13 successful folder creates, 68
+uploads (67 successes and one predispatch review rejection), 38 exact content
+readbacks, 15 listings and one invalid metadata call. These are setup-only
+figures, not whole-trial totals. The seven-query batch preserved 89 non-error Drive receipts: six folder lists
+and 83 file reads. Retrieval scanned the full saved layout rather than selecting
+only the pages needed; 14 canonical records were cited in the answers.
 
-The historical authorization-blocker paragraphs below describe the preceding
-checkpoint, not a current reason to ask the user to approve testing again.
+The browser worker's tab-binding failure and stalled native-app selections
+occurred before prompts; root took over UI. The user-directed Drive ZIP upload
+used the same 98,205-byte starter with matching metadata, not a replacement
+trial. The earlier personal-data approval rejection was resolved explicitly.
+Spark transcript visibility changed in saved UI views without a captured root
+Edit invocation; the cause remains unknown. The user chose to investigate that
+UI issue, so the coordinator ended the inquiry without resending answers.
 
-Following the starter readiness handoff, the user explicitly approved testing
-and uploads for all three agents. The user then added: report findings and review
-all results together; **do not implement or address bugs independently**. The
-goal resumed with active status on 2026-09-16. The pinned starter remains
-`ba6bcc3bec96dfc542fd83cb792318ac8e54ce56`; do not edit or republish it during
-these trials. Findings, private evidence and continuity records may be written;
-product fixes, defect workarounds and repair/retest loops are not authorized.
-
-The fresh context-free Sol route has received only the published ZIP link and
-“setup my schoolOS.” It reports reading the starter and has asked its setup
-interview questions. It is held before Drive writes pending those answers. This
-is a discovery/interview observation, not a successful persisted setup. Static
-review then found that this route read repository setup instructions before the
-ZIP; it cannot establish unassisted bundle-only discovery. Preserve the attempt
-and report that environment limitation without a fix or silent restart.
-
-Browser approval review accepted read-only inventory after the active goal was
-verified, but rejected opening a fresh Gemini Spark tab because it still treated
-the earlier wait-for-unblock instruction as unsatisfied. Root requested a direct
-clarification instead of bypassing the rejection. No Gemini or ChatGPT Work
-trial was submitted. This authorization issue is separate from product findings.
-Independent private interview/audit preparation may continue without live calls.
-
-Use three new isolated folders and the same starter/interval once launched;
-keep earlier failed instances and unknown effects intact. The current proposed
-common received/arrival interval is `[2026-09-09T17:53:48Z, 2026-09-16T17:53:48Z)`.
-It differs from the older source oracle, so that oracle cannot silently qualify
-the new interval. No source or task-tool mutation, outbound delivery or schedule
-is included. Current next action: complete or record blockers for the three setup
-attempts, then issue the separate common ingestion request only after verified
-setup. Observe ingestion and retrieval, and report results without repairs.
+**Exact next action:** finish the authorized 64/128/256 KiB assessment and
+independent review using only already-saved records. Publish sanitized
+results and continuity, verify the remote commit, and hand all findings to the
+user for joint review. Preserve every failed route. No fixes or retests are
+implicitly authorized by completion of this audit.
 
 <a id="current-checkpoint--one-link-setup-implementation-and-testing-hold"></a>
 
