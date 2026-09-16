@@ -1,9 +1,12 @@
 # Authorized three-agent ingestion trials
 
-Status: the first revised trial attempts and audits are concluded. The user has
-now authorized second Spark and Work attempts under the active plan's isolated-
-controller rules, including controlled transient retries. The following review
-stop records the first attempts; it does not override this newer authorization. The
+Status: the first revised trials and the later authorized second Spark/Work
+attempts are concluded. The second attempts used isolated Sol controllers and
+controlled transient retries. Spark failed setup; Work passed setup but saved
+partial ingestion with material semantic defects. Work's seven questions graded
+five pass, one qualified and one fail. The active boundary is joint findings
+review before fixes, cleanup, new attempts or broader tests. The following
+paragraph preserves the earlier first-attempt outcome. The
 user requires joint review before any bug is addressed: **do not repair bugs,
 clean up failed artifacts, retry the browser routes or start additional tests**.
 The frozen starter produced one persisted Sol ingestion with material semantic

@@ -3,8 +3,11 @@
 Updated 2026-09-16. The latest approved addition is a clean starter ZIP and the
 one-link “setup my schoolOS” flow, with a discoverable dedicated setup guide and
 parent interview. See [starter distribution](../../setup-bundle.md) and the
-[revised trial handoff](TRIAL-PROMPTS.md). Publish and report readiness; hold new
-testing for the user's direction. Earlier guided attempts remain historical.
+[revised trial handoff](TRIAL-PROMPTS.md). The starter is published, the user
+authorized the named live trials and later isolated browser attempts, and their
+[results](TRIAL-RESULTS.md) include material failures. The authorized attempts and
+audits are concluded. Stop for joint review before fixes or new trials. Earlier guided
+attempts remain historical; the active plan controls current authority.
 
 Start here when resuming the restart. The retained MVP
 implementation is authored but not yet qualified. Earlier experiments and the
@@ -25,10 +28,12 @@ long-term scope; these explicit MVP exceptions take precedence for delivery.
 
 [Fictional scenarios and proposed tests](implementation/TESTING-PROPOSAL.md) and
 the [isolated development model](identity/revised-model/README.md) are authored
-preparation only. Frozen studies stay unchanged. No tests or models were run.
+preparation only. Frozen studies stay unchanged. These prepared suites and model
+replays were not run; the separately authorized live trials are recorded in the
+results rather than being inferred from this preparation.
 The [minimal helpers](../../../helpers/README.md) are authored with prepared
-checks, not executed. This subset/documentation checkpoint is not the whole-code
-handoff or start of testing.
+checks whose suite was not executed. Authorship or indirect use in an agent trial
+does not establish helper qualification.
 
 For a guided review, open the [HTML architecture decision guide](implementation/architecture-guide.html).
 Its [single numbered section](implementation/architecture-guide.html#open-questions)
@@ -45,7 +50,8 @@ decision, evidence limits and matched later evaluation.
 The [new operating instructions](../../../operations/README.md) cover the
 approved setup interview, reusable tool-semantic adapters and parent confirmation
 of detected completion. Agent-specific connectors own API/access mechanics;
-these instructions and their review cases are authored, not executed.
+the limited trials exercise selected setup, ingestion and query paths. Their
+results do not qualify the remaining task-app, brief, audio or extension flows.
 
 The [architecture in practice page](implementation/architecture-in-practice.html)
 shows the layers, Drive structure, processing coverage and seven step-by-step
@@ -61,10 +67,12 @@ The [product principles](../../product-principles.md#decision-authority) are the
 source of truth and grounding for uncovered decisions. Every new or changed
 architecture decision requires explicit user approval before adoption or
 implementation, except where the user has explicitly delegated a recorded choice.
-After publishing and verifying the starter, report readiness and wait. The three
-planned isolated seven-day ingestion/audit trials and matched 64/128/256 KiB
-page-size evaluation begin only on subsequent user direction. No test or provider
-effect starts automatically. The [coordinator handoff](ASTRA-HANDOFF.md) has a historical
+The three isolated seven-day attempts and matched 64/128/256 KiB evaluation ran
+under explicit user authority; only the first Sol route reached that size
+comparison, and larger-capacity behavior was not exercised. Later Spark/Work
+attempts also require their own qualified outcomes. No new test or provider effect
+starts automatically; retain the current 64 KiB maximum and wait for joint review
+before any fix or further trial. The [coordinator handoff](ASTRA-HANDOFF.md) has a historical
 filename; the active plan controls current authority.
 
 The assignment covers the [whole project](PLAN.md#whole-project-implementation-scope):

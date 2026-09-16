@@ -6378,3 +6378,102 @@ requirements, then read this log from top to bottom.
   expectations. It receives no browser transcript, other route context or revised
   oracle. Reads are confined to the assigned instance; no Gmail read or mutation
   is authorized. Questions and this audit can proceed as independent read-only work.
+
+## 2026-09-16 — Work answer capture encounters observer timeouts
+
+- The unchanged seven questions plus the authorized downloadable-report sentence
+  were submitted once; the saved private prompt preserves the exact original
+  prefix. Last supported activity says Drive-only retrieval finished and report
+  artifact creation was underway, retaining the 16/17 ingestion limit.
+- Two later read-only observations returned CDP transport timeouts before any UI
+  state. No final answer or downloadable artifact was observed, and no download
+  or repeated question prompt was attempted. These observation failures do not
+  establish a provider-task failure or success.
+- Root authorized one bounded observer recovery: preserve exact own handles,
+  reset only that controller's CUA session, reattach the same owned tab and try
+  a compact documented DOM read. No page reload, provider restart, resubmission,
+  global browser controls or other-tab operation. If that also fails, stop browser
+  retries and report question-result availability as unknown. Independent saved
+  Drive audit continues within its existing read-only scope.
+
+## 2026-09-16 — Final answer artifact recovered locally; index audit corrected
+
+- Same-tab observer recovery returned the final seven-answer response and a named
+  Markdown report. Several documented capture attempts did not return the file;
+  a final download-event wait with a Library Download click was interrupted after
+  exceeding seven minutes. No file path or bytes returned from that operation,
+  and its partial local effect could not be inferred from the timeout alone.
+- Root ended all browser retries, then authorized only an exact-filename local
+  check. The expected report existed as an 11,819-byte regular file with creation
+  and modification timestamps during the question stage. Its unchanged bytes
+  were copied privately and compared exactly, without modifying the original or
+  inventorying unrelated downloads. The absent browser receipt limits attribution
+  to the interrupted call. The independent evaluator will verify question and
+  citation correspondence before grading this candidate artifact.
+- The saved-state evaluator corrected its first interpretation of derived roots:
+  Entity/Topic routes use nested bucket `page_ids`. After the coordinator's
+  contract check, it resolved all 24 referenced index pages. All 55 inspected shard
+  references resolve to canonical records with current page hints. The earlier
+  statement that there were no linked shards is withdrawn; this was an evaluator
+  interpretation error, not a product defect or instance repair.
+- Saved-state audit stands at 61 provider reads attempted and 59 complete receipts
+  preserved; two initial entry reads were lost to the local evidence sink. No
+  further broad reads are planned. Exact next action: finish source-semantic and
+  seven-answer grading, publish the qualified findings and stop for joint review.
+
+## 2026-09-16 — Work ingestion audit complete; question grading remains
+
+- Actual saved state confirms 16 fully ingested emails and one not-ingested
+  source with no linked Knowledge and one missing frozen substantive meaning.
+  The provider explicitly kept the run incomplete. Six additional source-bound
+  Task findings cover two unsupported obligations, one recurring-to-finite case
+  with narrowed completion scope, one conditional-to-finite case, and two
+  individual-completion cases collapsed to household state. No fixes were made.
+- All 17 source metadata mappings and checked canonical/source references pass;
+  94 locator entries, four nonempty catalogue entries, eight index-coverage
+  entries, 24 referenced index pages and 55 shard references resolve with current
+  checked identities/revisions. These structural passes do not qualify meaning.
+- Largest saved data page: 34,714 bytes; largest compact record: 2,184 bytes.
+  No 64 KiB overflow and no extra page-size trial. Audit cost/receipt counts and
+  the corrected nested-index interpretation are retained above and in the report.
+- The exact candidate answer file is now with the independent evaluator for all
+  seven grades and citation/provenance checks. It requires no further provider
+  reads. Exact next action: integrate those results, publish final continuity and
+  stop for joint review before any product fix or new trial.
+
+## 2026-09-16 — Second browser trials and audits concluded; review stop
+
+- Both second attempts used fresh Sol controllers with separate contexts, tabs,
+  packets and new Drive roots. Root serialized browser actions; no controller
+  received the other's transcript or the evaluator's expected answers. The
+  signed-in Chrome profile was shared, so account/profile isolation is not claimed.
+- Spark failed its required canonical catalogue-route audit; no ingestion was
+  requested into that failed setup. Work passed setup and saved 16 fully ingested
+  emails plus one explicitly not-ingested source. The whole Work run is incomplete.
+- Work's final saved-data audit has eight material finding instances: the explicit
+  incomplete-source gap, six Task-meaning defects and one omitted response
+  deadline. The last finding was exposed by Q2 and confirmed locally against the
+  original source body and frozen receipt hash; it is not inferred from message
+  timestamps. No evidence shows a retrieval miss from correctly saved deadline
+  data, because the linked canonical records omit it.
+- Seven answers graded five pass, one qualified pass and one fail. All 21 file
+  citations resolve to the reviewed snapshot; Q7's record-level source support is
+  weaker, and Q2 contradicts the source deadline. Query operation counts, tokens,
+  costs and efficiency remain unknown; report links/self-description are not a
+  measured trace. The recovered candidate file's browser-receipt provenance limit
+  remains explicit.
+- Final ingestion-audit I/O is 62 attempted Drive reads with 60 complete receipts;
+  two early reads were lost to the evaluator's local sink. Current configuration
+  root references were independently checked as the last read. All 24 referenced
+  index pages resolve after correcting the evaluator's nested-root interpretation.
+  The known frozen-source/JPEG and browser-observation limits are retained.
+- Updated the active plan, results, protocol, artifact guide, coordinator handoff
+  and whole-project coverage map so implementation and observed qualification stay
+  separate. Runtime/starter files, failed instances and frozen studies are unchanged.
+  Task-app writes, completion review, email/audio delivery, schedules, upgrades,
+  broad suites and larger/year-scale behavior remain unexercised.
+- Final publication uses only diff/privacy/document-link/Git hygiene and remote
+  verification. Exact next action after publication: review all findings with the
+  user. Do not repair bugs, clean up trial artifacts, or launch new tests without
+  subsequent direction. The authorized bounded evaluation is complete; the
+  School-OS product is not qualified for routine use.

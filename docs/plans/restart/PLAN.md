@@ -6,9 +6,12 @@ requires reporting only, with no fixes before joint review. The first trial
 had one persisted ingestion with material semantic defects, one failed setup,
 and one failed browser launch. Two subsequent browser attempts are now under
 review: Spark failed its saved-setup audit; Work passed the required setup gate
-with documented limits and reports partial ingestion, with one of 17 emails
-remaining incomplete. Independent saved-state audit and the common read-only
-questions are in progress. No broad product qualification is claimed. See
+with documented limits and saved partial ingestion, with one of 17 emails
+remaining incomplete. The independent audit found six task-semantic defects and
+one omitted response deadline beyond that explicit input gap. Seven answers
+graded five pass, one qualified and one fail. The authorized attempts/audits are
+concluded; stop for joint review before fixes or further trials. No broad product
+qualification is claimed. See
 [trial results](TRIAL-RESULTS.md) for evidence and limitations; earlier checkpoints
 below are historical. The [artifact guide](README.md) distinguishes the active
 contract from frozen studies and superseded proposals.
@@ -50,10 +53,12 @@ are private. Both providers completed their interviews and claimed setup success
 Spark's saved catalogue does not expose the required canonical routes; preserve
 that failed instance and do not ingest into it. Work's required saved-state audit
 passed with documented evidence limits and its separate ingestion request was
-submitted once. Work reports the run incomplete and its read-only questions are
-active. Exact next action: finish the independent saved-meaning audit, capture
-and grade exact question results, publish findings and stop for joint review.
-Preserve and report any blocker. Neither route may
+submitted once. Work's run remains incomplete; the saved-data and seven-answer
+audits are now concluded. The report artifact was recovered by an exact-filename
+local check after an interrupted browser download; provenance and observer limits
+remain explicit. Exact next action: review the published findings with the user.
+Do not repair, clean up or start another trial without subsequent direction.
+Neither route may
 receive product fixes or coaching from the evaluator's expected answers.
 
 ## Previous completed trial authority and outcomes

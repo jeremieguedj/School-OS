@@ -1,6 +1,6 @@
 # Restart trial results
 
-## Second browser attempts — in progress
+## Second browser attempts — completed; review before fixes
 
 The user authorized fresh Spark and ChatGPT Work attempts after reviewing the
 first findings. Two new context-free Sol controllers have separate assigned
@@ -15,7 +15,11 @@ setup success. Work visibly uses GPT-5.6 Sol Light.
 | Route | Independent setup audit | Next stage |
 | --- | --- | --- |
 | Gemini Spark, second attempt | Failed: required canonical catalogue routes are missing | Ingestion blocked; preserve instance for review |
-| ChatGPT Work, second attempt | Pass with documented limits | Partial ingestion reported; saved-state audit and read-only questions in progress |
+| ChatGPT Work, second attempt | Pass with documented limits | 16/17 emails ingested; six task-semantic defects and one omitted deadline; questions: five pass, one qualified, one fail |
+
+Both authorized attempts and their bounded audits are concluded. Preserve the
+instances and evidence. No product repair, cleanup, new attempt or broader test
+is authorized before joint findings review with the user.
 
 **Spark's confirmed defect:** its sole page catalogue uses the invalid
 canonical-family route `catalogue_root`, with no reachable Email, Attachment
@@ -47,7 +51,7 @@ preserved. No connector-reported error occurred. These are evaluator audit costs
 not measured provider setup costs. Root accepted the required setup gate and
 authorized the separate, unchanged seven-day ingestion request.
 
-**Work's ingestion report, pending independent audit:** discovery completed for
+**Work's ingestion report:** discovery completed for
 17 observed emails; 16 are marked fully ingested and one remains not ingested.
 It reports 17 Knowledge records, 10 internal Tasks and three processed image
 attachments, with canonical and derived pages saved and read back. It explicitly
@@ -61,14 +65,75 @@ did not cite a named School-OS attachment rule. Preserve that scope interpretati
 for review without claiming a connector failure or a proven product defect.
 No corrective prompt or expanded source request was sent.
 
-The independent evaluator froze its expectation map before seeing Work output
-and is now reading the saved instance. The same seven read-only questions were
+The independent evaluator froze its expectation map before seeing Work output.
+Actual saved data confirms 16 fully ingested emails and one not-ingested email;
+the latter has no linked Knowledge and one frozen substantive meaning is absent.
+This is an explicit incomplete-input outcome, unlike a false whole-run completion
+claim. Six further source-bound Task defects were found:
+
+1. A canonical Task comes from a source explicitly classified as no action.
+2. A second canonical Task turns noncanonical guidance into an obligation.
+3. A recurring/standing action is saved as finite and its ongoing family scope is
+   narrowed to a child completion subject.
+4. A conditional action is saved as finite.
+5. Two distinct individual-completion cases are represented at household level
+   (two finding instances).
+
+The question audit exposed one additional ingestion omission: an explicit
+response deadline in the original message body is absent from the linked saved
+Knowledge and Task. Their event dates were preserved, but event timing does not
+replace a response deadline. A local source-receipt check confirmed this is not
+an inference from sending/received metadata. The report therefore records eight
+material ingestion finding instances: one explicitly incomplete source outcome,
+the six Task defects above, and this omitted deadline. The deadline finding was
+added transparently after the initial seven-finding ingestion review.
+
+These findings are tied to the frozen source expectations and actual saved
+records; a Task-count difference alone is not the basis for the conclusion.
+Structural checks pass: all 17 source metadata mappings, canonical/source
+references, 94 locator entries, four nonempty catalogue entries, eight
+index-coverage entries, 24 referenced index pages and 55 shard references resolve
+with the checked identities/revisions. The current configuration's seven
+entity/topic root references match the current directories/indexes and entrypoint.
+This does not establish semantic accuracy.
+The largest current encoded data page is 34,714 bytes and the largest compact
+record is 2,184 bytes; no 64 KiB overflow occurred. No new size comparison ran.
+
+The ingestion audit attempted 62 Drive reads and preserved 60 complete receipts;
+two initial entry reads were lost to a local receipt-sink error and repeated
+read-only. Preserved receipts have no connector-reported error. The evaluator
+initially overlooked nested index-root bucket references; a coordinator contract
+review corrected the traversal, after which all 24 referenced pages were fetched.
+That withdrawn intermediate statement was an evaluator error, not a product
+defect. Listing responses still do not prove exhaustive folder inventory.
+
+The same seven read-only questions were
 submitted once. One explicit reporting adjustment appends a request for a
 downloadable copy of the same answers/citations/limitations/retrieval summary,
 because ordinary Chrome chat text lacks supported durable export in this session.
 Question content and expected answers are unchanged; Drive/source mutations and
 repairs remain forbidden. Report-generation overhead is separate from retrieval.
-No successful semantic or question outcome is yet established.
+Browser observations then timed out. A same-tab recovery observed the final
+answers and named report, but a download wait/click was interrupted without a
+returned file path. A bounded exact-filename local check found an 11,819-byte
+report with question-stage timestamps; unchanged bytes were preserved privately.
+Its absent browser download receipt limits provenance.
+
+**Seven-answer result: five pass, one qualified pass, one fail.** Q1 and Q3–Q6
+pass. Q2 contradicts a source-supported response deadline by calling it absent
+or unknown. It exposes the canonical omission above; it does not establish a
+retrieval miss from correctly saved data. Q7 gives a supported negative
+correction/replacement conclusion with the incomplete-source limit, but its
+page-level citations do not directly cover every expected source record.
+All 21 answer citations match files in the final Work snapshot, with no checked
+family mismatch or invalid mentioned canonical ID. Resolving a file citation
+does not establish every answer's accuracy.
+
+The report contains six retrieval-evidence links and three links per answer,
+but those links and the agent's read/stop narrative are not a measured operation
+trace. Query read count, model-visible bytes, tokens and efficiency are unknown.
+The observer timeouts, local candidate provenance, two evaluator receipt losses
+and fresh-JPEG limits remain explicit; none is silently converted into a pass.
 
 **Controller evidence limitation:** one Work read-only observation timed out
 and reset the controller runtime. A controlled reattachment retry preserved the
