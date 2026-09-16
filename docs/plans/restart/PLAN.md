@@ -33,10 +33,23 @@ ordinary interview answers were supplied and it reached Drive-root qualification
 no persisted setup or ingestion success is yet established. Preserve its already
 reported repository-instruction exposure; no replacement trial was spawned.
 
-The browser operator initially could not bind the coordinator-owned empty Spark
-tab, then a native-app selection call stalled and was interrupted. It confirms
-that no provider prompt was submitted. It is opening its own fresh browser tabs;
-record this evaluator-control delay separately from School-OS product behavior.
+The browser operator could not bind the coordinator-owned empty Spark tab; two
+native-app selection calls stalled and were interrupted without a submitted
+prompt. Root took over UI and submitted both exact minimal opening requests.
+ChatGPT Work's UI identified GPT-5.6 Sol Light. Its first response was a network
+error before the interview; Retry remains untouched under the no-repair boundary.
+Spark reported an external-download limitation. The user then specifically
+directed use of a Google Drive ZIP link for Spark. Root uploaded the unchanged
+98,205-byte starter under the verified tests parent, verified metadata, and sent
+its returned link to the same Spark task. This is an explicit distribution
+intervention, not a clean first-link success or an unreported replacement trial.
+
+Approval review initially rejected Sol's configured bootstrap upload for needing
+specific personal-data authority. The user subsequently authorized personal-data
+uploads to Drive and the agents needed for this goal. This clears that consent
+hold for the assigned instances and interviews; no duplicate effect or product
+repair is thereby authorized. Continue the same Sol attempt after establishing
+that the rejected request was not dispatched.
 
 The independent source audit observed 17 provider entries, read all 17 message
 bodies and exhausted both domain searches for the fixed interval. It prepared

@@ -36,12 +36,24 @@ is addressed. No implementation fix or defect workaround is permitted.
   mode 0700 and file modes 0600. After an initial capacity error, the same worker
   resumed with ordinary interview answers and reached its assigned Drive root.
   No canonical instance or saved setup success is established yet.
-- **Gemini Spark / ChatGPT Work:** the user's direct start statement cleared the
-  earlier authorization issue. The browser operator confirms neither prompt was
-  submitted during its initial failed attempt to bind a coordinator-owned tab.
-  A subsequent native-app selection stalled and was interrupted. The operator
-  is now opening its own fresh tabs; no existing provider task is being replaced.
-  This is evaluator-control friction, not evidence of School-OS failure.
+- **Browser launch:** the user's direct start statement cleared the earlier
+  authorization issue. No prompt was submitted during the operator's tab-binding
+  error or two stalled native-app attachments. Root took over and submitted the
+  minimal opening requests in both browser products. This control delay is
+  evaluator friction, not evidence of School-OS failure.
+- **Gemini Spark:** reported that external downloading was unavailable and asked
+  for uploaded starter material before any setup interview. The user explicitly
+  requested a Drive ZIP link. Root uploaded the unchanged release ZIP, verified
+  returned metadata and supplied its link to the same task. Continued setup is
+  under observation; the original GitHub-link path did not succeed unaided.
+- **ChatGPT Work:** selected UI model was GPT-5.6 Sol Light. The recorded first
+  response was a network error, before interview or setup completion. No Retry
+  was submitted. The available UI does not establish its underlying cause.
+- **Configured upload authority:** review rejected Sol's initial configured
+  bootstrap upload for insufficiently specific personal-data approval. The user
+  then explicitly authorized uploading needed personal data to Drive and the
+  agents for this goal. The same setup may continue after checking dispatch/effect
+  state; this permission does not authorize duplicate writes or product fixes.
 - **New isolated destinations:** three new folders were created under the
   verified tests parent and individually verified by metadata readback. A
   URL-form metadata request failed with INVALID_ARGUMENT; the same folder's

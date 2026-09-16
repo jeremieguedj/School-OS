@@ -6,8 +6,9 @@ and any runtime approval blocker. The user explicitly requires observation and
 reporting only: **do not repair bugs or work around product defects**. Earlier
 guided-trial activity is preserved in [results](TRIAL-RESULTS.md). The fresh Sol
 route has answered its interview and reached Drive-root qualification; no revised
-persisted setup or ingestion outcome is established. The operator is launching
-the browser routes; neither submission is established yet. The independent source
+persisted setup or ingestion outcome is established. Both browser opening prompts
+are submitted: Work returned a network error; Spark continues using a Drive ZIP
+link at the user's explicit direction. The independent source
 audit has prepared questions, with fresh attachment-pixel semantics unverified.
 The [active plan](PLAN.md#current-execution-authorization) controls authorization.
 This evaluator protocol is never supplied as the agent's opening prompt. Use the

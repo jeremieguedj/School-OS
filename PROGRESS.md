@@ -5928,3 +5928,27 @@ requirements, then read this log from top to bottom.
 - Prepared the common separate ingestion request privately. It has not been
   supplied before verified setup. Product source and published starter remain
   unchanged. Continue the three attempts, then audit and report without fixes.
+
+## 2026-09-16 — Browser prompts submitted; Drive distribution directed by user
+
+- Browser operator could not bind the coordinator-owned tab and stalled twice
+  on native-app attachment, without submitting either prompt. Root took over
+  browser control and submitted the exact starter link plus “setup my schoolOS”
+  to Spark and Work. Work's visible selection was GPT-5.6 Sol Light. Actual task
+  handles and task-relevant observations are preserved privately.
+- Work returned a network error before the interview; root did not click Retry.
+  Spark reported external-download restrictions and requested uploaded material.
+  The user specifically directed a Google Drive ZIP link for Spark. Root uploaded
+  the same 98,205-byte public starter under the verified tests parent and checked
+  returned metadata against the intended name, MIME, size, identity and parent.
+  Its observed Drive link was supplied to the same Spark task, which resumed.
+- Review rejected Sol's configured-bootstrap upload for missing specific private
+  data authority. Root surfaced the rejection. The user then explicitly authorized
+  personal-data uploads to Drive and the agents needed for the goal. Root conveyed
+  that authority while retaining effect verification and no-repair boundaries.
+- Review also rejected displaying full raw browser trees. Root instead saved
+  observations privately without emitting their contents; a Sol observer extracts
+  only relevant findings. No account/history material is added to public records.
+- No product implementation changed. Await setup readback or concrete blockers,
+  then separately request ingestion only on configured routes. Work's failure
+  remains preserved; no unrequested retry or replacement was launched.
