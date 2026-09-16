@@ -5435,3 +5435,26 @@ requirements, then read this log from top to bottom.
 - Exact next action: obtain the explicit Q10 decision, implement that approved
   representation with Sol workers, publish and verify the complete retained MVP,
   then conduct the three already-authorized isolated ingestion/audit trials.
+
+
+## 2026-09-16 — Accepted restart checkpoint published and verified
+
+- Committed and pushed the accepted implementation checkpoint at
+  `972ac4f1023be1aad4003af6a44ffbe527cb0c8f` on
+  `codex/restart-implementation`; `git ls-remote` matched the exact SHA and
+  the working tree was clean. The snapshot tag/release is unchanged.
+- Publication hygiene passed with zero privacy findings, 398 local document
+  links/anchors resolved and no whitespace findings. Frozen study paths had
+  no changes; no functional test was executed.
+- Static website source at `8176dee5da2ee78030e7812cc69ced3133f18fe3`
+  includes the readable Q10 proposal, approved Q1–Q9 history and current
+  retained implementation links. Its 11 static pages passed privacy and
+  local-link hygiene; those checks do not establish functional behavior.
+- Q10 remains the sole new architecture answer needed. Do not call the full
+  retained MVP complete or begin the three ingestion trials. Exact next action:
+  obtain the segment-format decision, delegate the approved change to Sol,
+  integrate/publish/verify the complete implementation, then run the already
+  authorized three isolated trials.
+- Site version 14 deployed successfully at the existing owner-private guide,
+  with source revision recorded above. The current open-question section links
+  the concrete Q10 representation; no testing was triggered by publication.

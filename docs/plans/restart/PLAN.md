@@ -44,6 +44,11 @@ explicitly blocked, not truncated or silently deferred from the required MVP.
 Independent implementation/review proceeds. The whole-MVP publication prerequisite
 for the authorized trials is not met while this required representation is open.
 
+
+**Published accepted-work checkpoint:** `972ac4f1023be1aad4003af6a44ffbe527cb0c8f`
+on `codex/restart-implementation`, remote verified. This checkpoint is incomplete
+while Q10 awaits approval. Publishing it does not start or authorize early trials.
+
 ## Current execution authorization
 
 The user explicitly supplied subsequent testing direction after approving the

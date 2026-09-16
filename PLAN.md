@@ -59,3 +59,11 @@ No private/untracked material is part of cleanup or publication.
 The autonomous goal is not complete at the documentation snapshot or the first
 implementation slice. If an external blocker prevents a trial, preserve work and
 report it precisely. Broader qualification remains outside the named trial scope.
+
+## Published checkpoint
+
+Accepted implementation material is published at
+`972ac4f1023be1aad4003af6a44ffbe527cb0c8f` on `codex/restart-implementation`;
+the exact remote revision was verified. This is an incomplete, untested
+checkpoint with Q10 pending, not the complete-MVP trial gate. The documentation
+snapshot remains separate and unchanged.
