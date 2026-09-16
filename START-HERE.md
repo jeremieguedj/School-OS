@@ -47,9 +47,10 @@ tools perform the rest. Recipes name actual scripts when applicable; see
 personal computer, persistent process or coding CLI is required by this choice.
 The latest numbered review approves run-start scope, strict original Date
 precision, binary whole-email ingestion, the manual freshness conversation, no
-audio archive and combined email/audio with an audio-failure fallback. Q1/Q2
-concrete fields/indexes and the narrow Q4/Q6 discovery/reuse proposals still
-need approval; see the current restart plan.
+audio archive and combined email/audio with an audio-failure fallback. The user
+subsequently approved all remaining published recommendations: Q1/Q2 concrete
+data/index architecture, Q4 arrival-window discovery and Q6 completed-email reuse.
+See the current restart plan and its documentation snapshot checkpoint.
 Setup now includes the approved [parent interview](operations/setup.md): offer
 known task tools available to the executing agent and ask for the parent's
 choice. Use or author one shared [tool-semantic adapter](operations/tool-adapters.md)
@@ -68,16 +69,18 @@ verified/corrected information and relevant open tasks, shows original source
 dates and discloses failed task-app sync; source accuracy, truthful task/coverage
 state and the daily ingestion gate remain required.
 
-For the next implementation handoff, publish the agreed new project code, then
-stop and check in with the user. The user personally manages and oversees the
-testing phase. Do not start tests, simulations, replay experiments, connector
-probes, managed-agent pilots, ingestion or scheduled jobs without the user's
-subsequent testing direction. Test code and a proposed testing sequence may be
-prepared without execution. This explicit boundary supersedes older instructions
-to proceed autonomously through validation or live qualification.
-Inspect applicable hooks and CI before publishing the new code; do not trigger
-testing indirectly or silently disable checks. Surface any publication conflict
-with the user before proceeding.
+The user has now supplied subsequent testing direction: after completing the
+retained MVP, committing/pushing it and verifying the remote revision, conduct
+three isolated seven-day school-email ingestion trials (a fresh context-free
+worker, Gemini Spark through the user's browser, and ChatGPT Work through the
+user's browser). Each uses its own fresh instance under the authorized tests
+folder. This explicitly supersedes the earlier requirement to wait for another
+permission at that checkpoint, only for these ingestion and audit trials.
+Do not start functional execution before implementation publication. Do not infer
+permission for outbound briefs, task-app writes, schedules or changes to existing
+instances. Preserve private evidence and report incomplete capabilities honestly.
+Inspect hooks and CI before publication; never silently bypass checks. See
+[the current execution authorization](docs/plans/restart/PLAN.md#current-execution-authorization).
 
 ## Instruction hierarchy
 

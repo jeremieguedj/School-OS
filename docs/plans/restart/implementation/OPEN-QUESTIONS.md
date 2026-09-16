@@ -1,38 +1,38 @@
-# Remaining decisions and recorded answers
+# Final numbered decisions and recorded approvals
 
-Updated 2026-09-15 after the user’s numbered-review answers. The [active plan](../PLAN.md) remains the approval ledger.
+Updated 2026-09-15 after the user approved every remaining numbered proposal and recommendation. The [active plan](../PLAN.md) remains the approval ledger.
 
-Your answers are recorded. Questions 1 and 2 now have a concrete data architecture to review. Question 4 has a simpler replacement proposal. For question 6, binary email completion is approved; only the rule for skipping a later matching appearance still needs an answer. Questions 3, 5, 7, 8 and 9 are settled. The original numbering is preserved.
+All nine questions are settled. Q1/Q2 adopt the concrete linked-data and lookup contract. Q4 adopts the simpler arrival-boundary discovery policy. Q6 adopts binary email completion and the narrow fully-ingested reuse rule. The original numbering and rejected alternatives are preserved for review history.
 
-The next phase is completing the agreed implementation. These answers do not authorize tests or live account operations. The user directs testing after the whole agreed MVP is published and its remote revision verified.
+The approved documentation will first be preserved in the requested GitHub snapshot **OrgoS Restart Documentation**. The next phase is completing and publishing the agreed implementation. Three isolated last-seven-day ingestion trials are authorized only after that implementation is published and its remote SHA is verified; this documentation snapshot does not execute them.
 
 ## Q1. What exact information and links must the saved JSON records contain?
 
-**Proposed architecture — awaiting approval.**
+**Approved.**
 
-Store entities, source emails, substantive knowledge and canonical tasks as linked records. Knowledge declares whether it applies to a child, a family, a school or a defined group. Tasks separately declare the unit that must act, so a once-per-family form stays one family task. The concrete field tables and connected JSON examples are now in the data proposal.
+Store entities, source emails, substantive knowledge and canonical tasks as linked records. Knowledge declares whether it applies to a child, a family, a school or a defined group. Tasks separately declare the unit that must act, so a once-per-family form stays one family task. The concrete field tables and connected JSON examples are in the approved data contract.
 
 **Example:** Robin’s personal math observation is child-specific; a school lunch guideline is stored once at school level; a once-per-family contact form creates one family task.
 
-See [the proposed data architecture](DATA-ARCHITECTURE-PROPOSAL.md) and its [viewable diagrams and examples](data-architecture.html).
+See [the approved data architecture](DATA-ARCHITECTURE-PROPOSAL.md) and its [viewable diagrams and examples](data-architecture.html).
 
-**Alternative and tradeoff:** Mostly free-text records are easier to improvise but make scope, filtering and cross-agent interpretation unreliable. Copying school facts per child creates duplicates and divergent updates. The proposed structure adds a small amount of explicit metadata, with no generic write engine.
+**Historical alternative and tradeoff:** Mostly free-text records are easier to improvise but make scope, filtering and cross-agent interpretation unreliable. Copying school facts per child creates duplicates and divergent updates. The approved structure adds a small amount of explicit metadata, with no generic write engine.
 
-**Decision / limits:** Review the exact record fields, references, dates, scope rules and task granularity in the proposal. These are recommendations, not already-adopted schemas.
+**Decision / limits:** The exact record fields, references, dates, scope rules and task granularity are approved for dependent implementation. They remain unimplemented and unqualified.
 
 ## Q2. How should the index find all relevant information about a child and topic over time?
 
-**Proposed architecture — awaiting approval.**
+**Approved.**
 
 Use paged, rebuildable indexes by applicability, topic and time, with source/month routes and explicit index coverage. Resolve the child’s dated family/school memberships, fetch matching records, keep personal observations separate from general guidance, and synthesize the timeline with sources.
 
 **Example:** For Robin’s math evolution, retrieve Robin’s dated math feedback. Read relevant school guidance as context; do not turn a school-wide math update or a sibling’s report into feedback about Robin.
 
-See [the proposed data architecture](DATA-ARCHITECTURE-PROPOSAL.md) and its [viewable diagrams and examples](data-architecture.html).
+See [the approved data architecture](DATA-ARCHITECTURE-PROPOSAL.md) and its [viewable diagrams and examples](data-architecture.html).
 
-**Alternative and tradeoff:** Scanning a whole year avoids maintaining topic indexes but grows costly. A search/vector service adds a new dependency and does not itself establish exact scope or completeness. The proposal uses bounded Drive pages and explicit aliases, with a documented fallback when an index is stale.
+**Historical alternative and tradeoff:** Scanning a whole year avoids maintaining topic indexes but grows costly. A search/vector service adds a new dependency and does not itself establish exact scope or completeness. The approved contract uses bounded Drive pages and explicit aliases, with a documented fallback when an index is stale.
 
-**Decision / limits:** Review the index entries, membership history, alias rules, completeness limits and end-to-end query traces in the proposal. Efficiency is designed for; it has not been measured.
+**Decision / limits:** The index entries, membership history, alias rules, completeness limits and end-to-end query traces are approved for implementation. Efficiency is designed for; it has not been measured.
 
 ## Q3. Should a daily run cover every School-OS-pending item through the start of that run?
 
@@ -46,15 +46,15 @@ Yes. Complete all relevant not-ingested emails in configured scope through run s
 
 ## Q4. How should we catch relevant mail that appears late in a search?
 
-**Revised, simpler proposal — awaiting approval.**
+**Approved.**
 
 Use the connector’s live mailbox access for normal daily discovery from the last completed arrival-time boundary through run start, plus unfinished windows and known not-ingested backlog. Include the prior boundary at its actual precision, follow every continuation, and use metadata association for repeated results. Do not rescan all history every day or impose a fixed seven-day overlap.
 
 **Example:** An email sent Monday but received Wednesday is found by Wednesday’s arrival-time search. An old message that becomes visible only after its older arrival window was marked complete may be missed under this simpler MVP policy.
 
-**Alternative and tradeoff:** The rejected full-history fallback could catch more older changes but costs much more. The simpler policy accepts that newly visible older material is not automatically rediscovered. A parent can explicitly request a historical rescan. Live access alone does not establish every connector’s search behavior.
+**Historical alternative and tradeoff:** The rejected full-history fallback could catch more older changes but costs much more. The approved simpler policy accepts that newly visible older material is not automatically rediscovered. A parent can explicitly request a historical rescan. Live access alone does not establish every connector’s search behavior.
 
-**Decision / limits:** Approve this narrower assumption and tradeoff? The route must expose usable search-time meaning, timezone/boundary behavior and continuation; otherwise report the capability limit or use a supported route. Original sending Date still defines identity, not arrival time.
+**Decision / limits:** No further approval is needed. The route must expose usable arrival/search-time meaning, timezone/boundary behavior and continuation; otherwise report the capability limit or use a supported route. Original sending Date still defines identity, not arrival time.
 
 ## Q5. How precise must the original email Date be for automatic association?
 
@@ -68,15 +68,15 @@ Require the original individual-message Date with known timezone and second-or-f
 
 ## Q6. When a matching email appears again, what may the agent safely skip reading?
 
-**Binary outcome approved — one reuse rule awaiting approval.**
+**Approved.**
 
-Approved: each logical email is fully ingested or not ingested. Full means body and all required attachments were extracted, saved and checked; partial-email processing is outside MVP. Proposed remaining rule: a unique supported metadata match to a fully ingested email can reuse that result and skip content unless explicit new or contradictory inventory/coverage evidence challenges it.
+Each logical email is fully ingested or not ingested. Full means body and all required attachments were extracted, saved and checked; partial-email processing is outside MVP. A unique supported metadata match to a fully ingested email reuses that result and skips content unless explicit new or contradictory inventory/coverage evidence challenges it.
 
-**Example:** Yesterday’s fully ingested notice appears again through a different connector handle. Under the proposal it is skipped. A new reply has its own original Date and is ingested separately. If new evidence exposes unprocessed required material, the email cannot be treated as fully ingested.
+**Example:** Yesterday’s fully ingested notice appears again through a different connector handle and is skipped. A new reply has its own original Date and is ingested separately. If new evidence exposes unprocessed required material, the email becomes not ingested until the whole email is processed and verified.
 
-**Alternative and tradeoff:** Always rereading is more costly. Reusing completion is simpler but cannot detect a content change hidden behind unchanged allowed metadata. This is the residual risk of the metadata-only design, not permission to ignore a known gap.
+**Historical alternative and tradeoff:** Always rereading is more costly. Reusing completion is simpler but cannot detect a content change hidden behind unchanged allowed metadata. This is the residual risk of the metadata-only design, not permission to ignore a known gap.
 
-**Decision / limits:** Approve reusing the fully-ingested result on that supported metadata match? Different handles or unknown optional fields alone would not reopen it. No per-appearance ledger, partial-PDF workflow or content-hash identity is introduced.
+**Decision / limits:** No further approval is needed. Different handles or unknown optional fields alone do not reopen it. No per-appearance ledger, partial-PDF workflow or content-hash identity is introduced.
 
 ## Q7. May a parent explicitly request a manual brief despite known processing gaps?
 
@@ -110,6 +110,14 @@ When audio is properly configured, prepare it and send it with the email. If aud
 
 ## Boundaries
 
-D1 storage, D3 helpers/shared adapters, D5 knowledge/task meanings and prior approvals stay in force. The generic record/save and interrupted-write repair framework, central jobs/scheduler register and packaged lifecycle remain outside MVP. The new field/index design is a proposal, not an implemented or tested data layer.
+D1 storage, D3 helpers/shared adapters, D5 knowledge/task meanings and prior approvals stay in force. The generic record/save and interrupted-write repair framework, central jobs/scheduler register and packaged lifecycle remain outside MVP. The field/index design is approved, but remains an unimplemented and untested data layer.
+
+After the completed implementation is published and its remote SHA verified, the user has authorized three isolated ingestion trials over the last seven days:
+
+1. a fresh context-free agent;
+2. Gemini Spark through its browser; and
+3. ChatGPT Work through its browser.
+
+Each trial uses the published implementation SHA in isolation. They do not begin during this documentation snapshot or authorize earlier probes, ingestion or functional validation.
 
 The recommendations serve source-linked lossless knowledge, simple parent workflows, efficient bounded access, explicit scope, fresh-agent portability and honest completion. The [coverage map](COVERAGE.md) retains the whole deliverable scope.

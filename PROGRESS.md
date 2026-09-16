@@ -5293,3 +5293,29 @@ requirements, then read this log from top to bottom.
   then dependent implementation after explicit approval. Publication of this
   proposal/instruction subset is complete; the whole MVP and user-directed
   testing handoff are still ahead. No schema/index approval is inferred.
+
+
+## 2026-09-15 — Final architecture approval and documentation snapshot preparation
+
+- User explicitly approved all remaining published recommendations: Q1/Q2 exact
+  data/index architecture, Q4 simplified arrival-time discovery and Q6 reuse of a
+  fully-ingested email on a supported metadata match. Existing MVP deferrals remain.
+- User authorized autonomous implementation followed by three isolated seven-day
+  school-email ingestion/audit trials after implementation is published and its
+  remote revision verified. This supplies the previously reserved subsequent
+  testing direction; it does not authorize early tests, outbound messages,
+  personal task-app writes, schedules or changes to existing instances.
+- User then requested a recoverable GitHub snapshot titled **OrgoS Restart
+  Documentation** before implementation and a clean restart free of legacy runtime
+  pollution. Selected annotated tag `orgos-restart-documentation` and a new
+  implementation branch `codex/restart-implementation` from that checkpoint in
+  this same directory. Old runtime remains recoverable in tag/history.
+- Inspected clean `codex/restart-school-os` at
+  `ec7d70067ff9d8e55278596c0c51063fbdb02bd1`; preservation tag
+  `restart-baseline-2026-09-14` already exists. Only sample local hooks were found;
+  current CI tests main pushes/PRs/manual dispatch, not this branch/tag publication.
+- Workers review approval wording, legacy isolation and publication boundaries.
+  No functional tests, connector probes or ingestion have run in this phase.
+- Exact next action: finish documentation hygiene, commit/push and verify the
+  snapshot/tag/release; create the implementation branch, retire legacy active
+  paths, then delegate the complete approved MVP and integrate it.

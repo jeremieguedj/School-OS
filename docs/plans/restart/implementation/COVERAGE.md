@@ -7,9 +7,9 @@ mechanisms and old runtime do not supply missing architecture approvals.
 
 The [updated question list](OPEN-QUESTIONS.md) records Q3/Q5/Q7–Q9 decisions and
 Q6's binary email outcome. The [concrete data/index proposal](DATA-ARCHITECTURE-PROPOSAL.md)
-now covers child/family/school scope, linked fields and query routes; those new
-contracts remain unapproved. Only Q1/Q2 and narrow Q4/Q6 discovery/reuse choices
-remain open. No generic D2 framework is restored; no performance is qualified.
+covers child/family/school scope, linked fields and query routes. The user has
+now explicitly approved those contracts and the Q4/Q6 discovery/reuse rules.
+No published architecture questions remain open. No generic D2 framework is restored; no performance is qualified.
 
 Status: requirements mapped; D1, the
 [query-coverage rule](ARCHITECTURE-PROPOSAL.md#approved-query-coverage-rule),
@@ -30,8 +30,7 @@ selection, original dates, relevant open tasks and failed task-sync disclosure
 are approved as template behavior, not a universal brief policy. The
 separate records/ordinary-save framework is now outside MVP, alongside the
 earlier exclusions below; it is not an approval gate for MVP coding. Q3 run-start scope, Q5 strict Date precision, Q6 binary ingestion and Q7–Q9
-manual/audio policies are approved. Concrete data/index and narrow discovery/
-reuse rules remain pending. New architecture cannot be invented through generic delegation.
+manual/audio policies are approved. Concrete data/index and discovery/reuse rules are now explicitly approved. New architecture cannot be invented through generic delegation.
 Supplier capability availability is user-reported, not independently qualified.
 Helper and operation-instruction authoring are separate from whole-project
 implementation, vendor qualification and testing.
@@ -47,7 +46,7 @@ not be reported fully delivered without naming the exclusions.
 | D2 | Interrupted canonical-write repair remains outside MVP. The separate records/ordinary-save framework and its prerequisite review are also deferred: do not introduce a schema/write engine or reinstate that gate. Canonical Drive data, D1/D5 meanings, normal agent verification, coverage and cleanup remain required. |
 | D3 helpers | Small Python standard-library routines and a minimal reusable helper set are approved. Recipes refer to actual scripts; the agent/tools handle the rest. Extra dependencies, new runtime mechanisms or new canonical architecture are not approved by implication. |
 | D3 setup/adapters | Setup interviews the parent about their task-tool choice and explains known options available to the current agent. Reuse one shared, API-independent School-OS semantic mapping per tool; author a missing mapping when the tool is accessible. Agent connectors own API/authentication/SDK/transport. New architectural choices still need specific approval. |
-| D4 | One logical ingestion run completes all relevant unprocessed mail in its authorized scope. The actual agent manages adaptive resource chunks and resource recovery using School-OS guidance. Former School-OS per-run caps and batch/continuation scheduling are rejected. Run-start scope, strict Date precision and binary ingestion are approved; Q4 discovery and Q6 completed-email reuse are still proposals. |
+| D4 | One logical ingestion run completes all relevant unprocessed mail in its authorized scope. The actual agent manages adaptive resource chunks and resource recovery using School-OS guidance. Former School-OS per-run caps and batch/continuation scheduling are rejected. Run-start scope, strict Date precision and binary ingestion are approved; Q4 discovery and Q6 completed-email reuse are approved. |
 | D5 | Approved in full: substantive claims and relationships; parent fields and state; finite/recurring tasks; native recurrence or a 14-day occurrence fallback; three-way reconciliation and missing projections. Added 2026-09-15: clear task-satisfying evidence enters “Completion detected — awaiting parent confirmation”; the parent checks off reviewed candidates, then D5 sync completes Drive/app state. No automatic closure, downgrade of completed tasks or extra approval gate for this state. Preserve meanings without the deferred records/save framework. |
 | D6 | The agent validates uncertain actions using its available authorized means. Complete ingestion is required before an ordinary daily brief. Users and agents may create and choose any number of brief recipes. The approved starter selects newly verified/corrected information, shows original dates and relevant open tasks, and discloses failed task sync while using verified canonical state. This is template behavior, not universal selection policy. Manual limited briefs require a freshness prompt and parent choice; configured audio accompanies email, failures produce a text email notice, and no canonical audio archive remains after delivery; no recipe registry or fixed effect engine is inferred. |
 | D7 | Centralized tools/jobs/capabilities register and scheduling control are outside MVP. Users and agents own nonconcurrent scheduling and select adapters from recipes. No replacement School-OS scheduler or registry is introduced. |

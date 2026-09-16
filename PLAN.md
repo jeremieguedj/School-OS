@@ -1,18 +1,29 @@
 # School-OS implementation plan
 
-Status: restart preparation remains on `codex/restart-school-os`. D1, query coverage, D3 helpers/shared adapters and D5 remain approved. The numbered-review answers approve Q3 run-start scope, Q5 strict Date precision, Q6 binary whole-email ingestion and Q7–Q9 manual freshness/audio behavior. Concrete Q1/Q2 data/index architecture and narrow Q4/Q6 discovery/reuse proposals remain for approval. Explicit D2/D7/D8 MVP deferrals remain. Implementation and qualification are incomplete.
-Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
+Status: all remaining published architecture recommendations are explicitly
+approved. Implementation and qualification remain incomplete. The current
+[restart plan](docs/plans/restart/PLAN.md) and its
+[execution authorization](docs/plans/restart/PLAN.md#current-execution-authorization)
+govern the next work. D2 write repair, D7 centralized jobs and D8 packaged
+lifecycle remain deferred; no other retained MVP area is silently deferred.
 
-Decision authority: [product principles](docs/product-principles.md#decision-authority)
-are the source of truth and grounding for uncovered decisions. Every new or
-changed architecture decision requires explicit user approval before adoption
-or implementation. Existing explicit approvals remain valid.
+Before implementation, publish **OrgoS Restart Documentation**, a named GitHub
+snapshot of the approved design and continuity at tag
+`orgos-restart-documentation`. Preserve the existing history and baseline tag.
+Then create `codex/restart-implementation` from that snapshot in this same
+repository directory and retire legacy runtime material from the active tree.
+The snapshot and earlier baseline retain the exact previous files.
 
-Next-session boundary: implement and publish the agreed new project code, then
-stop and check in. The user personally manages and oversees testing; no tests,
-simulations, probes or pilots start without the user's subsequent direction.
-Publication hygiene remains required. Use the updated
-[Astra coordinator prompt](docs/plans/restart/ASTRA-HANDOFF.md).
+The user authorized autonomous implementation followed, after publication and
+remote verification, by three fresh isolated school-email ingestion/audit trials.
+The earlier stop-before-testing is superseded only for that explicit sequence.
+No outbound delivery, personal task-app mutation or scheduling is authorized by
+these ingestion trials. The coordinator manages workers, integration, architecture
+escalations and publication; workers own bounded files and do not make Git changes.
+
+Decision authority remains [the product principles](docs/product-principles.md).
+Any architecture beyond the now-approved proposals still requires explicit
+approval. Qualification claims must match actual evidence.
 
 ## Current restart work
 
@@ -35,9 +46,8 @@ the approved rule permitting useful answers with explicit coverage limits.
 The [updated decision review](docs/plans/restart/implementation/OPEN-QUESTIONS.md)
 records the user's answers. The concrete
 [Q1/Q2 data/index proposal](docs/plans/restart/implementation/DATA-ARCHITECTURE-PROPOSAL.md)
-and updated instructions are published. Exact next action: obtain approval of
-that proposal and the narrow
-Q4/Q6 discovery/reuse rules before dependent implementation. Do not re-request
+and updated instructions are published. Exact next action: publish the named documentation snapshot, then implement
+that approved proposal and the Q4/Q6 discovery/reuse rules. Do not re-request
 settled policies or revive deferred infrastructure.
 D3’s minimal Python/agent split and shared tool-semantic adapters are approved.
 The [setup and adapter operations](operations/README.md) implement the interview,
@@ -50,7 +60,7 @@ The [new helper subset](helpers/README.md) and its prepared checks are authored,
 not run; this is not the complete project implementation. D5 behavior is approved and
 must not be resubmitted. Deferred D7/D8 infrastructure is not a prerequisite for
 retained features. Prepare meaningful unexecuted checks, publish the agreed MVP
-code/continuity, verify the remote revision and stop for user-directed testing.
+code/continuity, verify the remote revision and proceed to the newly authorized isolated trials.
 
 Follow [the restart architecture and simulation plan](docs/plans/restart/PLAN.md)
 and the updated [product principles](docs/product-principles.md). The user has
@@ -82,8 +92,8 @@ experiments, not a claim that the existing runtime implements the new
 architecture. Prior authorization for the completed bounded read-only Gmail
 probe does not authorize repeating it in the next implementation phase. This
 preparation checkpoint performs no private-instance migration, live ingestion,
-schedule or delivery operation. Dependent production coding awaits the recorded
-architecture approvals.
+schedule or delivery operation. The required published architecture approvals are now recorded; implementation
+follows the documentation snapshot.
 The previous architecture may require an explicit future migration; its frozen
 release and clean-root qualification rules do not govern this design exercise.
 

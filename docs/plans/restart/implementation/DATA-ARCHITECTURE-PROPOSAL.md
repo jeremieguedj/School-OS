@@ -1,15 +1,17 @@
-# Proposed retained-data and lookup contract
+# Approved retained-data and lookup contract
 
-**Status: proposal for Q1 and Q2 review; not adopted or implemented.**
+**Status: approved 2026-09-15; not implemented or qualified.**
 
-This document supplies the concrete data-shape and lookup proposal requested in
+This approved contract is part of the documentation to be preserved before
+implementation in the requested GitHub snapshot **OrgoS Restart Documentation**.
+
+This document is the approved concrete data-shape and lookup contract requested in
 [OPEN-QUESTIONS.md](OPEN-QUESTIONS.md). It does not reopen the approved D1
 physical layout, metadata-only email identity, query-coverage rule or D5
-knowledge/task behavior. Every new field, record family, reference convention,
-page revision and index rule below still requires explicit user approval before
-dependent implementation.
+knowledge/task behavior. The user approved the field, record-family, reference,
+page-revision and index choices below for dependent MVP implementation.
 
-The proposal is deliberately smaller than the historical D2 design. It defines
+The contract is deliberately smaller than the historical D2 design. It defines
 only the retained data needed to save and find source-linked knowledge, tasks,
 coverage and configuration. It does not add a generic record registry, generic
 writer, transaction protocol, interrupted-write repair engine, database, vector
@@ -17,11 +19,11 @@ service, migration system or external dependency. Ordinary operations would
 write bounded Drive JSON pages directly and verify the pages they change. The
 MVP would still make no claim to repair an interrupted canonical write.
 
-## The two decisions this proposal asks for
+## The two approved decisions
 
-### Q1 — approve this concrete retained-data contract
+### Q1 — approved concrete retained-data contract
 
-The recommendation is to use the small record families defined here:
+The approved contract uses the small record families defined here:
 
 - configuration and logical source accounts;
 - entities, topics and dated membership relationships;
@@ -37,9 +39,9 @@ instance. A School entity does not create a shared multi-household database. One
 independently completed obligation; it is not duplicated merely because several
 children benefit from one household action.
 
-### Q2 — approve this concrete entity/topic lookup contract
+### Q2 — approved concrete entity/topic lookup contract
 
-The recommendation is to use stable entity and topic IDs, dated membership
+The approved contract uses stable entity and topic IDs, dated membership
 records, and three small rebuildable lookups. The entity index finds records by
 scope or participation; the topic index finds records by a small declared topic
 vocabulary and its exact aliases; the incoming-relationship lookup finds later
@@ -59,7 +61,7 @@ discloses the unfinished search.
 ### Bounded page envelope
 
 D1 already requires UTF-8 JSON pages containing one record family, a page ID,
-instance ID and schema version. This proposal adds only `content_revision`, a
+instance ID and schema version. This contract adds only `content_revision`, a
 positive integer incremented when a canonical page is successfully changed. It
 exists so a derived index can reveal staleness; it is not a generation chain,
 lock or repair protocol.
@@ -83,7 +85,7 @@ linked to one Knowledge ID rather than truncation.
 
 ### IDs and references
 
-This proposal recommends an opaque UUID v4 assigned once by School-OS for every
+The approved contract uses an opaque UUID v4 assigned once by School-OS for every
 canonical record. A readable family prefix may precede the UUID, as in the
 fictional examples, but carries no semantic identity. IDs are never derived from
 a name, provider ID, source body, hash or connector response.
@@ -111,7 +113,7 @@ School-OS ID or prove identity, equality, processing or completion.
 
 ### Required, optional and unknown values
 
-The proposal uses these rules consistently:
+The contract uses these rules consistently:
 
 - System identifiers, `family` and `schema_version` must have their declared
   concrete types; they cannot be unknown.
@@ -159,7 +161,7 @@ that time; it does not claim that the JSON field containing the timestamp had
 already verified its own persistence. After the bounded JSON write, the agent
 reads the final page back once and checks its intended values. That final
 readback is operational evidence and does not trigger another timestamp write,
-avoiding an infinite write-to-record-its-own-save loop. This proposal adds no
+avoiding an infinite write-to-record-its-own-save loop. This contract adds no
 general persisted write-verification log.
 
 ## Entity, topic and membership records
@@ -182,7 +184,7 @@ within this instance; aliases never silently merge two entities.
 }
 ```
 
-The proposed finite `entity_kind` values are `household`, `child`, `person`,
+The approved finite `entity_kind` values are `household`, `child`, `person`,
 `school`, and `class_or_group`. A teacher is a `person`; being Robin's teacher is
 a dated relationship, not part of the teacher's identity. A subject such as
 math is normally a Topic, not an Entity.
@@ -210,7 +212,7 @@ separate topics: `fractions` is co-tagged with `math` and may declare `math` as 
 broader topic, but is not silently made an alias. Teacher feedback should also
 carry the `teacher-feedback` topic rather than relying on words in its statement.
 Query expansion follows only declared broader-topic references and still reads
-the actual Knowledge. The proposal has no ontology service, embeddings or
+the actual Knowledge. The contract has no ontology service, embeddings or
 automatic synonym service. An unfamiliar or conflicting label remains
 unresolved until an agent or parent selects an existing topic or creates a
 distinct one.
@@ -249,7 +251,7 @@ fields are `membership_id`, `subject_ref`, `role`, `container_ref`,
 ```
 
 An empty `evidence_refs` is valid only for a parent-declared configuration fact.
-A source-derived membership cites Knowledge records. The initial proposed roles
+A source-derived membership cites Knowledge records. The approved initial roles
 are `household_member`, `student`, `class_member`, and `teacher`. A role does not
 imply dates that were not stated. `ongoing`, `ended` and `unknown` are distinct;
 absence of an end date does not by itself prove ongoing membership.
@@ -304,7 +306,7 @@ precision for automatic association, alongside the other approved metadata and
 coverage checks. Even that precision does not prove uniqueness; compatible
 multiple candidates remain unresolved.
 
-This fictional compact example shows the proposed separation between observed
+This fictional compact example shows the approved separation between observed
 identity metadata, normalized comparison values and replaceable access aids:
 
 ```json
@@ -484,21 +486,24 @@ not save a partial email-ingestion state for later part-level resumption. Source
 and attachment inventory still preserve what was observed, and discovery-window
 coverage remains separate.
 
-This proposal intentionally does **not** decide when a later repeated appearance
-may reuse prior body or attachment coverage. A metadata match and an existing
-`ingestion_state: "fully_ingested"` value do not, by this document alone, authorize skipping
-the new appearance. The later Q6 decision table must define what appearance
-evidence is sufficient, what changed or incomplete inventory means, and when a
-reread is required. No body/byte hash or content comparison is introduced.
+The approved Q6 reuse rule is narrow. A unique, sufficiently supported match
+under the approved metadata recipe to an existing `fully_ingested` logical email
+reuses that result and skips its body and attachment content. Explicit new or
+contradictory inventory/coverage evidence reopens the logical email as
+`not_ingested` until the whole email again satisfies the binary completion rule.
+A changed provider handle or unknown optional metadata alone does not reopen it.
+A reply with its own original Date remains a separate logical email. This rule
+accepts the metadata-only design's residual risk; it introduces no body/byte
+hash, content comparison, or per-appearance ledger.
 
 ### Discovery-window records
 
 A `discovery_window` describes where the mailbox was searched, separately from
 an individual email's binary ingestion result. This is a concrete representation
-of the already-approved durable window progress. The proposed arrival-time
-search policy below is still conditional on Q4 approval.
+of the already-approved durable window progress and the now-approved Q4
+arrival-boundary policy.
 
-| Field | Proposed meaning |
+| Field | Approved meaning |
 |---|---|
 | `window_id` | School-OS-owned ID, resolved through the source-account window directory. |
 | `source_account_ref` | Logical mailbox; no required provider cursor. |
@@ -529,6 +534,20 @@ fully ingested. To assess fresh knowledge, read the relevant window outcomes
 and each required email's ingestion result. A window can be completely listed
 while an email is not ingested. A lost token allows replay of an unfinished
 window. No window falsely advances because a connector returned a short page.
+
+For a normal daily run, discovery begins at the last completed arrival-time
+boundary, including that boundary at the route's actual precision, and ends at
+the run-start cutoff. Follow every continuation. Also finish saved unfinished
+windows and process every known `not_ingested` email in configured scope through
+run start. Original sending Date still controls logical-email identity; arrival
+time controls this discovery window only. The route must expose usable arrival-
+time meaning, timezone, precision and boundary behavior or report the capability
+gap.
+
+Do not rescan the whole configured history each day and do not impose a fixed
+seven-day overlap. This simpler approved policy accepts that material newly
+visible under an already completed older arrival window may be missed. A parent
+may explicitly request a historical rescan.
 
 ## Knowledge records
 
@@ -577,7 +596,7 @@ scope. A household policy is stored once at Household scope.
 
 ### Fictional teacher-feedback history
 
-These linked examples are proposals, not executed or simulated data. Page hints
+These linked examples illustrate the approved contract; they are not executed or simulated data. Page hints
 are omitted for readability.
 
 ```json
@@ -848,7 +867,7 @@ Each configured projection entry proposes these fields:
 ```
 
 The task's canonical `parent_state`, the `last_verified_shared_values` base and a
-new remote observation supply D5's approved three-way comparison. Proposed
+new remote observation supply D5's approved three-way comparison. Approved
 finite `projection_state` values are `verified`, `missing`, `unknown`, and
 `conflict`. The provider handle only locates the current projection. The managed
 School-OS Task ID establishes identity; title similarity does not.
@@ -861,7 +880,7 @@ identity marker, the projection remains unsupported.
 
 ### Canonical routes
 
-The proposal uses D1's approved routes rather than inventing a database:
+The contract uses D1's approved routes rather than inventing a database:
 
 - Email, attachment and coverage pages route by logical mailbox and normalized
   UTC month of original Date; unknown original dates use the discoverable
@@ -1074,7 +1093,7 @@ months through the known ingestion snapshot: a new email may describe an old
 observation or correct an old claim. Do not check only the original-Date months
 matching the requested observation year. The normal completeness check may
 therefore read all applicable Knowledge catalogue entries, in small pages, but
-not all Knowledge bodies. This metadata cost grows with history; the proposal
+not all Knowledge bodies. This metadata cost grows with history; the contract
 does not claim constant-time exhaustive search.
 
 A missing page, mismatched revision, unfinished directory or unread coverage
@@ -1101,7 +1120,7 @@ mask staleness. The revision mechanism does not repair or transact either write.
 
 ## From one new email to searchable information
 
-This is the proposed agent procedure, not an executed write or a generic writer.
+This is the approved agent procedure, not an executed write or a generic writer.
 The two completion dimensions remain separate: a source window can be fully
 listed while one email remains not ingested, or all observed emails can be fully
 ingested while discovery still has another page.
@@ -1109,8 +1128,9 @@ ingested while discovery still has another page.
 1. Read instance configuration and the selected source/Drive mappings. Resolve
    the logical mailbox, child/family/school entities and existing source index.
 2. Associate the individual message using approved metadata and the Q5 Date
-   threshold. A known complete email's later-match skip rule still awaits Q6;
-   a new reply is independently identified.
+   threshold. A unique supported match to a `fully_ingested` email reuses that
+   outcome unless explicit new or contradictory inventory/coverage evidence
+   reopens it. A new reply is independently identified.
 3. Read the whole body and required attachment material for the email being
    ingested. Extract substantive claims, dates, exceptions and finite/recurring
    action requirements. Do not use content to decide email/attachment identity.
@@ -1208,7 +1228,7 @@ limit rather than title-matching remote tasks.
 
 Free text is easier to author initially and harder for another agent to filter,
 join and qualify consistently. It weakens stable cross-agent task sync and makes
-scope-aware historical questions expensive. The proposed fields retain agent
+scope-aware historical questions expensive. The approved fields retain agent
 reasoning for interpretation while persisting its result explicitly.
 
 ### Duplicate school-wide knowledge and tasks under each child
@@ -1236,25 +1256,24 @@ generic graph service is needed.
 ### Full scans only
 
 Scanning every source/month Knowledge page avoids index maintenance and becomes
-costly as years accumulate. The proposed indexes accelerate the normal query and
+costly as years accumulate. The approved indexes accelerate the normal query and
 retain a deterministic scan fallback. No throughput, latency or Drive-cost claim
 is qualified before user-directed testing.
 
 ### Database, full-text or vector service
 
 These could improve search but create a second operational dependency and risk a
-parallel source of truth. They are unnecessary for the proposed household-scale
+parallel source of truth. They are unnecessary for the approved household-scale
 bounded indexes and are not selected.
 
-## Remaining limitations and decisions not answered here
+## Remaining limitations
 
-- This contract is unapproved until the user decides Q1 and Q2. Publication does
-  not authorize implementation, migration, tests or live operations.
+- Q1 and Q2 are approved for dependent implementation. Approval does not itself
+  claim implementation, migration, qualification or a completed live operation.
 - Q3's run-start cutoff and Q5's known-timezone, second-or-finer original-Date
   threshold are approved constraints. Q6's binary email-level ingestion state is
-  also approved. Q4's exact discovery mechanism and Q6's repeated-appearance
-  content-reuse rule remain separate unapproved decisions; this proposal does
-  not choose when prior coverage may be reused.
+  approved, as are Q4's arrival-boundary discovery rule and Q6's narrow
+  fully-ingested reuse rule.
 - A silently capped or incomplete source cannot be made complete by an index.
   Source discovery, body processing and attachment processing remain distinct.
 - Alias resolution and topic assignment require semantic judgment. An index can
@@ -1262,23 +1281,27 @@ bounded indexes and are not selected.
   remain necessary.
 - Household membership, enrollment and teacher relationships may have imprecise
   dates. Unknown intervals remain unknown and can widen or qualify a query.
-- The proposal does not define concurrent writes. The approved household scope
+- The contract does not define concurrent writes. The approved household scope
   assumes no simultaneous mutation of the same Drive data.
 - D2 interrupted-write repair and the separate generic record/save framework
-  remain outside the MVP. The proposed page revision is index evidence, not a
+  remain outside the MVP. The approved page revision is index evidence, not a
   substitute repair engine.
 - D7 job/scheduler management and D8 packaging/migration machinery remain
-  deferred. `schema_version` identifies this proposed initial shape but does not
+  deferred. `schema_version` identifies this approved initial shape but does not
   provide an upgrade process.
 - Actual Drive connector behavior, page costs, search latency, task-app fields
   and fresh-agent performance are unqualified. No fictional example here was
   executed, simulated or validated.
 
-## Approval effect
+## Approval effect and testing boundary
 
-If Q1 and Q2 are approved, dependent implementation may encode these exact
-families, fields, reference rules, directories and indexes within approved D1
-pages and D5 meanings. Approval would not authorize tests, live source reads,
-connector probes, ingestion, task effects, brief delivery, a generic writer or
-interrupted-write recovery. The agreed implementation must still be published
-and remotely verified, then stop for the user's separate testing direction.
+Dependent implementation may encode these exact families, fields, reference
+rules, directories and indexes within approved D1 pages and D5 meanings. This
+does not add a generic writer or interrupted-write recovery.
+
+The user authorized three isolated last-seven-day ingestion trials only **after**
+the completed implementation is published at a verified GitHub SHA: one fresh
+context-free agent trial, one Gemini Spark browser trial and one ChatGPT Work
+browser trial. Each trial must use the published SHA in isolation. This
+documentation snapshot does not execute those trials, connector probes,
+ingestion or other functional validation.

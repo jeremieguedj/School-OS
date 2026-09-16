@@ -7,27 +7,60 @@ search-window recovery. Implementation and managed-agent qualification remain
 pending. The [artifact guide](README.md) separates current authority from frozen
 experiments and historical proposals.
 
-## Current coordinator checkpoint — architecture approval pending
+## Current coordinator checkpoint — approved implementation
 
-The numbered review at commit `fbfc16d568fdc9879496e23dc7ec4491470c16e4`
-was published and the user has now answered it. Q3 and Q5 are approved; Q7–Q9
-are approved with the stated freshness/audio amendments; Q6 now has a binary
-logical-email outcome. The full-history daily rescan in Q4 is rejected.
-The [current decision list](implementation/OPEN-QUESTIONS.md) and
-[data architecture proposal](implementation/DATA-ARCHITECTURE-PROPOSAL.md)
-separate these decisions from the unapproved Q1/Q2 fields/indexes and the narrow
-Q4 discovery and Q6 completed-email reuse proposals. No schema/index design is
-adopted merely by publishing it.
+The user explicitly approved **all remaining published proposals and
+recommendations** after reviewing the concrete data architecture. Q1/Q2's exact
+records, IDs, fields, scope, page catalogues, indexes and query paths are approved
+as published at `1aa7af7bfa2cec07ac3c8c4d4fb7ccaa9fbb4440`. Q4's simpler live
+arrival-window discovery and Q6's fully-ingested metadata-match reuse are also
+approved. Prior Q3/Q5/Q7–Q9 approvals and D1/D3/D5 remain in force. This is explicit
+approval of those concrete proposals, not blanket approval of future designs.
 
-Published proposal/instruction commit:
-`1aa7af7bfa2cec07ac3c8c4d4fb7ccaa9fbb4440`, verified on the remote restart branch.
-The existing private Site deployed version 12 successfully, including
-[the concrete data architecture](https://school-os-architecture-guide.jeremieg.chatgpt.site/data-architecture.html).
-Exact next action: obtain explicit Q1/Q2 and Q4/Q6 answers before dependent
-implementation. Continue independent approved work. The whole agreed MVP still
-needs implementation; tests remain reserved for the user after its verified
-publication. No functional validation or provider compatibility is claimed.
+The user requests a named GitHub snapshot, **OrgoS Restart Documentation**, before
+implementation. Publish the updated approval ledger and documentation under
+annotated tag `orgos-restart-documentation`, with a GitHub release bearing that
+exact display name. It is a documentation checkpoint, not an installable product
+release or a validation claim. Then create `codex/restart-implementation` from it
+in this same directory. Retire old runtime entry points/code/contracts from the
+active checkout while preserving them in the snapshot and existing history.
+Keep frozen restart studies, useful evidence, principles and continuity.
 
+Implementation is incomplete. Exact next action: finish and verify the snapshot,
+then complete the retained MVP through bounded workers, integrate/review, publish
+and verify the exact remote implementation revision.
+
+## Current execution authorization
+
+The user explicitly supplied subsequent testing direction after approving the
+architecture: following completed implementation publication, run three isolated
+seven-day school-email ingestion trials under the existing authorized tests
+folder on Drive. Use one fresh context-free worker driven by the coordinator,
+one fresh Gemini Spark task through the user's browser, and one fresh ChatGPT
+Work task through the browser. Give each a distinct new instance folder and the
+same implementation revision and fixed seven-day interval. Instruct external
+agents to disregard prior School-OS instances and confine writes to their assigned
+folder. Never delete old instances or change their data to satisfy that instruction.
+
+Audit observable execution, inefficiencies, failures, discovery/content coverage,
+source-supported knowledge and tasks, and retrieval/evidence traces for several
+questions. Do not request private internal reasoning. Compare against independent
+source evidence rather than treating another agent's extraction or provider-entry
+counts as logical-email ground truth. Preserve raw development receipts privately;
+public reports contain sanitized findings, never household records or source IDs.
+
+This instruction supersedes the earlier mandatory wait for testing permission
+**after** implementation publication for these specified trials. It does not
+permit early testing, unrelated qualification runs, outbound email/audio delivery,
+personal task-app mutations, scheduled jobs or modifications to existing instances.
+Normal source/Drive operations required by the three trials are authorized.
+A newly discovered architecture change still needs approval. The coordinator
+may resolve routine implementation choices and manage bounded agents autonomously.
+
+The latest documentation snapshot request is additive: complete it first; it does
+not cancel implementation or the subsequent authorized trials. Keep exact published
+revisions and results in PROGRESS.md. Do not declare the goal complete at the
+snapshot or implementation-only checkpoint.
 
 The 2026-09-14 implementation session remains in the existing repository directory
 on `codex/restart-school-os`. Its clean starting revision was
@@ -38,13 +71,12 @@ The old runtime has not been adopted as the new foundation or removed yet.
 The [whole-project coverage map](implementation/COVERAGE.md) reconciles all nine
 design priorities, seven core use cases, other mandatory principle sections and
 ten implementation areas. Requirements are already established; the remaining
-blocker is approval of concrete architecture, not renewed product discovery.
+work is implementation of the approved architecture, not renewed product discovery.
 
 The [architecture proposal, revision 11](implementation/ARCHITECTURE-PROPOSAL.md)
 records recommendations and explicit decisions. **D1, query coverage, D3 minimal
 Python standard-library helpers with agent/tool operations, and D5 are approved. D4/D6 now use the approved agent-led directions
-below. D2 interrupted-write recovery, D7 and D8 are outside the MVP. Remaining
-Q1/Q2 data/lookup specifics and the narrow Q4/Q6 proposals remain pending; the separate record/save framework is
+below. D2 interrupted-write recovery, D7 and D8 are outside the MVP. Q1/Q2 data/lookup specifics and the Q4/Q6 discovery/reuse proposals are now approved; the separate record/save framework is
 also outside MVP and must not be reinstated as an approval gate.**
 On 2026-09-14 the user explicitly replied "D1 approved"
 after the explanation of multiple JSON pages and per-page capacity limits.
@@ -91,7 +123,7 @@ gate. No scenario, helper, connector operation or test was executed.
 | D1 | Physical Drive layout, bounded pages and directories | Approved explicitly, 2026-09-14 |
 | D2 | Earlier canonical-record and write framework | Repair and separate records/ordinary-save framework outside MVP; existing data meanings and query rule retained |
 | D3 | Minimal Python helpers; shared tool-semantic adapters and agent-specific connectors | Approved explicitly, 2026-09-15, including setup interview, creation and reuse of missing tool mappings; no runtime version pin/SDK selected |
-| D4 | Complete logical run; agent owns resources/batching; School-OS supplies guidance | Run-start scope, strict Date threshold and binary ingestion approved; simplified discovery and completed-email reuse pending |
+| D4 | Complete logical run; agent owns resources/batching; School-OS supplies guidance | Run-start scope, strict Date threshold and binary ingestion approved; simplified discovery and completed-email reuse approved in the final review |
 | D5 | Knowledge, tasks, parent synchronization and detected-completion review | Approved explicitly, 2026-09-15; detected completion awaits parent confirmation, represented by tool status or section |
 | D6 | Agent verification, complete daily ingestion and extensible brief recipes | Verification/timing and starter selection/task-sync disclosure approved, 2026-09-15; any number of user/agent-created recipes allowed; manual freshness prompt, no audio archive and combined audio/email with failure fallback approved |
 | D7 | Capabilities/tools/jobs register and scheduler management | Deferred outside MVP, 2026-09-15; user and agents own nonconcurrent jobs |
@@ -266,21 +298,19 @@ They are authored instructions and review artifacts, not executed validation.
 emails through run start, including backlog and already-opened Gmail messages.
 Q5 approves known timezone and second-or-finer original Date precision for
 otherwise-supported automatic association. Q6 adopts a binary email result.
-The exact simpler discovery policy and reuse of a fully ingested email on a
-later appearance remain narrow proposals in the numbered review.
+The simpler arrival-window discovery policy and reuse of a fully ingested email
+on a supported metadata match are approved by the final review.
 
-The concrete Q1/Q2 data/index proposal and updated review are published.
-Exact next action: resolve those proposals plus Q4/Q6 before dependent implementation.
-Continue independent approved work; preserve existing D1/D5 and deferred scope.
-Publish the whole agreed MVP code/continuity, verify the remote revision, then
-stop for the user's testing direction. This proposal publication is not that
-final implementation handoff.
+The concrete Q1/Q2 data/index proposal and updated review are approved.
+Next: publish the named documentation snapshot, implement the whole retained MVP,
+publish and verify it, then perform the newly authorized isolated ingestion trials.
 
 ## Decision authority and user checkpoints
 
 ### Decisions from the numbered review, 2026-09-15
 
-The user's latest answers supersede the earlier open-question recommendations:
+This earlier numbered-answer record is historical; the final approval at the top
+of this plan resolves its remaining Q1/Q2, Q4 and Q6 questions:
 
 - **Q1/Q2 — requirements confirmed; proposed structure still needs approval.**
   Queries must follow one child's topic history and evolution. Knowledge and
@@ -387,23 +417,13 @@ does not itself grant approval. Existing explicit approvals remain valid;
 routine nonarchitectural implementation choices may proceed within their scope.
 Continue independent approved work while an architectural choice is pending.
 
-The next coordinator's implementation phase ends when the agreed new project
-code and continuity documents are committed, pushed and the remote revision
-verified. **Stop there and check in with the user.** The user personally manages
-and oversees the testing phase. Do not execute tests, simulations, replay
-experiments, connector probes, pilots, ingestion or schedules before the user's
-subsequent direction. Preparing test code, fictional fixtures and a proposed
-testing sequence is allowed; executing them is not. Publication hygiene (diff,
-privacy, document-link, Git status and remote-revision checks) remains required.
-Report the code as implemented but untested, with no qualification claim.
-Inspect applicable hooks and CI before publishing the new code. Do not trigger
-testing indirectly or silently disable checks; bring any conflict between
-publication and the reserved testing phase to the user before proceeding.
-
-These checkpoints supersede older automatic transitions into experiments,
-managed-agent pilots or release qualification. The
-[copyable Astra handoff](ASTRA-HANDOFF.md) carries the same boundaries.
-
+Implementation publication remains a mandatory checkpoint: commit/push the agreed
+code and continuity, verify the remote revision, and report implemented versus
+unqualified status. The subsequent explicit authorization above now permits the
+three specified ingestion/audit trials without another permission round. Until
+that checkpoint perform only publication hygiene; inspect hooks/CI and do not
+silently disable checks. The [coordinator handoff](ASTRA-HANDOFF.md) carries the
+same current boundary.
 ## Approved architecture and operating choices
 
 Read the broader baseline below subject to the explicit current MVP revisions
@@ -520,7 +540,7 @@ the concrete enumeration lesson.
 The original code, receipts and JSON counts remain unchanged. Read the corrected
 report before interpreting `wrong_association` or the earlier pass/failure totals.
 
-## Implementation phase: stop before testing
+## Implementation phase: publish before authorized trials
 
 - [x] Reconcile product principles, current recipe, test interpretation and
   artifact authority with the approved decisions.
@@ -543,9 +563,9 @@ report before interpreting `wrong_association` or the earlier pass/failure total
   Prepare a proposed test inventory and fixtures without running them.
 - [ ] Publish the agreed code and updated continuity documents. Report the
   exact revision, coverage of every deliverable, pending decisions, known risks, tests not
-  run and proposed testing sequence. Stop and await the user's direction.
+  run and the authorized testing sequence. Proceed only to the three specified trials.
 
-## User-directed testing phase: not authorized to start automatically
+## Broader qualification backlog — outside the specific trial authorization
 
 The following is a proposed qualification backlog, not permission to execute it.
 The user selects the scope, order, environment and timing. Include the revised

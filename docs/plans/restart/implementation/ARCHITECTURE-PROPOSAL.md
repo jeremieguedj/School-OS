@@ -1,18 +1,20 @@
-# Restart implementation decisions for approval
+# Approved restart implementation decisions
 
-Updated 2026-09-15, revision 11: records the numbered-review answers and the
-[concrete Q1/Q2 data/index proposal](DATA-ARCHITECTURE-PROPOSAL.md). Q3 run-start
-scope, Q5 strict Date precision, Q6 binary email outcome and Q7–Q9 manual/audio
-behavior are approved as recorded in the [active plan](../PLAN.md). The proposal's
-new fields/index rules and the narrow Q4/Q6 discovery/reuse choices remain
-unapproved. The generic records/write framework stays outside MVP.
+Updated 2026-09-15, revision 12: records approval of every remaining numbered
+proposal and recommendation. The [concrete Q1/Q2 data/index contract](DATA-ARCHITECTURE-PROPOSAL.md),
+Q4 arrival-boundary discovery and Q6 fully-ingested reuse rule are approved,
+along with the previously recorded Q3, Q5 and Q7–Q9 decisions. The generic
+records/write framework stays outside MVP.
 **D1, query coverage, D3's minimal Python/shared-adapter direction and
 D5 are approved; D4/D6 use the recorded agent-led direction. D2 repair, the
 separate record/save framework, D7 and D8 are deferred.** The helper subset may
 be authored within this scope; it is not a complete production implementation.
 New architecture still requires explicit approval, without reopening a deferred
 framework as a blanket prerequisite for retained operations.
-Testing remains reserved to the user after publication of the implementation.
+The approved documentation is to be preserved first in the requested GitHub
+snapshot **OrgoS Restart Documentation**. The user-authorized isolated ingestion
+trials remain after publication and remote-SHA verification of the completed
+implementation.
 
 The [coverage map](COVERAGE.md) maps the complete product to deliverables. The
 recommendations below now distinguish retained MVP work from the explicit D2,
@@ -21,7 +23,8 @@ to an identity model, a local CLI, or a single managed-agent demonstration.
 
 The [detailed decision briefs](decision-briefs/README.md) explain the approved D3 direction
 and D4–D8 through fictional emails, flows, parent-visible results, alternatives
-and implications. Their additional recommendations are explicitly unapproved.
+and implications. The final numbered recommendations are approved; historical
+alternatives remain review context.
 Written examples are not executed simulations or qualification evidence.
 
 ## Decision summary
@@ -31,7 +34,7 @@ Written examples are not executed simulations or qualification evidence.
 | D1 Storage | Small JSON record pages and paged directories in Drive, with a readable bootstrap | Native Sheets tables, with separately bounded long text | Approved, 2026-09-14 |
 | D2 Records and persistence | Earlier typed-record/write framework retained for later review | Agent/tool operations preserve already approved data meanings and verify actual saves | Repair and the separate records/ordinary-save framework outside MVP; query rule retained |
 | D3 Execution and adapters | Minimal Python helpers; setup interview; one shared tool-semantic adapter per tool, reusable through each agent's connector | Agent-specific adapter forks or a provider SDK runtime are not selected | Approved explicitly, 2026-09-15; creation/reuse of missing conformant mappings included |
-| D4 Ingestion | One logical run completes relevant unprocessed mail; the executing agent owns batching, resources and runtime continuity; School-OS supplies guidance | Former School-OS-managed per-run caps were rejected | Execution direction approved, 2026-09-15; run-start scope, strict Date threshold and binary email outcome approved; discovery/reuse details pending |
+| D4 Ingestion | One logical run completes relevant unprocessed mail; the executing agent owns batching, resources and runtime continuity; School-OS supplies guidance | Former School-OS-managed per-run caps and full-history daily rescans were rejected | Approved, 2026-09-15, including run-start scope, strict Date threshold, binary email outcome, arrival-boundary discovery and fully-ingested reuse |
 | D5 Knowledge and tasks | Source-supported claims, separate parent state, three-way sync; detected completion awaits parent confirmation in a supported status or section | Direct automatic closure is a future option, not selected | Approved explicitly, 2026-09-15, including the parent-confirmation amendment |
 | D6 Briefs and effects | Executing agent verifies uncertain effects using available tools; validate complete ingestion before daily composition | Former generic persisted-effect engine is not selected | Verification/timing, starter selection/task-sync disclosure and recipe extensibility approved, 2026-09-15; manual freshness prompt, no audio archive and combined delivery/failure fallback approved |
 | D7 Tools and schedules | User and agents manage their own jobs and select adapters from recipes; assume nonconcurrent use | Central register and scheduler control retained for possible later work | Outside MVP by explicit user direction, 2026-09-15 |
@@ -242,8 +245,9 @@ bounded execution, especially U2 historical and current school queries. Requirin
 all processing to finish before any answer is a credible alternative, but delays
 useful answers when sources are unavailable or the budget is exhausted. The
 approved rule permits useful qualified answers at the cost of coverage reads
-and sometimes an incomplete result. Exact bounded coverage access still depends
-on the pending record/adapter/query contracts. This rule does not restore the
+and sometimes an incomplete result. Exact bounded coverage access uses the
+approved data/index contract and still depends on the selected adapter's actual
+capabilities. This rule does not restore the
 deferred interrupted-write recovery procedure or approve recovery triggers.
 
 ## D3 — Runtime, adapter contracts and first supplied routes
@@ -277,8 +281,8 @@ or a provider adapter. Their local function arguments/results are ordinary
 implementation interfaces, not a new persisted record contract. Preserve original
 metadata outside the normalized return value. Do not convert unsupported helper
 input into an invented source value or a reason to use content/provider IDs for
-identity. No helper selects the pending Date sufficiency threshold or establishes
-that content was processed.
+identity. No helper establishes that the approved Date threshold was met or that
+content was processed.
 
 The agent remains responsible for source discovery, actual metadata extraction,
 Date meaning/precision, attachment/content reading, substantive interpretation,
@@ -361,11 +365,15 @@ deferred; agent-owned runtime recovery does not implement that feature.
 
 Q3 approves all relevant School-OS-pending emails through run start, including
 older not-ingested messages even if marked read in Gmail. Later arrivals belong
-to the next run. The user rejected a full-history enumeration on every daily
-run (Q4); a simpler live-window discovery proposal is still for approval. Source
-window continuation, token-loss replay and following all pages remain required.
-Live access is an operating expectation, not proof that an unknown connector
-exposes every message or that search uses original Date rather than arrival time.
+to the next run. Q4 approves normal daily discovery from the last completed
+arrival-time boundary through run start, including the prior boundary at its
+actual precision, plus unfinished windows and known not-ingested backlog. Follow
+every continuation and use metadata association for repeated results. Do not
+rescan all history every day or impose a fixed seven-day overlap. The approved
+tradeoff accepts that material newly visible under an already completed older
+arrival window may be missed; a parent may request a historical rescan. The
+route must expose usable arrival-time meaning, timezone, precision and boundary
+behavior or report the capability gap. Original Date still defines identity.
 
 Q5 approves the stricter threshold: verified mailbox, original subject,
 normalized sender and individual original Date with known timezone and declared
@@ -380,9 +388,12 @@ Full ingestion includes body and every required attachment candidate, substantiv
 extraction and verified persistence. Partial-email processing/resumption is not
 an MVP workflow. Honest inventory/evidence remains necessary to justify full
 completion; unread content cannot inherit a processed flag. The narrower rule
-for reusing a full result on a later metadata match is still proposed in
-[question 6](OPEN-QUESTIONS.md#q6-when-a-matching-email-appears-again-what-may-the-agent-safely-skip-reading).
-No per-appearance ledger, generic writer or recovery engine is selected.
+is also approved: a unique sufficiently supported metadata match to an existing
+fully ingested logical email reuses that result and skips content unless explicit
+new or contradictory inventory/coverage evidence challenges it. A changed
+provider handle or unknown optional data alone does not reopen the email; a new
+reply remains independently identified. No per-appearance ledger, content hash,
+generic writer or recovery engine is selected.
 
 Grounding: losslessness/provenance, simple agent-led procedures, efficient bounded
 access, managed-agent portability and independence from brittle identifiers.
@@ -494,7 +505,9 @@ limits. It is not permission to deliver a partial daily brief as complete.
 
 This resolves the prior question of wait-versus-partial daily delivery. The user
 and executing agent own schedules and runtime continuation under the D7 deferral.
-The instruction does not itself approve actual sends, scheduled jobs or testing.
+The instruction does not itself trigger actual sends or scheduled jobs. The
+three approved isolated ingestion trials remain conditional on completed
+implementation publication and remote-SHA verification.
 
 ### Approved starter selection and extensible recipes, 2026-09-15
 
@@ -607,11 +620,16 @@ That does not approve the rest of D3 or qualify particular runtime/adapter route
 On 2026-09-15 the user approved D5, replaced D4's batch manager with
 agent-managed complete-run execution, directed agent-led effect verification and
 ingestion-before-brief under D6, and deferred D7/D8 from the MVP. The active plan
-records these boundaries and the later Q3/Q5/Q6-outcome/Q7–Q9 approvals.
-Resolve Q1/Q2 fields/indexes and Q4/Q6 discovery/reuse proposals before dependent
-implementation.
+records these boundaries and the later Q1–Q9 approvals, including the concrete
+data/index contract, arrival-boundary discovery and fully-ingested reuse rule.
+No numbered architecture decision remains open before dependent implementation.
 The records/ordinary-save framework is excluded, not an MVP gate. Do not ask for
 approved D5 mechanisms again or rebuild deferred infrastructure as a dependency.
-Publish the agreed MVP code and continuity, verify the remote revision, then
-stop for the user's testing direction. No test, simulation, replay, build, probe,
-ingestion, scheduled operation or live qualification is authorized now.
+First preserve this approved documentation in the requested GitHub snapshot
+**OrgoS Restart Documentation**. Then publish the agreed MVP code and continuity
+and verify the remote implementation SHA. Only after that publication, the user
+has authorized three isolated last-seven-day ingestion trials pinned to that
+SHA: a fresh context-free agent, Gemini Spark through its browser and ChatGPT
+Work through its browser. No test, simulation, replay, build, probe, ingestion,
+scheduled operation or live qualification is executed by this documentation
+update.

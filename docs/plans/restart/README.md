@@ -131,3 +131,18 @@ Publish the agreed project code and stop for the user to direct testing.
 Actual file/table layout, attachment-group processing, complete discovery,
 scheduling, fresh-session handoff and execution cost remain qualification work;
 the proposed managed-agent/Drive pilot is not authorized to start automatically.
+
+
+## Final approval and documentation snapshot
+
+The user has explicitly approved all remaining published Q1/Q2, Q4 and Q6
+recommendations. Earlier proposal/pending language in historical review material
+records the discussion at that time, not a remaining approval gate. The active
+[plan](PLAN.md#current-execution-authorization) records the final authority and
+three isolated post-publication ingestion/audit trials. Those trials supersede
+the earlier requirement to wait for subsequent testing direction; unrelated
+qualification and outbound effects remain unauthorized.
+
+The requested **OrgoS Restart Documentation** snapshot preserves all tracked
+documentation, decisions, architecture, plans, source history and frozen evidence
+before restart implementation cleanup. See [the snapshot guide](DOCUMENTATION-SNAPSHOT.md).

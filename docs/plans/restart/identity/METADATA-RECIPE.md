@@ -162,10 +162,12 @@ Candidate inventories and evidence of what was actually processed remain
 necessary to justify that outcome. They are not separate completed email
 states. Replies remain independent emails. Whole-search coverage is separate:
 all found emails being ingested does not prove all relevant emails were found.
-The narrow policy for skipping a later metadata-matching appearance on the
-strength of a prior full result remains a proposal in the
-[current review](../implementation/OPEN-QUESTIONS.md); binary status alone does
-not silently adopt that transition rule.
+The approved reuse rule permits a unique supported metadata match to a fully
+ingested email to reuse that result and skip content unless explicit new or
+contradictory inventory/coverage evidence challenges completion. A changed access
+handle or unknown optional metadata alone does not reopen it. This cannot detect
+content changes hidden behind unchanged allowed metadata; that residual risk is
+accepted. No content-hash identity or per-appearance processing ledger is added.
 
 ## Bounded enumeration and fresh-session recovery
 
@@ -188,8 +190,14 @@ unfinished; the next agent starts with September 4 using the Drive record. No
 saved token, prior conversation or local process is necessary to describe the work.
 
 Q3 fixes the daily cutoff at run start and includes earlier not-ingested emails.
-Missed/unfinished windows remain discoverable. A simple live-window policy is
-proposed under Q4; the full-history-on-every-run fallback was rejected.
+Missed/unfinished windows remain discoverable. Approved Q4 uses live arrival/
+received-time windows from the last completed boundary through run start, plus
+unfinished windows and known not-ingested backlog. Include the previous boundary
+at its actual precision. The route must establish usable time meaning, timezone,
+boundaries and continuation; report unsupported discovery rather than silently
+substituting original sending Date. Newly visible old material behind an already
+completed boundary can be missed; a parent may request a historical rescan. The
+full-history-on-every-run fallback was rejected.
 No fixed overlap duration or automatic full-history rescan is adopted. A maximum
 source Date alone is not proof that discovery has caught up; late-arriving or
 newly indexed material and the search route's time semantics need qualification.
