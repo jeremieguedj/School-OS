@@ -5511,3 +5511,9 @@ requirements, then read this log from top to bottom.
   The goal remains blocked on the explicit architecture decision.
 - Next action: publish this clearer explanation and retain the existing Q10
   approval boundary before dependent implementation and the authorized trials.
+- Publication complete: proposal revision
+  `e8bce725b4a2d104441b7a795a76a72c9cd707cb` was pushed and its remote SHA
+  verified. Private Site version 15 deployed successfully from source
+  `744eaba2dd69e611f890ff488e83e8fb3a818ca1`. Document privacy/link hygiene
+  passed; the working proposal remains unapproved and no functional execution
+  occurred. The next action is the user's Q10 decision.
