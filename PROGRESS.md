@@ -5119,3 +5119,52 @@ requirements, then read this log from top to bottom.
   The full agreed MVP must still be committed/pushed with its remote revision
   verified before the mandatory stop for user-directed testing. This explanatory
   page is not the completed whole-project implementation checkpoint.
+
+## 2026-09-15 — Setup, shared adapters, parent confirmation and brief recipes
+
+- Recorded three explicit user decisions in the active restart plan and product
+  principles: setup interviews offer known tools available to the current agent;
+  one shared semantic adapter per tool can be created when missing and reused
+  by other agents through their own connectors; clear task-fulfillment evidence
+  becomes Completion detected — awaiting parent confirmation, represented by a
+  supported status or section until the parent checks it complete; and the daily
+  brief is a starter template among any number of user/agent-created recipes.
+- The user accepted newly verified/corrected information, original dates,
+  relevant open tasks and failed task-sync disclosure as the daily starter's
+  selection. This is not a fixed selection rule for all briefs. Custom weekly
+  and event recipes can retrieve still-relevant older information. The ordinary
+  daily complete-ingestion gate, coverage accuracy and source/task meaning remain.
+- Authored reusable instructions under `operations/`: setup interview, shared
+  adapter selection/authoring, an API-agnostic adapter writing template,
+  completion review and brief recipes. Connector access/authentication/API/SDK
+  and transport mechanics stay separate from shared School-OS tool semantics.
+  No vendor-specific adapter or actual connector compatibility is claimed.
+- Expanded `architecture-in-practice.html` with shared adapter/connector diagrams,
+  D1 routing and bounded page details, an explicitly illustrative JSON reading
+  sketch, and step-by-step reads/interpretation/saves for the seven scenarios.
+  Added brief-recipe selection examples and replaced the proposed automatic
+  closure with the approved parent-confirmation flow. Clarified the still-pending
+  manual limited-brief exception with a saved museum notice and unread newsletter.
+- Updated the overview, D3/D5/D6 source briefs and their static companion pages,
+  whole-project coverage, entry points and handoff. A focused static review
+  caught a stale task-sync choice and an over-restrictive weekly example; both
+  were corrected. The explanation does not approve a canonical field schema,
+  new registry, selection engine, scheduler, recovery framework or installer.
+- Prepared 15 written fictional operation review cases with a proposed sequence.
+  The frozen studies, the prior 13-source/33-scenario inventory, retired runtime,
+  helpers and their unexecuted checks are preserved. These instructions/cases are
+  an intermediate delivered subset; the entire retained MVP is not implemented.
+- No tests, simulations, model replays, helper imports/compilation, application
+  builds, smoke runs, source/task/mail/audio probes, ingestion, schedules or
+  live School-OS effects ran. Static document authoring and publication hygiene
+  do not establish functional validation or revised-architecture qualification.
+- Exact next action: publish this accepted instruction/documentation subset to
+  `codex/restart-school-os`, verify its remote revision and update the existing
+  architecture website. Then continue only independent approved implementation
+  while resolving D4 daily scope/identity/discovery choices and D6 audio/manual
+  limited-brief policy. Once the whole agreed MVP is published and verified,
+  stop for the user's testing direction; this is not that final testing handoff.
+- Publication hygiene: no privacy findings; all 311 local document links/anchors
+  resolve; diff whitespace checks pass. Applicable Git hooks are inactive
+  samples. CI is unchanged and runs on main pushes, pull requests or manual
+  dispatch; this restart branch has no open pull request. No checks were disabled.

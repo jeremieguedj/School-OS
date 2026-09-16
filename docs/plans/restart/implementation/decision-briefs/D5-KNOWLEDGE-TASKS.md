@@ -4,6 +4,12 @@ Updated 2026-09-15. **D5 is explicitly approved:** “Regarding D5, I approve th
 [the current D5 proposal](../ARCHITECTURE-PROPOSAL.md#d5--substantive-knowledge-queries-and-task-reconciliation)
 through wholly fictional correspondence. No operations or tests were executed.
 
+**Additional explicit direction, 2026-09-15:** clear evidence satisfying a
+specific task produces **“Completion detected — awaiting parent confirmation,”**
+not an automatic completed task. The selected tool's shared adapter uses a
+supported custom status or section for these candidates. Parent confirmation,
+including checking off a reviewed group, flows through approved D5 sync.
+
 The decision is how School-OS preserves school information, identifies required
 actions and respects parent edits across apps. It serves losslessness,
 provenance and useful applications built on the same canonical knowledge.
@@ -96,6 +102,62 @@ Starting September 15 exposes September 16 and 23; it does not discard later
 Wednesdays. Completing September 16 does not complete the whole series.
 The recurrence mechanism and 14-day default are included in the D5 approval.
 
+## School evidence proposes completion; the parent confirms it
+
+Suppose a separate fictional school request says:
+
+> Please return Maya's vaccination form by September 20.
+
+Later, a school reply says:
+
+> We have received Maya's complete vaccination form. No further action is
+> needed for this request.
+
+If the task is still open and this evidence clearly satisfies that specific
+request, the approved result is **“Completion detected — awaiting parent
+confirmation.”** It is not completed yet. The agent records the supporting
+statement, source reference and why it relates to this child and request.
+The reply has its own original Date and content-processing coverage; an earlier
+message's coverage or a shared thread cannot prove this reply was read. Email
+identity still uses the metadata recipe. Content is read to understand the
+evidence, not to establish source identity.
+
+The parent sees the candidate in a separate custom status or section that the
+selected task tool supports, alongside the evidence needed to review it. The
+shared tool adapter explains that presentation without changing the underlying
+meaning: **awaiting confirmation is not completed**. The adapter cannot claim
+such a display works when the current connector cannot support it, and must
+surface that limitation.
+
+The parent can review several candidates and check all the confirmed tasks off
+together. This is their confirmation, not an agent closing the group on their
+behalf. The next authorized synchronization uses the existing D5 field rules,
+saves and verifies completion on Drive and in the task app, and preserves the
+parent confirmation separately from the school's evidence. A divergent edit
+still needs review; this direction does not replace three-way reconciliation.
+
+The distinction matters in less clear cases:
+
+| School message | What the agent can conclude |
+|---|---|
+| “We received Maya's complete vaccination form; no further action is needed.” | Clear support for this task's confirmation-pending state when the request/context match |
+| “We received your message.” | Receipt of a message does not establish that the required form is complete; retain the limited evidence |
+| “We received the form, but the vaccination page is missing.” | The requirement remains unsatisfied; preserve the missing-page action and qualification |
+
+A candidate must not erase a previously recorded parent completion. If the
+parent has already completed the task, add relevant source evidence while
+preserving that state. A generic reminder still does not reopen it; an explicit
+new requirement or conflicting evidence follows D5's explained relationship
+and review rules.
+
+The [completion-review instructions](../../../../../operations/completion-review.md)
+carry this approved behavior into the agent workflow. They do not authorize
+searching Sent mail or broadening the configured source scope. Automatic task
+closure may be reconsidered after a later accuracy review, but neither a fixed
+accuracy threshold nor automatic promotion from this review state is approved.
+There is no extra approval gate for implementing the confirmation-pending
+behavior now, and no tests or live task changes have run.
+
 ## Synchronization compares three versions
 
 The proposal compares the last verified shared values with today's Drive task
@@ -146,6 +208,7 @@ choosing that storage format.
 | Supporting, correcting and conflicting relationships | Explain why a current answer differs from an earlier notice |
 | Tasks, recurrence and occurrence history | Preserve required actions and their meaning |
 | Parent owner, plan, progress and completion evidence | Preserve household decisions separately from school facts |
+| Confirmation-pending state, supporting source evidence and its processing coverage | Let the parent review detected completion without representing it as completed; retain the parent's eventual confirmation separately |
 | Last verified shared values and projection binding | Distinguish later app edits from later canonical edits |
 
 Raw emails and attachments remain at their sources. Temporary processing copies
@@ -168,7 +231,8 @@ An unavailable original limits rechecking without erasing saved knowledge.
 
 The recommendation remains source-linked claims and explicit relationships,
 separate parent fields, recurring tasks with a 14-day fallback horizon, and
-field-level three-way synchronization.
+field-level three-way synchronization. The additional confirmation-pending
+completion flow is also approved; it is not a proposal awaiting another decision.
 
 Summary records are smaller but more easily
 lose qualifications and correction history. One-way task export is simpler but

@@ -46,6 +46,23 @@ tools perform the rest. Recipes name actual scripts when applicable; see
 [the helper guide](helpers/README.md). No Python version pin, external dependency,
 personal computer, persistent process or coding CLI is required by this choice.
 Named D4/D6 choices and any specific new architecture still need approval.
+Setup now includes the approved [parent interview](operations/setup.md): offer
+known task tools available to the executing agent and ask for the parent's
+choice. Use or author one shared [tool-semantic adapter](operations/tool-adapters.md)
+per tool, reusable through each agent's own connector. The adapter defines
+School-OS-to-tool meanings; API, SDK, authentication and transport belong to the
+connector. Missing conformant mappings may be authored under this approval;
+missing connector capabilities must remain explicit. These new instructions
+supersede retired runtime-specific adapter definitions. Clear evidence of task
+fulfillment now becomes [completion detected awaiting parent confirmation](operations/completion-review.md),
+not completed. The shared adapter uses a supported status or section; parent
+confirmation then follows ordinary D5 sync. Direct automatic closure is future
+work requiring a later decision. The daily brief is a starter template: users
+and agents may create and choose any number of compatible
+[brief recipes](operations/brief-recipes.md). The approved starter selects newly
+verified/corrected information and relevant open tasks, shows original source
+dates and discloses failed task-app sync; source accuracy, truthful task/coverage
+state and the daily ingestion gate remain required.
 
 For the next implementation handoff, publish the agreed new project code, then
 stop and check in with the user. The user personally manages and oversees the
@@ -69,7 +86,7 @@ For an installed instance, use this order:
 5. Valid instance configuration and state.
 6. Historical logs and derived files.
 
-Configuration supplies instance values; it does not rewrite generic behavior. Adapters map generic contracts to a selected runtime or provider; they do not redefine core policy.
+Configuration supplies instance values; it does not rewrite generic behavior. Shared tool adapters map School-OS logic to the selected tool's concepts without redefining core policy. Each agent's connector handles that tool's API and access mechanics.
 
 ## Read narrowly
 

@@ -26,11 +26,15 @@ handoff or start of testing.
 
 For a guided review, open the [HTML architecture decision guide](implementation/architecture-guide.html).
 It explains current decisions and remaining proposals with examples and flows.
+The [new operating instructions](../../../operations/README.md) cover the
+approved setup interview, reusable tool-semantic adapters and parent confirmation
+of detected completion. Agent-specific connectors own API/access mechanics;
+these instructions and their review cases are authored, not executed.
 
 The [architecture in practice page](implementation/architecture-in-practice.html)
 shows the layers, Drive structure, processing coverage and seven step-by-step
 household scenarios. It separates approved behavior from fictional values and
-unapproved automatic email-completion/manual-brief policies. It is explanatory
+approved detected-completion review and the still-unapproved manual-brief policy. It is explanatory
 material, not an executed simulation or an implementation claim.
 The [agent execution guidance](implementation/AGENT-EXECUTION-GUIDANCE.md) gives
 resource-management advice without implementing an agent batch controller.

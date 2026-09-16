@@ -20,7 +20,7 @@ design priorities, seven core use cases, other mandatory principle sections and
 ten implementation areas. Requirements are already established; the remaining
 blocker is approval of concrete architecture, not renewed product discovery.
 
-The [architecture proposal, revision 8](implementation/ARCHITECTURE-PROPOSAL.md)
+The [architecture proposal, revision 9](implementation/ARCHITECTURE-PROPOSAL.md)
 records recommendations and explicit decisions. **D1, query coverage, D3 minimal
 Python standard-library helpers with agent/tool operations, and D5 are approved. D4/D6 now use the approved agent-led directions
 below. D2 interrupted-write recovery, D7 and D8 are outside the MVP. Remaining
@@ -34,20 +34,27 @@ readable walkthrough of the decisions and mirrors this approval ledger; the
 ledger here remains authoritative.
 The [architecture in practice page](implementation/architecture-in-practice.html)
 adds diagrams and seven fictional household walkthroughs. It makes the following
-two specific boundaries visible for review; neither is adopted or implemented:
+two specific policies visible. The first is now explicitly approved as amended
+below; the second remains pending. No operation was executed:
 
-- **Email evidence to task completion:** D5 already accepts unconflicted parent
-  completion from a correctly mapped task app and preserves source-linked
-  completion evidence. It does not select when incoming acknowledgments or
-  parent-sent email automatically change an open task to completed. Recommend
-  automatic completion only when clear observed evidence satisfies the correctly
-  linked obligation; preserve ambiguity and seek clarification otherwise.
-  Alternatively require parent confirmation for every email-inferred completion.
-  The first reduces routine interruptions but risks semantic mistakes; the second
-  reduces automatic mistakes but adds parent work. This serves provenance, task
-  accuracy and simplicity. Exact sufficiency, partial fulfillment and authorized
-  source scope (including any sent-mail discovery) remain unknown. No new state
-  machine, source scope or background monitoring is approved by the walkthrough.
+- **Approved: detected completion requires parent confirmation.** The user
+  approved clear source-supported detection for the correctly linked task,
+  amending the earlier automatic-closure proposal. Record the distinct canonical
+  state **Completion detected — awaiting parent confirmation** and supporting
+  evidence; do not mark the task completed. The shared tool adapter maps this
+  meaning to a supported task status or section, making the tasks easy for the
+  parent to review and check off. Each agent's connector performs the actual
+  permitted tool updates and readback. Parent confirmation then follows approved
+  D5 synchronization to completed on Drive and in the task tool. Already confirmed
+  completion is not downgraded by a later acknowledgment; ambiguous, partial or
+  conflicting evidence cannot establish that the whole obligation is satisfied.
+  If the tool cannot represent the distinction, preserve it on Drive and report
+  the limitation rather than displaying completed. The instruction implementation
+  is [completion review](../../../operations/completion-review.md).
+  Automatic final completion may be considered later after accuracy is observed,
+  but no automatic promotion, accuracy threshold or monitoring infrastructure is
+  approved now. Existing source scope remains; this does not authorize searching
+  Sent mail, background monitoring or additional account permissions.
 - **Manual briefs with incomplete coverage:** the approved complete-ingestion
   gate explicitly governs ordinary daily briefs; the qualified-query rule does
   not by itself authorize a partial manual email send. Recommend permitting a
@@ -58,7 +65,7 @@ two specific boundaries visible for review; neither is adopted or implemented:
   freshness must remain explicit. The complete-coverage fresh-agent example
   assumes usable authorized routes and does not establish provider support.
 
-This explanation changes no approval status. The record/write framework remains
+The completion amendment changes D5 as explicitly directed. The record/write framework remains
 outside MVP; these are specific product-policy choices, not a reinstated schema
 gate. No scenario, helper, connector operation or test was executed.
 
@@ -66,10 +73,10 @@ gate. No scenario, helper, connector operation or test was executed.
 |---|---|---|
 | D1 | Physical Drive layout, bounded pages and directories | Approved explicitly, 2026-09-14 |
 | D2 | Earlier canonical-record and write framework | Repair and separate records/ordinary-save framework outside MVP; existing data meanings and query rule retained |
-| D3 | Minimal standard-library Python helpers, otherwise agent/tool operations | Approved explicitly, 2026-09-15; recipes name actual scripts; no runtime version pin/SDK selected |
+| D3 | Minimal Python helpers; shared tool-semantic adapters and agent-specific connectors | Approved explicitly, 2026-09-15, including setup interview, creation and reuse of missing tool mappings; no runtime version pin/SDK selected |
 | D4 | Complete logical run; agent owns resources/batching; School-OS supplies guidance | Direction approved, 2026-09-15; finite scope/cutoff and remaining identity/discovery choices pending |
-| D5 | Knowledge relationships, recurring/finite tasks and parent synchronization | Approved explicitly, 2026-09-15 |
-| D6 | Agent verifies uncertain effects; complete ingestion before daily composition | Verification/timing approved, 2026-09-15; selection/task-app freshness/audio choices pending |
+| D5 | Knowledge, tasks, parent synchronization and detected-completion review | Approved explicitly, 2026-09-15; detected completion awaits parent confirmation, represented by tool status or section |
+| D6 | Agent verification, complete daily ingestion and extensible brief recipes | Verification/timing and starter selection/task-sync disclosure approved, 2026-09-15; any number of user/agent-created recipes allowed; audio and manual limited-brief choices pending |
 | D7 | Capabilities/tools/jobs register and scheduler management | Deferred outside MVP, 2026-09-15; user and agents own nonconcurrent jobs |
 | D8 | Packaged installation, compatibility and upgrades | Deferred outside MVP, 2026-09-15; preserve D1 separation for future work |
 
@@ -96,6 +103,28 @@ be reported, but exhaustive lists, counts and absence claims require supporting
 coverage. This does not require clearing all pending work before answering.
 It does not approve the remaining D2 mechanisms, D3–D8, or any daily-run recovery
 trigger/ordering rule. Required record and adapter contracts remain undecided.
+
+### Approved brief templates and household recipes, 2026-09-15
+
+The user accepted the proposed daily selection and task-freshness direction,
+clarifying that School-OS starts with a **template recipe** and users and their
+agents may create as many brief recipes as they want and adopt whichever they
+choose. The starter daily template includes newly verified or substantively
+corrected information, original source dates, relevant open tasks and disclosure
+of failed task-app synchronization. Detected-completion tasks remain visibly
+awaiting parent confirmation. This is a starter selection, not a universal
+fixed brief or an immutable report format.
+
+Adopt reusable, discoverable compatible household recipes within the existing
+D1 system/instance/extensions separation. No new recipe schema, registry,
+selection-precedence engine or scheduler is approved or required. Each agent
+reads the chosen recipe and uses shared tool mappings through its own connectors.
+Source accuracy, task-state distinctions, coverage honesty and the complete
+agreed ingestion gate for an ordinary daily brief remain binding.
+The authored [brief-recipe guidance](../../../operations/brief-recipes.md)
+implements this direction as agent instructions, not as an executed briefing run.
+Audio retention/ordering and the explicit manual-brief exception for known gaps
+remain pending; accepting a starter selection does not decide them.
 
 ### User-approved MVP exception — interrupted writes
 
@@ -221,7 +250,7 @@ The coordinator asked for explicit approval. This defines a finite snapshot
 without chasing new arrivals forever; a later cutoff captures more arrivals but
 can extend work. No answer is recorded yet. This interpretation/cutoff must not
 be adopted silently. Remaining D4 precision/search/repeated-appearance details,
-D6 selection/audio and specific remaining architecture choices remain pending.
+D6 audio/manual limited-brief and specific remaining architecture choices remain pending.
 D3’s minimal Python/agent split is approved; the record/save framework is deferred. Existing source-metadata and coverage invariants remain authoritative.
 
 Exact next action: resolve the finite daily scope/cutoff and those remaining
@@ -234,6 +263,47 @@ then stop for the user's testing direction. This architecture/document update is
 not the completed code handoff or authorization to test.
 
 ## Decision authority and user checkpoints
+
+### Approved setup interview and shared tool adapters, 2026-09-15
+
+The user confirmed the coordinator's restatement and directed the relevant
+changes. Adopt the following architecture, without asking for this approval again:
+
+- First setup interviews the parent about the task tool they want. Offer known
+  options available to that executing agent, explaining relevant capability and
+  access limits rather than presenting a fixed universal list or silently
+  selecting a tool. Reuse prior explicit choices instead of repeating questions.
+- One shared School-OS adapter per external tool maps School-OS meanings and
+  procedures to the tool's own concepts. Its logic is independent of agent,
+  connector, API implementation, SDK, authentication and transport mechanics.
+- Each agent uses its own authorized connector to execute the required tool
+  operations. A missing operation remains an explicit limitation; authoring an
+  adapter does not create an unavailable connector or capability.
+- If the chosen tool is accessible but lacks a School-OS mapping, the agent can
+  author a conformant adapter. This is authorized within existing meanings;
+  genuinely new architecture still needs explicit approval. Do not require a
+  separate approval merely because a new tool mapping is being authored.
+- Keep the adapter discoverable in the shared Drive instance, using approved D1
+  separation for supplied system material and user-created extensions. A second
+  agent accessing that tool reuses the same semantic mapping through its own
+  connector. Do not fork the adapter per agent or introduce a D7-style register.
+
+The authored [operation instructions](../../../operations/README.md),
+[setup interview](../../../operations/setup.md),
+[adapter creation/reuse procedure](../../../operations/tool-adapters.md) and
+[adapter authoring template](../../../operations/tool-adapter-template.md)
+implement the instruction portion of this direction. They have not been run.
+No concrete vendor mapping, source access, task write or compatibility
+qualification is established by their existence.
+
+This supersedes earlier current-document wording that conflated an adapter with
+an agent/runtime/API wrapper. Retired `core/contracts/adapters.md` and runtime
+adapter files remain historical evidence, not a foundation. Applicable privacy,
+response-evidence and unknown-effect safeguards still govern connector handling.
+The [architecture walkthrough](implementation/architecture-in-practice.html)
+now explains the approved storage layout in detail and traces each scenario's
+reads and writes. Explanatory JSON labels are illustrative, not adoption of the
+deferred record framework or a new persisted field schema.
 
 The [product principles](../../product-principles.md#decision-authority) are the
 source of truth for product/design decisions and the grounding for any decision

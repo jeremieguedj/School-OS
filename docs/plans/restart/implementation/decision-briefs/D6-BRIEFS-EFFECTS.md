@@ -1,8 +1,10 @@
-# D6 — A daily brief follows complete relevant ingestion
+# D6 — Choose a brief recipe; keep its source and coverage claims honest
 
 **Current user direction, 2026-09-15:** the executing code-capable agent must finish and validate relevant unread/unprocessed school mail before composing an ordinary completed daily brief. When an external action has an uncertain outcome, that agent assesses the available evidence through its own **authorized** connectors or APIs and validates the effect; School-OS does not silently import a central effect engine. This supersedes the earlier D6 illustration of delivering a partial ordinary daily brief while a relevant listing page and attachment remained unread, and the earlier D6 proposal’s generalized persisted-intent engine. The prior proposal is preserved historically at Git revision `62070eb`. This brief contains wholly fictional written examples, not executed mail, audio, task changes, simulations, probes or qualification evidence.
 
-The [active plan](../../PLAN.md) remains the approval ledger. The [product principles](../../../../product-principles.md) and [approved query-coverage rule](../ARCHITECTURE-PROPOSAL.md#approved-query-coverage-rule) require source-linked knowledge, explicit gaps and reliable claims of coverage. D4 now places completion and internal batching with the executing agent; see the [D4 brief](D4-INGESTION.md). The user’s direction resolves the **daily composition gate and agent-owned effect assessment**. It does not blanket-approve verification-time recency, task selection, audio retention or ordering, reporting-occurrence identity, exact effect evidence/retry policy, specific new adapter/canonical architecture. D3’s minimal Python/agent split is approved and the record/ordinary-save framework is excluded, not pending as a gate. D5 semantics are separately approved; D7 job management and D8 lifecycle machinery are deferred. The [architecture proposal’s D6 section](../ARCHITECTURE-PROPOSAL.md#d6--brief-selection-delivery-audio-and-unknown-effects) records this direction; the prior central-effect description is not current MVP authority.
+**Additional explicit direction, 2026-09-15:** the daily brief starts as a template recipe. Users and agents may create any number of brief recipes and choose or adopt whichever they want. The user approved the proposed selection of newly verified/corrected information, original dates and relevant open tasks, with failed task-sync disclosure, **as the starter template**. It is not a universal brief policy.
+
+The [active plan](../../PLAN.md) remains the approval ledger. The [product principles](../../../../product-principles.md) and [approved query-coverage rule](../ARCHITECTURE-PROPOSAL.md#approved-query-coverage-rule) require source-linked knowledge, explicit gaps and reliable claims of coverage. D4 places completion and internal batching with the executing agent; see the [D4 brief](D4-INGESTION.md). The approved directions now cover the **daily composition gate, agent-owned effect assessment, extensible brief recipes and the starter's selection/sync disclosure**. Audio policy and the proposed manual incomplete-brief exception remain pending; specific new architecture is not approved by implication. D3's minimal Python/agent split is approved and the record/ordinary-save framework is excluded, not pending as a gate. D5 semantics and parent-confirmation completion review are approved; D7 job management and D8 lifecycle machinery are deferred. The [architecture proposal's D6 section](../ARCHITECTURE-PROPOSAL.md#d6--brief-selection-delivery-audio-and-unknown-effects) records this direction; the prior central-effect description is not current MVP authority.
 
 ## What must happen before the daily brief
 
@@ -13,6 +15,14 @@ The agent then establishes discovery exhaustion for that scope, including all av
 If a connector cannot establish complete listing, an attachment is unsupported, the agent loses a necessary source route, or saved coverage cannot be verified, it **reports the scoped gap and does not issue an ordinary completed daily brief**. It must not replace the missing material with a guessed summary, a “no news” claim, or a brief whose ordinary format falsely implies completion. A separate parent-requested **partial/provisional** output is a possible future policy, not approved by this instruction; its label, content, timing and authorization would need a concrete proposal. An individual parent query can still provide verified facts with explicit incompleteness under the already approved query rule, which is a different operation from the completed daily brief.
 
 This direction assumes a capable executing agent can maintain or recover its own logical task while it pages, reads and verifies. Exact agent continuity, source fidelity, completion evidence and unattended capabilities remain unqualified. School-OS must not install a 25-message stopping rule, automatic follow-up schedule or centralized batching engine to make the brief gate appear achievable. A runtime that cannot finish must expose the limitation rather than certify an incomplete daily result.
+
+## The approved starter is one recipe among any number
+
+The [brief-recipe instructions](../../../../../operations/brief-recipes.md) support creating and adopting recipes without creating a recipe registry or a new scheduling system. A parent may prefer a short action-focused brief; another recipe may give school updates more space. Users and agents can write and choose their own. The chosen presentation cannot erase a source qualification, manufacture completeness or call an unconfirmed task completed.
+
+The approved starter uses information **first verified or substantively corrected during the reporting interval**, with original school dates shown separately. That makes an older email learned today visible without claiming the school sent it today. An unchanged reread is not new information. Include relevant open tasks from verified canonical state, preserving the school's deadline separately from the parent's planned date. If a task is **“Completion detected — awaiting parent confirmation,”** label it that way; do not count it as completed or hide the pending confirmation.
+
+For this starter, a failed task-app sync does not by itself block a knowledge brief after complete relevant ingestion. Use the verified Drive information and disclose the failed sync and resulting uncertainty about current app state. For example: “Your task app could not be synchronized. These tasks reflect the verified Drive state; recent app edits may be missing.” Do not claim that the app matches Drive. Other chosen recipes may use different selection or presentation rules, while preserving truthful state and coverage.
 
 ## A fictional day with a late correction
 
@@ -26,7 +36,7 @@ Suppose fictional Maple School sent three relevant messages before today’s pro
 
 The source returns a short page with continuation. The agent follows it, processes each relevant appearance and newsletter candidate, and verifies saved claims/coverage before composing. If the newsletter cannot be read, it reports that relevant ingestion is incomplete and withholds the ordinary completed brief. The chess message’s older sending date does not make it optional: it is pending School-OS processing within the declared scope. The fictional day has no measured speed or promise that any actual runtime could do this work.
 
-After complete relevant processing, a **possible** brief under the still-pending verification-time recency proposal might say:
+After complete relevant processing, an illustrative brief following the **approved starter recipe** might say:
 
 > **School update — September 15**
 >
@@ -38,7 +48,18 @@ After complete relevant processing, a **possible** brief under the still-pending
 >
 > **Coverage:** The declared daily ingestion scope was completed and saved. Source references accompany each statement.
 
-That copy is illustrative, not an approved format or dispatch. The recency choice remains to be decided: select knowledge first verified/substantively corrected during a requested reporting interval (which surfaces late-processed old mail), or select by original school Date (which may miss newly learned history), or define another explicit hybrid. Historical import still needs an explicit delivery choice rather than automatically emailing a backlog. The brief may include outstanding canonical tasks and parent plans, using the now-approved D5 task meanings; the exact D6 selection policy remains pending. An action-free, completely read task snapshot should not trigger a nonexistent task-app write; task-sync failure cannot erase canonical information. Whether an incomplete task-app sync prevents, qualifies or merely accompanies the completed knowledge brief needs an explicit rule consistent with the verified input state.
+That copy is illustrative, not a mandated format or an authorized dispatch. The starter's selection behavior is approved; users and agents may adopt another recipe. Historical import still needs an explicit delivery choice rather than automatically emailing a backlog. The source dates remain accurate regardless of recipe, and tasks use approved D5 meanings. An action-free, completely read task snapshot should not trigger a nonexistent task-app write. Failed task synchronization does not erase canonical information; the starter discloses the failure instead of claiming current synchronized app state.
+
+## The manual incomplete-brief exception is still a proposal
+
+Imagine the museum notice has been processed and saved: the visit is September 25 and the bus leaves at 08:20. A new school newsletter has arrived, but School-OS has not read it yet. That newsletter might contain another deadline or a correction. Merely changing the brief's layout does not make its information complete.
+
+There are two understandable paths:
+
+1. **The approved ordinary daily path:** finish reading and saving the newsletter and other relevant outstanding material, then compose and send the authorized brief. If processing is blocked, explain the blocker.
+2. **A proposed manual exception:** the parent explicitly asks to send only the currently verified information now, with the unread material and its implications made clear. A possible output would say: “The museum visit is September 25; the saved notice says the bus leaves at 08:20. The new newsletter has not been processed, so this update may omit later instructions or changes.”
+
+The second path remains **pending approval**. The user requested an explanation of it; approving recipe extensibility and the starter template does not approve this exception. Its benefit is an immediate useful update; its cost is that the parent may act before relevant changes are known. Until a decision is made, it is not an alternative way to complete the daily brief. The separately approved knowledge-query rule still allows a truthful answer with coverage limits; that does not authorize sending this proposed manual brief.
 
 ## Optional audio and attribution remain choices
 
@@ -58,27 +79,25 @@ The earlier proposal described a common School-OS effect engine with durable own
 
 ## What your direction settles, and what remains
 
-Your direction settles who checks uncertain actions and when the ordinary daily
-brief may be created. No separate central effect engine or partial-brief policy
-is needed to implement that direction. D5 is approved; D7/D8 are deferred.
+Your direction settles who checks uncertain actions, when the ordinary daily
+brief may be created, and that users and agents can create and choose any number
+of brief recipes. The starter's selection and failed-sync disclosure are approved.
+No separate central effect engine, recipe registry or partial-brief policy is
+needed to implement that direction. D5 is approved; D7/D8 are deferred.
 
 The remaining D6 product choices are narrower:
 
-- **Content selection:** recommend newly verified or substantively corrected
-  knowledge in the requested reporting interval, showing original source dates
-  and relevant outstanding tasks. This surfaces late-processed older deadlines.
-  Selecting only original source dates is simpler but can miss those updates.
+- **Manual incomplete brief:** the museum/newsletter example above explains the
+  proposed explicit-request exception. It remains unapproved; no universal
+  manual-brief policy follows from choosing a recipe.
 - **Optional audio:** the prior recommendation saves a derived audio artifact
   on Drive until parent deletion. A shorter retention rule uses less storage but
   reduces later access. Email-first avoids waiting on optional audio; combined
   delivery waits for audio. Retention and order remain unapproved.
-- **Task-app freshness:** the prior recommendation permits a knowledge brief
-  after complete ingestion even if task-app synchronization fails, using verified
-  canonical tasks and disclosing the app-state limitation. Blocking the brief
-  until task sync succeeds is an alternative with potentially later delivery.
 
-The finite D4 scope/cutoff and remaining D6 selection/audio choices still need
-resolution before their dependent implementation. The approved minimal D3 helper
+The finite D4 scope/cutoff, proposed manual exception and audio choices still need
+resolution before their dependent implementation. The starter template and
+recipe extensibility may proceed within their approved scope. The minimal D3 helper
 direction may proceed; no separate record/save-framework gate remains. The agent can report a blocked operation
 in its existing authorized interaction; this brief does not add an alert service
 or require an architectural decision about message wording. No test, probe,

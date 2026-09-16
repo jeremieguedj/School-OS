@@ -47,6 +47,16 @@ helpers are neither the entire source adapter nor an identity/persistence
 engine. They do not complete the 33 lifecycle scenarios or the whole project.
 Recipes point to actual scripts; the agent and its tools perform the rest.
 
+## New operation review cases — prepared only
+
+The [written operation cases](../../../../operations/prepared-review-cases.md)
+add setup/tool choice, shared adapter reuse, pending parent confirmation, storage
+lookup and recipe-selection expectations. They do not modify the frozen studies
+or the 13-source/33-scenario inventory. All remain unexecuted. The proposed order
+is text review, fictional capability/mapping exercises, storage/query and task
+round trips, then complete ingestion/brief exercises. The user chooses and
+authorizes each testing stage; this document authorizes none.
+
 ## Current approvals and MVP boundary
 
 | Decision | Current treatment in prepared acceptance work |
@@ -57,9 +67,9 @@ Recipes point to actual scripts; the agent and its tools perform the rest.
 | D3 | Code-capable agents and a minimal set of small Python standard-library routines are approved. Recipes name actual helpers while agents/tools do other work. Extra dependencies/new architecture are not implied; actual runtime qualification remains unestablished. No personal machine, daemon or coding CLI is required. |
 | D4 | One logical run completes all relevant unprocessed mail. The agent owns adaptive resource batching and resource recovery with School-OS guidance. Former School-OS per-run caps and batch scheduling are rejected. Remaining metadata/discovery/content choices are not blanket-approved. |
 | D5 | Approved in full: claims/relationships, parent fields, finite/recurring tasks, native recurrence or a 14-day occurrence fallback, three-way field reconciliation and missing projections. The deferred framework is not needed to reopen those approved meanings. |
-| D6 | Agent validates uncertain actions through authorized means; ordinary daily brief requires complete ingestion. Remaining content/recency/audio choices are not blanket-approved. No fixed effect engine or records/save framework is inferred. |
+| D6 | Agent validates uncertain actions through authorized means; ordinary daily brief requires complete ingestion. Starter selection/task-sync disclosure and any number of compatible household brief recipes are approved; audio and manual limited-brief choices remain pending. No fixed effect engine or records/save framework is inferred. |
 | D7 | Centralized tools/jobs/capabilities register and scheduling control are out of MVP. Users/agents schedule nonconcurrently and select adapters from recipes. |
-| D8 | Package installer, upgrades, compatibility and migrations are deferred. D1 separation remains; minimum setup needs a separate decision. |
+| D8 | Package installer, upgrades, compatibility and migrations are deferred. D1 separation remains; the setup interview and shared adapter authoring/reuse are now approved. |
 
 Actual runtime limits, authorization and source unavailability remain real. A
 blocked agent reports incomplete work instead of declaring the logical run
@@ -81,7 +91,7 @@ to check normal saves or preserved meaning.
 
 | Existing scenario or branch | Classification after the latest direction |
 |---|---|
-| S01 package installation | Package admission/installer branch deferred; minimum setup undecided; startup from established D1 state remains relevant |
+| S01 package installation | Package admission/installer branch deferred; agent-led setup interview/shared mapping authoring approved; startup from established D1 state remains relevant |
 | S02 capabilities | Agent checks available authorized means and recipe requirements; no centralized capability register required |
 | S06, S10–S11, S14, S23 bounded work | Keep identity/coverage/resource limits; supersede School-OS cap-driven successful stops or scheduled batches with agent-owned continuation/blocker handling |
 | S12 normal saves/readback/cleanup | In scope; no unverified completion claims |

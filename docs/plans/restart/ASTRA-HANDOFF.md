@@ -31,6 +31,14 @@ helper set. All remaining work is agent/tool operations; recipes name actual
 helper scripts/callables when applicable. No version pin, third-party dependency,
 SDK, personal machine, persistent process or coding CLI is selected. The authored
 helpers/source_metadata.py and its prepared checks must not be executed yet.
+The user also approved an interview during setup: present task tools known and
+available to the current agent and ask for the parent's choice. One shared
+tool-semantic adapter per tool maps School-OS logic to tool meanings, independent
+of agent/API/SDK/authentication/transport. Each agent uses its own connector.
+Author a missing conformant mapping for a selected accessible tool and save it
+as discoverable shared instance material under existing D1 separation. Reuse it
+across agents; do not create runtime-specific forks or a central tool registry.
+See operations/setup.md and operations/tool-adapters.md; both are unexecuted.
 
 Current additional MVP exclusion, 2026-09-15: the separate records/ordinary-save
 framework is outside MVP. Do not make a full schema catalogue, generic writer,
@@ -48,12 +56,21 @@ Current MVP revisions, approved 2026-09-15:
   The proposed School-OS-pending/run-start cutoff awaits explicit approval;
   remaining metadata threshold/search details are not blanket-approved.
 - D5: approved in full, including recurring tasks/14-day fallback, separate parent
-  state and three-way task sync. Do not ask for these mechanisms again.
+  state and three-way task sync. The new approved amendment classifies clear
+  evidence of fulfillment as Completion detected — awaiting parent confirmation,
+  not completed. The shared adapter maps it to a supported status or section;
+  the parent checks it off and ordinary sync establishes completion on both
+  sides. Preserve evidence and already confirmed completion. Future automatic
+  closure needs a later decision; no accuracy threshold or automatic rollout
+  exists. See operations/completion-review.md. Do not ask for these approvals again.
 - D6: executing agent validates uncertain effects through its available authorized
   tools/APIs. Validate complete intended ingestion before creating the daily brief.
   If blocked, report incomplete ingestion rather than a finished partial brief.
-  Do not restore the former generic persisted-effect engine. Recency/audio/minimum
-  output architecture remains subject to explicit decisions; qualified knowledge questions remain allowed.
+  Do not restore the former generic persisted-effect engine. The daily starter
+  selects newly verified/corrected information and relevant open tasks, shows
+  original dates and discloses failed task-app sync. Users and agents may create
+  and select any number of compatible brief recipes. Audio and manual limited-
+  brief choices remain pending; qualified knowledge questions remain allowed.
 - D7: tools/capabilities/jobs register, scheduler management and register-based job/
   sender queries are outside MVP. Users/agents manage their own jobs, read recipes
   and select adapters. Assume no concurrent same-data use; add no locking service.

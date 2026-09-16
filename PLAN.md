@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: restart preparation remains on `codex/restart-school-os`. D1, query coverage, minimal Python standard-library helpers with agent/tool operations and D5 are approved. D4 now requires agent-managed complete-run ingestion; D6 requires agent verification and complete ingestion before the daily brief. D2 canonical-write recovery, the separate records/ordinary-save framework, D7 central tools/jobs management and D8 packaged lifecycle are outside MVP. Remaining small contracts/choices await approval; production implementation and qualification remain pending.
+Status: restart preparation remains on `codex/restart-school-os`. D1, query coverage, minimal Python standard-library helpers with agent/tool operations and D5 are approved. D4 now requires agent-managed complete-run ingestion; D6 requires agent verification and complete ingestion before the daily brief; the approved starter selection permits any number of compatible user-created brief recipes. D2 canonical-write recovery, the separate records/ordinary-save framework, D7 central tools/jobs management and D8 packaged lifecycle are outside MVP. Remaining small contracts/choices await approval; production implementation and qualification remain pending.
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 Decision authority: [product principles](docs/product-principles.md#decision-authority)
@@ -33,8 +33,13 @@ a successfully completed partial daily brief. General knowledge questions retain
 the approved rule permitting useful answers with explicit coverage limits.
 
 Exact next action: resolve the proposed finite daily scope/cutoff, remaining D4
-identity/discovery and D6 selection/audio choices before their dependent work.
-D3’s minimal Python/agent split is approved. The separate records/ordinary-save
+identity/discovery and D6 audio/manual limited-brief choices before their dependent work.
+D3’s minimal Python/agent split and shared tool-semantic adapters are approved.
+The [setup and adapter operations](operations/README.md) implement the interview,
+missing-mapping authoring and cross-agent reuse as instructions. The approved
+[completion review](operations/completion-review.md) distinguishes detected
+completion from parent-confirmed completion using a supported tool status or
+section. These instructions are authored, not executed or qualified. The separate records/ordinary-save
 framework is not an MVP feature or gate; do not restore it as a hidden dependency.
 The [new helper subset](helpers/README.md) and its prepared checks are authored,
 not run; this is not the complete project implementation. D5 behavior is approved and

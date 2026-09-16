@@ -31,6 +31,15 @@ identity or completion. Another capable agent can read already saved knowledge.
 
 ## Before processing
 
+For first setup, follow the [parent interview](../../../../operations/setup.md):
+offer task tools known and available to this agent, state limitations and let the
+parent choose. Follow [adapter creation/reuse](../../../../operations/tool-adapters.md)
+when the selected accessible tool needs a mapping. One shared adapter per tool
+holds School-OS-to-tool semantics; each agent's connector supplies API access,
+authentication, transport and actual calls. Do not fork the adapter per agent or
+confuse a missing mapping with missing connector capabilities. Use the shared
+mapping again on later operations and from fresh agents.
+
 - Read the selected recipe, configured school/source scope and relevant Drive
   state. Do not load all historical knowledge merely to begin a daily operation.
 - Establish the intended work scope. The proposal to include all School-OS-pending
@@ -94,6 +103,20 @@ read coverage. For large material, use an available supported reading route
 within actual limits. Do not invent a segmentation capability, truncate school
 information or mark unsupported content complete. Lack of access or usable
 content support is a blocker to full ingestion, not a reason to silently omit it.
+
+## Task evidence and selected brief recipes
+
+Follow [completion review](../../../../operations/completion-review.md) when
+clear observed evidence satisfies a linked task: save detected completion awaiting
+parent confirmation, use the shared adapter's status/section mapping and accept
+actual parent confirmation through D5 sync. Do not report the detected state as
+completed.
+
+Follow the [chosen brief recipe](../../../../operations/brief-recipes.md). The
+daily starter includes newly verified/corrected information, original source
+dates and relevant open tasks, disclosing failed task-app sync. Users and agents
+may author and choose any number of compatible recipes. This does not relax the
+coverage gate below or adopt the pending manual limited-brief exception.
 
 ## Completion before the daily brief
 
