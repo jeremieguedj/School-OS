@@ -25,7 +25,11 @@ checks, not executed. This subset/documentation checkpoint is not the whole-code
 handoff or start of testing.
 
 For a guided review, open the [HTML architecture decision guide](implementation/architecture-guide.html).
-It explains current decisions and remaining proposals with examples and flows.
+Its [single numbered section](implementation/architecture-guide.html#open-questions)
+and matching [question inventory](implementation/OPEN-QUESTIONS.md) cover nine
+known remaining decisions. Q1, Q2 and Q6 need concrete proposals from the
+coordinator before final approval; the other six have recommendations ready for
+review. Existing approvals and explicit MVP deferrals are preserved.
 The [new operating instructions](../../../operations/README.md) cover the
 approved setup interview, reusable tool-semantic adapters and parent confirmation
 of detected completion. Agent-specific connectors own API/access mechanics;

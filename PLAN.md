@@ -32,8 +32,11 @@ its intended ingestion before daily brief composition. Blocked ingestion is not
 a successfully completed partial daily brief. General knowledge questions retain
 the approved rule permitting useful answers with explicit coverage limits.
 
-Exact next action: resolve the proposed finite daily scope/cutoff, remaining D4
-identity/discovery and D6 audio/manual limited-brief choices before their dependent work.
+Exact next action: publish the [consolidated nine-question review](docs/plans/restart/implementation/OPEN-QUESTIONS.md),
+then supply the missing concrete data-field/link, topic/entity lookup and
+content-read reuse proposals (Q1, Q2, Q6). Resolve these and the remaining daily
+scope/discovery/identity and manual/audio choices before their dependent work.
+The list records no new approvals; it preserves D1/D5 and all explicit deferrals.
 D3’s minimal Python/agent split and shared tool-semantic adapters are approved.
 The [setup and adapter operations](operations/README.md) implement the interview,
 missing-mapping authoring and cross-agent reuse as instructions. The approved

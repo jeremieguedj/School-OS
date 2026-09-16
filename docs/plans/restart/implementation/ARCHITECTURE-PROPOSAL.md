@@ -1,8 +1,11 @@
 # Restart implementation decisions for approval
 
-Updated 2026-09-15, revision 9: adds the approved setup interview and shared
-tool-semantic adapter/agent-connector separation, plus parent confirmation of
-detected completion, to the minimal Python helper direction; keeps the records-and-ordinary-save framework outside MVP.
+Updated 2026-09-15, revision 10: consolidates the known remaining choices in
+[one numbered review](OPEN-QUESTIONS.md). Concrete retained data fields/links,
+topic/entity lookup conventions and content-read reuse evidence still need
+complete proposals before approval (Q1, Q2, Q6). The other six questions carry
+explicit recommendations, alternatives and limits. This review records no new
+approval and does not restore the deferred generic records/write framework.
 **D1, query coverage, D3's minimal Python/shared-adapter direction and
 D5 are approved; D4/D6 use the recorded agent-led direction. D2 repair, the
 separate record/save framework, D7 and D8 are deferred.** The helper subset may

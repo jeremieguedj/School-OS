@@ -5178,3 +5178,41 @@ requirements, then read this log from top to bottom.
 - Next action is now the remaining architecture choices and independent approved
   implementation stated above; publication of this subset is no longer pending.
   Testing remains stopped, and no whole-project completion claim is made.
+
+
+## 2026-09-15 — Consolidated remaining architecture questions
+
+- At the user's request, reconciled the open website choices against the active
+  approval ledger, product principles, retained whole-project scope and recent
+  discussion of missing schemas and historical-query indexing.
+- Added `implementation/OPEN-QUESTIONS.md` and one nine-item numbered section in
+  the main HTML guide. The practical walkthrough links to that section instead
+  of keeping a second incomplete list. Each question explains the recommendation,
+  example, alternatives, tradeoffs, served principles/use cases and limits.
+- Q1 concrete retained fields/links, Q2 topic/entity lookup conventions and Q6
+  exact content-read reuse evidence still need detailed proposals before final
+  approval. Q3–Q5 and Q7–Q9 have recommendations. No new architecture is adopted.
+  The broad D2 record/save framework remains outside MVP; D1/D5 and other prior
+  approvals are not reopened. Household source/tool/recipe choices remain in
+  the approved interview and request flow.
+- Read-only worker review caught two gaps: Q6 had been labeled ready despite
+  its missing deciding rule, and Q4 understated the full-range fallback's cost.
+  Corrected both: Q6 explicitly remains proposal work; proposed full-range
+  enumeration occurs every daily run and can require repeated body/attachment
+  reads depending on the reuse rule. Its efficiency is not qualified.
+- Fixed stale active-plan wording about starter selection: the user's later
+  approval already selects newly verified/corrected information and failed-sync
+  disclosure for the starter, with arbitrary compatible household recipes.
+- No product code, frozen studies or prepared checks changed. No tests,
+  simulations, replays, builds, browser tests, connector probes or live School-OS
+  operations ran. Only static authoring, review and publication hygiene apply.
+- Exact next action: publish this review and verify its remote revision and Site
+  deployment, then supply Q1/Q2/Q6 proposals and resolve the remaining questions
+  before dependent implementation. Continue independent approved work. The next
+  phase is completing the agreed MVP; testing remains reserved for the user's
+  subsequent direction after the whole agreed implementation is published.
+- Publication hygiene passed: zero privacy findings, 187 local document links
+  and anchors resolve, and the diff has no whitespace errors. Both repositories
+  have only inactive sample hooks. The restart branch has no open pull request;
+  existing CI applies to main pushes, pull requests or manual dispatch. The
+  Site is static and owner-private. No checks were disabled or tests triggered.

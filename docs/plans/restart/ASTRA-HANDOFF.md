@@ -48,6 +48,15 @@ save verification and temporary-source cleanup remain. No replacement schema,
 UUID/locator scheme or write engine is approved; surface only a specific new
 architecture need if it arises during otherwise authorized implementation.
 
+Current decision review, 2026-09-15: read implementation/OPEN-QUESTIONS.md.
+It is the single known remaining-choice inventory, not an approval. Q1 concrete
+retained data fields/links, Q2 topic/entity lookup conventions and Q6 exact
+content-read reuse evidence still need detailed proposals before user approval.
+Do not promise a persisted schema or efficient complete history query from the
+current illustrative JSON. These specific gaps do not restore D2's generic
+record/save framework or reopen approved D1/D5 meanings. Q3–Q5 and Q7–Q9 contain
+recommendations; none may be adopted merely because the website was updated.
+
 Current MVP revisions, approved 2026-09-15:
 - D4: one logical run must complete all intended unread/unprocessed school mail.
   The capable executing agent owns resource limits, batching and its runtime

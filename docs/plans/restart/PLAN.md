@@ -9,14 +9,22 @@ experiments and historical proposals.
 
 ## Current coordinator checkpoint — architecture approval pending
 
-Latest published instruction/documentation subset:
+Prior published instruction/documentation subset:
 `087c061507731bac997624936dc6610ef0674f19` on `codex/restart-school-os`, verified
 against the remote branch. The existing architecture website now reflects these
 setup, shared-adapter, parent-confirmation and brief-recipe approvals, with D1
 storage diagrams and retrieval/save walkthroughs. Publication succeeded. No
 functional tests ran; this is not the whole-project implementation handoff.
-Next: resolve the still-pending D4 scope/identity/discovery and D6 audio/manual
-limited-brief choices while continuing independent approved implementation.
+Current review: the [single numbered question list](implementation/OPEN-QUESTIONS.md)
+and [website section](implementation/architecture-guide.html#open-questions) now
+cover every known remaining MVP choice. Q1 (concrete retained data fields/links),
+Q2 (topic/entity lookup conventions) and Q6 (content-read reuse evidence) need
+concrete proposals before final approval. Q3–Q5 and Q7–Q9 have recommendations
+for review. The full-range fallback proposed in Q4 applies every daily run and
+may repeat content reads depending on Q6; it is not adopted or qualified.
+Next: publish this consolidated review, then supply those three missing proposal
+packets and resolve the remaining choices before their dependent implementation.
+Continue independent approved work. No new architecture approval is recorded.
 The testing phase remains stopped until the user's subsequent direction.
 
 
@@ -31,11 +39,11 @@ design priorities, seven core use cases, other mandatory principle sections and
 ten implementation areas. Requirements are already established; the remaining
 blocker is approval of concrete architecture, not renewed product discovery.
 
-The [architecture proposal, revision 9](implementation/ARCHITECTURE-PROPOSAL.md)
+The [architecture proposal, revision 10](implementation/ARCHITECTURE-PROPOSAL.md)
 records recommendations and explicit decisions. **D1, query coverage, D3 minimal
 Python standard-library helpers with agent/tool operations, and D5 are approved. D4/D6 now use the approved agent-led directions
 below. D2 interrupted-write recovery, D7 and D8 are outside the MVP. Remaining
-named D4/D6 choices remain pending; the separate record/save framework is
+named D4/D6 choices and the newly exposed retained data/lookup specifics remain pending; the separate record/save framework is
 also outside MVP and must not be reinstated as an approval gate.**
 On 2026-09-14 the user explicitly replied "D1 approved"
 after the explanation of multiple JSON pages and per-page capacity limits.
@@ -229,8 +237,10 @@ After the detailed review, the user explicitly directed:
   mail/content is ingested, then create the daily brief. A real blocker remains
   an incomplete operation and must be reported; a partial normal daily brief
   cannot substitute for the required completed ingestion. The approved qualified
-  knowledge-query rule remains separate. Selection by verification time, audio
-  retention/order and specific new output meanings are not blanket-approved;
+  knowledge-query rule remains separate. The later starter-recipe approval
+  selects newly verified/corrected information with original dates and relevant
+  open tasks, disclosing failed task-app sync. Audio retention/order and the
+  explicit manual limited-brief exception remain pending;
   no record/save framework is an MVP prerequisite.
 - **D7:** remove the centralized tools/capability/jobs register, scheduler control,
   binding manager and register-backed known-job/sender queries from the MVP.
@@ -264,9 +274,11 @@ be adopted silently. Remaining D4 precision/search/repeated-appearance details,
 D6 audio/manual limited-brief and specific remaining architecture choices remain pending.
 D3’s minimal Python/agent split is approved; the record/save framework is deferred. Existing source-metadata and coverage invariants remain authoritative.
 
-Exact next action: resolve the finite daily scope/cutoff and those remaining
-MVP choices with the user, without rebuilding deferred infrastructure or
-reopening the excluded record/save framework. Continue approved helper and
+Exact next action: publish the consolidated [nine-question review](implementation/OPEN-QUESTIONS.md),
+then supply concrete proposals for Q1 data fields/links, Q2 lookup conventions
+and Q6 read-reuse evidence, and resolve the remaining numbered choices with the
+user before dependent implementation. These are specific gaps in retained
+features, not a generic record/write framework or a reopening of D1/D5 approvals. Continue approved helper and
 instruction work independently; do not execute it.
 Implement approved retained deliverables and prepare their unexecuted checks.
 Commit/push the agreed MVP code and continuity, verify the exact remote revision,
