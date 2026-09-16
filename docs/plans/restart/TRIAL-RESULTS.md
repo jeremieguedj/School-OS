@@ -15,7 +15,7 @@ setup success. Work visibly uses GPT-5.6 Sol Light.
 | Route | Independent setup audit | Next stage |
 | --- | --- | --- |
 | Gemini Spark, second attempt | Failed: required canonical catalogue routes are missing | Ingestion blocked; preserve instance for review |
-| ChatGPT Work, second attempt | Pass with documented limits | Separate fixed-scope ingestion authorized; completion pending |
+| ChatGPT Work, second attempt | Pass with documented limits | Partial ingestion reported; saved-state audit and read-only questions in progress |
 
 **Spark's confirmed defect:** its sole page catalogue uses the invalid
 canonical-family route `catalogue_root`, with no reachable Email, Attachment
@@ -45,8 +45,30 @@ complete envelopes, plus four earlier coordinator envelopes. One initial list
 response was lost to a local encoder failure; a single read-only repeat was
 preserved. No connector-reported error occurred. These are evaluator audit costs,
 not measured provider setup costs. Root accepted the required setup gate and
-authorized only the separate, unchanged seven-day ingestion request. No successful
-ingestion or retrieval outcome is yet established.
+authorized the separate, unchanged seven-day ingestion request.
+
+**Work's ingestion report, pending independent audit:** discovery completed for
+17 observed emails; 16 are marked fully ingested and one remains not ingested.
+It reports 17 Knowledge records, 10 internal Tasks and three processed image
+attachments, with canonical and derived pages saved and read back. It explicitly
+reports the whole run incomplete. Temporary-copy cleanup and unchanged mailbox
+state are provider claims, not independently established by saved data alone.
+
+The reported gap is a newsletter available through an external HTML image link.
+The frozen packet did not expressly prohibit such links; Work inferred an access
+limit from mailbox-only scope and the ban on substitute defect workarounds. It
+did not cite a named School-OS attachment rule. Preserve that scope interpretation
+for review without claiming a connector failure or a proven product defect.
+No corrective prompt or expanded source request was sent.
+
+The independent evaluator froze its expectation map before seeing Work output
+and is now reading the saved instance. The same seven read-only questions were
+submitted once. One explicit reporting adjustment appends a request for a
+downloadable copy of the same answers/citations/limitations/retrieval summary,
+because ordinary Chrome chat text lacks supported durable export in this session.
+Question content and expected answers are unchanged; Drive/source mutations and
+repairs remain forbidden. Report-generation overhead is separate from retrieval.
+No successful semantic or question outcome is yet established.
 
 **Controller evidence limitation:** one Work read-only observation timed out
 and reset the controller runtime. A controlled reattachment retry preserved the

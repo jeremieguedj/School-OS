@@ -6,8 +6,9 @@ requires reporting only, with no fixes before joint review. The first trial
 had one persisted ingestion with material semantic defects, one failed setup,
 and one failed browser launch. Two subsequent browser attempts are now under
 review: Spark failed its saved-setup audit; Work passed the required setup gate
-with documented limits and may begin its separate seven-day ingestion. No
-second-attempt ingestion result is established. No broad product qualification is claimed. See
+with documented limits and reports partial ingestion, with one of 17 emails
+remaining incomplete. Independent saved-state audit and the common read-only
+questions are in progress. No broad product qualification is claimed. See
 [trial results](TRIAL-RESULTS.md) for evidence and limitations; earlier checkpoints
 below are historical. The [artifact guide](README.md) distinguishes the active
 contract from frozen studies and superseded proposals.
@@ -48,9 +49,11 @@ missing knowledge from the oracle. New destinations and raw metadata receipts
 are private. Both providers completed their interviews and claimed setup success.
 Spark's saved catalogue does not expose the required canonical routes; preserve
 that failed instance and do not ingest into it. Work's required saved-state audit
-passed with documented evidence limits. Exact next action: submit its unchanged
-separate ingestion request, observe completion, then audit saved source meaning
-and requested question results. Preserve and report any blocker. Neither route may
+passed with documented evidence limits and its separate ingestion request was
+submitted once. Work reports the run incomplete and its read-only questions are
+active. Exact next action: finish the independent saved-meaning audit, capture
+and grade exact question results, publish findings and stop for joint review.
+Preserve and report any blocker. Neither route may
 receive product fixes or coaching from the evaluator's expected answers.
 
 ## Previous completed trial authority and outcomes

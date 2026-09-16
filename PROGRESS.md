@@ -6328,3 +6328,53 @@ requirements, then read this log from top to bottom.
   expected record counts or Spark context go into that provider message. Spark
   stays preserved at its failed setup. Exact next action: observe Work's separate
   ingestion, then audit actual saved meaning and questions without fixes.
+
+## 2026-09-16 — Work ingestion dispatched; independent expectations frozen
+
+- The isolated Work controller confirmed idle state and submitted the separate
+  unchanged ingestion request exactly once. The exact bounds are visibly present
+  and the provider is active. Later activity reports source enumeration and
+  attachment review, followed by extraction/persistence work; these remain
+  provider claims until independently audited. No questions or fixes were sent.
+- A separate context-free Sol evaluator prepared a private expectation map from
+  the existing source-bound reference before reading Work output. It covers
+  substantive knowledge, task dispositions, applicability, completion units,
+  source links and seven question expectations. Controllers receive no oracle.
+  The existing lost-search-receipt and fresh-JPEG-pixel limits remain unchanged.
+- Exact next action: let Work finish, preserve its actual saved pages and report,
+  then compare those with the frozen expectations and evaluate the requested
+  questions. Root continues exclusive browser-action leases; Spark remains held.
+
+## 2026-09-16 — Work reports one source-content scope gap
+
+- Work activity reports one message whose substantive newsletter is reachable
+  only through an external HTML image URL. It is preserving `not_ingested` for
+  that email and continuing the other discovered messages. No final saved-state
+  outcome has yet been audited.
+- Local review of the frozen packet confirms there is no explicit external-image
+  prohibition. Work inferred one from read-only mailbox scope and the instruction
+  not to introduce substitute workarounds; its captured explanation cites no
+  named School-OS attachment rule. Preserve this scope-interpretation issue and
+  do not assert a connector failure, unsupported fetch, or proven product defect.
+- The coordinator made no provider correction, expanded source request or
+  workaround. Let the provider finish and audit actual saved coverage and meaning;
+  any later common questions must preserve the observed ingestion limitation.
+
+## 2026-09-16 — Work question reporting and independent saved-state audit
+
+- Work reached a final idle ingestion response. The separate question packet
+  had not yet been submitted when the controller identified that in-chat answers
+  could not be exported durably through the documented Chrome API. In-memory AX
+  alone would not provide a durable exact-answer artifact for independent review.
+- Root authorized one explicit output-format adjustment: keep all common
+  questions unchanged and append a request for a downloadable Markdown/plain-text
+  copy of the same answers, citations, limitations and concise retrieval summary.
+  It explicitly forbids Drive mutations, new source fetches and repairs. Preserve
+  the final submitted prompt privately and record artifact-generation overhead
+  separately. This changes evidence delivery, not expected answers or product code.
+  If the provider cannot supply a supported download, report that limitation.
+- The independent Sol evaluator may now read the final saved Work instance from
+  its verified private binding and compare it with the already-frozen source
+  expectations. It receives no browser transcript, other route context or revised
+  oracle. Reads are confined to the assigned instance; no Gmail read or mutation
+  is authorized. Questions and this audit can proceed as independent read-only work.
