@@ -6521,3 +6521,55 @@ requirements, then read this log from top to bottom.
   permission to fix. Exact next action: capture Work's existing response when it
   finishes; resolve the Spark controller choice; obtain/cross-check its diagnostic
   and return to joint review. Product/starter and trial instances remain unchanged.
+
+## 2026-09-16 — Spark root-cause diagnostic completed
+
+- After the user directed the Sol High coordinator to complete the Spark
+  investigation, root reopened only the exact existing Spark task and submitted
+  one read-only diagnostic prompt. No new task, setup run, ingestion, Drive
+  mutation, external effect or fix occurred.
+- Spark identified its retained generator as the earliest divergence: it created
+  one page catalogue using the invalid `catalogue_root` family and assumed the
+  concrete family/month and pending routes would be created during ingestion.
+  The supplied storage and data contracts required those routes to be reachable
+  at setup, so the interpretation was incompatible with the contract.
+- Spark's readback checked its entrypoint, configuration and Entity locator. It
+  established internal reference consistency but did not read back the catalogue
+  or compare reachable routes against the contract. This explains why it claimed
+  completion despite the independently confirmed saved-state failure.
+- A chronology follow-up corrected Spark's initial overstatement: storage and
+  the relevant data-contract section were read before generation, while identity,
+  adapters, helpers and most operations were read afterward. It also recognized
+  the existing system-file set only after generating/uploading instance JSON.
+  Split reading remains a plausible contributor, not a proven technical cause.
+- Archive corruption, Drive JSON conversion, unavailable files and connector
+  error are not supported causes. Provider-reported generator lines are
+  consistent with the saved output but the VM script itself was not acquired.
+- Exact next action: capture and cross-check Work's existing diagnostic response,
+  then publish the final no-fix root-cause accounting for joint review.
+
+## 2026-09-16 — Work root-cause diagnostic completed
+
+- The isolated Work controller observed the existing diagnostic finish and saved
+  a privacy-safe normalized capture. A named downloadable artifact was visible
+  and its Download control returned, but original bytes were not recovered at the
+  expected path; no broad local scan was performed.
+- Work confirms that Q2's deadline was absent before persistence, leaving the
+  later Drive-only query unable to recover it. Q7 retrieved the relevant saved
+  material but stopped at aggregate page/catalogue citations.
+- Work attributes the Task failures to extraction/classification mistakes such
+  as promoting guidance, flattening conditions/lifecycle and generalizing
+  household scope. These explanations fit the output but remain retrospective.
+  Its blanket attribution to Task derivation conflicts with stronger saved-state
+  evidence: four divergences already occur in Knowledge, while two first occur
+  in Task completion-subject derivation.
+- No logged connector, write, truncation or context-limit failure explains the
+  semantic defects. Structural checks compared generated payloads with persisted
+  bytes and therefore could not establish source-semantic accuracy.
+- The remote-image source remained explicitly not ingested. Work describes a
+  derived third-party-fetch authorization boundary; reachability and authorization
+  remain unknown because no fetch was attempted. Binary coverage correctly kept
+  the source incomplete.
+- Spark and Work diagnostics are now complete and cross-checked. No fix, replay,
+  fresh source read or external mutation occurred. After publishing this no-fix
+  diagnostic checkpoint, the exact next action is joint review with the user.

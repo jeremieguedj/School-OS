@@ -1,12 +1,12 @@
 # School-OS trial root-cause review
 
-Status: local evidence review complete. Work’s diagnostic response is generating.
-Spark’s diagnostic prompt has not been dispatched: the app refused a fresh
-isolated worker, and the user’s choice about a coordinator-led fallback is pending.
-No product or instance changes are authorized. This report reuses frozen source
-expectations, final saved readbacks and preserved answers. The local review
-performed no new source access or functional test. See [trial results](TRIAL-RESULTS.md)
-for the full attempts, scope and evidence limitations.
+Status: local evidence review and the existing Spark and Work diagnostic
+follow-ups are complete. Their retrospective explanations are cross-checked and
+labeled separately from retained evidence and remaining unknowns. No product or
+instance changes are authorized. This report reuses frozen source expectations,
+final saved readbacks and preserved answers. The diagnostic performed no new
+source access or functional test. See [trial results](TRIAL-RESULTS.md) for the
+full attempts, scope and evidence limitations.
 
 ## Causal standard
 
@@ -91,8 +91,106 @@ This review confirms output divergence, not mental process. The most useful prov
 
 ## Provider diagnostic follow-up
 
-Work’s existing task was reopened at its exact saved URL after the previous tab handle became unavailable. The controller verified the prior setup/ingestion/question history, confirmed no earlier diagnostic prompt, submitted the prepared prompt once and observed the response begin. It remains in progress.
+Work’s existing task was reopened at its exact saved URL after the previous tab handle became unavailable. The controller verified the prior setup/ingestion/question history, confirmed no earlier diagnostic prompt and submitted the prepared prompt once. The completed report was normalized into a private privacy-safe capture. Work also exposed a named downloadable artifact; its Download control returned, but the exact file did not appear at the expected location and browser export was unsupported, so original artifact bytes were not claimed.
 
-Spark’s diagnostic prompt has not been dispatched. Fresh isolated worker creation was denied by the app’s retained-agent limit, including after another worker finished. Reusing the Work reviewer would conflict with the user’s controller-context separation rule. A question is pending about whether the coordinator may conduct this read-only follow-up directly with Spark-only evidence. No new trial or provider task has been created.
+### Work ingestion and question root causes
 
-Retrospective provider explanations will be distinguished from causes established by retained evidence. No fixes, fresh ingestion or question replay are authorized.
+Work's diagnostic agrees with the independent evidence on the main causal chain:
+
+- Q2's response deadline was absent from the first saved Knowledge and Task. A
+  Drive-only query could not recover a value absent from the saved canonical
+  representation. The answer failure is therefore downstream of that first
+  saved representation, not a failure to retrieve correctly saved data.
+- Work reports that Q7 retrieved the relevant saved canonical, source and
+  coverage material and kept the incomplete-coverage qualification. Its weakness arose during final
+  answer composition: it cited aggregate catalogue/page evidence instead of a
+  direct readable source path for every record supporting the negative claim.
+- Work reports that the Task defects arose during semantic derivation before
+  structurally valid pages were persisted. Independently, the first retained
+  divergences appear in saved Knowledge for four cases and saved Task for two.
+  Schema, references, routes and byte readback passed despite those defects.
+- No recorded connector error, failed write, truncation marker or context-limit
+  event explains the missing deadline or Task semantics.
+
+Work retrospectively attributes the semantic errors to ordinary extraction and
+classification mistakes: promoting advisory language into obligations, flattening
+conditional or recurring actions into finite tasks, and over-generalizing a
+household completion scope. Those explanations fit the observed outputs, but
+they are not contemporaneous decision records.
+
+One part of Work's retrospective is too broad. It says the Task defects first
+became observable during canonical Task derivation. Independent saved-state
+comparison places four of the six divergences earlier, in Knowledge action
+disposition; only the two completion-subject collapses first appear in Task
+derivation. The evidence matrix remains authoritative on that stage boundary.
+
+For the remote-image source, Work reports a derived authorization boundary: the
+source was a remote image URL in HTML rather than a connector attachment, and no
+explicit third-party web-fetch authority was found. The saved `not_ingested`
+state and absence of Knowledge are confirmed and truthful. Whether the remote
+resource was accessible or would have been authorized remains unknown because
+no fetch was attempted. This is an explicit incomplete-source outcome, not a
+proved connector defect or a silent success.
+
+Work also reports why its checks missed the defects. Persistence checks tested
+payload bytes and graph integrity. They did not compare source meaning with the
+saved deadline, action disposition, lifecycle, condition, scope or independent
+completion unit. Q7 lacked an effective final citation audit. Binary coverage,
+by contrast, correctly prevented the remote-image source from being marked fully
+ingested.
+
+### Spark setup root cause
+
+After the user directed the coordinator to complete the investigation, the
+coordinator reopened the exact existing Spark task and submitted a diagnostic
+prompt. It created no new provider task, reran no setup or ingestion, and made no
+Drive change.
+
+Spark's report and clarification give this retrospective causal account:
+
+1. It read `START-HERE.md`, the setup and product-principles documents, the
+   storage procedure and the relevant catalogue section of the data contract
+   before authoring its generator.
+2. It treated the bootstrap table's logical “Source/month page catalogues” row
+   as one physical file. It assumed that concrete family/month and pending pages
+   would be created later during ingestion.
+3. It reports that its generator consequently allocated one catalogue page and
+   wrote `canonical_family: "catalogue_root"`, a family the data contract does not
+   define. The earliest independently proven divergence is the saved invalid
+   catalogue and entrypoint reachability state.
+4. It reports that its readback checked the entrypoint, configuration and Entity
+   locator. These checks proved that its generated references existed and agreed internally.
+   It did not read back the catalogue page or compare reachable catalogue routes
+   with the contract, so the semantic setup defect passed its completion check.
+
+The supplied instructions are explicit: the entrypoint must identify bounded
+catalogue roots that reach Email, Attachment Group, Ingestion Coverage and
+Knowledge routes by source/month, including pending routes; a page catalogue's
+`route.canonical_family` names the actual canonical family. The independent
+audit confirms that Spark's saved state violated both requirements. Spark
+retrospectively attributes that result to a one-file interpretation followed by
+an inadequate semantic verification step. The preserved evidence independently
+confirms the incompatible saved catalogue and missing required route coverage;
+no evidence supports archive corruption, Drive conversion or connector failure.
+
+Spark initially overstated how comprehensively it had read the supplied system
+before generation. When challenged with the visible action chronology, it
+clarified that identity, adapters, helpers and most operation recipes were read
+only after the instance JSON had been generated and uploaded; it recognized the
+need to transfer the existing system files at that later stage. It nevertheless
+maintains, with tool-history references, that the storage and relevant data
+catalogue rules were retrieved before its generator was authored. This narrows
+the failure from unavailable instruction to misapplied instruction.
+
+Spark reports that the long data contract was initially truncated and that it
+then fetched the relevant later section before generation. Split reading may
+have contributed to weak cross-document synthesis, but it is not established as
+the cause because the needed section was reportedly retrieved. Spark also cites
+exact lines from a retained VM generator artifact. The saved output independently
+corroborates the generated shape, while exact script-line provenance remains a
+provider claim because that VM file was not acquired by the evaluator.
+
+Both provider diagnostics are now complete and cross-checked against retained
+evidence. Retrospective explanations are labeled separately from established
+causes and remaining unknowns. No fixes, fresh ingestion or question replay were
+performed or authorized.

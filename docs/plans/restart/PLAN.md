@@ -38,12 +38,18 @@ The fresh Sol test run must appear alongside the Spark and Work results; the two
 browser reruns are additional attempts, not the entire three-route assignment.
 
 The [root-cause report](ROOT-CAUSE-REVIEW.md) records the local evidence review.
-Work’s existing conversation is generating its diagnostic response. Spark’s
-follow-up is not dispatched because fresh isolated worker creation was denied;
-the user’s choice about a coordinator-led fallback is pending.
-Exact next action: obtain bounded diagnostic reports from the existing sessions,
-cross-check them against preserved evidence, publish the three-route/root-cause
-accounting and stop for joint review before fixes.
+Spark's existing conversation has completed its diagnostic and one chronology
+clarification. Independent evidence confirms the invalid saved catalogue and
+missing required route coverage. Spark retrospectively attributes that result to
+a one-file interpretation of a plural route requirement, followed by
+self-consistency checks that omitted catalogue semantics.
+Work's existing conversation has also completed its diagnostic response. The
+independent evidence confirms that the deadline is absent from the first saved
+Knowledge/Task and that Q7's final citation set is too aggregate. Work attributes
+those outcomes to extraction and citation selection. Four Task defects first
+appear in Knowledge and two in Task derivation, narrowing Work's broader
+retrospective attribution.
+Exact next action after publication: stop for joint review before fixes.
 
 ### Second browser attempts authorized — isolated controllers
 

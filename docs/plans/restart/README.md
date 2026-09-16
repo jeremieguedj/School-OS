@@ -6,8 +6,8 @@ parent interview. See [starter distribution](../../setup-bundle.md) and the
 [revised trial handoff](TRIAL-PROMPTS.md). The starter is published, the user
 authorized the named live trials and later isolated browser attempts, and their
 [results](TRIAL-RESULTS.md) include material failures. The authorized attempts and
-audits are concluded. A subsequent [read-only root-cause review](ROOT-CAUSE-REVIEW.md)
-is authorized; stop for joint review before fixes or new trials. Earlier guided
+audits are concluded. The subsequent [read-only root-cause review](ROOT-CAUSE-REVIEW.md)
+is complete; stop for joint review before fixes or new trials. Earlier guided
 attempts remain historical; the active plan controls current authority.
 
 Start here when resuming the restart. The retained MVP
