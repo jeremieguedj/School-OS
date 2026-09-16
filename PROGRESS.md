@@ -5592,3 +5592,24 @@ requirements, then read this log from top to bottom.
   goal was created. The architecture blocker itself is resolved. Next: the user
   resumes the existing goal via app controls, then continue exact-folder
   verification and the authorized trials, preserving fresh-agent isolation.
+
+## 2026-09-16 — Goal resumed; isolated folders verified
+
+- The existing goal is now active. The prior turn made concrete progress through
+  publication and browser/Drive preflight evidence; it did not complete trials.
+- Diagnosed the prior metadata failure as argument projection: a descriptive
+  wrapper containing a folder URL was passed where the tool needed the folder
+  reference. Extracting the referenced ID allowed a successful metadata read;
+  the intended Tests parent was not missing. Cached browser confirmation was
+  kept separate from live connector evidence.
+- Created and metadata-verified three distinct fresh child folders for the
+  coordinator, Gemini Spark and ChatGPT Work routes. No previous instance data
+  was copied. Shared private inputs pin implementation
+  `138ca7954bdb3b7e9de065199fdb4903d6a924a3` and received-time interval
+  `[2026-09-09T14:53:31Z, 2026-09-16T14:53:31Z)` for every route.
+- Browser trial prompts are being prepared for the verified isolated folders.
+  A separate Sol auditor handles source expectations without reading tested
+  outputs. The fresh context-free worker still needs an available agent slot
+  or the user's answer about a separate Sol task; no experienced worker has
+  been substituted. Next: launch browser trials, preserve their actual handles,
+  and audit the three routes without cross-instance contamination.

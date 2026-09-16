@@ -28,9 +28,10 @@ recoverable from the snapshot and history; frozen restart studies remain intact.
 
 The retained operations, contracts, adapters and fictional examples are authored
 but untested. Q10 is resolved with no new format: whole records remain bounded by
-the existing 64 KiB maximum, and oversize records block without truncation. Exact
-next action: finish static integration review and publication hygiene, then publish and verify
-the exact remote implementation revision before any authorized trial begins.
+the existing 64 KiB maximum, and oversize records block without truncation. Static
+integration and implementation publication are complete. Exact next action:
+conduct the three authorized isolated trials at the published revision below,
+then independently audit their saved results and retrieval evidence.
 
 ### Q10 decision — retain the single page maximum
 
@@ -54,6 +55,15 @@ and T1–T10 with explicit D2/D7/D8 deferrals. No functional test or ingestion h
 run. The next action is the already-authorized three isolated ingestion/audit
 trials at this fixed implementation revision, including page-size evaluation.
 This publication is not a claim of connector, agent or semantic qualification.
+
+**Trial preflight, 2026-09-16:** the goal is active again. The intended tests
+parent and three separate fresh route folders have been verified through live
+Drive metadata. Browser trial prompts are being prepared with the same fixed
+seven-day interval and published revision. Independent source audit is separate
+from tested-agent outputs. The session's agent-thread limit currently prevents
+spawning the first context-free worker; a separate Sol task was proposed to the
+user, without silently substituting an existing worker. Browser routes can
+proceed independently. Private references and evidence remain outside Git.
 
 ## Current execution authorization
 
