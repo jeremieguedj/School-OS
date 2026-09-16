@@ -5568,3 +5568,27 @@ requirements, then read this log from top to bottom.
   `ec43f61c001a25ca563ceadb51965aa68899ff5c`, with links pinned to the published
   implementation. Site privacy and local-link hygiene passed. Q10 now explains
   the retained limit and evaluation rather than requesting segment approval.
+
+## 2026-09-16 — Post-publication trial preflight paused
+
+- Published implementation remains pinned at
+  `138ca7954bdb3b7e9de065199fdb4903d6a924a3`; continuity publication was
+  `6bda4a1ddec20c6c31becf8437f17085fd4a5d9f`. No ingestion has started.
+- Sol browser preflight found fresh Gemini Spark and ChatGPT Work composers;
+  Work visibly offered a non-Astra Sol selection. No prompt was submitted.
+- Drive preflight established connector access but did not verify the intended
+  tests-parent folder. The metadata route returned an invalid-argument response;
+  a metadata-only search did not establish the exact pointer. No trial folders
+  or canonical data were created. Raw receipts and local preservation-failure
+  provenance remain private; do not classify this as an ingestion defect.
+- Independent source enumeration and the semantic oracle have not started.
+  Private continuation is in `private/restart-trials/preflight/status.json`.
+- A fresh context-free worker could not spawn because this session reached its
+  agent-thread limit. The coordinator asked whether to create a separate Sol
+  task for that route; no replacement trial was silently substituted.
+- The user requested unblocking the existing autonomous goal. Available goal
+  tools expose no resume action, and CUA prohibits operating the Codex app.
+  The existing goal remains blocked in the UI; no false completion or replacement
+  goal was created. The architecture blocker itself is resolved. Next: the user
+  resumes the existing goal via app controls, then continue exact-folder
+  verification and the authorized trials, preserving fresh-agent isolation.
