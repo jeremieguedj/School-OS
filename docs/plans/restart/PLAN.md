@@ -65,8 +65,11 @@ Drive metadata. The operating implementation remains pinned at
 identifier and metadata observed 17 matching message entries in the fixed
 interval and no continuation; this is an observed provider-entry inventory, not
 a count of canonical logical emails. The independent oracle has read those 17
-bodies, while the visual meaning of three image attachments remains under review,
-so source coverage is not yet complete.
+bodies and prepared source-bound expectations and questions. Three image
+attachment receipts expose authenticated file references but no local binary or
+inline image; their visual meaning remains unknown, so source coverage is not
+complete. Approved metadata comparisons, not RFC or provider message IDs,
+govern logical associations.
 
 The first private launch-input preparation mistakenly retained only one of two
 configured school-sender domains. That version is frozen as evidence; corrected
