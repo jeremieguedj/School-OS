@@ -66,6 +66,13 @@ or outcome. Root stopped that response and requested only a read-only account
 of existing saved state and uncertain effects. No repair, cleanup, replacement
 setup or ingestion is authorized by this intervention. Preserve the distinction
 between progress claims and verified provider effects. Sol ingestion continues.
+Spark's final read-only report is now received. Independent exact-handle metadata
+checks confirm the reported test JSON exists under My Drive/root, outside its
+assigned instance. Actor/deletion history remains self-reported. A direct fetch
+confirms the saved Google Doc entrypoint has 18 roles and one generic catalogue
+root, failing the approved 24-role/eight-catalogue bootstrap. Spark setup is
+failed and ingestion remains unexercised; preserve its state for joint review.
+No repair, deletion or further Spark operation is authorized by these findings.
 
 Approval review initially rejected Sol's configured bootstrap upload for needing
 specific personal-data authority. The user subsequently authorized personal-data

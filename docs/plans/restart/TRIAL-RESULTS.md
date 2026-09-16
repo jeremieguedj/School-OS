@@ -75,6 +75,19 @@ is addressed. No implementation fix or defect workaround is permitted.
   and requested a read-only state/effect report, without allowing repair or
   cleanup. These are unverified progress claims, not proof of a particular
   mutation, error cause or successful setup. No ingestion request was sent.
+- **Spark final audit / independent checks:** Spark's read-only report describes
+  partial setup, missing operation procedures, format conversions and incomplete
+  readback. Bounded independent provider checks confirm that its exact reported
+  test JSON exists directly under My Drive/root, outside the assigned instance.
+  Metadata proves location/current existence, not actor history; authorship and
+  the statement that no deletion was attempted remain self-reported. The fetched
+  entrypoint is a native Google Doc exposing 18 logical-role page IDs and one
+  generic catalogue root, versus the approved 24 discoverable roles and eight
+  catalogue routes. This independently confirms a bootstrap mismatch. Remaining
+  file counts, missing procedures and decoding/corruption statements were not
+  independently qualified in this bounded check. Setup failed; ingestion,
+  retrieval questions and page-size comparison on this route are unexercised.
+  No cleanup, repair, replacement or retry was performed.
 - **ChatGPT Work:** selected UI model was GPT-5.6 Sol Light. The recorded first
   response was a network error, before interview or setup completion. No Retry
   was submitted. Evidence establishes provisional frontend state, not a durable

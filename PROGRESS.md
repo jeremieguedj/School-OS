@@ -6015,3 +6015,22 @@ requirements, then read this log from top to bottom.
 - Exact next action: inspect the Sol ingestion result and Spark read-only report;
   continue query/audit work only where actual saved state supports it. Preserve
   failures for joint user review, without addressing bugs during the trials.
+
+## 2026-09-16 — Spark failed setup independently confirmed
+
+- Spark returned its read-only report: partial setup, missing procedures, format
+  conversion and incomplete verification. No ingestion was requested or claimed.
+  The coordinator did not instruct repair, cleanup or resumption.
+- Independent read-only metadata using exact observed handles confirms that the
+  reported test JSON exists directly under My Drive/root, outside the assigned
+  route. Its current existence/location is confirmed; authorship and whether a
+  deletion was ever attempted are not established by metadata alone.
+- Independent metadata/content fetch confirms a native Google Doc entrypoint
+  with 18 logical-role IDs and one generic catalogue root. This fails the pinned
+  24-role/eight-catalogue contract. Other file counts, absent operations and
+  decode/corruption statements remain self-reported in this bounded audit.
+- Four complete connector receipts and the audit are preserved privately at
+  mode 0600. No broad Drive search, mutation, repair, cleanup, replacement task
+  or failed-effect retry occurred. Spark is a failed setup outcome with later
+  ingestion/query/page-size stages unexercised. Sol ingestion continues; Work
+  remains at its un-retried launch/network failure.
