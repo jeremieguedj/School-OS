@@ -39,6 +39,22 @@ is addressed. No implementation fix or defect workaround is permitted.
   instance JSON files, plus public system inventory and folder checks. Independent
   setup review is in progress. The separate ingestion request is now supplied;
   no ingestion outcome is yet established.
+- **Independent Sol setup review:** actual content receipts support exact
+  readback for the configured entry point and all 37 instance JSON pages. Page
+  schema, references, UUIDs, bounds and configuration scope match the approved
+  inputs; the maximum observed setup page is 5,795 bytes. Observed create/upload
+  parents are confined to the assigned root. All 30 public/root file sizes match,
+  but 29 public files lack content readback. Their presence/size is verified,
+  not their complete contents.
+  Preserved setup attempts total 135: 13 successful folder creates, 68 uploads
+  (67 successes and one predispatch approval rejection), 38 exact content
+  readbacks, 15 folder listings and one invalid metadata call. This is setup
+  activity, separate from later ingestion; a rejected attempt is not provider I/O.
+- **Inventory claim limitation:** folder-list responses expose only returned
+  files, without continuation or explicit exhaustion. Expected direct-child
+  counts do not establish exhaustive inventories or prove extensions empty.
+  Fresh coordinator-created destination provenance and new UUIDs are separate
+  evidence; they do not upgrade those list responses into exhaustion proof.
 - **Browser launch:** the user's direct start statement cleared the earlier
   authorization issue. No prompt was submitted during the operator's tab-binding
   error or two stalled native-app attachments. Root took over and submitted the
@@ -52,6 +68,13 @@ is addressed. No implementation fix or defect workaround is permitted.
   Spark then asked the ordinary household/source/location/tool interview. Root
   answered it under the user's explicit personal-data authority, including the
   standard starter brief template as configuration only. No ingestion requested.
+- **Spark coordinator hold:** progress claimed saves and an initial completion
+  while the task remained active, without a final inventory or actual readback.
+  It also mentioned retries/decoding/conversion issues and deletion of a test
+  file. No target or confirmed outcome was visible. Root stopped the response
+  and requested a read-only state/effect report, without allowing repair or
+  cleanup. These are unverified progress claims, not proof of a particular
+  mutation, error cause or successful setup. No ingestion request was sent.
 - **ChatGPT Work:** selected UI model was GPT-5.6 Sol Light. The recorded first
   response was a network error, before interview or setup completion. No Retry
   was submitted. Evidence establishes provisional frontend state, not a durable

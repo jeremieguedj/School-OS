@@ -5976,3 +5976,42 @@ requirements, then read this log from top to bottom.
   brief-template preference as configuration only. Spark is setting up; no
   ingestion request has been sent to it. Work remains at its un-retried network
   failure with no confirmed durable task handle.
+
+## 2026-09-16 — Independent setup review and first ingestion observations
+
+- Sol reports discovery of 17 in-scope observations, exhausted continuation, full
+  MIME reads for all 17 and successful reads of three attachment candidates.
+  It is interpreting content; the discovery window remains durably unfinished.
+  Fetch success is not a verified complete-ingestion claim.
+- Independent setup audit confirms exact actual readback for START-HERE and all
+  37 instance pages. Schema, references, UUIDs, bounds and approved configuration
+  scope pass the preserved-evidence comparison; maximum setup page is 5,795 bytes.
+  This does not exercise pages near 64 KiB or larger candidate limits.
+- Audit corrected the strength of inventory claims: folder lists expose no
+  continuation/exhaustion evidence, so matching returned counts do not prove full
+  inventories or extensions empty. Fresh destination creation is separately
+  documented. All 30 public/root files match reported sizes, but 29 lack content
+  readback. Preserve these unverified areas without repairs or corrective calls.
+- Canonical configuration evidence supports continuing the separate ingestion
+  attempt. Spark remains in setup, Work remains un-retried, and no product files
+  or published starter have changed.
+
+## 2026-09-16 — Setup audit completed; Spark held for uncertain effects
+
+- Independent Sol setup audit completed privately. Preserved setup activity is
+  135 attempts: 13 successful folder creates, 68 uploads (67 successes plus one
+  predispatch review rejection), 38 exact content readbacks, 15 listings and one
+  invalid metadata call. Core configuration/scope/reference/bound checks pass;
+  public-file content and listing-exhaustion limits remain as recorded above.
+- Spark's live progress claimed setup writes and completion but supplied no
+  visible final readback. It also mentioned decoding/conversion/retry issues
+  and deletion of a test file without an observed target or outcome. Root stopped
+  that response and asked for read-only inspection of the assigned instance and
+  an evidence-based account of existing saves and uncertain effects. Do not
+  mistake these progress claims for confirmed errors or provider mutations.
+- This is a preserved coordinator intervention, not a silent product fix,
+  cleanup, restart or successful setup qualification. Spark ingestion has not
+  started. Sol continues its independent ingestion; Work remains un-retried.
+- Exact next action: inspect the Sol ingestion result and Spark read-only report;
+  continue query/audit work only where actual saved state supports it. Preserve
+  failures for joint user review, without addressing bugs during the trials.

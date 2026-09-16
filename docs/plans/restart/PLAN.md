@@ -32,7 +32,12 @@ The same initial Sol trial resumed after the source evaluator finished. Its
 ordinary interview answers were supplied. It reports verified setup: exact
 content readback for the entry point and all 37 instance JSON files, plus public
 system inventory and folder checks. An independent evidence review is underway;
-write/readback equality is distinct from full semantic correctness. The separate
+write/readback equality is distinct from full semantic correctness. Independent
+review confirms the configured entry point and 37 JSON pages, schema/references,
+scope and bounds (maximum setup page 5,795 bytes). It flags missing exhaustive
+folder-list evidence and absent content readback for 29 public system files;
+presence/size checks do not establish complete public-file contents or empty
+extensions. Preserve these limits without repair. The separate
 common ingestion request has now been supplied to this same instance. Ingestion
 success is not yet established. Preserve its repository-instruction exposure;
 no replacement trial was spawned.
@@ -53,6 +58,14 @@ unpacked as a fresh unconfigured starter, with no earlier Drive writes. Root
 supplied the authorized destination, household/source/tool choices and standard
 starter brief-template preference. Spark is setting up the instance; ingestion
 has not been requested.
+
+**Current Spark hold:** while still running, Spark claimed setup writes and
+completion without visible readback, and its progress mentioned retries,
+conversion/decoding issues and deletion of a test file with no observed target
+or outcome. Root stopped that response and requested only a read-only account
+of existing saved state and uncertain effects. No repair, cleanup, replacement
+setup or ingestion is authorized by this intervention. Preserve the distinction
+between progress claims and verified provider effects. Sol ingestion continues.
 
 Approval review initially rejected Sol's configured bootstrap upload for needing
 specific personal-data authority. The user subsequently authorized personal-data
