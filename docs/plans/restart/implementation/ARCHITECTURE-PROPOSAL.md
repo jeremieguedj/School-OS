@@ -1,11 +1,11 @@
 # Restart implementation decisions for approval
 
-Updated 2026-09-15, revision 10: consolidates the known remaining choices in
-[one numbered review](OPEN-QUESTIONS.md). Concrete retained data fields/links,
-topic/entity lookup conventions and content-read reuse evidence still need
-complete proposals before approval (Q1, Q2, Q6). The other six questions carry
-explicit recommendations, alternatives and limits. This review records no new
-approval and does not restore the deferred generic records/write framework.
+Updated 2026-09-15, revision 11: records the numbered-review answers and the
+[concrete Q1/Q2 data/index proposal](DATA-ARCHITECTURE-PROPOSAL.md). Q3 run-start
+scope, Q5 strict Date precision, Q6 binary email outcome and Q7–Q9 manual/audio
+behavior are approved as recorded in the [active plan](../PLAN.md). The proposal's
+new fields/index rules and the narrow Q4/Q6 discovery/reuse choices remain
+unapproved. The generic records/write framework stays outside MVP.
 **D1, query coverage, D3's minimal Python/shared-adapter direction and
 D5 are approved; D4/D6 use the recorded agent-led direction. D2 repair, the
 separate record/save framework, D7 and D8 are deferred.** The helper subset may
@@ -31,9 +31,9 @@ Written examples are not executed simulations or qualification evidence.
 | D1 Storage | Small JSON record pages and paged directories in Drive, with a readable bootstrap | Native Sheets tables, with separately bounded long text | Approved, 2026-09-14 |
 | D2 Records and persistence | Earlier typed-record/write framework retained for later review | Agent/tool operations preserve already approved data meanings and verify actual saves | Repair and the separate records/ordinary-save framework outside MVP; query rule retained |
 | D3 Execution and adapters | Minimal Python helpers; setup interview; one shared tool-semantic adapter per tool, reusable through each agent's connector | Agent-specific adapter forks or a provider SDK runtime are not selected | Approved explicitly, 2026-09-15; creation/reuse of missing conformant mappings included |
-| D4 Ingestion | One logical run completes relevant unprocessed mail; the executing agent owns batching, resources and runtime continuity; School-OS supplies guidance | Former School-OS-managed per-run caps were rejected | Execution direction approved, 2026-09-15; scope/cutoff and remaining identity/discovery details pending |
+| D4 Ingestion | One logical run completes relevant unprocessed mail; the executing agent owns batching, resources and runtime continuity; School-OS supplies guidance | Former School-OS-managed per-run caps were rejected | Execution direction approved, 2026-09-15; run-start scope, strict Date threshold and binary email outcome approved; discovery/reuse details pending |
 | D5 Knowledge and tasks | Source-supported claims, separate parent state, three-way sync; detected completion awaits parent confirmation in a supported status or section | Direct automatic closure is a future option, not selected | Approved explicitly, 2026-09-15, including the parent-confirmation amendment |
-| D6 Briefs and effects | Executing agent verifies uncertain effects using available tools; validate complete ingestion before daily composition | Former generic persisted-effect engine is not selected | Verification/timing, starter selection/task-sync disclosure and recipe extensibility approved, 2026-09-15; audio/manual limited-brief choices pending |
+| D6 Briefs and effects | Executing agent verifies uncertain effects using available tools; validate complete ingestion before daily composition | Former generic persisted-effect engine is not selected | Verification/timing, starter selection/task-sync disclosure and recipe extensibility approved, 2026-09-15; manual freshness prompt, no audio archive and combined delivery/failure fallback approved |
 | D7 Tools and schedules | User and agents manage their own jobs and select adapters from recipes; assume nonconcurrent use | Central register and scheduler control retained for possible later work | Outside MVP by explicit user direction, 2026-09-15 |
 | D8 Packages and upgrades | Retain approved D1 separation so installation/upgrades can be added later | Original ZIP, activation, compatibility and migration machinery retained as future proposal | Outside MVP by explicit user direction, 2026-09-15 |
 
@@ -357,45 +357,32 @@ If access or content support prevents that, the task is blocked/incomplete, not
 a successfully finished partial daily brief. D2 canonical-write repair remains
 deferred; agent-owned runtime recovery does not implement that feature.
 
-### Remaining scope and discovery choices
+### Approved scope, precision and binary ingestion
 
-The proposed interpretation of unread is **not yet fully processed by School-OS**,
-including already-opened mailbox items and attachments still lacking coverage.
-The recommended finite daily boundary is all relevant pending mail through the
-start of the run, including backlog, with later arrivals handled next time.
-This scope/cutoff has been presented for explicit approval and remains pending.
-It favors a complete finite snapshot; an end-of-run or repeatedly refreshed
-cutoff includes newer arrivals but can extend the task indefinitely. The scope
-must be fixed before claiming all mail is covered. Search-time semantics and
-late indexing remain limitations to describe, not assumed completeness.
+Q3 approves all relevant School-OS-pending emails through run start, including
+older not-ingested messages even if marked read in Gmail. Later arrivals belong
+to the next run. The user rejected a full-history enumeration on every daily
+run (Q4); a simpler live-window discovery proposal is still for approval. Source
+window continuation, token-loss replay and following all pages remain required.
+Live access is an operating expectation, not proof that an unknown connector
+exposes every message or that search uses original Date rather than arrival time.
 
-The source-metadata recipe, durable completed/unfinished search windows,
-follow-through after short pages, and token-loss replay remain required. Actual
-window partitioning and resource-sized processing belong to the agent. The
-former fixed seven-day historical/overlap defaults and saved inventory-pass
-orchestration are not newly approved by the user's direction. Exact production
-search/coverage and repeated-appearance rules still need approval where the
-existing recipe does not settle them. Metadata association cannot confer content
-coverage; the agent must establish what it actually read.
-
-### Remaining automatic-association threshold
-
-The approved metadata recipe remains unchanged. The still-pending recommendation
-for automatic reuse/new-record creation is verified mailbox, original subject,
+Q5 approves the stricter threshold: verified mailbox, original subject,
 normalized sender and individual original Date with known timezone and declared
-second-or-finer precision, without comparable contradiction and with adequate
-lookup coverage. Equivalent zoned instants agree; preserve originals and precision.
-One available richer individual metadata read can clarify an ambiguous listing
-Date. Missing timezone, minute/day precision or unclear meaning stays pending
-under this recommendation. Received time never replaces original Date; multiple
-compatible existing records remain unresolved.
+second-or-finer precision, no comparable contradiction and adequate lookup
+coverage. Equivalent zoned instants agree; preserve original values and precision.
+Use an available richer metadata read when needed; unresolved evidence stays
+unresolved. Unknown optional fields do not manufacture duplicate emails. The
+frozen Gmail provider-entry study does not qualify this policy.
 
-A credible alternative admits coarser Dates under an explicit sufficiency table
-or source-grounded agent judgment. That can reduce pending work but increase
-incorrect joins. The frozen second-resolution evaluator does not qualify either
-production choice. Same-parent/same-filename attachment groups and independent
-candidate coverage remain required; positions/handles/names do not prove a
-candidate was read. Unread, unsupported or ambiguous content remains explicit.
+Q6 approves a binary logical-email outcome: fully ingested or not ingested.
+Full ingestion includes body and every required attachment candidate, substantive
+extraction and verified persistence. Partial-email processing/resumption is not
+an MVP workflow. Honest inventory/evidence remains necessary to justify full
+completion; unread content cannot inherit a processed flag. The narrower rule
+for reusing a full result on a later metadata match is still proposed in
+[question 6](OPEN-QUESTIONS.md#q6-when-a-matching-email-appears-again-what-may-the-agent-safely-skip-reading).
+No per-appearance ledger, generic writer or recovery engine is selected.
 
 Grounding: losslessness/provenance, simple agent-led procedures, efficient bounded
 access, managed-agent portability and independence from brittle identifiers.
@@ -498,8 +485,8 @@ engine as its MVP implementation. No D2 partial-write repair is reinstated.
 
 Before composing the daily brief, the agent first validates that **all intended
 emails and content have been ingested**, with complete relevant discovery and
-verified processing/persistence. The revised D4 finite scope/cutoff still needs
-approval. An agent's batch boundary is not this gate. If ingestion is blocked or
+verified processing/persistence. Q3 approves the run-start cutoff for all School-OS-pending email in configured
+scope. An agent's batch boundary is not this gate. If ingestion is blocked or
 unverifiable, report the blocker rather than creating the normal daily brief
 from a knowingly incomplete selection. This is stricter than a general knowledge
 question: the approved query rule still allows a useful answer with coverage
@@ -527,23 +514,30 @@ ingestion gate remain requirements. Use existing D1 instruction/extension
 locations and references. No recipe registry, field schema, precedence engine
 or scheduler is introduced. See [brief recipes](../../../../operations/brief-recipes.md).
 
-Historical import does not implicitly authorize sending a backlog. The manual
-limited-brief exception still needs explicit approval: a parent may be offered
-the proposed choice to send current verified information with known gaps, but
-that policy has not been adopted. A completely read action-free snapshot must
-not attempt a nonexistent task write.
+Historical import does not implicitly authorize sending a backlog. A completely
+read action-free snapshot must not attempt a nonexistent task write.
 
-### Remaining audio choices
+### Approved manual freshness conversation and audio delivery
 
-Optional supported audio is still in scope, but its exact service route,
-retention and order relative to email remain pending. The existing recommendation
-is to narrate the same canonical information, retain the derived audio on Drive
-until parent deletion and disclose unsupported audio. Alternatives include an
-explicit retention period or no retained artifact. Sending email first reduces
-waiting; waiting for audio can provide a combined delivery but creates a new
-dependency. Neither ordering is chosen. These are derived outputs, not raw school
-attachments. Operation/output source attribution remains required through agent instructions;
-register-backed job history and known-sender queries are deferred with D7.
+Q7 permits a limited manual brief after warning that knowledge may be outdated,
+showing available last ingestion/discovery coverage and last source-email dates
+(or unknowns), and asking whether the parent wants new email ingested first.
+If the parent chooses now, send the authorized brief with a clear limitation.
+Do not substitute a newest source timestamp for complete searched-through
+coverage. The ordinary daily ingestion gate is unchanged.
+
+Q8 rejects keeping an audio archive. Do not retain generated audio in canonical
+Drive storage. After verified delivery to the parent by authorized email or chat,
+discard accessible temporary processing copies. No provider-storage deletion or
+replay history is promised.
+
+Q9 requires configured audio to be prepared and delivered together with email.
+If audio fails, send the email without it and include an explicit failure notice.
+Audio narrates the same verified information and qualifications. Unknown effects
+still require executing-agent verification; do not blindly send a second email.
+No timeout, background retry mechanism or scheduler is introduced. The selected
+capable tool/route and recipient come from setup or the authorized request.
+Operation/output attribution remains; D7 register-backed history is deferred.
 
 Grounding: source-linked useful briefs, clear completion evidence, simplicity,
 capability-led agent reasoning and truthful external outcomes. Real readback,
@@ -613,8 +607,9 @@ That does not approve the rest of D3 or qualify particular runtime/adapter route
 On 2026-09-15 the user approved D5, replaced D4's batch manager with
 agent-managed complete-run execution, directed agent-led effect verification and
 ingestion-before-brief under D6, and deferred D7/D8 from the MVP. The active plan
-records these exact boundaries. Resolve the daily scope/cutoff, remaining D4
-identity/discovery choices, D6 audio/manual limited-brief, specific remaining architectural choices before their dependent implementation.
+records these boundaries and the later Q3/Q5/Q6-outcome/Q7–Q9 approvals.
+Resolve Q1/Q2 fields/indexes and Q4/Q6 discovery/reuse proposals before dependent
+implementation.
 The records/ordinary-save framework is excluded, not an MVP gate. Do not ask for
 approved D5 mechanisms again or rebuild deferred infrastructure as a dependency.
 Publish the agreed MVP code and continuity, verify the remote revision, then

@@ -42,10 +42,11 @@ mapping again on later operations and from fresh agents.
 
 - Read the selected recipe, configured school/source scope and relevant Drive
   state. Do not load all historical knowledge merely to begin a daily operation.
-- Establish the intended work scope. The proposal to include all School-OS-pending
-  school mail through run start, including backlog, is awaiting approval. Do not
-  silently adopt that cutoff, another cutoff or the mailbox's unread flag as the
-  sole definition. Mailbox read/unread state is not evidence of School-OS coverage.
+- Establish the approved daily scope: all relevant School-OS-pending school mail
+  within the configured source/import scope through the start of the run,
+  including older unfinished work. Later arrivals belong to the next run.
+  The mailbox's read/unread icon does not determine School-OS processing.
+  This finite cutoff is not a message quota or an agent batch boundary.
 - Identify the source metadata/content, Drive persistence, task and delivery
   operations actually needed. Use existing authorized capabilities; do not infer
   them merely from an agent supplier's name or from code-execution capability.
@@ -72,6 +73,38 @@ source account, discovery, attachment reading, meaning, tasks, saving/readback
 and external actions remain agent/tool operations. Follow the same approved
 procedure through available tools when a helper is not applicable; do not invent
 new semantics or require a new execution/persistence framework.
+
+## Approved identity threshold and ingestion outcome
+
+Automatic logical-email association requires verified mailbox, original subject,
+normalized sender and the individual message's original Date with a known
+timezone and second-or-finer precision, adequate relevant index lookup, and no
+contradictory comparable evidence. Use an available richer metadata view when
+the listing cannot establish those facts. If the required evidence remains
+inadequate, keep the association unresolved; do not invent seconds or a timezone,
+substitute received/provider time for original Date, or use content as identity.
+Unknown optional metadata is not a contradiction or a reason to create a duplicate.
+Several compatible logical records remain ambiguous. The helpers alone do not
+establish this threshold or qualify any connector.
+
+The logical email's ingestion outcome is binary: **fully_ingested** or
+**not_ingested**. Mark it fully ingested only after the body and required
+attachment material have been read, their substantive information extracted,
+and the resulting knowledge, source references and actual coverage saved and
+checked. Required attachments remain in scope. If those conditions are not met,
+the email is not ingested; do not call a processed body a completed partial email.
+This sets the outcome's meaning, not a new persisted field layout.
+
+The agent may read material in resource-sized chunks, but those internal steps
+do not create a supported partial-email completion or part-by-part resume
+workflow. Preserve honest evidence of what was and was not read; a blocked or
+unknown result must not become fully ingested. The MVP does not promise repair
+of interrupted canonical writes.
+
+Whether a later metadata-matching appearance may skip content using a previously
+verified fully-ingested state remains a separate, narrow reuse decision. The
+binary outcome does not silently select that rule, a per-appearance ledger or
+mandatory rereading. Do not infer prior content processing from metadata alone.
 
 ## Advice for managing resources
 
@@ -116,7 +149,8 @@ Follow the [chosen brief recipe](../../../../operations/brief-recipes.md). The
 daily starter includes newly verified/corrected information, original source
 dates and relevant open tasks, disclosing failed task-app sync. Users and agents
 may author and choose any number of compatible recipes. This does not relax the
-coverage gate below or adopt the pending manual limited-brief exception.
+ordinary daily coverage gate below. The approved manual limited-brief path has
+its own disclosure and parent-choice step.
 
 ## Completion before the daily brief
 
@@ -138,6 +172,34 @@ This does not prevent answering a separate knowledge question with verified
 facts and an explicit limitation under the already approved query-coverage rule.
 A qualified answer to a question is different from declaring the daily ingestion
 and brief complete.
+
+## Manual briefs and configured audio
+
+For a manual brief with known gaps or uncertain freshness, warn that saved
+knowledge may be outdated. State the latest relevant source date available in
+verified knowledge and the known ingestion freshness, identifying either as
+unknown when necessary. Do not call the latest saved source the latest email
+the school actually sent unless discovery supports that claim. Ask whether the
+parent wants fresh mail ingested first or wants the current verified information
+now with those limits. Honor an existing explicit choice rather than asking
+again. Send the limited brief only when the parent chooses that option; include
+the freshness warning and material gaps in the output. If the parent chooses
+ingestion first, process within the authorized scope and capabilities before
+composing. Neither path makes an incomplete ordinary daily run complete.
+
+When audio is configured for an email brief, prepare the written brief and its
+audio for delivery together. If audio generation or availability is verified to
+have failed, send the authorized text email with an explicit audio-failure
+notice. An unknown generation or send result is not a verified failure; apply
+the uncertain-action rule below before deciding what happened. Do not add a
+timeout, deadline, scheduler or blind resend to force an outcome.
+
+Keep no canonical audio archive. After verifying audio delivery to the authorized
+email or chat destination, discard the accessible temporary audio copy. Retain
+truthful source/output attribution as required, without retaining audio bytes
+on Drive. Do not claim to erase provider-managed copies or the copy delivered
+to the parent. Audio selection does not itself authorize a recipient, send or
+generation operation, and no actual audio route is qualified by this guidance.
 
 ## Checking an uncertain external action
 

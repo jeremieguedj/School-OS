@@ -48,22 +48,25 @@ save verification and temporary-source cleanup remain. No replacement schema,
 UUID/locator scheme or write engine is approved; surface only a specific new
 architecture need if it arises during otherwise authorized implementation.
 
-Current decision review, 2026-09-15: read implementation/OPEN-QUESTIONS.md.
-It is the single known remaining-choice inventory, not an approval. Q1 concrete
-retained data fields/links, Q2 topic/entity lookup conventions and Q6 exact
-content-read reuse evidence still need detailed proposals before user approval.
-Do not promise a persisted schema or efficient complete history query from the
-current illustrative JSON. These specific gaps do not restore D2's generic
-record/save framework or reopen approved D1/D5 meanings. Q3–Q5 and Q7–Q9 contain
-recommendations; none may be adopted merely because the website was updated.
+Current decision review, 2026-09-15: read implementation/OPEN-QUESTIONS.md and
+implementation/DATA-ARCHITECTURE-PROPOSAL.md. The user requires child-specific
+history/trends plus family/school scope without duplicating shared knowledge or
+one-per-family tasks; new concrete schema/index design still awaits approval.
+Q3 run-start scope, Q5 strict Date precision, Q6 binary email outcome, Q7 freshness
+prompt before a limited manual brief, Q8 no audio archive and Q9 combined
+email/audio with explicit audio-failure fallback are approved. Q4 full-history
+daily rescan was rejected; a simpler live-window proposal remains. Q6's later
+completed-email reuse rule is still a narrow proposal. No tests are authorized.
 
 Current MVP revisions, approved 2026-09-15:
 - D4: one logical run must complete all intended unread/unprocessed school mail.
   The capable executing agent owns resource limits, batching and its runtime
   continuity/recovery; School-OS supplies advice, recipes and completion/coverage
   requirements, not a batch manager, fixed per-run caps or catch-up scheduler.
-  The proposed School-OS-pending/run-start cutoff awaits explicit approval;
-  remaining metadata threshold/search details are not blanket-approved.
+  Q3 approves the School-OS-pending/run-start cutoff; Q5 approves known timezone
+  and second-or-finer original Date. Q6 uses fully-ingested/not-ingested for the
+  whole email, including required attachments. Q4 discovery and Q6 reuse remain
+  specific proposals, not a partial-email engine.
 - D5: approved in full, including recurring tasks/14-day fallback, separate parent
   state and three-way task sync. The new approved amendment classifies clear
   evidence of fulfillment as Completion detected — awaiting parent confirmation,
@@ -78,8 +81,10 @@ Current MVP revisions, approved 2026-09-15:
   Do not restore the former generic persisted-effect engine. The daily starter
   selects newly verified/corrected information and relevant open tasks, shows
   original dates and discloses failed task-app sync. Users and agents may create
-  and select any number of compatible brief recipes. Audio and manual limited-
-  brief choices remain pending; qualified knowledge questions remain allowed.
+  and select any number of compatible brief recipes. Q7 approves a limited manual brief after explaining freshness and offering
+  new ingestion first. Q8 forbids a canonical audio archive. Q9 sends configured
+  audio with email, or text email with an audio-failure notice. Qualified
+  knowledge questions remain allowed.
 - D7: tools/capabilities/jobs register, scheduler management and register-based job/
   sender queries are outside MVP. Users/agents manage their own jobs, read recipes
   and select adapters. Assume no concurrent same-data use; add no locking service.

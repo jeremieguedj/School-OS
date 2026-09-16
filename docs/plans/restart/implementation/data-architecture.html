@@ -1,0 +1,733 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="School-OS proposed data architecture: child, family and school knowledge; canonical tasks; linked JSON; and bounded search for historical questions."><title>Proposed data architecture · School-OS</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='8' fill='%23146759'/%3E%3Ctext x='20' y='28' text-anchor='middle' font-size='27' fill='white'%3ES%3C/text%3E%3C/svg%3E"><style>
+:root{--ink:#192f35;--muted:#53666a;--line:#d4dfdc;--paper:#fffefa;--teal:#146759;--wash:#eaf3ee;--amber:#815414}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:2rem}body{margin:0;background:var(--paper);color:var(--ink);font:18px/1.68 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:var(--teal);text-underline-offset:3px}a:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #b4751f;outline-offset:5px}header{background:#edf3ee;border-bottom:1px solid var(--line);padding:25px max(24px,calc((100vw - 1280px)/2)) 35px}.top{display:flex;gap:20px;justify-content:space-between;font-size:14px}.eyebrow{font-size:13px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;margin:28px 0 10px}h1{font:600 clamp(32px,4.8vw,54px)/1.15 Georgia,serif;max-width:880px;margin:0 0 20px}.lead{font-size:22px;max-width:900px;line-height:1.5}.layout{display:grid;grid-template-columns:235px minmax(0,880px);gap:60px;max-width:1280px;margin:auto;padding:35px 24px 75px}aside{font-size:14px;position:sticky;top:20px;align-self:start;max-height:90vh;overflow:auto}aside a{display:block;padding:6px 0;line-height:1.4;text-decoration:none}.nav-separator{border-top:1px solid var(--line);margin-top:16px;padding-top:16px}main{min-width:0}h2{font:600 29px/1.3 Georgia,serif;margin:48px 0 18px;padding-top:18px;border-top:1px solid var(--line)}h3{font-size:22px;margin:28px 0 14px}p{margin:0 0 18px}li{padding-left:4px;margin-bottom:12px}ol,ul{padding-left:25px}.notice{background:#fff5df;border-left:4px solid #ae7d30;padding:20px 24px;margin-bottom:28px}.notice p:last-child{margin-bottom:0}.diagram{padding:24px;border:1px solid var(--line);border-radius:10px;background:#f2f6f2;margin:24px 0}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.box{background:white;padding:19px;border:1px solid var(--line);border-radius:8px}.box h3{font-size:18px;margin:0 0 8px}.box p{font-size:15px;line-height:1.5;margin:0}.arrow{text-align:center;font-size:17px;font-weight:650;color:var(--teal);padding:14px}.wide{padding:20px;background:#dceee3;border-radius:8px}.wide p{font-size:16px;margin:0}.caption{font-size:14px;color:var(--muted)}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:8px;margin:24px 0}table{border-collapse:collapse;min-width:520px;width:100%;text-align:left;font-size:15px;line-height:1.55}td,th{padding:13px 15px;border-bottom:1px solid var(--line);vertical-align:top}th{background:var(--wash)}tr:last-child td{border:0}code{font-size:.88em;background:#edf2ed;padding:2px 4px;border-radius:4px;overflow-wrap:anywhere}.code-example{border:1px solid var(--line);border-radius:8px;margin:22px 0;background:white}.code-example summary{padding:15px 18px;cursor:pointer;font-weight:650;color:var(--teal)}pre{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;font-size:14px;padding:20px;background:#142e34;color:#e6f4eb;margin:0;border-radius:0 0 8px 8px}pre code{background:none;color:inherit;padding:0;font-size:inherit}.quick-links{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0}.quick-links a{border:1px solid #a9c6b8;border-radius:22px;padding:7px 15px;background:white;font-size:15px}.flow-steps{list-style:decimal}.flow-steps li{padding:9px 0 9px 5px}.flow-steps strong{color:var(--teal)}footer{border-top:1px solid var(--line);padding:25px;max-width:1200px;margin:auto;font-size:14px;color:var(--muted)}.skip{position:absolute;top:-80px;left:16px;background:white;padding:8px}.skip:focus{top:8px}@media(max-width:960px){.layout{grid-template-columns:1fr;gap:20px}aside{position:static;max-height:none}aside .full-nav{display:none}.grid{grid-template-columns:1fr}.lead{font-size:20px}body{font-size:17px}.top{flex-wrap:wrap;gap:6px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}@media print{aside,.skip,.quick-links{display:none}.layout{display:block;padding:0}header{background:white;padding:0}body{font-size:11pt}h2,h3{break-after:avoid}.table-wrap{overflow:visible}table{min-width:0}.code-example{break-inside:avoid}}
+</style></head><body><a class="skip" href="#main">Skip to proposal</a><header><div class="top"><a href="architecture-guide.html#open-questions">← Your decisions and remaining questions</a><span>Proposed architecture · 15 September 2026</span></div><p class="eyebrow">Questions 1 and 2</p><h1>Find the right information for a child, a family or a school</h1><p class="lead">Store each fact at its real scope. Link tasks to the action that needs completing. Use small indexes to retrieve the relevant history.</p></header><div class="layout"><aside aria-label="Proposal navigation"><a href="#overview">Architecture at a glance</a><a href="#records">Q1 · Records and links</a><a href="#search">Q2 · Search and indexes</a><a href="#flows">Step-by-step queries</a><div class="full-nav nav-separator"><a href="#the-two-decisions-this-proposal-asks-for">The two decisions this proposal asks for</a><a href="#contract-rules-shared-by-all-pages">Contract rules shared by all pages</a><a href="#entity-topic-and-membership-records">Entity, topic and membership records</a><a href="#source-attachment-and-ingestion-coverage-records">Source, attachment and ingestion-coverage records</a><a href="#knowledge-records">Knowledge records</a><a href="#task-records-and-action-granularity">Task records and action granularity</a><a href="#directory-and-derived-index-contract">Directory and derived-index contract</a><a href="#from-one-new-email-to-searchable-information">From one new email to searchable information</a><a href="#narrow-query-traces">Narrow query traces</a><a href="#alternatives-and-tradeoffs">Alternatives and tradeoffs</a><a href="#remaining-limitations-and-decisions-not-answered-here">Remaining limitations and decisions not answered here</a><a href="#approval-effect">Approval effect</a></div></aside><main id="main"><section id="overview"><div class="notice"><p><strong>Proposed for your approval.</strong> The child/family/school requirements are agreed. The exact record fields, reference format and index rules below are proposed architecture. They have not been implemented or tested.</p></div><h2>Keep shared information once, with its real scope</h2><div class="diagram" role="group" aria-label="One knowledge record at its true scope"><div class="grid"><div class="box"><h3>Child: Robin</h3><p>“Robin explained equivalent fractions independently.” A dated personal observation.</p></div><div class="box"><h3>School: Pine School</h3><p>“Nut-free lunches, except for pupils receiving a school meal.” One shared guideline.</p></div><div class="box"><h3>Family</h3><p>“One emergency-contact confirmation per household.” One family obligation, even with two children.</p></div></div><div class="arrow">Dated family and school memberships tell the agent what applies to each child ↓</div><div class="wide"><p><strong>Stored once; visible in the right questions.</strong> A shared guideline can appear when asking about Robin or Jamie. It is still the same knowledge record. One family task appears once in the family’s to-do list.</p></div></div><p class="caption">These scopes are all inside the household’s own Drive instance. “School-level” does not mean publishing information to other households.</p><h2>Knowledge describes the situation; tasks track the action</h2><div class="diagram" role="group" aria-label="Source to knowledge to independent task"><div class="wide"><p><strong>Original email or attachment</strong><br>Stays in the mailbox. School-OS saves source metadata, identity and the whole-email ingestion outcome.</p></div><div class="arrow">Agent reads meaning and saves ↓</div><div class="wide"><p><strong>Knowledge record</strong><br>Statement + kind + applicability + topic + meaningful dates + source evidence.</p></div><div class="arrow">Only when action is required ↓</div><div class="grid"><div class="box"><h3>No task</h3><p>Teacher feedback or a general school update needs no checkbox.</p></div><div class="box"><h3>One family task</h3><p>One household confirmation. Robin and Jamie are beneficiaries.</p></div><div class="box"><h3>Two child tasks</h3><p>If each child needs a separate consent form, each obligation has its own completion.</p></div></div></div><h2>A question follows a small set of linked records</h2><ol class="flow-steps"><li><strong>Resolve who and what:</strong> identify Robin, math and the requested year.</li><li><strong>Resolve applicability:</strong> read dated family, school and class relationships.</li><li><strong>Locate candidate records:</strong> use the relevant paged entity/topic indexes and time buckets.</li><li><strong>Read and check:</strong> fetch matching knowledge, source evidence, later corrections and coverage. Fall back or disclose when indexes are incomplete.</li><li><strong>Explain the evolution:</strong> compare dated personal observations, with school guidance as context. Improvement is not automatically a correction.</li></ol><p><strong>Efficiency goal:</strong> read small directories and the records needed for the question. This avoids a default download of every email or every year of knowledge. Broader interpretation or incomplete indexes can still require more reads.</p><div class="quick-links"><a href="#records">Fields and linked JSON</a><a href="#search">Indexes and freshness</a><a href="#flows">Detailed query flows</a><a href="architecture-guide.html#open-questions">Answers and remaining decisions</a></div></section><p><strong>Status: proposal for Q1 and Q2 review; not adopted or implemented.</strong></p>
+<p>This document supplies the concrete data-shape and lookup proposal requested in <a href="OPEN-QUESTIONS.md">OPEN-QUESTIONS.md</a>. It does not reopen the approved D1 physical layout, metadata-only email identity, query-coverage rule or D5 knowledge/task behavior. Every new field, record family, reference convention, page revision and index rule below still requires explicit user approval before dependent implementation.</p>
+<p>The proposal is deliberately smaller than the historical D2 design. It defines only the retained data needed to save and find source-linked knowledge, tasks, coverage and configuration. It does not add a generic record registry, generic writer, transaction protocol, interrupted-write repair engine, database, vector service, migration system or external dependency. Ordinary operations would write bounded Drive JSON pages directly and verify the pages they change. The MVP would still make no claim to repair an interrupted canonical write.</p>
+<h2 id="the-two-decisions-this-proposal-asks-for">The two decisions this proposal asks for</h2>
+<h3 id="q1--approve-this-concrete-retained-data-contract">Q1 — approve this concrete retained-data contract</h3>
+<p>The recommendation is to use the small record families defined here:</p>
+<ul>
+<li>configuration and logical source accounts;</li>
+<li>entities, topics and dated membership relationships;</li>
+<li>logical emails, parent-bound attachment candidate groups and email-level ingestion coverage and bounded discovery-window progress;</li>
+<li>source-linked knowledge records; and</li>
+<li>canonical tasks with parent state and task-app synchronization evidence.</li>
+</ul>
+<p>Records use School-OS-owned IDs and typed references. School evidence stays separate from parent planning and completion. Knowledge is stored once at its true household, school, class or child scope inside this household’s own Drive instance. A School entity does not create a shared multi-household database. One Task represents one independently completed obligation; it is not duplicated merely because several children benefit from one household action.</p>
+<h3 id="q2--approve-this-concrete-entitytopic-lookup-contract">Q2 — approve this concrete entity/topic lookup contract</h3>
+<p>The recommendation is to use stable entity and topic IDs, dated membership records, and three small rebuildable lookups. The entity index finds records by scope or participation; the topic index finds records by a small declared topic vocabulary and its exact aliases; the incoming-relationship lookup finds later corrections, replacements, support or conflicts that point to an earlier Knowledge record. Queries read the canonical records, source discovery coverage and binary email-ingestion state after using these candidate references. Household and school membership expands a child&#x27;s query without copying school-wide facts onto every child.</p>
+<p>Each derived index declares the canonical page revisions it covers. A missing or mismatched revision makes the index stale, not authoritative. The agent then scans the affected canonical source/month pages and active-task pages or discloses the unfinished search.</p>
+<span id="records"></span>
+<h2 id="contract-rules-shared-by-all-pages">Contract rules shared by all pages</h2>
+<h3 id="bounded-page-envelope">Bounded page envelope</h3>
+<p>D1 already requires UTF-8 JSON pages containing one record family, a page ID, instance ID and schema version. This proposal adds only <code>content_revision</code>, a positive integer incremented when a canonical page is successfully changed. It exists so a derived index can reveal staleness; it is not a generation chain, lock or repair protocol.</p>
+<details class="code-example" open><summary>Proposed JSON · Bounded page envelope</summary><pre><code>{
+  &quot;instance_id&quot;: &quot;inst_2c9485f0-5df8-47ad-8e73-843da9f75f13&quot;,
+  &quot;family&quot;: &quot;knowledge&quot;,
+  &quot;page_id&quot;: &quot;page_8bb862cb-c401-4cb9-9868-5579c534e40a&quot;,
+  &quot;schema_version&quot;: &quot;1&quot;,
+  &quot;content_revision&quot;: 4,
+  &quot;records&quot;: []
+}</code></pre></details>
+<p>The encoded page, including its envelope, remains at or below D1&#x27;s approved 64 KiB default. Directory and index pages contain at most 100 entries and use explicit continuation. More pages extend capacity; these are not total-history limits. Long substantive text uses D1&#x27;s numbered, lossless paragraph segments linked to one Knowledge ID rather than truncation.</p>
+<h3 id="ids-and-references">IDs and references</h3>
+<p>This proposal recommends an opaque UUID v4 assigned once by School-OS for every canonical record. A readable family prefix may precede the UUID, as in the fictional examples, but carries no semantic identity. IDs are never derived from a name, provider ID, source body, hash or connector response.</p>
+<p>A canonical reference contains the record family and School-OS ID. An optional page hint reduces reads but is replaceable:</p>
+<details class="code-example"><summary>Proposed JSON · IDs and references</summary><pre><code>{
+  &quot;family&quot;: &quot;entity&quot;,
+  &quot;id&quot;: &quot;entity_7140b96d-b564-4905-b8cc-fb4b71d9588a&quot;,
+  &quot;page_hint&quot;: &quot;page_9f76c841-34a2-4fe8-bbfe-0b2083fda2de&quot;
+}</code></pre></details>
+<p>Reference equality uses <code>family</code> plus <code>id</code>; it never uses <code>page_hint</code>. A paged family locator directory maps each record ID to its current page ID. Resolution checks the hinted page first, verifies the ID, then consults the locator directory. If the locator entry is absent or stale, the agent may traverse the bounded family page directory; failure to resolve remains explicit.</p>
+<p>Current Drive handles and provider handles are access aids only. They may be stored in a clearly separated <code>access_aids</code> section, but cannot replace a School-OS ID or prove identity, equality, processing or completion.</p>
+<h3 id="required-optional-and-unknown-values">Required, optional and unknown values</h3>
+<p>The proposal uses these rules consistently:</p>
+<ul>
+<li>System identifiers, <code>family</code> and <code>schema_version</code> must have their declared concrete types; they cannot be unknown.</li>
+<li>A <strong>required</strong> field must be present. If its real-world value is required but the source does not establish it, use an explicit unknown object such as <code>{&quot;state&quot;:&quot;unknown&quot;,&quot;reason&quot;:&quot;not stated by source&quot;}</code>.</li>
+<li>An <strong>optional</strong> field is omitted only when the concept does not apply.</li>
+<li>An empty string is substantive only when the source explicitly supplies one; it never means unknown.</li>
+<li>An empty array means the relevant inventory was established and had zero members. An unknown or partial inventory uses an explicit state instead.</li>
+<li>Canonical records do not use <code>null</code>; explicit known, unknown, partial, unsupported and unavailable states retain their different meanings.</li>
+<li>A boolean is stored only for a genuine two-valued statement. It must not hide unknown or partial evidence.</li>
+</ul>
+<p>Known dates preserve value, meaning and precision. An instant also preserves the supplied timezone. A calendar date without a source timezone does not gain one from the executing agent:</p>
+<details class="code-example"><summary>Proposed JSON · Required, optional and unknown values</summary><pre><code>{
+  &quot;state&quot;: &quot;known&quot;,
+  &quot;value&quot;: &quot;2026-03-10&quot;,
+  &quot;precision&quot;: &quot;day&quot;,
+  &quot;meaning&quot;: &quot;observation_date&quot;
+}</code></pre></details>
+<details class="code-example"><summary>Proposed JSON · Required, optional and unknown values</summary><pre><code>{
+  &quot;state&quot;: &quot;known&quot;,
+  &quot;value&quot;: &quot;2026-03-10T08:15:23-07:00&quot;,
+  &quot;precision&quot;: &quot;second&quot;,
+  &quot;timezone&quot;: &quot;-07:00&quot;,
+  &quot;meaning&quot;: &quot;original_email_date&quot;
+}</code></pre></details>
+<p><code>recorded_at</code> is the instant the agent authored the record values for the save. It is separate from the source&#x27;s original Date, an observation date, a deadline and an applicability interval. A <code>verified_at</code> inside coverage or tool-sync evidence means the agent completed the named source/content/remote readback at that time; it does not claim that the JSON field containing the timestamp had already verified its own persistence. After the bounded JSON write, the agent reads the final page back once and checks its intended values. That final readback is operational evidence and does not trigger another timestamp write, avoiding an infinite write-to-record-its-own-save loop. This proposal adds no general persisted write-verification log.</p>
+<h2 id="entity-topic-and-membership-records">Entity, topic and membership records</h2>
+<h3 id="entity">Entity</h3>
+<p>An Entity identifies a household, child, other person, school, or class/group. The required fields are <code>entity_id</code>, <code>entity_kind</code>, <code>display_name</code>, <code>recorded_at</code> and <code>origin</code>. Optional aliases support exact name resolution within this instance; aliases never silently merge two entities.</p>
+<details class="code-example"><summary>Proposed JSON · Entity</summary><pre><code>{
+  &quot;entity_id&quot;: &quot;entity_7140b96d-b564-4905-b8cc-fb4b71d9588a&quot;,
+  &quot;entity_kind&quot;: &quot;child&quot;,
+  &quot;display_name&quot;: &quot;Robin&quot;,
+  &quot;aliases&quot;: [&quot;Robin G.&quot;],
+  &quot;origin&quot;: &quot;parent_configuration&quot;,
+  &quot;recorded_at&quot;: &quot;2026-09-15T16:00:00Z&quot;
+}</code></pre></details>
+<p>The proposed finite <code>entity_kind</code> values are <code>household</code>, <code>child</code>, <code>person</code>, <code>school</code>, and <code>class_or_group</code>. A teacher is a <code>person</code>; being Robin&#x27;s teacher is a dated relationship, not part of the teacher&#x27;s identity. A subject such as math is normally a Topic, not an Entity.</p>
+<h3 id="topic">Topic</h3>
+<p>A Topic is a small, human-readable lookup concept. Required fields are <code>topic_id</code>, <code>label</code>, <code>aliases</code>, <code>origin</code> and <code>recorded_at</code>. Optional <code>broader_topic_refs</code> provide explicit query expansion without treating related topics as aliases.</p>
+<details class="code-example"><summary>Proposed JSON · Topic</summary><pre><code>{
+  &quot;topic_id&quot;: &quot;topic_e83bf100-a778-448b-b24e-d24535146b7a&quot;,
+  &quot;label&quot;: &quot;math&quot;,
+  &quot;aliases&quot;: [&quot;mathematics&quot;, &quot;numeracy&quot;],
+  &quot;broader_topic_refs&quot;: [],
+  &quot;origin&quot;: &quot;household_extension&quot;,
+  &quot;recorded_at&quot;: &quot;2026-09-15T16:05:00Z&quot;
+}</code></pre></details>
+<p>An alias must mean the same topic in this household context. Related terms are separate topics: <code>fractions</code> is co-tagged with <code>math</code> and may declare <code>math</code> as a broader topic, but is not silently made an alias. Teacher feedback should also carry the <code>teacher-feedback</code> topic rather than relying on words in its statement. Query expansion follows only declared broader-topic references and still reads the actual Knowledge. The proposal has no ontology service, embeddings or automatic synonym service. An unfamiliar or conflicting label remains unresolved until an agent or parent selects an existing topic or creates a distinct one.</p>
+<h3 id="membership-history">Membership history</h3>
+<p>A Membership record preserves one dated relationship between entities. Required fields are <code>membership_id</code>, <code>subject_ref</code>, <code>role</code>, <code>container_ref</code>, <code>valid_interval</code>, <code>origin</code>, <code>evidence_refs</code> and <code>recorded_at</code>.</p>
+<details class="code-example"><summary>Proposed JSON · Membership history</summary><pre><code>{
+  &quot;membership_id&quot;: &quot;membership_b2064205-eeda-4ab5-a86c-c57cc97fdcf5&quot;,
+  &quot;subject_ref&quot;: {
+    &quot;family&quot;: &quot;entity&quot;,
+    &quot;id&quot;: &quot;entity_7140b96d-b564-4905-b8cc-fb4b71d9588a&quot;
+  },
+  &quot;role&quot;: &quot;student&quot;,
+  &quot;container_ref&quot;: {
+    &quot;family&quot;: &quot;entity&quot;,
+    &quot;id&quot;: &quot;entity_ba7a2221-56ed-4803-85bf-5d85b4fa8962&quot;
+  },
+  &quot;valid_interval&quot;: {
+    &quot;start&quot;: {
+      &quot;state&quot;: &quot;known&quot;,
+      &quot;value&quot;: &quot;2026-08-24&quot;,
+      &quot;precision&quot;: &quot;day&quot;,
+      &quot;meaning&quot;: &quot;membership_start&quot;
+    },
+    &quot;end_state&quot;: &quot;ongoing&quot;
+  },
+  &quot;origin&quot;: &quot;parent_configuration&quot;,
+  &quot;evidence_refs&quot;: [],
+  &quot;recorded_at&quot;: &quot;2026-09-15T16:10:00Z&quot;
+}</code></pre></details>
+<p>An empty <code>evidence_refs</code> is valid only for a parent-declared configuration fact. A source-derived membership cites Knowledge records. The initial proposed roles are <code>household_member</code>, <code>student</code>, <code>class_member</code>, and <code>teacher</code>. A role does not imply dates that were not stated. <code>ongoing</code>, <code>ended</code> and <code>unknown</code> are distinct; absence of an end date does not by itself prove ongoing membership.</p>
+<p>Membership history lets a query include one school-wide record for each child who belonged to that school at the relevant time without copying the record per child. It also preserves teacher or class changes across a year.</p>
+<h2 id="source-attachment-and-ingestion-coverage-records">Source, attachment and ingestion-coverage records</h2>
+<h3 id="logical-source-account-and-instance-configuration">Logical source account and instance configuration</h3>
+<p>The instance configuration proposes these minimum retained fields:</p>
+<div class="table-wrap" tabindex="0"><table><thead><tr><th>Field</th><th>Requirement and meaning</th></tr></thead><tbody>
+<tr><td><code>instance_id</code></td><td>Required approved D1 instance identity.</td></tr>
+<tr><td><code>household_entity_ref</code></td><td>Required true household scope.</td></tr>
+<tr><td><code>household_timezone</code></td><td>Required parent-selected display/default planning timezone; never substitutes for a source timezone.</td></tr>
+<tr><td><code>source_accounts</code></td><td>Required bounded references to logical Source Account records; each retains the logical mailbox, configured school/source scope and parent-selected import boundary. Credentials are excluded.</td></tr>
+<tr><td><code>entity_topic_roots</code></td><td>Required references to the entity, membership, topic and derived-index directories.</td></tr>
+<tr><td><code>selected_task_projection</code></td><td>Optional when no task tool is configured; otherwise names the shared tool-semantic adapter, parent-selected connection label and supported field mapping.</td></tr>
+<tr><td><code>selected_brief_recipes</code></td><td>Optional parent choices made discoverable through the existing D1 configuration.</td></tr>
+<tr><td><code>authorized_destinations</code></td><td>Optional operation destinations; absence gives no send authority.</td></tr>
+</tbody></table></div>
+<p>This is operating configuration, not a D7 tools/jobs registry. It does not inventory every connector, scheduled job or runtime.</p>
+<p>A logical Source Account is a canonical record in the <code>source_account</code> family, resolved through its family directory like every typed reference. It has a School-OS ID, parent-readable label, logical mailbox identity, configured scope, import boundary and selected shared mail-tool adapter. Current connection or provider handles remain replaceable access aids in configuration and do not become source identity.</p>
+<h3 id="logical-email">Logical email</h3>
+<p>The Email record follows the approved metadata-only recipe. It contains:</p>
+<ul>
+<li>a School-OS <code>email_id</code> and logical <code>source_account_ref</code>;</li>
+<li>original observed subject, sender, original Date, received time when exposed, To/Cc roles, and original attachment names/count when comparably exposed;</li>
+<li>separately stored normalized comparison values;</li>
+<li>association state and any unresolved candidates;</li>
+<li>optional current <code>access_aids</code>, clearly excluded from identity; and</li>
+<li>a reference to its email-level ingestion coverage.</li>
+</ul>
+<p>Individual replies have individual Email records. A thread summary cannot stand in for them. Provider IDs, thread IDs, body content, hashes and MIME structure cannot decide identity. Original Date precision and timezone are preserved; this the now-approved Q5 threshold requires a known timezone and second-or-finer precision for automatic association, alongside the other approved metadata and coverage checks. Even that precision does not prove uniqueness; compatible multiple candidates remain unresolved.</p>
+<p>This fictional compact example shows the proposed separation between observed identity metadata, normalized comparison values and replaceable access aids:</p>
+<details class="code-example"><summary>Proposed JSON · Logical email</summary><pre><code>{
+  &quot;email_id&quot;: &quot;email_f99baa23-032d-49cd-b180-2b6dc6727c82&quot;,
+  &quot;source_account_ref&quot;: {
+    &quot;family&quot;: &quot;source_account&quot;,
+    &quot;id&quot;: &quot;source_account_6f173cea-043b-4a42-92c4-f4f1fc54b8f0&quot;
+  },
+  &quot;observed_metadata&quot;: {
+    &quot;subject&quot;: &quot;Family science night&quot;,
+    &quot;sender&quot;: &quot;Pine School &lt;office@pine.example&gt;&quot;,
+    &quot;original_date&quot;: {
+      &quot;state&quot;: &quot;known&quot;,
+      &quot;value&quot;: &quot;2026-09-14T15:42:18-07:00&quot;,
+      &quot;precision&quot;: &quot;second&quot;,
+      &quot;timezone&quot;: &quot;-07:00&quot;,
+      &quot;meaning&quot;: &quot;original_email_date&quot;
+    },
+    &quot;received_time&quot;: {
+      &quot;state&quot;: &quot;known&quot;,
+      &quot;value&quot;: &quot;2026-09-14T22:42:44Z&quot;,
+      &quot;precision&quot;: &quot;second&quot;,
+      &quot;timezone&quot;: &quot;Z&quot;,
+      &quot;meaning&quot;: &quot;received_time&quot;
+    },
+    &quot;recipients&quot;: {
+      &quot;state&quot;: &quot;known&quot;,
+      &quot;to&quot;: [&quot;family@example.net&quot;],
+      &quot;cc&quot;: []
+    },
+    &quot;attachment_inventory&quot;: {
+      &quot;state&quot;: &quot;known_complete&quot;,
+      &quot;original_names&quot;: [&quot;Science-Night.pdf&quot;]
+    }
+  },
+  &quot;comparison_metadata&quot;: {
+    &quot;subject&quot;: &quot;Family science night&quot;,
+    &quot;sender&quot;: {&quot;local_part&quot;: &quot;office&quot;, &quot;domain&quot;: &quot;pine.example&quot;},
+    &quot;to&quot;: [{&quot;local_part&quot;: &quot;family&quot;, &quot;domain&quot;: &quot;example.net&quot;}],
+    &quot;cc&quot;: [],
+    &quot;original_date_instant&quot;: &quot;2026-09-14T22:42:18Z&quot;
+  },
+  &quot;association&quot;: {
+    &quot;state&quot;: &quot;resolved&quot;,
+    &quot;pending_candidate_refs&quot;: []
+  },
+  &quot;access_aids&quot;: [
+    {
+      &quot;adapter_ref&quot;: &quot;system/tool-adapters/example-mail-tool&quot;,
+      &quot;provider_handle&quot;: &quot;replaceable-message-handle&quot;,
+      &quot;observed_at&quot;: &quot;2026-09-15T16:20:00Z&quot;
+    }
+  ],
+  &quot;coverage_ref&quot;: {
+    &quot;family&quot;: &quot;ingestion_coverage&quot;,
+    &quot;id&quot;: &quot;coverage_a6354db3-9e26-436e-900f-4a1ea3783b98&quot;
+  },
+  &quot;recorded_at&quot;: &quot;2026-09-15T16:21:00Z&quot;
+}</code></pre></details>
+<p>The <code>cc: []</code> value means the comparable recipient inventory explicitly had no Cc members. Missing or partial recipients would use an explicit state instead. The example provider handle can change without changing <code>email_id</code>.</p>
+<h3 id="attachment-candidate-group">Attachment candidate group</h3>
+<p>An Attachment Group is identified by its parent <code>email_ref</code> and original filename when known. It records inventory scope, all currently exposed candidates, requirement classification and completion evidence when the email is fully ingested. Same-name candidates under one email remain together; different handles or MIME labels do not prove separate documents. A generated download name is not an original filename.</p>
+<p><code>required_for_full_ingestion</code> has the values <code>required</code>, <code>not_required</code>, or <code>unknown</code>, with a short source-grounded reason. <code>not_required</code> is appropriate only when the material is established to be outside the configured substantive scope, such as a purely decorative asset. Unknown requirement blocks the email from becoming fully ingested.</p>
+<details class="code-example"><summary>Proposed JSON · Attachment candidate group</summary><pre><code>{
+  &quot;attachment_group_id&quot;: &quot;attachment_group_4c67171d-5508-431b-929a-a8d65b900ee7&quot;,
+  &quot;email_ref&quot;: {
+    &quot;family&quot;: &quot;email&quot;,
+    &quot;id&quot;: &quot;email_f99baa23-032d-49cd-b180-2b6dc6727c82&quot;
+  },
+  &quot;original_filename&quot;: {
+    &quot;state&quot;: &quot;known&quot;,
+    &quot;value&quot;: &quot;Science-Night.pdf&quot;
+  },
+  &quot;inventory_scope&quot;: &quot;complete_for_selected_message_route&quot;,
+  &quot;candidates&quot;: [
+    {
+      &quot;candidate_ref&quot;: &quot;candidate_1&quot;,
+      &quot;access_aid&quot;: &quot;replaceable-attachment-handle&quot;,
+      &quot;ingestion_evidence&quot;: {
+        &quot;state&quot;: &quot;processed_saved_verified&quot;,
+        &quot;knowledge_refs&quot;: [
+          {&quot;family&quot;: &quot;knowledge&quot;, &quot;id&quot;: &quot;knowledge_e3cf85f5-9796-4a55-891f-0e1e849c8106&quot;}
+        ],
+        &quot;verified_at&quot;: &quot;2026-09-15T16:25:00Z&quot;
+      }
+    }
+  ],
+  &quot;required_for_full_ingestion&quot;: {
+    &quot;state&quot;: &quot;required&quot;,
+    &quot;reason&quot;: &quot;the notice says the PDF contains event instructions&quot;
+  },
+  &quot;recorded_at&quot;: &quot;2026-09-15T16:22:00Z&quot;
+}</code></pre></details>
+<p><code>candidate_ref</code> is local to the Attachment Group and is never promoted to canonical attachment identity. If two same-name candidates cannot be distinguished, preserve the candidate group and qualified attribution. Unread or unresolved required processing prevents full ingestion. Uncertainty about which of two fully processed candidates is the same physical original does not by itself block the email or create permanent attachment identity.</p>
+<h3 id="email-level-ingestion-coverage">Email-level ingestion coverage</h3>
+<p>The approved Q6 binary direction is represented at the logical-email level: an email is either <code>fully_ingested</code> or <code>not_ingested</code>. School-OS does not persist a partially ingested email or a part-resume workflow. The example below is wholly complete: the body and required PDF were processed, their Knowledge was saved, and the required readbacks were verified.</p>
+<details class="code-example"><summary>Proposed JSON · Email-level ingestion coverage</summary><pre><code>{
+  &quot;coverage_id&quot;: &quot;coverage_a6354db3-9e26-436e-900f-4a1ea3783b98&quot;,
+  &quot;email_ref&quot;: {
+    &quot;family&quot;: &quot;email&quot;,
+    &quot;id&quot;: &quot;email_f99baa23-032d-49cd-b180-2b6dc6727c82&quot;
+  },
+  &quot;body_ingestion_evidence&quot;: {
+    &quot;state&quot;: &quot;processed_saved_verified&quot;,
+    &quot;knowledge_refs&quot;: [
+      {&quot;family&quot;: &quot;knowledge&quot;, &quot;id&quot;: &quot;knowledge_d45652fb-cfc8-486f-81d7-b5413c672ff8&quot;}
+    ],
+    &quot;verified_at&quot;: &quot;2026-09-15T16:25:00Z&quot;
+  },
+  &quot;attachment_inventory&quot;: {
+    &quot;state&quot;: &quot;complete&quot;,
+    &quot;group_refs&quot;: [
+      {
+        &quot;family&quot;: &quot;attachment_group&quot;,
+        &quot;id&quot;: &quot;attachment_group_4c67171d-5508-431b-929a-a8d65b900ee7&quot;
+      }
+    ]
+  },
+  &quot;required_attachment_group_refs&quot;: [
+    {
+      &quot;family&quot;: &quot;attachment_group&quot;,
+      &quot;id&quot;: &quot;attachment_group_4c67171d-5508-431b-929a-a8d65b900ee7&quot;
+    }
+  ],
+  &quot;ingestion_state&quot;: &quot;fully_ingested&quot;,
+  &quot;evaluated_at&quot;: &quot;2026-09-15T16:26:00Z&quot;
+}</code></pre></details>
+<p><code>ingestion_state</code> may be <code>fully_ingested</code> only when:</p>
+<ol>
+<li>the individual message body was processed, including an explicitly established empty body, and its resulting Knowledge was saved and read back;</li>
+<li>the attachment inventory is complete for the selected route and scope;</li>
+<li>every attachment group&#x27;s requirement is known; and</li>
+<li>every group marked required was processed and its resulting Knowledge was saved and read back.</li>
+</ol>
+<p>If any condition fails, the email is <code>not_ingested</code>. The agent reports the blocking reason and the logical ingestion operation remains incomplete; it does not save a partial email-ingestion state for later part-level resumption. Source and attachment inventory still preserve what was observed, and discovery-window coverage remains separate.</p>
+<p>This proposal intentionally does <strong>not</strong> decide when a later repeated appearance may reuse prior body or attachment coverage. A metadata match and an existing <code>ingestion_state: &quot;fully_ingested&quot;</code> value do not, by this document alone, authorize skipping the new appearance. The later Q6 decision table must define what appearance evidence is sufficient, what changed or incomplete inventory means, and when a reread is required. No body/byte hash or content comparison is introduced.</p>
+<h3 id="discovery-window-records">Discovery-window records</h3>
+<p>A <code>discovery_window</code> describes where the mailbox was searched, separately from an individual email&#x27;s binary ingestion result. This is a concrete representation of the already-approved durable window progress. The proposed arrival-time search policy below is still conditional on Q4 approval.</p>
+<div class="table-wrap" tabindex="0"><table><thead><tr><th>Field</th><th>Proposed meaning</th></tr></thead><tbody>
+<tr><td><code>window_id</code></td><td>School-OS-owned ID, resolved through the source-account window directory.</td></tr>
+<tr><td><code>source_account_ref</code></td><td>Logical mailbox; no required provider cursor.</td></tr>
+<tr><td><code>scope_description</code> and <code>school_refs</code></td><td>The configured source scope in tool-independent terms, including applicable inclusion/exclusion choices. A connector query is only an access aid.</td></tr>
+<tr><td><code>time_basis</code>, <code>start</code>, <code>end</code></td><td>Declared source time meaning, timezone, precision and inclusive/exclusive boundary flags; never silently reuse original sending Date as arrival time.</td></tr>
+<tr><td><code>discovery_state</code></td><td><code>unfinished</code> or <code>complete</code>; completion requires route-established exhaustion of the declared window.</td></tr>
+<tr><td><code>observed_email_refs</code></td><td>References to bounded source-index pages containing results, not an unbounded array of message IDs.</td></tr>
+<tr><td><code>verification</code></td><td>When the agent observed exhaustion or interruption and the relevant route limitation/evidence summary. This does not certify invisible provider material.</td></tr>
+<tr><td><code>access_aids</code></td><td>Optional temporary continuation/token hints. Their loss does not erase the described window or require a prior conversation.</td></tr>
+</tbody></table></div>
+<details class="code-example"><summary>Proposed JSON · Discovery-window records</summary><pre><code>{
+  &quot;window_id&quot;: &quot;window_d23383df-95eb-4f1c-bb49-8091d2641d65&quot;,
+  &quot;source_account_ref&quot;: {&quot;family&quot;: &quot;source_account&quot;, &quot;id&quot;: &quot;source_account_6f173cea-043b-4a42-92c4-f4f1fc54b8f0&quot;},
+  &quot;scope_description&quot;: &quot;Parent-selected Pine School correspondence in the configured mailbox&quot;,
+  &quot;school_refs&quot;: [{&quot;family&quot;: &quot;entity&quot;, &quot;id&quot;: &quot;entity_ba7a2221-56ed-4803-85bf-5d85b4fa8962&quot;}],
+  &quot;time_basis&quot;: &quot;source_received_time&quot;,
+  &quot;start&quot;: {&quot;value&quot;: &quot;2026-09-14T06:00:00-07:00&quot;, &quot;precision&quot;: &quot;second&quot;, &quot;timezone&quot;: &quot;-07:00&quot;, &quot;inclusive&quot;: true},
+  &quot;end&quot;: {&quot;value&quot;: &quot;2026-09-15T06:00:00-07:00&quot;, &quot;precision&quot;: &quot;second&quot;, &quot;timezone&quot;: &quot;-07:00&quot;, &quot;inclusive&quot;: true},
+  &quot;discovery_state&quot;: &quot;complete&quot;,
+  &quot;observed_email_refs&quot;: {&quot;source_index_page_ids&quot;: [&quot;page_a6273a4f-6c57-49f1-ad04-3d281701c49b&quot;], &quot;continuation&quot;: {&quot;state&quot;: &quot;exhausted&quot;}},
+  &quot;verification&quot;: {&quot;observed_at&quot;: &quot;2026-09-15T13:05:00Z&quot;, &quot;evidence_summary&quot;: &quot;Selected route exhausted all continuation pages for this window&quot;}
+}</code></pre></details>
+<p>These references point to source records; they do not prove those emails were fully ingested. To assess fresh knowledge, read the relevant window outcomes and each required email&#x27;s ingestion result. A window can be completely listed while an email is not ingested. A lost token allows replay of an unfinished window. No window falsely advances because a connector returned a short page.</p>
+<h2 id="knowledge-records">Knowledge records</h2>
+<p>All saved school meaning uses one Knowledge family with a required <code>knowledge_kind</code>:</p>
+<ul>
+<li><code>fact</code>: a source-supported proposition;</li>
+<li><code>guideline</code>: a rule, instruction or condition that can remain applicable;</li>
+<li><code>update</code>: a source-announced change in state or plan; or</li>
+<li><code>observation</code>: a dated report, assessment or description.</li>
+</ul>
+<p>The kind is independent of actionability. Each record also has an <code>action_disposition</code> of <code>none</code>, <code>finite</code>, <code>conditional</code>, or <code>recurring</code>. An actionable Task points to its supporting Knowledge; the Knowledge record does not duplicate a reverse Task link. A guideline can therefore produce a recurring task, while a teacher observation can remain non-actionable.</p>
+<p>Required Knowledge fields are:</p>
+<div class="table-wrap" tabindex="0"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>knowledge_id</code></td><td>Stable School-OS ID.</td></tr>
+<tr><td><code>knowledge_kind</code></td><td>One of the four meanings above.</td></tr>
+<tr><td><code>statement</code> or <code>segment_refs</code></td><td>Lossless substantive statement, with long text segmented under D1.</td></tr>
+<tr><td><code>qualifications</code></td><td>Established exceptions, conditions and uncertainty; empty only when assessed as none.</td></tr>
+<tr><td><code>scope</code></td><td>True storage/applicability anchor, described below.</td></tr>
+<tr><td><code>entity_links</code></td><td>Relevant entities with roles such as subject, reporter or school context.</td></tr>
+<tr><td><code>topic_refs</code></td><td>One or more selected Topic IDs; unresolved topic classification remains explicit.</td></tr>
+<tr><td><code>source_refs</code></td><td>Email/body or attachment evidence and readable extraction location; exactly one source is designated primary for canonical source/month routing.</td></tr>
+<tr><td><code>dates</code></td><td>Applicable source, observation, effective or interval dates without conflation.</td></tr>
+<tr><td><code>action_disposition</code></td><td><code>none</code>, <code>finite</code>, <code>conditional</code>, or <code>recurring</code>; Tasks carry the supporting Knowledge references.</td></tr>
+<tr><td><code>relationships</code></td><td>Explicit evidenced support/correction/replacement/conflict links; may be established empty.</td></tr>
+<tr><td><code>recorded_at</code></td><td>Instant the agent authored these record values for the bounded save.</td></tr>
+</tbody></table></div>
+<p><code>scope</code> contains one anchor Entity and an applicability mode:</p>
+<ul>
+<li><code>anchor_only</code> applies to the household, person, school or class itself;</li>
+<li><code>listed_entities</code> applies only to the required <code>listed_entity_refs</code> array in that <code>scope</code>; every listed Entity receives a derived entity-index entry; or</li>
+<li><code>members_at_effective_time</code> applies to entities with the required Membership role during the record&#x27;s effective interval.</li>
+</ul>
+<p>This lets a school-wide guideline be stored once at School scope. A child query reaches it through dated enrollment. A notice that names Robin alone uses Child scope. A household policy is stored once at Household scope.</p>
+<h3 id="fictional-teacher-feedback-history">Fictional teacher-feedback history</h3>
+<p>These linked examples are proposals, not executed or simulated data. Page hints are omitted for readability.</p>
+<details class="code-example"><summary>Proposed JSON · Fictional teacher-feedback history</summary><pre><code>{
+  &quot;knowledge_id&quot;: &quot;knowledge_0f629d53-1ec4-42f7-8c5f-21c7a19cac42&quot;,
+  &quot;knowledge_kind&quot;: &quot;observation&quot;,
+  &quot;statement&quot;: &quot;Robin needed prompts to compare fractions with unlike denominators.&quot;,
+  &quot;qualifications&quot;: [&quot;Observation concerned independent class work during the autumn conference period.&quot;],
+  &quot;scope&quot;: {
+    &quot;anchor_ref&quot;: {&quot;family&quot;: &quot;entity&quot;, &quot;id&quot;: &quot;entity_7140b96d-b564-4905-b8cc-fb4b71d9588a&quot;},
+    &quot;applicability&quot;: &quot;anchor_only&quot;
+  },
+  &quot;entity_links&quot;: [
+    {&quot;role&quot;: &quot;subject&quot;, &quot;ref&quot;: {&quot;family&quot;: &quot;entity&quot;, &quot;id&quot;: &quot;entity_7140b96d-b564-4905-b8cc-fb4b71d9588a&quot;}},
+    {&quot;role&quot;: &quot;reporter&quot;, &quot;ref&quot;: {&quot;family&quot;: &quot;entity&quot;, &quot;id&quot;: &quot;entity_10427a27-2369-4857-979c-713971128626&quot;}},
+    {&quot;role&quot;: &quot;school_context&quot;, &quot;ref&quot;: {&quot;family&quot;: &quot;entity&quot;, &quot;id&quot;: &quot;entity_ba7a2221-56ed-4803-85bf-5d85b4fa8962&quot;}}
+  ],
+  &quot;topic_refs&quot;: [
+    {&quot;family&quot;: &quot;topic&quot;, &quot;id&quot;: &quot;topic_e83bf100-a778-448b-b24e-d24535146b7a&quot;},
+    {&quot;family&quot;: &quot;topic&quot;, &quot;id&quot;: &quot;topic_b7d18075-d15f-4d5c-847f-fe807f8a78cc&quot;},
+    {&quot;family&quot;: &quot;topic&quot;, &quot;id&quot;: &quot;topic_bbe44cfa-774d-469d-8a89-137e5cc140c4&quot;}
+  ],
+  &quot;source_refs&quot;: [
+    {&quot;email_ref&quot;: {&quot;family&quot;: &quot;email&quot;, &quot;id&quot;: &quot;email_3ce1f05a-f927-47fc-872d-40f55f3bef67&quot;}, &quot;part&quot;: &quot;body&quot;, &quot;location&quot;: &quot;conference feedback paragraph&quot;, &quot;primary&quot;: true}
+  ],
+  &quot;dates&quot;: [
+    {&quot;state&quot;: &quot;known&quot;, &quot;value&quot;: &quot;2025-10&quot;, &quot;precision&quot;: &quot;month&quot;, &quot;meaning&quot;: &quot;observation_period&quot;}
+  ],
+  &quot;action_disposition&quot;: &quot;none&quot;,
+  &quot;relationships&quot;: [],
+  &quot;recorded_at&quot;: &quot;2025-10-18T18:30:00Z&quot;
+}</code></pre></details>
+<details class="code-example"><summary>Proposed JSON · Fictional teacher-feedback history</summary><pre><code>{
+  &quot;knowledge_id&quot;: &quot;knowledge_8ee6417d-8325-49b1-acd4-f319f60682ac&quot;,
+  &quot;knowledge_kind&quot;: &quot;observation&quot;,
+  &quot;statement&quot;: &quot;Robin independently explained why two fractions were equivalent.&quot;,
+  &quot;qualifications&quot;: [&quot;Observation concerned a spring small-group activity.&quot;],
+  &quot;scope&quot;: {
+    &quot;anchor_ref&quot;: {&quot;family&quot;: &quot;entity&quot;, &quot;id&quot;: &quot;entity_7140b96d-b564-4905-b8cc-fb4b71d9588a&quot;},
+    &quot;applicability&quot;: &quot;anchor_only&quot;
+  },
+  &quot;entity_links&quot;: [
+    {&quot;role&quot;: &quot;subject&quot;, &quot;ref&quot;: {&quot;family&quot;: &quot;entity&quot;, &quot;id&quot;: &quot;entity_7140b96d-b564-4905-b8cc-fb4b71d9588a&quot;}},
+    {&quot;role&quot;: &quot;reporter&quot;, &quot;ref&quot;: {&quot;family&quot;: &quot;entity&quot;, &quot;id&quot;: &quot;entity_10427a27-2369-4857-979c-713971128626&quot;}}
+  ],
+  &quot;topic_refs&quot;: [
+    {&quot;family&quot;: &quot;topic&quot;, &quot;id&quot;: &quot;topic_e83bf100-a778-448b-b24e-d24535146b7a&quot;},
+    {&quot;family&quot;: &quot;topic&quot;, &quot;id&quot;: &quot;topic_b7d18075-d15f-4d5c-847f-fe807f8a78cc&quot;},
+    {&quot;family&quot;: &quot;topic&quot;, &quot;id&quot;: &quot;topic_bbe44cfa-774d-469d-8a89-137e5cc140c4&quot;}
+  ],
+  &quot;source_refs&quot;: [
+    {&quot;email_ref&quot;: {&quot;family&quot;: &quot;email&quot;, &quot;id&quot;: &quot;email_aaf8400b-8014-45a4-83d4-b4ab33ac1757&quot;}, &quot;part&quot;: &quot;body&quot;, &quot;location&quot;: &quot;math update paragraph&quot;, &quot;primary&quot;: true}
+  ],
+  &quot;dates&quot;: [
+    {&quot;state&quot;: &quot;known&quot;, &quot;value&quot;: &quot;2026-03-10&quot;, &quot;precision&quot;: &quot;day&quot;, &quot;meaning&quot;: &quot;observation_date&quot;}
+  ],
+  &quot;action_disposition&quot;: &quot;none&quot;,
+  &quot;relationships&quot;: [],
+  &quot;recorded_at&quot;: &quot;2026-03-11T01:20:00Z&quot;
+}</code></pre></details>
+<p>The spring observation does <strong>not</strong> correct the autumn observation. Both can be true at their respective times and together show development. A <code>corrects</code> relationship is allowed only when source evidence establishes that a prior statement was wrong. A prospective policy change uses <code>replaces</code>; disagreement without resolution uses <code>conflicts_with</code>; additional evidence may use <code>supports</code>. Each relationship points from the newer record to the earlier one and includes evidence and a short justification. No reverse-link rewrite is required.</p>
+<h2 id="task-records-and-action-granularity">Task records and action granularity</h2>
+<p>A Task is created only for a finite, conditional or recurring actionable request. Guidelines and observations remain Knowledge even when they create no Task. One Task represents one independently completed obligation.</p>
+<p>Task fields are listed below. School-source fields are required only for <code>source_derived</code> Tasks; the table identifies valid parent-created omissions.</p>
+<div class="table-wrap" tabindex="0"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>task_id</code></td><td>Stable School-OS ID; also carried in a supported managed app field.</td></tr>
+<tr><td><code>origin</code></td><td><code>source_derived</code> or <code>parent_created</code>; parent-created Tasks do not require school evidence.</td></tr>
+<tr><td><code>action</code> and <code>context</code></td><td>What must be done and its source-supported or parent-authored context.</td></tr>
+<tr><td><code>scope_ref</code></td><td>True scope of the actionable obligation: household, school, class or child.</td></tr>
+<tr><td><code>source_context_refs</code></td><td>School, class or other source context; an established empty array is valid for a personal Task.</td></tr>
+<tr><td><code>completion_subject_ref</code></td><td>Entity whose single action completes this Task.</td></tr>
+<tr><td><code>beneficiary_refs</code></td><td>Established children/people affected; complete inventory or explicit unknown.</td></tr>
+<tr><td><code>supporting_knowledge_refs</code></td><td>Source-derived support; an established empty array is valid for a parent-created Task.</td></tr>
+<tr><td><code>action_kind</code></td><td><code>finite</code>, <code>conditional</code>, <code>recurring_series</code>, or <code>recurring_occurrence</code>.</td></tr>
+<tr><td><code>school_timing</code></td><td>Required for source timing when applicable; omitted for a personal Task with no school timing.</td></tr>
+<tr><td><code>parent_state</code></td><td>Owner, planned date, progress, completion, personal notes and explicit completion-review decisions.</td></tr>
+<tr><td><code>task_sync</code></td><td>Last verified shared values and observed task-app state.</td></tr>
+<tr><td><code>recorded_at</code></td><td>Instant the agent authored these record values for the bounded save.</td></tr>
+</tbody></table></div>
+<p>For recurrence, a <code>recurring_series</code> Task preserves the source recurrence and applicability interval. Each projected <code>recurring_occurrence</code> has its own Task ID, completion subject, due date and parent state, plus <code>series_ref</code>. This keeps occurrence completion independent and supports D5&#x27;s approved 14-day projection fallback without growing one record indefinitely.</p>
+<h3 id="one-household-task-for-two-children">One household task for two children</h3>
+<p>Suppose fictional Pine School requests one emergency-contact confirmation per household, even when siblings Robin and Jamie both attend. Store the school request once as Knowledge at School scope and create one Task whose completion subject is the household:</p>
+<details class="code-example"><summary>Proposed JSON · One household task for two children</summary><pre><code>{
+  &quot;knowledge_id&quot;: &quot;knowledge_a4f11b51-dc24-470c-a929-90acec03df1f&quot;,
+  &quot;knowledge_kind&quot;: &quot;guideline&quot;,
+  &quot;statement&quot;: &quot;Each household with students at Pine School must confirm its emergency-contact details once.&quot;,
+  &quot;qualifications&quot;: [&quot;One confirmation covers siblings in the same household.&quot;],
+  &quot;scope&quot;: {
+    &quot;anchor_ref&quot;: {&quot;family&quot;: &quot;entity&quot;, &quot;id&quot;: &quot;entity_ba7a2221-56ed-4803-85bf-5d85b4fa8962&quot;},
+    &quot;applicability&quot;: &quot;members_at_effective_time&quot;,
+    &quot;membership_role&quot;: &quot;student&quot;
+  },
+  &quot;entity_links&quot;: [
+    {&quot;role&quot;: &quot;school_context&quot;, &quot;ref&quot;: {&quot;family&quot;: &quot;entity&quot;, &quot;id&quot;: &quot;entity_ba7a2221-56ed-4803-85bf-5d85b4fa8962&quot;}}
+  ],
+  &quot;topic_refs&quot;: [
+    {&quot;family&quot;: &quot;topic&quot;, &quot;id&quot;: &quot;topic_68f256cc-19f3-43ec-9858-c5c2fb1de620&quot;}
+  ],
+  &quot;source_refs&quot;: [
+    {&quot;email_ref&quot;: {&quot;family&quot;: &quot;email&quot;, &quot;id&quot;: &quot;email_f99baa23-032d-49cd-b180-2b6dc6727c82&quot;}, &quot;part&quot;: &quot;body&quot;, &quot;location&quot;: &quot;required action paragraph&quot;, &quot;primary&quot;: true}
+  ],
+  &quot;dates&quot;: [
+    {&quot;state&quot;: &quot;known&quot;, &quot;value&quot;: &quot;2026-09-18&quot;, &quot;precision&quot;: &quot;day&quot;, &quot;meaning&quot;: &quot;school_deadline&quot;}
+  ],
+  &quot;action_disposition&quot;: &quot;finite&quot;,
+  &quot;relationships&quot;: [],
+  &quot;recorded_at&quot;: &quot;2026-09-15T16:55:00Z&quot;
+}</code></pre></details>
+<details class="code-example"><summary>Proposed JSON · One household task for two children</summary><pre><code>{
+  &quot;task_id&quot;: &quot;task_aa32a59d-03d9-461a-a8e4-ced24ee1870b&quot;,
+  &quot;origin&quot;: &quot;source_derived&quot;,
+  &quot;action&quot;: &quot;Confirm the household emergency-contact details in the school portal.&quot;,
+  &quot;context&quot;: &quot;Pine School requests one confirmation per household.&quot;,
+  &quot;scope_ref&quot;: {&quot;family&quot;: &quot;entity&quot;, &quot;id&quot;: &quot;entity_03a9f0bb-26aa-42c0-b363-314213034b3d&quot;},
+  &quot;source_context_refs&quot;: [
+    {&quot;family&quot;: &quot;entity&quot;, &quot;id&quot;: &quot;entity_ba7a2221-56ed-4803-85bf-5d85b4fa8962&quot;}
+  ],
+  &quot;completion_subject_ref&quot;: {&quot;family&quot;: &quot;entity&quot;, &quot;id&quot;: &quot;entity_03a9f0bb-26aa-42c0-b363-314213034b3d&quot;},
+  &quot;beneficiary_refs&quot;: [
+    {&quot;family&quot;: &quot;entity&quot;, &quot;id&quot;: &quot;entity_7140b96d-b564-4905-b8cc-fb4b71d9588a&quot;},
+    {&quot;family&quot;: &quot;entity&quot;, &quot;id&quot;: &quot;entity_4567b2ea-aa5b-441a-b241-78890fd6f248&quot;}
+  ],
+  &quot;supporting_knowledge_refs&quot;: [
+    {&quot;family&quot;: &quot;knowledge&quot;, &quot;id&quot;: &quot;knowledge_a4f11b51-dc24-470c-a929-90acec03df1f&quot;}
+  ],
+  &quot;action_kind&quot;: &quot;finite&quot;,
+  &quot;school_timing&quot;: {
+    &quot;deadline&quot;: {&quot;state&quot;: &quot;known&quot;, &quot;value&quot;: &quot;2026-09-18&quot;, &quot;precision&quot;: &quot;day&quot;, &quot;meaning&quot;: &quot;school_deadline&quot;}
+  },
+  &quot;parent_state&quot;: {
+    &quot;owner&quot;: {&quot;state&quot;: &quot;unknown&quot;, &quot;reason&quot;: &quot;parent has not assigned an owner&quot;},
+    &quot;planned_date&quot;: {&quot;state&quot;: &quot;unknown&quot;, &quot;reason&quot;: &quot;parent has not planned a date&quot;},
+    &quot;progress&quot;: &quot;open&quot;,
+    &quot;completed&quot;: false,
+    &quot;personal_notes&quot;: [],
+    &quot;completion_reviews&quot;: []
+  },
+  &quot;task_sync&quot;: [],
+  &quot;recorded_at&quot;: &quot;2026-09-15T17:00:00Z&quot;
+}</code></pre></details>
+<p>A fictional parent-created personal Task has no fabricated school Knowledge or deadline:</p>
+<details class="code-example"><summary>Proposed JSON · One household task for two children</summary><pre><code>{
+  &quot;task_id&quot;: &quot;task_c51b95b9-3e30-4818-b19b-a75cc43e9cd6&quot;,
+  &quot;origin&quot;: &quot;parent_created&quot;,
+  &quot;action&quot;: &quot;Pack an extra snack for Robin&#x27;s field trip.&quot;,
+  &quot;context&quot;: &quot;Parent-added preparation reminder.&quot;,
+  &quot;scope_ref&quot;: {&quot;family&quot;: &quot;entity&quot;, &quot;id&quot;: &quot;entity_03a9f0bb-26aa-42c0-b363-314213034b3d&quot;},
+  &quot;source_context_refs&quot;: [],
+  &quot;completion_subject_ref&quot;: {&quot;family&quot;: &quot;entity&quot;, &quot;id&quot;: &quot;entity_03a9f0bb-26aa-42c0-b363-314213034b3d&quot;},
+  &quot;beneficiary_refs&quot;: [
+    {&quot;family&quot;: &quot;entity&quot;, &quot;id&quot;: &quot;entity_7140b96d-b564-4905-b8cc-fb4b71d9588a&quot;}
+  ],
+  &quot;supporting_knowledge_refs&quot;: [],
+  &quot;action_kind&quot;: &quot;finite&quot;,
+  &quot;parent_state&quot;: {
+    &quot;owner&quot;: &quot;Parent A&quot;,
+    &quot;planned_date&quot;: &quot;2026-09-17&quot;,
+    &quot;progress&quot;: &quot;open&quot;,
+    &quot;completed&quot;: false,
+    &quot;personal_notes&quot;: [],
+    &quot;completion_reviews&quot;: []
+  },
+  &quot;task_sync&quot;: [],
+  &quot;recorded_at&quot;: &quot;2026-09-15T17:02:00Z&quot;
+}</code></pre></details>
+<p>If the source instead requires a separate confirmation per child, create two Tasks because there are two independent completion units. Shared source Knowledge remains stored once; each Task links the same Knowledge and its own child completion subject. A school-wide notice that asks parents to remember a rule but requires no response creates no Task.</p>
+<p>Clear completion evidence creates an entry in <code>parent_state.completion_reviews</code>. Each entry contains its evidence references, <code>detected_at</code>, and an explicit parent-review state: <code>awaiting_confirmation</code>, <code>confirmed</code>, or <code>rejected</code>. Only an <code>awaiting_confirmation</code> entry displays <strong>Completion detected — awaiting parent confirmation</strong> while <code>parent_state.completed</code> remains false. Evidence by itself does not compute that state.</p>
+<p>A parent&#x27;s rejection changes that review entry to <code>rejected</code> and preserves the evidence; the same evidence cannot silently reopen it. Materially new evidence may create a new awaiting entry, while the rejected decision remains in history. A confirmed review and the parent&#x27;s checked completion flow through approved D5 synchronization. A later receipt does not reopen or downgrade an already completed Task. If the review list outgrows a bounded Task page, D1-style numbered segments linked to the same Task ID preserve the history.</p>
+<details class="code-example"><summary>Proposed JSON · One household task for two children</summary><pre><code>{
+  &quot;state&quot;: &quot;rejected&quot;,
+  &quot;evidence_refs&quot;: [
+    {&quot;family&quot;: &quot;knowledge&quot;, &quot;id&quot;: &quot;knowledge_5ee6ba75-81d9-45c0-bf1e-f18ca29c65d0&quot;}
+  ],
+  &quot;detected_at&quot;: &quot;2026-09-16T08:10:00Z&quot;,
+  &quot;decided_at&quot;: &quot;2026-09-16T15:30:00Z&quot;,
+  &quot;parent_note&quot;: &quot;The receipt was for Jamie&#x27;s form, not Robin&#x27;s.&quot;
+}</code></pre></details>
+<h3 id="task-app-synchronization-evidence">Task-app synchronization evidence</h3>
+<p>Each configured projection entry proposes these fields:</p>
+<details class="code-example"><summary>Proposed JSON · Task-app synchronization evidence</summary><pre><code>{
+  &quot;adapter_ref&quot;: &quot;system/tool-adapters/example-task-tool&quot;,
+  &quot;connection_label&quot;: &quot;Parent-selected task account&quot;,
+  &quot;access_aid&quot;: &quot;replaceable-provider-task-handle&quot;,
+  &quot;identity_marker_verified&quot;: true,
+  &quot;last_verified_at&quot;: &quot;2026-09-15T17:10:00Z&quot;,
+  &quot;last_verified_shared_values&quot;: {
+    &quot;owner&quot;: &quot;Parent A&quot;,
+    &quot;planned_date&quot;: &quot;2026-09-17&quot;,
+    &quot;progress&quot;: &quot;open&quot;,
+    &quot;completed&quot;: false,
+    &quot;personal_notes&quot;: []
+  },
+  &quot;last_observed_remote_values&quot;: {
+    &quot;owner&quot;: &quot;Parent A&quot;,
+    &quot;planned_date&quot;: &quot;2026-09-17&quot;,
+    &quot;progress&quot;: &quot;open&quot;,
+    &quot;completed&quot;: false,
+    &quot;personal_notes&quot;: []
+  },
+  &quot;projection_state&quot;: &quot;verified&quot;
+}</code></pre></details>
+<p>The task&#x27;s canonical <code>parent_state</code>, the <code>last_verified_shared_values</code> base and a new remote observation supply D5&#x27;s approved three-way comparison. Proposed finite <code>projection_state</code> values are <code>verified</code>, <code>missing</code>, <code>unknown</code>, and <code>conflict</code>. The provider handle only locates the current projection. The managed School-OS Task ID establishes identity; title similarity does not.</p>
+<p>No credentials, API request format, retry engine or central binding registry is stored here. If the selected app or connector cannot carry or verify the managed identity marker, the projection remains unsupported.</p>
+<span id="search"></span>
+<h2 id="directory-and-derived-index-contract">Directory and derived-index contract</h2>
+<h3 id="canonical-routes">Canonical routes</h3>
+<p>The proposal uses D1&#x27;s approved routes rather than inventing a database:</p>
+<ul>
+<li>Email, attachment and coverage pages route by logical mailbox and normalized UTC month of original Date; unknown original dates use the discoverable pending area.</li>
+<li>Knowledge pages route primarily by the original-Date month of their one designated primary supporting source and retain all source references.</li>
+<li>Task pages use the separately paged active-task directory. Completed Tasks remain discoverable through task history pages and their canonical IDs.</li>
+<li>Entity, Topic and Membership families use bounded family directories.</li>
+<li>Family locator pages map canonical record IDs to current page IDs, at most 100 entries per page.</li>
+</ul>
+<p>Changing a Drive handle or page hint does not rename a record. Directory continuations are explicit and independent of provider pagination tokens.</p>
+<p>The canonical page catalogue is a small D1 directory, not a copy of page bodies. Each entry carries the current readable page revision so index freshness can be checked without downloading every canonical body:</p>
+<details class="code-example"><summary>Proposed JSON · Canonical routes</summary><pre><code>{
+  &quot;instance_id&quot;: &quot;inst_2c9485f0-5df8-47ad-8e73-843da9f75f13&quot;,
+  &quot;family&quot;: &quot;page_catalogue&quot;,
+  &quot;page_id&quot;: &quot;page_catalogue_56aeb7cc-68c6-44a0-bda5-fb2983280fcb&quot;,
+  &quot;schema_version&quot;: &quot;1&quot;,
+  &quot;content_revision&quot;: 3,
+  &quot;route&quot;: {
+    &quot;canonical_family&quot;: &quot;knowledge&quot;,
+    &quot;source_account_id&quot;: &quot;source_account_6f173cea-043b-4a42-92c4-f4f1fc54b8f0&quot;,
+    &quot;source_month&quot;: &quot;2026-03&quot;
+  },
+  &quot;entries&quot;: [
+    {
+      &quot;canonical_page_id&quot;: &quot;page_8bb862cb-c401-4cb9-9868-5579c534e40a&quot;,
+      &quot;canonical_family&quot;: &quot;knowledge&quot;,
+      &quot;content_revision&quot;: 4,
+      &quot;drive_access_aid&quot;: &quot;replaceable-drive-handle&quot;
+    }
+  ],
+  &quot;continuation&quot;: {&quot;state&quot;: &quot;exhausted&quot;}
+}</code></pre></details>
+<p>The normal save order is canonical page write and readback, then catalogue entry write and readback, then derived-index update. These are independent bounded writes, not an atomic transaction. Interruption between them can leave a stale catalogue that this MVP does not repair or always detect; the agent reports a known uncertain save outcome, and the D2 repair deferral remains material.</p>
+<h3 id="entity-topic-and-incoming-relationship-indexes">Entity, topic and incoming-relationship indexes</h3>
+<p>All three lookups are derived and rebuildable. Entity/topic index month means the record&#x27;s semantic time, not its canonical source-page month:</p>
+<ul>
+<li>an Observation uses its observation date or interval;</li>
+<li>a Fact, Guideline or Update uses its effective date or interval;</li>
+<li>a closed interval appears in each overlapping calendar-month shard;</li>
+<li>an explicitly continuing guideline appears in its start month and an <code>open_interval</code> shard checked by every current or historical applicability query whose interval could overlap the continuing rule; and</li>
+<li>unknown applicability appears in an <code>unknown_interval</code> shard and must be read and qualified rather than silently excluded.</li>
+</ul>
+<p>The primary source&#x27;s original Date still determines the canonical source/month page. Thus a March email that reports a November observation is stored through the March source route and indexed in November for a historical trend query. Index entries retain both semantic and source dates so the distinction remains visible.</p>
+<p>Membership entries use their valid interval. Active Task retrieval always reads the relevant active-task directory and does not exclude a task merely because its original email is old; any dated Task index entry uses the task’s school or parent-planned timing and preserves the chosen meaning. Unknown timing uses the unknown bucket. Index-root directory entries map an entity/topic ID to its bucket-page references; bucket directories and continuations also obey D1’s 100-entry and byte limits. Looking up an ID can require several directory pages; there is no hidden database search operation.</p>
+<p>Each entry contains a canonical record reference, record family, the matched role, and known effective/observation bounds for pruning. It does not copy the substantive statement. Index entries are paged at 100 or fewer and remain under 64 KiB.</p>
+<p>An entity-index page and entry look like this:</p>
+<details class="code-example"><summary>Proposed JSON · Entity, topic and incoming-relationship indexes</summary><pre><code>{
+  &quot;instance_id&quot;: &quot;inst_2c9485f0-5df8-47ad-8e73-843da9f75f13&quot;,
+  &quot;family&quot;: &quot;entity_index&quot;,
+  &quot;page_id&quot;: &quot;page_entity_index_268b421e-97a1-4117-a787-f3157ac52714&quot;,
+  &quot;schema_version&quot;: &quot;1&quot;,
+  &quot;content_revision&quot;: 2,
+  &quot;index_key&quot;: {
+    &quot;entity_id&quot;: &quot;entity_7140b96d-b564-4905-b8cc-fb4b71d9588a&quot;,
+    &quot;time_bucket&quot;: &quot;2026-03&quot;
+  },
+  &quot;entries&quot;: [
+    {
+      &quot;record_ref&quot;: {&quot;family&quot;: &quot;knowledge&quot;, &quot;id&quot;: &quot;knowledge_8ee6417d-8325-49b1-acd4-f319f60682ac&quot;, &quot;page_hint&quot;: &quot;page_8bb862cb-c401-4cb9-9868-5579c534e40a&quot;},
+      &quot;matched_role&quot;: &quot;subject&quot;,
+      &quot;date_basis&quot;: &quot;observation_date&quot;,
+      &quot;semantic_interval&quot;: {&quot;start&quot;: &quot;2026-03-10&quot;, &quot;end&quot;: &quot;2026-03-10&quot;},
+      &quot;primary_source_month&quot;: &quot;2026-03&quot;
+    }
+  ],
+  &quot;continuation&quot;: {&quot;state&quot;: &quot;exhausted&quot;}
+}</code></pre></details>
+<p>A topic-index page uses the same bounded structure:</p>
+<details class="code-example"><summary>Proposed JSON · Entity, topic and incoming-relationship indexes</summary><pre><code>{
+  &quot;instance_id&quot;: &quot;inst_2c9485f0-5df8-47ad-8e73-843da9f75f13&quot;,
+  &quot;family&quot;: &quot;topic_index&quot;,
+  &quot;page_id&quot;: &quot;page_topic_index_03d60650-489c-4ace-b262-a7bd3e165852&quot;,
+  &quot;schema_version&quot;: &quot;1&quot;,
+  &quot;content_revision&quot;: 2,
+  &quot;index_key&quot;: {
+    &quot;topic_id&quot;: &quot;topic_e83bf100-a778-448b-b24e-d24535146b7a&quot;,
+    &quot;time_bucket&quot;: &quot;2026-03&quot;
+  },
+  &quot;entries&quot;: [
+    {
+      &quot;record_ref&quot;: {&quot;family&quot;: &quot;knowledge&quot;, &quot;id&quot;: &quot;knowledge_8ee6417d-8325-49b1-acd4-f319f60682ac&quot;, &quot;page_hint&quot;: &quot;page_8bb862cb-c401-4cb9-9868-5579c534e40a&quot;},
+      &quot;matched_topic_id&quot;: &quot;topic_e83bf100-a778-448b-b24e-d24535146b7a&quot;,
+      &quot;date_basis&quot;: &quot;observation_date&quot;,
+      &quot;semantic_interval&quot;: {&quot;start&quot;: &quot;2026-03-10&quot;, &quot;end&quot;: &quot;2026-03-10&quot;},
+      &quot;primary_source_month&quot;: &quot;2026-03&quot;
+    }
+  ],
+  &quot;continuation&quot;: {&quot;state&quot;: &quot;exhausted&quot;}
+}</code></pre></details>
+<p>Entity indexing includes:</p>
+<ul>
+<li>the Knowledge <code>scope</code> anchor;</li>
+<li>every <code>listed_entity_refs</code> member when applicability is <code>listed_entities</code>;</li>
+<li>every Knowledge <code>entity_link</code> role;</li>
+<li>Task scope, completion subject and beneficiaries (active Tasks also remain directly reachable through D1’s active-task directory); and</li>
+<li>Membership subjects and containers.</li>
+</ul>
+<p>Topic indexing includes only Knowledge topic references. Tasks have no derived topic-index entries: a task query retrieves Tasks from the active-task directory and entity index, then reads their linked supporting Knowledge to apply topic filters. A parent-created task with no school Knowledge is filtered using its own action/context and explicit beneficiaries; no school source is invented. This avoids a dependency engine in which changing Knowledge silently makes an unchanged Task&#x27;s topic entry stale.</p>
+<p>Writers should co-tag specific and broad concepts that the source supports, such as <code>fractions</code>, <code>math</code>, and <code>teacher-feedback</code>, and queries follow declared <code>broader_topic_refs</code>. Even a fresh topic index cannot prove semantic completeness: a record may have been classified too narrowly. For a completeness-sensitive topic question, the agent also reviews the relevant entity/scope/time candidate Knowledge and applies source-grounded semantic judgment. It discloses any unfinished fallback rather than claiming that exact topic matches are exhaustive.</p>
+<p>A school-wide Knowledge record with no individual subject is indexed under the School scope (and any explicitly recorded reporter/context roles), not every child. It is not copied under Robin and Jamie. A query for Robin first reads Robin&#x27;s dated Memberships, then includes applicable Household, School and Class scopes. This keeps one canonical record at its true scope while making it discoverable for each relevant child.</p>
+<p>Every outgoing Knowledge relationship remains on the newer Knowledge record. A small incoming-relationship lookup is additionally keyed by the target Knowledge ID:</p>
+<details class="code-example"><summary>Proposed JSON · Entity, topic and incoming-relationship indexes</summary><pre><code>{
+  &quot;target_knowledge_id&quot;: &quot;knowledge_0f629d53-1ec4-42f7-8c5f-21c7a19cac42&quot;,
+  &quot;entries&quot;: [
+    {
+      &quot;from_ref&quot;: {&quot;family&quot;: &quot;knowledge&quot;, &quot;id&quot;: &quot;knowledge_2ab1d913-1782-4c0a-bc10-bf94ce68e293&quot;},
+      &quot;relationship&quot;: &quot;corrects&quot;,
+      &quot;relationship_recorded_at&quot;: &quot;2026-04-09T19:15:00Z&quot;
+    }
+  ],
+  &quot;continuation&quot;: {&quot;state&quot;: &quot;exhausted&quot;}
+}</code></pre></details>
+<p>This lookup lets a query that finds an autumn record discover a correction or replacement recorded after the requested autumn period. It is rebuildable from canonical outgoing links, paged at 100 entries and covered by the same freshness catalogue. The alternative is scanning every later Knowledge month for incoming links, which avoids one derived lookup but is expensive across years. This is a reverse-lookup aid, not a generic graph or separate canonical edge family.</p>
+<h3 id="freshness-and-completeness">Freshness and completeness</h3>
+<p>A shared derived-index coverage directory lists canonical page IDs and the exact <code>content_revision</code> for which all required entity, topic and incoming-relationship entries were emitted. It avoids copying the same page inventory into every topic shard. Coverage lists are also paged at 100 entries. The indexes are complete for a requested route and period only when:</p>
+<ol>
+<li>the relevant small canonical page-catalogue directory has been traversed through explicit exhaustion;</li>
+<li>every catalogue entry appears in the index coverage pages; and</li>
+<li>every indexed revision equals the catalogue&#x27;s current <code>content_revision</code>.</li>
+</ol>
+<p>For a historical observation query, “relevant catalogue” includes later source months through the known ingestion snapshot: a new email may describe an old observation or correct an old claim. Do not check only the original-Date months matching the requested observation year. The normal completeness check may therefore read all applicable Knowledge catalogue entries, in small pages, but not all Knowledge bodies. This metadata cost grows with history; the proposal does not claim constant-time exhaustive search.</p>
+<p>A missing page, mismatched revision, unfinished directory or unread coverage page makes the index incomplete for that scope. A timestamp such as <code>built_at</code> alone is not completeness evidence.</p>
+<p>The shared coverage entry for a canonical page is advanced only after every required entity/topic/incoming-relationship entry derived from that page has been written and read back. An unknown index-write outcome leaves the older coverage revision in place. This is ordinary verification for derived data, not an interrupted-write repair mechanism.</p>
+<p>When incomplete, the agent uses the index only as a candidate accelerator. It scans the missing or changed canonical source/month pages and relevant active task pages, following continuations. If it cannot finish within authorized capabilities, it reports the unfinished search under the approved query-coverage rule. It must not turn zero index hits into “none exist.” Rebuilding an index is a normal derived-data operation, not proof that source ingestion was complete.</p>
+<p>An interrupted canonical-page or page-catalogue write remains outside the MVP&#x27;s repair guarantee. Comparing small catalogues avoids routine body-page downloads, but a catalogue that was not updated after an interrupted canonical change can mask staleness. The revision mechanism does not repair or transact either write.</p>
+<h2 id="from-one-new-email-to-searchable-information">From one new email to searchable information</h2>
+<p>This is the proposed agent procedure, not an executed write or a generic writer. The two completion dimensions remain separate: a source window can be fully listed while one email remains not ingested, or all observed emails can be fully ingested while discovery still has another page.</p>
+<ol>
+<li>Read instance configuration and the selected source/Drive mappings. Resolve the logical mailbox, child/family/school entities and existing source index.</li>
+<li>Associate the individual message using approved metadata and the Q5 Date threshold. A known complete email&#x27;s later-match skip rule still awaits Q6; a new reply is independently identified.</li>
+<li>Read the whole body and required attachment material for the email being ingested. Extract substantive claims, dates, exceptions and finite/recurring action requirements. Do not use content to decide email/attachment identity.</li>
+<li>Assign each claim its real applicability. A family science-night notice can produce a school-wide event statement, one household RSVP obligation and a child-specific accommodation, each with the same source evidence but its own scope. Never infer a separate task per child from a household-wide request.</li>
+<li>Resolve entity and topic references. Preserve ambiguous names or dates as unresolved; do not merge similarly named children. Relate corrections only when evidence supports them. Maintain one independently completed task per actual obligation, with parent state preserved.</li>
+<li>Write and read back the affected canonical source, attachment, Knowledge and Task pages in bounded pieces. Update/read back their page-catalogue and locator entries; update the affected derived indexes and their coverage evidence. No atomic multi-file save or repair after interruption is promised.</li>
+<li>Save the email&#x27;s <code>fully_ingested</code> outcome only after required content and substantive/source results are verified. A failed required part means <code>not_ingested</code>; this does not create a part-resume workflow. Discard accessible temporary raw copies only after verified persistence.</li>
+<li>Record completed or unfinished discovery windows separately. New questions use canonical records through the indexes; optional task-app synchronization uses the shared adapter and its own readback. Task-app failure does not erase canonical knowledge or falsely become a successful app sync.</li>
+</ol>
+<p>Index freshness remains its own check. If a derived index cannot be updated, retain its older coverage revision and disclose or use the canonical fallback; do not turn that failure into silently complete indexed search.</p>
+<span id="flows"></span>
+<h2 id="narrow-query-traces">Narrow query traces</h2>
+<h3 id="how-has-robins-math-teachers-feedback-evolved-this-school-year">“How has Robin&#x27;s math teacher&#x27;s feedback evolved this school year?”</h3>
+<ol>
+<li>Resolve <code>Robin</code> through the Entity directory within the configured household. More than one compatible entity is ambiguity, not a first-name match.</li>
+<li>Resolve <code>math</code> and <code>teacher-feedback</code> through Topic labels/aliases and expand declared broader-topic links such as <code>fractions</code> → <code>math</code>. Do not treat the related terms as synonyms.</li>
+<li>Read Robin&#x27;s Membership history for the requested school-year interval. Collect the Household, School and Class scopes that overlap that interval, including dated teacher relationships when established.</li>
+<li>Build two candidate sets. The direct-feedback set requires Robin as the Knowledge scope anchor, an explicit <code>listed_entity_refs</code> member, or the <code>subject</code> entity role. The context set uses applicable Household/School/Class scope and is kept separately. A sibling&#x27;s feedback record with Jamie as subject is excluded even if it shares the same school, teacher and topics.</li>
+<li>Intersect direct candidates with the expanded math and teacher-feedback topic shards. Also review the relevant Robin/scope/year candidates semantically so a fractions-only tag cannot make the topic result appear complete.</li>
+<li>Validate index coverage against the current small page catalogues. Scan any missing or stale source/month pages; include <code>open_interval</code> and <code>unknown_interval</code> shards so an older continuing guideline is not missed.</li>
+<li>Read the actual Knowledge records. Keep observations, qualifications, source dates, observation/effective dates and reporter roles. Exclude records whose membership/applicability interval does not overlap Robin&#x27;s. Present shared school context separately from direct teacher observations.</li>
+<li>Follow outgoing links and consult the incoming-relationship lookup for each selected Knowledge ID, even when the later relationship was recorded outside the requested year. Apply explicit <code>corrects</code>, <code>replaces</code>, <code>supports</code> and <code>conflicts_with</code> links. Do not interpret chronological improvement as correction; the fictional autumn difficulty and spring independence observations both remain true.</li>
+<li>Check source discovery and email-level ingestion coverage for the requested school/source/year scope. Any relevant email marked <code>not_ingested</code> makes that coverage gap explicit.</li>
+<li>Answer as a dated trend with citations and qualifications. Mention relevant open Tasks separately; do not turn feedback into a task unless its supporting Knowledge has an actionable disposition.</li>
+</ol>
+<p>No step requires loading all instance history, vector search or a live source read when saved verified Knowledge and sufficient coverage answer the question.</p>
+<h3 id="household-school-and-shared-task-lookup">Household, school and shared-task lookup</h3>
+<p>For “What applies to both children at Pine School, and what do we still need to do?” the agent:</p>
+<ol>
+<li>resolves the household, Pine School, Robin and Jamie entities;</li>
+<li>verifies each child&#x27;s overlapping Pine School Membership;</li>
+<li>reads Pine School and Household entity-index shards for the requested period, plus direct child shards;</li>
+<li>reads canonical Knowledge and filters applicability against membership dates;</li>
+<li>reads the active-task directory and entity-index task candidates;</li>
+<li>returns the school-wide Knowledge once, not once per child; and</li>
+<li>returns the fictional emergency-contact Task once because its completion subject is the household, while listing Robin and Jamie as beneficiaries.</li>
+</ol>
+<p>If Pine School required one submission per child, the two independently completed Tasks would both appear. If task-app synchronization is stale or failed, the answer uses verified canonical Task state and discloses the app-state limit rather than title-matching remote tasks.</p>
+<h2 id="alternatives-and-tradeoffs">Alternatives and tradeoffs</h2>
+<h3 id="mostly-free-text-records">Mostly free-text records</h3>
+<p>Free text is easier to author initially and harder for another agent to filter, join and qualify consistently. It weakens stable cross-agent task sync and makes scope-aware historical questions expensive. The proposed fields retain agent reasoning for interpretation while persisting its result explicitly.</p>
+<h3 id="duplicate-school-wide-knowledge-and-tasks-under-each-child">Duplicate school-wide knowledge and tasks under each child</h3>
+<p>Duplication makes a child folder easy to browse, but corrections, provenance and completion can diverge. It also creates two tasks for one household obligation. True-scope storage plus dated Membership expansion costs extra index reads and preserves one canonical meaning.</p>
+<h3 id="free-text-tags-only">Free-text tags only</h3>
+<p>Tags are simple but can confuse equal names, miss exact synonyms and lose teacher/school changes over time. Stable Entity/Topic IDs require small directories and explicit alias decisions, but do not require a large ontology.</p>
+<h3 id="separate-relationship-records">Separate relationship records</h3>
+<p>A dedicated edge family handles very high relationship counts, but adds another directory and more reads. The recommendation stores one-way evidenced links on the newer Knowledge record and derives only the small incoming lookup needed for reverse discovery. If a link list would exceed its bounded page, the record may use D1-style numbered relationship segments linked to the same Knowledge ID; no generic graph service is needed.</p>
+<h3 id="full-scans-only">Full scans only</h3>
+<p>Scanning every source/month Knowledge page avoids index maintenance and becomes costly as years accumulate. The proposed indexes accelerate the normal query and retain a deterministic scan fallback. No throughput, latency or Drive-cost claim is qualified before user-directed testing.</p>
+<h3 id="database-full-text-or-vector-service">Database, full-text or vector service</h3>
+<p>These could improve search but create a second operational dependency and risk a parallel source of truth. They are unnecessary for the proposed household-scale bounded indexes and are not selected.</p>
+<h2 id="remaining-limitations-and-decisions-not-answered-here">Remaining limitations and decisions not answered here</h2>
+<ul>
+<li>This contract is unapproved until the user decides Q1 and Q2. Publication does not authorize implementation, migration, tests or live operations.</li>
+<li>Q3&#x27;s run-start cutoff and Q5&#x27;s known-timezone, second-or-finer original-Date threshold are approved constraints. Q6&#x27;s binary email-level ingestion state is also approved. Q4&#x27;s exact discovery mechanism and Q6&#x27;s repeated-appearance content-reuse rule remain separate unapproved decisions; this proposal does not choose when prior coverage may be reused.</li>
+<li>A silently capped or incomplete source cannot be made complete by an index. Source discovery, body processing and attachment processing remain distinct.</li>
+<li>Alias resolution and topic assignment require semantic judgment. An index can miss a concept that was never assigned; the fallback and coverage disclosure remain necessary.</li>
+<li>Household membership, enrollment and teacher relationships may have imprecise dates. Unknown intervals remain unknown and can widen or qualify a query.</li>
+<li>The proposal does not define concurrent writes. The approved household scope assumes no simultaneous mutation of the same Drive data.</li>
+<li>D2 interrupted-write repair and the separate generic record/save framework remain outside the MVP. The proposed page revision is index evidence, not a substitute repair engine.</li>
+<li>D7 job/scheduler management and D8 packaging/migration machinery remain deferred. <code>schema_version</code> identifies this proposed initial shape but does not provide an upgrade process.</li>
+<li>Actual Drive connector behavior, page costs, search latency, task-app fields and fresh-agent performance are unqualified. No fictional example here was executed, simulated or validated.</li>
+</ul>
+<h2 id="approval-effect">Approval effect</h2>
+<p>If Q1 and Q2 are approved, dependent implementation may encode these exact families, fields, reference rules, directories and indexes within approved D1 pages and D5 meanings. Approval would not authorize tests, live source reads, connector probes, ingestion, task effects, brief delivery, a generic writer or interrupted-write recovery. The agreed implementation must still be published and remotely verified, then stop for the user&#x27;s separate testing direction.</p><p><a href="DATA-ARCHITECTURE-PROPOSAL.md">Complete proposal source</a> · <a href="../PLAN.md">Approval ledger</a></p></main></div><footer>Written fictional examples. No schema has been adopted by publication; no tests, simulations, ingestion or connector operations ran.</footer></body></html>

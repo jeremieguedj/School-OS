@@ -9,27 +9,21 @@ experiments and historical proposals.
 
 ## Current coordinator checkpoint — architecture approval pending
 
-Prior published instruction/documentation subset:
-`087c061507731bac997624936dc6610ef0674f19` on `codex/restart-school-os`, verified
-against the remote branch. The existing architecture website now reflects these
-setup, shared-adapter, parent-confirmation and brief-recipe approvals, with D1
-storage diagrams and retrieval/save walkthroughs. Publication succeeded. No
-functional tests ran; this is not the whole-project implementation handoff.
-Current review: the [single numbered question list](implementation/OPEN-QUESTIONS.md)
-and [website section](implementation/architecture-guide.html#open-questions) now
-cover every known remaining MVP choice. Q1 (concrete retained data fields/links),
-Q2 (topic/entity lookup conventions) and Q6 (content-read reuse evidence) need
-concrete proposals before final approval. Q3–Q5 and Q7–Q9 have recommendations
-for review. The full-range fallback proposed in Q4 applies every daily run and
-may repeat content reads depending on Q6; it is not adopted or qualified.
-The consolidated review was published from repository commit
-`fbfc16d568fdc9879496e23dc7ec4491470c16e4`, verified on the remote restart branch.
-Site version 11 deployed successfully at
-[the numbered question section](https://school-os-architecture-guide.jeremieg.chatgpt.site/#open-questions).
-Next: supply those three missing proposal packets and resolve the remaining
-choices before their dependent implementation.
-Continue independent approved work. No new architecture approval is recorded.
-The testing phase remains stopped until the user's subsequent direction.
+The numbered review at commit `fbfc16d568fdc9879496e23dc7ec4491470c16e4`
+was published and the user has now answered it. Q3 and Q5 are approved; Q7–Q9
+are approved with the stated freshness/audio amendments; Q6 now has a binary
+logical-email outcome. The full-history daily rescan in Q4 is rejected.
+The [current decision list](implementation/OPEN-QUESTIONS.md) and
+[data architecture proposal](implementation/DATA-ARCHITECTURE-PROPOSAL.md)
+separate these decisions from the unapproved Q1/Q2 fields/indexes and the narrow
+Q4 discovery and Q6 completed-email reuse proposals. No schema/index design is
+adopted merely by publishing it.
+
+Exact next action: publish the concrete proposal and updated decision record,
+then obtain explicit answers on those remaining choices before dependent
+implementation. Continue independent approved work. The whole agreed MVP still
+needs implementation; tests remain reserved for the user after its verified
+publication. No functional validation or provider compatibility is claimed.
 
 
 The 2026-09-14 implementation session remains in the existing repository directory
@@ -43,11 +37,11 @@ design priorities, seven core use cases, other mandatory principle sections and
 ten implementation areas. Requirements are already established; the remaining
 blocker is approval of concrete architecture, not renewed product discovery.
 
-The [architecture proposal, revision 10](implementation/ARCHITECTURE-PROPOSAL.md)
+The [architecture proposal, revision 11](implementation/ARCHITECTURE-PROPOSAL.md)
 records recommendations and explicit decisions. **D1, query coverage, D3 minimal
 Python standard-library helpers with agent/tool operations, and D5 are approved. D4/D6 now use the approved agent-led directions
 below. D2 interrupted-write recovery, D7 and D8 are outside the MVP. Remaining
-named D4/D6 choices and the newly exposed retained data/lookup specifics remain pending; the separate record/save framework is
+Q1/Q2 data/lookup specifics and the narrow Q4/Q6 proposals remain pending; the separate record/save framework is
 also outside MVP and must not be reinstated as an approval gate.**
 On 2026-09-14 the user explicitly replied "D1 approved"
 after the explanation of multiple JSON pages and per-page capacity limits.
@@ -58,7 +52,7 @@ ledger here remains authoritative.
 The [architecture in practice page](implementation/architecture-in-practice.html)
 adds diagrams and seven fictional household walkthroughs. It makes the following
 two specific policies visible. The first is now explicitly approved as amended
-below; the second remains pending. No operation was executed:
+below; the second is now approved with the freshness conversation recorded below. No operation was executed:
 
 - **Approved: detected completion requires parent confirmation.** The user
   approved clear source-supported detection for the correctly linked task,
@@ -78,15 +72,12 @@ below; the second remains pending. No operation was executed:
   but no automatic promotion, accuracy threshold or monitoring infrastructure is
   approved now. Existing source scope remains; this does not authorize searching
   Sent mail, background monitoring or additional account permissions.
-- **Manual briefs with incomplete coverage:** the approved complete-ingestion
-  gate explicitly governs ordinary daily briefs; the qualified-query rule does
-  not by itself authorize a partial manual email send. Recommend permitting a
-  clearly qualified manual brief only when the parent explicitly requests that
-  output despite known gaps. Alternatively require complete relevant ingestion
-  before every manual send. The first supports useful parent-directed access;
-  the second is simpler but can delay useful output. Disclosure and task-app
-  freshness must remain explicit. The complete-coverage fresh-agent example
-  assumes usable authorized routes and does not establish provider support.
+- **Manual briefs with incomplete coverage:** approved with the Q7 freshness
+  conversation: warn that knowledge could be outdated, explain known ingestion
+  and source dates or unknowns, offer to ingest newer emails first, and follow
+  the parent's choice. A limited output remains visibly qualified; the ordinary
+  daily complete-ingestion gate is unchanged. The complete-coverage fresh-agent
+  example assumes usable authorized routes and does not establish support.
 
 The completion amendment changes D5 as explicitly directed. The record/write framework remains
 outside MVP; these are specific product-policy choices, not a reinstated schema
@@ -97,9 +88,9 @@ gate. No scenario, helper, connector operation or test was executed.
 | D1 | Physical Drive layout, bounded pages and directories | Approved explicitly, 2026-09-14 |
 | D2 | Earlier canonical-record and write framework | Repair and separate records/ordinary-save framework outside MVP; existing data meanings and query rule retained |
 | D3 | Minimal Python helpers; shared tool-semantic adapters and agent-specific connectors | Approved explicitly, 2026-09-15, including setup interview, creation and reuse of missing tool mappings; no runtime version pin/SDK selected |
-| D4 | Complete logical run; agent owns resources/batching; School-OS supplies guidance | Direction approved, 2026-09-15; finite scope/cutoff and remaining identity/discovery choices pending |
+| D4 | Complete logical run; agent owns resources/batching; School-OS supplies guidance | Run-start scope, strict Date threshold and binary ingestion approved; simplified discovery and completed-email reuse pending |
 | D5 | Knowledge, tasks, parent synchronization and detected-completion review | Approved explicitly, 2026-09-15; detected completion awaits parent confirmation, represented by tool status or section |
-| D6 | Agent verification, complete daily ingestion and extensible brief recipes | Verification/timing and starter selection/task-sync disclosure approved, 2026-09-15; any number of user/agent-created recipes allowed; audio and manual limited-brief choices pending |
+| D6 | Agent verification, complete daily ingestion and extensible brief recipes | Verification/timing and starter selection/task-sync disclosure approved, 2026-09-15; any number of user/agent-created recipes allowed; manual freshness prompt, no audio archive and combined audio/email with failure fallback approved |
 | D7 | Capabilities/tools/jobs register and scheduler management | Deferred outside MVP, 2026-09-15; user and agents own nonconcurrent jobs |
 | D8 | Packaged installation, compatibility and upgrades | Deferred outside MVP, 2026-09-15; preserve D1 separation for future work |
 
@@ -146,8 +137,8 @@ Source accuracy, task-state distinctions, coverage honesty and the complete
 agreed ingestion gate for an ordinary daily brief remain binding.
 The authored [brief-recipe guidance](../../../operations/brief-recipes.md)
 implements this direction as agent instructions, not as an executed briefing run.
-Audio retention/ordering and the explicit manual-brief exception for known gaps
-remain pending; accepting a starter selection does not decide them.
+The later Q7–Q9 answers below approve the manual freshness conversation, no
+audio archive and combined delivery with an audio-failure fallback.
 
 ### User-approved MVP exception — interrupted writes
 
@@ -243,8 +234,8 @@ After the detailed review, the user explicitly directed:
   cannot substitute for the required completed ingestion. The approved qualified
   knowledge-query rule remains separate. The later starter-recipe approval
   selects newly verified/corrected information with original dates and relevant
-  open tasks, disclosing failed task-app sync. Audio retention/order and the
-  explicit manual limited-brief exception remain pending;
+  open tasks, disclosing failed task-app sync. Later Q7–Q9 approve the freshness conversation, no retained audio archive
+  and combined delivery with an audio-failure notice fallback;
   no record/save framework is an MVP prerequisite.
 - **D7:** remove the centralized tools/capability/jobs register, scheduler control,
   binding manager and register-backed known-job/sender queries from the MVP.
@@ -268,28 +259,75 @@ The [agent execution guidance](implementation/AGENT-EXECUTION-GUIDANCE.md) and
 [updated briefs](implementation/decision-briefs/README.md) describe these boundaries.
 They are authored instructions and review artifacts, not executed validation.
 
-**Pending daily boundary:** recommend all relevant school mail not yet fully
-processed by School-OS through run start, including backlog and attachments, even
-if already marked read in the mailbox; later arrivals belong to the next run.
-The coordinator asked for explicit approval. This defines a finite snapshot
-without chasing new arrivals forever; a later cutoff captures more arrivals but
-can extend work. No answer is recorded yet. This interpretation/cutoff must not
-be adopted silently. Remaining D4 precision/search/repeated-appearance details,
-D6 audio/manual limited-brief and specific remaining architecture choices remain pending.
-D3’s minimal Python/agent split is approved; the record/save framework is deferred. Existing source-metadata and coverage invariants remain authoritative.
+**Current daily boundary:** Q3 explicitly approves all relevant School-OS-pending
+emails through run start, including backlog and already-opened Gmail messages.
+Q5 approves known timezone and second-or-finer original Date precision for
+otherwise-supported automatic association. Q6 adopts a binary email result.
+The exact simpler discovery policy and reuse of a fully ingested email on a
+later appearance remain narrow proposals in the numbered review.
 
-The consolidated [nine-question review](implementation/OPEN-QUESTIONS.md) is published.
-Exact next action: supply concrete proposals for Q1 data fields/links, Q2 lookup conventions
-and Q6 read-reuse evidence, and resolve the remaining numbered choices with the
-user before dependent implementation. These are specific gaps in retained
-features, not a generic record/write framework or a reopening of D1/D5 approvals. Continue approved helper and
-instruction work independently; do not execute it.
-Implement approved retained deliverables and prepare their unexecuted checks.
-Commit/push the agreed MVP code and continuity, verify the exact remote revision,
-then stop for the user's testing direction. This architecture/document update is
-not the completed code handoff or authorization to test.
+Exact next action: publish the concrete Q1/Q2 data/index proposal and updated
+review, then resolve those proposals plus Q4/Q6 before dependent implementation.
+Continue independent approved work; preserve existing D1/D5 and deferred scope.
+Publish the whole agreed MVP code/continuity, verify the remote revision, then
+stop for the user's testing direction. This proposal publication is not that
+final implementation handoff.
 
 ## Decision authority and user checkpoints
+
+### Decisions from the numbered review, 2026-09-15
+
+The user's latest answers supersede the earlier open-question recommendations:
+
+- **Q1/Q2 — requirements confirmed; proposed structure still needs approval.**
+  Queries must follow one child's topic history and evolution. Knowledge and
+  tasks must also apply at family and school levels: store a shared school fact
+  once, and retain a once-per-family obligation as one task rather than one per
+  child. Optimize agent lookup. The concrete data/index proposal is not yet
+  approved; do not infer field, index, ID or update-contract approval from these
+  requirements.
+- **Q3 — approved.** One daily run completes every School-OS-pending email in
+  configured scope through run start, including earlier not-ingested emails.
+  Later arrivals belong to the next run. Gmail read/unread status is irrelevant
+  to School-OS completion; no per-run quantity cap is introduced.
+- **Q4 — full-range daily rescan rejected as excessive.** The user expects live
+  connector access. No blanket guarantee of search completeness or replacement
+  discovery policy was approved. Present the simpler live-window proposal in
+  the current question list; do not implement the rejected full-history fallback.
+- **Q5 — approved.** Automatic association requires the original individual
+  email Date with known timezone and second-or-finer precision, plus the other
+  approved metadata/lookup conditions and no comparable contradiction. Seek a
+  richer metadata view if needed; otherwise keep association unresolved.
+- **Q6 — binary email outcome approved.** A logical email is either fully
+  ingested or not ingested. Full means the body and all required attachment
+  material were extracted, saved and checked. The partially processed email /
+  unread-PDF workflow is outside MVP. This does not remove attachments, permit
+  unread material to count as ingested, or remove whole-search coverage. Internal
+  evidence must remain honest about what was read; no resumable per-part engine
+  is introduced. Whether a later metadata match can reuse completed ingestion
+  and skip reading is a separate narrow proposal awaiting an explicit answer.
+- **Q7 — approved with a freshness conversation.** Before a limited manual
+  brief, flag that saved knowledge may be outdated, explain available last
+  ingestion/search coverage and latest source-email dates (or unknowns), and ask
+  whether to ingest new mail first. The parent may choose an explicitly limited
+  brief now. Keep the limitation in the delivered brief. A last source Date is
+  not proof that later mail was searched; the ordinary daily gate remains.
+- **Q8 — no retained audio archive.** Do not save generated audio as canonical
+  Drive history. After verified delivery to the user by authorized email or
+  agent chat, the audio job is done; discard accessible temporary processing
+  copies. User-delivered attachments/chat files and provider-managed copies are
+  not an archive managed by School-OS, and no deletion of them is promised.
+- **Q9 — combined delivery with failure fallback.** When audio is properly
+  configured, prepare it and send it with the email brief. If audio fails, send
+  the email without audio and include an explicit audio-failure notice. Unknown
+  effects still use agent verification; do not blindly resend an email or call
+  an unverified outcome success. No timeout, background retry or scheduler is
+  selected by this instruction.
+
+These directions do not authorize tests, source operations, email sends or
+audio generation in development. The current metadata recipe, normal save
+verification and explicit MVP deferrals remain; the binary ingestion amendment
+supersedes presenting partial-email processing as a supported MVP workflow.
 
 ### Approved setup interview and shared tool adapters, 2026-09-15
 

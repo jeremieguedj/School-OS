@@ -29,7 +29,7 @@ The current scope is:
   the daily task after one batch. Remaining specifics need their own approval.
 - **D5:** approved. Its knowledge, task and parent-state behavior remains in scope.
 - **D6:** agent verification and ingestion before brief generation are approved
-  directions. Remaining detailed choices are still pending; removing D7 does
+  directions. The later Q7–Q9 manual freshness and audio policies are also approved; removing D7 does
   not remove verification or allow unknown effects to be called successful.
 - **D2:** interrupted canonical-write recovery is deferred. The separately
   approved query rule and ordinary verified saves remain required. The separate

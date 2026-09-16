@@ -23,8 +23,24 @@ task app, not a claim about a real vendor's fields or connector support.
 | Fact with gap | Same notice, but the new newsletter is unprocessed. | Explain that the saved rule could have an update, or process the gap only within authorized scope. Do not infer that an unread item is irrelevant. Do not claim exhaustive current knowledge. |
 | Starter versus weekly recipe | A museum trip next week was processed two weeks ago. A correction was newly verified today. Parent selects the daily starter, then a custom weekly event overview. | Starter treats the correction as new and can include relevant open tasks. Weekly overview may include the still-relevant older event. Both show truthful original dates, source links and coverage; recipe choice does not alter canonical facts. |
 | Task freshness and briefs | Relevant daily ingestion is complete; task-app synchronization failed. | The starter may use verified Drive information with explicit task-app freshness limits. Keep detected completions in a review group and do not claim the app is synchronized. |
-| Manual exception pending | Museum notice saved; new newsletter unread; parent asks for a manual trip email. | Record the proposed alternative as an unresolved policy case. Do not treat recipe extensibility or this fixture as approval to send a limited brief. The approved complete daily path waits for ingestion. |
-| Optional audio | Parent chooses an audio recipe but no usable authorized generation route exists. | Report unsupported audio; do not invent an artifact or send. Retention and ordering policies remain open. |
+| Manual freshness choice | Museum notice saved; last verified scope is Monday; parent asks for a manual trip email. | Warn that knowledge may be outdated, distinguish latest source Date from verified ingestion/search coverage, ask whether to ingest new emails first, and honor the choice. If the parent chooses now, keep the limitation in the delivered brief. Ordinary daily ingestion still completes first. |
+| Optional audio | An authorized email brief requests configured audio, but audio preparation fails. | Send the email without audio, with a clear failure notice. If audio succeeds, deliver it with the email. Never claim a nonexistent audio artifact. No canonical audio archive remains after verified delivery. |
+| Binary email outcome | One email includes a body and required consent attachment. | Fully ingested only after both are processed and resulting knowledge/source links saved and checked. Otherwise not ingested; do not advertise a body-only completed email or partial-resume workflow. |
+| Audio unknown send | Combined email/audio send gives an unknown outcome. | Use authorized evidence to verify before any repeat. Do not convert lack of response into failed audio or blindly send a text-only duplicate. |
+
+## Proposed Q1/Q2 data-contract cases — awaiting architecture approval
+
+These are written expectations for the new proposal, not adoption or executed
+checks. Review the chosen contract before directing any later run.
+
+| Case | Fictional input | Proposed behavior to inspect later |
+|---|---|---|
+| One child’s evolution | Autumn: Robin needs fraction prompts. Spring: Robin explains equivalence independently. Jamie has a separate report. | Retain both Robin observations with their actual dates and sources, exclude Jamie’s report from Robin’s personal trend, and do not call improvement a correction. |
+| Shared school rule | Pine School has one continuing lunch rule; Robin and Jamie are enrolled. | Store one school-scoped claim, retrieve it through dated membership for either child, and return it once in the family view. An old source month must not hide a currently applicable rule. |
+| One family action | School requests one contact confirmation per household for both siblings. | One household completion unit and one task, with both beneficiaries. A later per-child form request instead creates independent child obligations using shared source knowledge. |
+| Late historical report | A March email reports a November observation. An April correction corrects that observation. | Store by source-month route, index by observation time, and retrieve the later incoming correction even for a November-only question. |
+| Incomplete index | A new canonical page is saved but its topic index is stale; a fractions observation lacks a math co-tag. | Detect recorded revision mismatch where observable, read appropriate canonical/entity candidates or disclose incomplete search. Fresh page indexing alone does not prove semantic classification completeness. No D2 repair guarantee. |
+| Parent task | Parent adds “Pack Robin’s snack” with no school requirement. | Preserve a parent-origin task and its planning state without inventing a school source or deadline. |
 
 ## Proposed sequence for the user to direct
 

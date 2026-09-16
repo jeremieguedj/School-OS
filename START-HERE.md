@@ -45,7 +45,11 @@ School-OS starts with minimal Python standard-library routines; the agent and it
 tools perform the rest. Recipes name actual scripts when applicable; see
 [the helper guide](helpers/README.md). No Python version pin, external dependency,
 personal computer, persistent process or coding CLI is required by this choice.
-Named D4/D6 choices and any specific new architecture still need approval.
+The latest numbered review approves run-start scope, strict original Date
+precision, binary whole-email ingestion, the manual freshness conversation, no
+audio archive and combined email/audio with an audio-failure fallback. Q1/Q2
+concrete fields/indexes and the narrow Q4/Q6 discovery/reuse proposals still
+need approval; see the current restart plan.
 Setup now includes the approved [parent interview](operations/setup.md): offer
 known task tools available to the executing agent and ask for the parent's
 choice. Use or author one shared [tool-semantic adapter](operations/tool-adapters.md)

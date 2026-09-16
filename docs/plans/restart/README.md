@@ -26,10 +26,11 @@ handoff or start of testing.
 
 For a guided review, open the [HTML architecture decision guide](implementation/architecture-guide.html).
 Its [single numbered section](implementation/architecture-guide.html#open-questions)
-and matching [question inventory](implementation/OPEN-QUESTIONS.md) cover nine
-known remaining decisions. Q1, Q2 and Q6 need concrete proposals from the
-coordinator before final approval; the other six have recommendations ready for
-review. Existing approvals and explicit MVP deferrals are preserved.
+and [decision inventory](implementation/OPEN-QUESTIONS.md) now record the user's
+Q3/Q5/Q7–Q9 decisions and binary email outcome. The
+[concrete data/index proposal](implementation/DATA-ARCHITECTURE-PROPOSAL.md)
+explains child/family/school scope and history queries. Its fields/indexes and
+the narrow Q4/Q6 discovery/reuse rules await approval; other decisions are settled.
 The [new operating instructions](../../../operations/README.md) cover the
 approved setup interview, reusable tool-semantic adapters and parent confirmation
 of detected completion. Agent-specific connectors own API/access mechanics;
@@ -38,7 +39,7 @@ these instructions and their review cases are authored, not executed.
 The [architecture in practice page](implementation/architecture-in-practice.html)
 shows the layers, Drive structure, processing coverage and seven step-by-step
 household scenarios. It separates approved behavior from fictional values and
-approved detected-completion review and the still-unapproved manual-brief policy. It is explanatory
+approved detected-completion review, manual freshness conversation and audio policy. It is explanatory
 material, not an executed simulation or an implementation claim.
 The [agent execution guidance](implementation/AGENT-EXECUTION-GUIDANCE.md) gives
 resource-management advice without implementing an agent batch controller.

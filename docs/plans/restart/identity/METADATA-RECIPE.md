@@ -1,7 +1,8 @@
 # Metadata-only logical email identity and resumable ingestion
 
 Status: current user-approved plan; execution wording aligned with the 2026-09-15
-agent-managed complete-run direction. Identity rules are unchanged. This supersedes the
+agent-managed complete-run direction and the latest numbered-review approvals.
+Q5 adds the approved strict Date threshold; Q6 uses a binary logical-email outcome. This supersedes the
 content-assisted proposal and the strict provider-entry interpretation of the
 [live metadata study](metadata-stress/README.md). The frozen study does not
 implement every rule below. Production implementation and managed-agent
@@ -82,8 +83,10 @@ canonical prerequisites.
    using subject, sender and original Date. Search broadly enough to accommodate
    the reported precision and presentation. Compare To/Cc and comparable original
    attachment information when available.
-2. Require sufficiently supported agreement in the core metadata and no
-   contradictory comparable evidence. A subject-only hit or a rounded date alone
+2. Require the original individual-message Date with a known timezone and
+   declared second-or-finer precision, sufficiently supported agreement in the
+   other core metadata and no contradictory comparable evidence. This strict
+   automatic-association threshold is approved by the user in Q5. A subject-only hit or a rounded date alone
    is insufficient. One richer metadata read can resolve an incomplete view;
    otherwise keep that association pending without an automatic retry loop.
 3. Reuse an existing logical email record when this recipe agrees. Repeated
@@ -137,13 +140,32 @@ separate originals or alternate representations of one file; different retrieval
 handles or reported MIME types alone do not settle that distinction. Keep all
 relevant candidates under the parent and account for their processing coverage.
 Do not select the first entry or invent permanent identity from list order.
-Exact individual attachment association may remain unresolved without blocking
-the parent email. An unidentified or unread candidate must not inherit another
+Exact individual attachment association may remain unresolved without
+blocking the parent email only if all required candidate material was actually
+processed and source attribution remains honestly group-qualified. An unidentified or unread candidate must not inherit another
 candidate's completion status merely because its filename agrees.
 
 Missing inline-image names leave name-based lookup incomplete. Discovering and
 reading meaningful images is content processing, with explicit coverage; it is
 not an identity fallback. No attachment-byte or HTML comparison is introduced.
+
+## Binary logical-email ingestion outcome — approved Q6
+
+Expose one outcome per logical email: **fully ingested** or **not ingested**.
+Only mark fully ingested after its complete required body/attachment material
+has been read, substantive information/source links saved and persistence
+verified. The unread-PDF partial-email workflow is outside MVP: a failed or
+unavailable required part means the email is not ingested. Do not advertise a
+per-part resume engine or treat finding a body as a completed email.
+
+Candidate inventories and evidence of what was actually processed remain
+necessary to justify that outcome. They are not separate completed email
+states. Replies remain independent emails. Whole-search coverage is separate:
+all found emails being ingested does not prove all relevant emails were found.
+The narrow policy for skipping a later metadata-matching appearance on the
+strength of a prior full result remains a proposal in the
+[current review](../implementation/OPEN-QUESTIONS.md); binary status alone does
+not silently adopt that transition rule.
 
 ## Bounded enumeration and fresh-session recovery
 
@@ -165,7 +187,10 @@ through their metadata. For example: September 1-3 complete, September 4
 unfinished; the next agent starts with September 4 using the Drive record. No
 saved token, prior conversation or local process is necessary to describe the work.
 
-Daily scans can repeat a bounded overlap and resume missed windows. A maximum
+Q3 fixes the daily cutoff at run start and includes earlier not-ingested emails.
+Missed/unfinished windows remain discoverable. A simple live-window policy is
+proposed under Q4; the full-history-on-every-run fallback was rejected.
+No fixed overlap duration or automatic full-history rescan is adopted. A maximum
 source Date alone is not proof that discovery has caught up; late-arriving or
 newly indexed material and the search route's time semantics need qualification.
 If a tool silently caps results, narrowing windows can reduce work but cannot

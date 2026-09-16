@@ -5230,3 +5230,49 @@ requirements, then read this log from top to bottom.
   Q1/Q2/Q6 proposals and resolve the remaining numbered choices before dependent
   implementation. No approval, feature completion or testing authority is
   inferred from this documentation publication.
+
+
+## 2026-09-15 — Numbered decisions and concrete data architecture proposal
+
+- Recorded the user's Q3 run-start scope and Q5 known-timezone, second-or-finer
+  original-Date approvals. Q6 now exposes fully-ingested/not-ingested for the
+  whole logical email; partial-email/PDF resumption is outside MVP, while bodies,
+  required attachments, honest evidence and discovery coverage remain required.
+- Q7 now permits a limited manual brief after explaining outdated-knowledge risk,
+  available source/ingestion freshness, and offering new ingestion first. Q8
+  rejects a canonical audio archive; temporary audio is discarded after verified
+  delivery. Q9 selects configured audio with email, or email alone with an audio-
+  failure notice. Updated actual brief/execution instructions, current plans,
+  principle amendments, metadata recipe, D4/D6 briefs and website scenarios.
+- Q4's full-history-every-day fallback was not accepted. The replacement proposal
+  uses live arrival-time discovery windows, unfinished windows and backlog,
+  accepting the explicit older-delayed-visibility limitation. It is unapproved.
+  Q6's binary outcome is approved; the narrow rule for skipping a later supported
+  metadata match remains explicitly proposed, not silently adopted.
+- Authored DATA-ARCHITECTURE-PROPOSAL.md and a viewable data-architecture.html page
+  for Q1/Q2: child/family/school applicability, dated memberships, distinct
+  knowledge/action meanings, one task per independent obligation, parent-created
+  tasks, source/coverage/configuration/sync fields, owned references, concrete
+  linked JSON and bounded entity/topic/incoming-correction indexes. The source
+  includes ingestion and retrieval traces and explicit alternatives/tradeoffs.
+  No schema, ID, catalogue or index contract is adopted by publication.
+- Bounded workers drafted the proposed contract, updated two approved-operation
+  files and reviewed the data architecture. Integration addressed listed-child
+  lookup, historical membership, topic-classification omissions, task-index
+  dependencies, parent-created tasks, later corrections, long-lived rules and
+  late-reported observations. Catalogue reads avoid default body downloads, but
+  completeness costs can grow with history; no performance is qualified.
+- Prepared six additional written Q1/Q2 cases pending architecture approval and
+  amended stale manual/audio expectations. Frozen studies and retired runtime
+  remain untouched. No tests, simulations, model replays, builds, helper runs,
+  connector probes, ingestion, sends, audio generation or scheduled jobs ran.
+- Exact next action: publish the proposal and updated decision/instruction
+  documents, verify remote revision and Site success, then obtain Q1/Q2 and
+  narrow Q4/Q6 decisions before dependent coding. Continue independent approved
+  work. The full MVP is still incomplete; its final verified publication must
+  stop for the user's separate testing direction.
+- Publication hygiene: zero privacy findings, 315 local document links/anchors
+  resolve, and diff whitespace checks pass. Both checkouts have inactive sample
+  hooks only; CI remains limited to main pushes, pull requests or manual dispatch.
+  This restart branch has no open pull request. No checks were disabled and no
+  testing will be triggered by this documentation publication.

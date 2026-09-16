@@ -50,6 +50,27 @@ The approved starter selects newly verified or substantively corrected informati
 
 The ordinary daily brief still follows complete relevant ingestion. A separate parent-requested brief from currently verified information while relevant material remains unread is only a proposed exception, not approved by recipe extensibility. Optional audio policy also remains pending. Follow the [brief-recipe instructions](../operations/brief-recipes.md). This direction adds no recipe schema, registry, selection precedence, scheduling mechanism or testing permission.
 
+## Approved scope, ingestion and brief refinements — 2026-09-15
+
+Knowledge and tasks must retain their real applicability: individual child,
+family or school. Support a child's topic history and evolution without copying
+one shared school statement to every child or duplicating one family obligation.
+Concrete schema and lookup/index architecture still require explicit approval.
+
+The daily input is all School-OS-pending mail in configured scope through run
+start; mailbox read status is not ingestion. Each email has one outcome: fully
+ingested or not ingested. Full ingestion includes its body and required
+attachments, substantive extraction and verified persistence. A partial-email
+processing workflow is outside MVP; missing material does not become completed.
+Whole-scope discovery and honest source evidence remain necessary.
+
+For a manual brief with known gaps, warn that knowledge could be outdated,
+explain available freshness evidence and offer to ingest new mail first. The
+parent may choose a clearly limited output now. Ordinary daily briefs still
+require complete ingestion. Generated audio is not kept as a School-OS archive
+once delivered to the parent. With configured audio, deliver it together with
+the email; on audio failure send email alone with an explicit failure notice.
+
 ## Source and processing boundary
 
 Raw emails, attachments, and other source material remain in their original source systems. School-OS does not maintain a duplicate raw-source archive on Drive. Download raw material temporarily into the agent's available execution environment only for processing, then discard the temporary material after verifying that the resulting knowledge, source references, and processing state have been saved. Here, local processing means the agent's execution environment; it does not imply a parent's physical computer.

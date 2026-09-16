@@ -1,6 +1,6 @@
 # School-OS implementation plan
 
-Status: restart preparation remains on `codex/restart-school-os`. D1, query coverage, minimal Python standard-library helpers with agent/tool operations and D5 are approved. D4 now requires agent-managed complete-run ingestion; D6 requires agent verification and complete ingestion before the daily brief; the approved starter selection permits any number of compatible user-created brief recipes. D2 canonical-write recovery, the separate records/ordinary-save framework, D7 central tools/jobs management and D8 packaged lifecycle are outside MVP. Remaining small contracts/choices await approval; production implementation and qualification remain pending.
+Status: restart preparation remains on `codex/restart-school-os`. D1, query coverage, D3 helpers/shared adapters and D5 remain approved. The numbered-review answers approve Q3 run-start scope, Q5 strict Date precision, Q6 binary whole-email ingestion and Q7–Q9 manual freshness/audio behavior. Concrete Q1/Q2 data/index architecture and narrow Q4/Q6 discovery/reuse proposals remain for approval. Explicit D2/D7/D8 MVP deferrals remain. Implementation and qualification are incomplete.
 Execution model: resumable. Every completed phase is recorded in `PROGRESS.md`.
 
 Decision authority: [product principles](docs/product-principles.md#decision-authority)
@@ -32,12 +32,12 @@ its intended ingestion before daily brief composition. Blocked ingestion is not
 a successfully completed partial daily brief. General knowledge questions retain
 the approved rule permitting useful answers with explicit coverage limits.
 
-The [consolidated nine-question review](docs/plans/restart/implementation/OPEN-QUESTIONS.md)
-is published on the existing architecture website. Exact next action: supply
-the missing concrete data-field/link, topic/entity lookup and
-content-read reuse proposals (Q1, Q2, Q6). Resolve these and the remaining daily
-scope/discovery/identity and manual/audio choices before their dependent work.
-The list records no new approvals; it preserves D1/D5 and all explicit deferrals.
+The [updated decision review](docs/plans/restart/implementation/OPEN-QUESTIONS.md)
+records the user's answers. Exact next action: publish the concrete
+[Q1/Q2 data/index proposal](docs/plans/restart/implementation/DATA-ARCHITECTURE-PROPOSAL.md)
+and updated instructions, then obtain approval of that proposal and the narrow
+Q4/Q6 discovery/reuse rules before dependent implementation. Do not re-request
+settled policies or revive deferred infrastructure.
 D3’s minimal Python/agent split and shared tool-semantic adapters are approved.
 The [setup and adapter operations](operations/README.md) implement the interview,
 missing-mapping authoring and cross-agent reuse as instructions. The approved

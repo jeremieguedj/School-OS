@@ -1,56 +1,105 @@
-# D4 — Complete the relevant mail in one logical run
+# D4 — One complete ingestion outcome per email
 
-**Current user direction, 2026-09-15:** School-OS must not impose its own per-run caps or managed batching system. The executing code-capable agent is responsible for carrying one logical ingestion run through all relevant unread or unprocessed mail, using the resources, batch sizes, continuations and runtime recovery available to it. This direction supersedes the earlier D4 proposal’s 25 message appearances, 100 listing entries and 8 MiB content-transfer ceilings. That prior proposal remains historical at Git revision `62070eb`; it is not the MVP rule. The [active plan](../../PLAN.md) is the approval ledger, and the [product principles](../../../../product-principles.md) and [approved metadata recipe](../../identity/METADATA-RECIPE.md) still govern source custody and identity. Examples here are wholly fictional written illustrations, not executed tests, simulations or provider evidence.
+The latest numbered-review answers approve the run-start input scope (Q3),
+strict original-Date threshold (Q5) and binary email outcome (Q6). The agent
+owns its resources and batches. School-OS supplies instructions and completion
+rules, not a batch controller. This is authored design, not a tested connector.
+The [active plan](../../PLAN.md) records authority; the
+[current questions](../OPEN-QUESTIONS.md) separate remaining proposals.
 
-The direction resolves **who owns completion and batching**, not every D4 choice. The exact original-Date automatic-association threshold, discovery-time basis and window/overlap policies and specific new adapter meanings remain to be reviewed. The separate record/ordinary-save framework is now excluded from MVP, not a prerequisite. The [architecture proposal](../ARCHITECTURE-PROPOSAL.md#d4--production-association-discovery-and-content-coverage) records this direction; the prior ceilings are historical, not current authority.
+## What the daily run must finish
 
-## What “one logical run” asks of the agent
+Process all relevant School-OS-pending emails in the configured mailbox/school
+and import scope through the start of this run, including earlier emails not
+fully ingested. Later arrivals belong to the next run. A parent opening an email
+in Gmail does not process it for School-OS; an unread Gmail email might already
+be fully ingested. The mailbox icon is not the progress record.
 
-A **scheduled job** may launch an agent. The **logical run** is the ingestion task that launch is meant to carry out, even if the agent internally pages through listings, reads material in small chunks, or resumes its own work after a runtime interruption. An individual tool call or connector page is not a finished run. School-OS does not decide “stop after 25 messages,” create follow-up jobs to work around a chosen ceiling, or require an installed batching engine. The agent chooses practical batches for its environment and continues until it has dealt with the relevant work.
+For example, the run starts at 06:00. It handles a pending message from yesterday
+and all in-scope arrivals through 06:00. A message arriving at 06:05 belongs to
+the next run. The agent may use any practical internal batches, but a finished
+batch cannot turn the full task into a completed partial run.
 
-This assumes a capable executing agent has a way to maintain or recover **its own** task continuity. That capability has not been qualified for a particular runtime; the user’s reported code-execution capability alone does not prove its scheduling, tool paging, storage, or recovery behavior. If the environment cannot sustain the task, or a required source operation is unavailable, the agent records what it can honestly verify, reports the block and does **not** claim ingestion complete. It may need a parent decision or an approved alternate route. No hidden School-OS cutoff turns a resource failure into success.
+## The ingestion flow
 
-Completion involves several independent questions:
+1. Read authorized configuration and the saved discovery windows. Establish the
+   run-start cutoff and known not-ingested emails.
+2. Discover the declared scope using the selected tool route. Follow all
+   continuation pages, even after a short page. Revisit unfinished windows if
+   a token is lost. Source handles remain replaceable access aids.
+3. Associate each individual email or reply using the metadata recipe. Require
+   original Date with known timezone and second-or-finer precision, verified
+   mailbox, subject, sender, complete relevant lookup and no comparable
+   contradiction. Unknown optional fields are not mismatches. Seek a richer
+   metadata read or preserve uncertainty; do not invent missing seconds/zone.
+4. Read the body and all required attachment material. Same-parent repeated
+   filenames remain candidate groups; never select the first by list position
+   or use bytes, body text or hashes as source identity evidence.
+5. Extract substantive knowledge and action requirements, preserve sources and
+   qualifications, save on Drive and check persistence.
+6. Mark the logical email **fully ingested** only once the entire required email
+   work is complete. Otherwise it is **not ingested**. There is no supported
+   partially-ingested email workflow or per-part resumption engine in MVP.
+7. After complete discovery and all required emails are fully ingested, the
+   ordinary daily brief may be composed. A blocker is reported as incomplete.
 
-1. **What is in scope?** Identify the parent-authorized logical mailbox, school scope, and time/search range. A finite run boundary is necessary so new mail arriving forever does not keep an active run open indefinitely. The exact cutoff is still undecided; a recommendation below proposes handling mail already pending at run start and later arrivals in the next run.
-2. **Was discovery complete for that scope?** Follow every available continuation, even after a short page. A short result, missing token, or narrowed search does not prove exhaustion. The agent uses its available continuation and recovery methods; School-OS records the scope and coverage needed to check the result.
-3. **Was each relevant appearance and part processed?** Metadata can associate a logical email, but cannot prove newly encountered body text or attachments were read. Individual replies have their own identity and coverage. Named, unnamed, same-name and unsupported attachment candidates remain accounted for without falsely inheriting another candidate’s completion.
-4. **Did knowledge and coverage save successfully?** Substantive facts, conditions, deadlines, action requirements and source references must be saved on Drive and ordinarily verified before accessible temporary raw copies are discarded. The agent verifies its actual saves under already approved meanings; no separate normal-save framework is an MVP gate. The MVP explicitly excludes the D2 interrupted **canonical-write repair engine**; this completion obligation does not quietly reinstate it.
+## A complete-email example
 
-The proposed interpretation of “unread,” awaiting explicit scope confirmation, is that **School-OS processing coverage** says the relevant source material has not been processed or its status is unknown. A mailbox UI’s read/unread flag is neither proof that School-OS extracted the content nor a canonical processing cursor. A parent opening an email must not make it disappear from School-OS work. Conversely, an email marked unread in the mailbox may already have verified School-OS knowledge; the agent checks saved coverage and any new source appearance instead of trusting the UI flag alone.
+A fictional school email says “Return museum consent by Friday”; its attachment
+contains the consent instructions and a lunch exception. The agent reads both,
+preserves the complete instruction and exception, saves the knowledge and task
+with their source, and verifies the save. Only then is that email fully ingested.
+If the required attachment cannot be read, the outcome is not ingested; the MVP
+does not claim the body-only work completes the email or present a partial-PDF
+continuation workflow. The attachment requirement itself remains in scope.
 
-## Fictional case: forty appearances, one run
+A later reply correcting the deadline has its own original Date and ingestion
+outcome. It does not inherit the earlier message's completed state. Corrected
+knowledge retains the source and explicit correction relationship.
 
-Imagine a fictional school mailbox with 40 relevant message appearances pending at the beginning of Monday’s run. The source listing route is established complete for this declared scope, and the agent can read every relevant message and attachment. The agent may use five internal batches of eight, two batches of twenty, or another safe pattern. Those numbers are **its implementation choices**, not School-OS quotas. It processes all 40 appearances, verifies the resulting knowledge and coverage, and only then reports this run complete. The number 40 does not imply 40 different logical emails: two appearances might support one logical record, while another association might remain ambiguous under permitted metadata.
+## Live discovery: a simpler proposal, not yet adopted
 
-Three fictional contents show why a mechanical 25-message stop would be wrong:
+The user rejected full-history enumeration on every daily run as overkill.
+Recommend normal live discovery from the last completed arrival-time boundary
+through run start, plus unfinished windows and known not-ingested backlog.
+Include the prior boundary at the connector's actual precision so a boundary
+item can be safely encountered again; use metadata association for reuse.
+Do not add a fixed seven-day overlap or automatic full-history rescan.
 
-| Appearance in this illustration | Source content | Parent-visible implication |
-|---|---|---|
-| 4 | “Return museum consent by Friday noon.” | A source-linked task can be saved after processing. |
-| 18 | “Bring swimming kit every Wednesday this term.” | A recurring requirement must not be reduced to a one-time title. |
-| 31 | “Correction: consent is due Thursday, not Friday.” | A run ending at appearance 25 would miss the correction and could mislead the parent. |
+The selected route must explain which source time it searches, timezone and
+boundary semantics; original sending Date remains the identity timestamp.
+If it lacks the required search/continuation capability, report the limitation
+or use a supported authorized route rather than silently substituting semantics.
+This proposal accepts the MVP limit that older material becoming newly visible
+before an already-completed boundary is not automatically rediscovered. Live
+access alone does not eliminate that possibility. The parent can explicitly
+request a historical rescan. This narrower tradeoff needs a Q4 decision.
 
-If the agent has read only 25 at an intermediate moment, it is **still working**. It must continue toward appearance 31 and the rest. If a source route blocks it after 25, the outcome is **blocked or incomplete**, not a completed Monday run. The agent may report 25 verified reads and 15 **known** pending appearances only if that 40-appearance inventory was truly established. If listing was still paginating, more undiscovered appearances may exist; it cannot state the total unread count. If some of the 25 had unread parts, it cannot call those appearances fully processed. Provider-entry counts and internal batch positions are not logical-email identity ground truth.
+## A completed email seen again: the remaining narrow choice
 
-The [approved query-coverage rule](../ARCHITECTURE-PROPOSAL.md#approved-query-coverage-rule) lets a separate parent query state an individual verified fact while disclosing an incomplete coverage lookup. It does not authorize the daily ingestion run to declare its relevant scope complete with known unread material. A daily brief’s composition gate is discussed in [D6](D6-BRIEFS-EFFECTS.md).
+The binary outcome is approved. Recommend that a unique, supported metadata
+match to a fully ingested logical email reuses that completed result and skips
+content reading, unless explicit new or contradictory inventory/coverage
+information challenges completion. A different provider handle or unknown
+optional metadata alone would not reopen it. A reply is a different email.
 
-## Continuation is a method, not a quota workaround
+That exact reuse rule remains for approval under Q6. It favors simple logical
+email reuse, while accepting the metadata recipe's residual indistinguishable-
+email risk. It cannot detect content changes hidden behind unchanged allowed
+metadata. Always rereading would cost more and is not proposed as a new engine.
+Neither option may mark newly identified unread material complete. Retain actual
+source/attachment evidence needed to justify the binary result without inventing
+a per-appearance record framework.
 
-**Short page.** A fictional source returns three entries and a continuation. The agent follows the next page and every further available page until the route establishes exhaustion for the declared search. “Only three messages” is unsupported while continuation remains. If a connector silently caps results without reliable exhaustion evidence, the agent reports that scope’s discovery limitation; a narrower search alone cannot prove completeness.
+## Boundaries and later qualification
 
-**Temporary token lost.** Another fictional agent reaches page two, then its token expires. It uses its own runtime recovery and may repeat the relevant search window, comparing allowed source metadata and verified School-OS coverage to avoid falsely creating new logical-email records. This is ordinary discovery continuation. The agent does not need a permanent provider token or prior conversation as a canonical identity requirement. But the ability of an exact runtime to resume and establish listing exhaustion remains unqualified. An interrupted set of canonical Drive writes is still outside MVP repair; repeating source listing is not a general write-recovery engine.
+Discovery and email completion remain different: all found emails being fully
+ingested does not prove every email was found. Counts of provider entries are
+not logical-email ground truth. Unsupported content, incomplete listings and
+unknown association must stay visible. Source originals remain in the mailbox;
+discard temporary processing copies after verified persistence.
 
-**Repeated appearance.** A Friday newsletter reappears in a later search. Its metadata may justify reusing one logical-email record. The agent still cannot infer equal content or processing coverage solely from that metadata. It checks whether this appearance or newly available parts require reading, extracts substantive information and reconciles knowledge under the approved source-only identity boundary. This can cost repeat reads. The earlier D4 proposal required independent reading of every admitted appearance and a seven-day overlap/pass assignment scheme; exact processing and overlap mechanics remain pending. No content hash or provider ID is introduced as an identity shortcut.
-
-**Large or same-name attachments.** A fictional field-trip email has a 10 MiB form and two items both originally called `trip.pdf`. The old 8 MiB School-OS transfer ceiling no longer stops the run. The agent assesses what its authorized source tools can read, using bounded temporary transfers or another supported route as needed. If the form cannot be read, it records unread/oversized/unsupported content and reports that relevant ingestion is incomplete. The same-name items stay a parent-bound candidate group; different tool handles or list positions do not prove distinct documents, and one processed candidate does not complete another. Group-qualified provenance exposes any unresolved exact attribution. The original source files remain in email, never in a duplicate Drive archive.
-
-## Finite cutoff and other choices still to approve
-
-**Unresolved cutoff — recommended for review, not yet approved:** define each run’s finite scope as all relevant School-OS-pending mail and source appearances discoverable through a declared cutoff at the **run’s start**, under its authorized mailbox/school scope. Complete discovery and content coverage for that fixed scope before calling the logical run complete. Mail first arriving after the cutoff belongs to the next run. This prevents an endless moving target while still forbidding a chosen per-run message quota. An alternative is a cutoff at the scheduled reporting time; it can cover later arrivals but may require longer execution or delay the brief. Another is a parent-specified manual interval for an import. The exact source time basis, late indexing behavior and treatment of older newly imported mail require explicit definition; a start cutoff alone does not prove the source listing found everything.
-
-The metadata policy is already source-only, but D4’s **exact automatic threshold** is still proposed: verified mailbox, subject, sender and each individual original Date with known timezone and second-or-finer precision, no comparable contradiction and complete relevant lookup. A richer metadata read may resolve unclear search time; minute/day evidence or missing timezone remains pending under that proposal. A credible alternative admits coarser agreeing Dates under an explicit sufficiency table, reducing pending associations while increasing false-join risk. The historical second-resolution evaluator did not prove a universal production threshold. Received/provider time cannot silently replace original Date, and bodies, hashes, handles and thread IDs cannot decide identity. Pending association must not erase verified knowledge or prevent unrelated processing; if it blocks complete coverage for the run’s relevant scope, the agent reports that limitation rather than inventing an identity.
-
-The previous proposal also specified separate historical/daily half-open windows, documented received-time listing where supported, seven-day historical windows and seven-day daily overlap. Those details are **not blanket-approved** by the new no-cap direction. The agent still needs a declared source search-time meaning, reliable exhaustion evidence and a way to discover missed or delayed mail; exact windows, overlap, older-mail rescan and adapter routes remain review choices. School-OS supplies guidance and honest coverage/completion obligations, while the capable agent chooses execution resources and internal batch sizes. A parent should approve any new canonical window or coverage meaning before dependent implementation.
-
-This direction claims no guaranteed runtime capacity, sustained task continuity, complete provider listing, automatic catch-up time, or qualification of attachments. If a route cannot process relevant material, a completed daily ingestion result is unavailable; report the specific gap and next needed action. No tests, connector probes, ingestion, schedules, builds or live operations are authorized by this brief.
+The frozen studies remain unchanged and do not qualify the new design. No test,
+simulation, model replay, connector probe, ingestion or scheduled job ran. Q1/Q2
+persisted shapes, Q4 discovery and Q6 completed-email reuse await approval before
+dependent implementation. D2 write repair and its generic framework stay deferred.
