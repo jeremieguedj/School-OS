@@ -1,6 +1,7 @@
 # Realistic first-use trial handoff
 
-Status: prepared for the next user-directed testing phase; **do not launch yet**.
+Status: the user explicitly directed all three tests and uploads to start.
+Use this handoff for the current trials; preserve the no-repair boundary.
 The user requested a normal new-user setup, not a developer-authored trial prompt.
 The [protocol](TRIAL-PROTOCOL.md) belongs to the evaluator; it is not an attachment
 for the agent being tested. The [earlier guided prompts](TRIAL-PROMPTS-GUIDED-HISTORICAL.md)

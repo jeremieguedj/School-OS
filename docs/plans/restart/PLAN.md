@@ -28,10 +28,24 @@ One URL-form readback failed with INVALID_ARGUMENT; verification through the
 same folder's returned ID succeeded. No folder creation was retried. Record this
 coordinator connector observation without changing product code or contracts.
 
-Resuming the same initial Sol trial worker encountered an agent-capacity error;
-no new Sol trial was spawned and no successful continuation is claimed. Resume
-that same recorded route when capacity is available, preserving its already
-reported repository-instruction exposure. Do not replace it silently.
+The same initial Sol trial resumed after the source evaluator finished. Its
+ordinary interview answers were supplied and it reached Drive-root qualification;
+no persisted setup or ingestion success is yet established. Preserve its already
+reported repository-instruction exposure; no replacement trial was spawned.
+
+The browser operator initially could not bind the coordinator-owned empty Spark
+tab, then a native-app selection call stalled and was interrupted. It confirms
+that no provider prompt was submitted. It is opening its own fresh browser tabs;
+record this evaluator-control delay separately from School-OS product behavior.
+
+The independent source audit observed 17 provider entries, read all 17 message
+bodies and exhausted both domain searches for the fixed interval. It prepared
+seven source-supported questions independently of tested-agent output. Three
+JPEG fetches succeeded, but fresh pixels were not model-visible; prior visual
+evidence is supplementary only, with fresh pixel equality unverified. Two early
+search responses were lost on local receipt-sink failures before subsequent
+preserved reads. Keep both evaluator limitations in the report; this is not full
+fresh attachment qualification or a flawless receipt chain.
 
 The historical authorization-blocker paragraphs below describe the preceding
 checkpoint, not a current reason to ask the user to approve testing again.
@@ -64,9 +78,9 @@ keep earlier failed instances and unknown effects intact. The current proposed
 common received/arrival interval is `[2026-09-09T17:53:48Z, 2026-09-16T17:53:48Z)`.
 It differs from the older source oracle, so that oracle cannot silently qualify
 the new interval. No source or task-tool mutation, outbound delivery or schedule
-is included. Current next action: resolve the browser authorization clarification,
-answer the Sol interview with authorized input, then observe the three fixed
-trials and report results without repairs.
+is included. Current next action: complete or record blockers for the three setup
+attempts, then issue the separate common ingestion request only after verified
+setup. Observe ingestion and retrieval, and report results without repairs.
 
 <a id="current-checkpoint--one-link-setup-implementation-and-testing-hold"></a>
 

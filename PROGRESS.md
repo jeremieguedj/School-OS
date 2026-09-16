@@ -5904,3 +5904,27 @@ requirements, then read this log from top to bottom.
   capacity limit. It was not replaced or relaunched as a new trial. Continue
   that same route when a bounded worker finishes. Current browser/source workers
   remain active; do not infer a stopped provider task from observation timeout.
+
+## 2026-09-16 — Source reference prepared; existing setup attempts continue
+
+- Independent source audit completed its message reads for the current interval:
+  17 provider observations, 17 full reads, two exhausted searches, three JPEG
+  fetches and seven source-supported questions. Counts are observations, not
+  logical-email ground truth. Fresh JPEG pixels were unavailable; earlier visual
+  evidence is explicitly supplementary, not fresh attachment qualification.
+- Two early search receipts were lost on local sink failures before later
+  preserved reads. Record this evaluator intervention and evidence limit. No
+  tested-agent output informed the reference inventory. Detailed evidence stays
+  in the ignored private trial directory.
+- With evaluator capacity freed, the original Sol starter worker resumed with
+  ordinary interview answers. It reached Drive-root qualification; setup writes
+  and ingestion success are not yet established. No replacement trial or hidden
+  reset occurred, and the earlier repository-instruction exposure remains.
+- Browser operator reported no submitted prompts after a tab-binding error and
+  stalled app selection. Root interrupted that stalled operator turn, confirmed
+  the original Spark composer was empty, and directed the operator to open its
+  own fresh browser tabs. This changes evaluator control, not product behavior;
+  no provider task was restarted. Record the delay separately from product bugs.
+- Prepared the common separate ingestion request privately. It has not been
+  supplied before verified setup. Product source and published starter remain
+  unchanged. Continue the three attempts, then audit and report without fixes.

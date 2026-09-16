@@ -33,20 +33,44 @@ is addressed. No implementation fix or defect workaround is permitted.
   downloaded file matches the release asset; it does not prove setup worked.
 - **Preservation:** its opening prompt and observed read/download sequence are
   saved in four ignored private evidence files. Coordinator verified directory
-  mode 0700 and file modes 0600. It is held before Drive writes pending interview
-  answers. No canonical instance or saved setup success is established.
-- **Gemini Spark / ChatGPT Work:** neither submitted. Approval review accepted
-  read-only browser inventory after the goal tool showed active status, but
-  rejected opening the new Gemini tab under the earlier wait instruction. Root
-  requested direct clarification and did not use an alternate browser path.
-  This is an authorization blocker, not a product failure.
+  mode 0700 and file modes 0600. After an initial capacity error, the same worker
+  resumed with ordinary interview answers and reached its assigned Drive root.
+  No canonical instance or saved setup success is established yet.
+- **Gemini Spark / ChatGPT Work:** the user's direct start statement cleared the
+  earlier authorization issue. The browser operator confirms neither prompt was
+  submitted during its initial failed attempt to bind a coordinator-owned tab.
+  A subsequent native-app selection stalled and was interrupted. The operator
+  is now opening its own fresh tabs; no existing provider task is being replaced.
+  This is evaluator-control friction, not evidence of School-OS failure.
+- **New isolated destinations:** three new folders were created under the
+  verified tests parent and individually verified by metadata readback. A
+  URL-form metadata request failed with INVALID_ARGUMENT; the same folder's
+  returned ID supported readback. No create operation was repeated. The Sol
+  worker independently reports a metadata-only error and a successful root
+  listing; neither an error nor a short listing establishes a complete inventory.
+- **Independent reference:** two exhausted domain searches yielded 17 observed
+  entries and 17 successful full-message reads for the common fixed interval.
+  Permitted-metadata signatures were distinct in this set; provider-entry count
+  is not logical-email ground truth. Independent expectations cover 17 messages,
+  eight canonical tasks, four conditional and three recurring/standing action
+  dispositions. Seven source-supported questions were prepared without reading
+  tested-agent output. No correction relationship was found in this sample.
+- **Reference limits:** three JPEG fetches returned successfully, but fresh pixels
+  were not exposed to the evaluator. Earlier visual evidence is supplementary
+  for the same parent/filename candidates; fresh pixel equality remains
+  unverified. None of the seven questions depends on those images. Two earlier
+  search responses were lost on local receipt-sink failures; subsequent preserved
+  reads followed a sink self-check. This evaluator intervention and incomplete
+  initial receipt chain must remain in the audit.
 - **Not exercised:** persisted setup, email discovery/ingestion, saved knowledge
-  or tasks, query retrieval and page-size comparison. No new source/Drive or
-  outbound effect is established by these observations.
+  or tasks by the tested agents, query retrieval and page-size comparison.
+  Coordinator source reads and folder creation are distinct from those outcomes.
+  No mailbox mutation or outbound effect was authorized or performed.
 
-The next safe action is the requested browser authorization clarification and
-normal parent interview answers, then independent trials without fixes. The
-older failed trial and oracle below remain separate historical evidence.
+Next: finish or record blockers for the three setup attempts, then send the
+separate common ingestion request after verified setup. Continue the independent
+output audit without fixes. The older attempt and oracle below remain separate
+historical evidence.
 
 ## Earlier guided attempt (historical)
 
