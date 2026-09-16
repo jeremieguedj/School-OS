@@ -5556,3 +5556,15 @@ requirements, then read this log from top to bottom.
   local document-link hygiene passed; only sample Git hooks and no active
   functional CI or matching pull request were present. Frozen studies are
   unchanged. This establishes publication hygiene only, not tested behavior.
+
+- Complete retained implementation published and remote verified at
+  `138ca7954bdb3b7e9de065199fdb4903d6a924a3` on
+  `codex/restart-implementation`. The coverage map accounts for every principle,
+  use case and T1–T10 deliverable; D2 generic repair, D7 centralized registry/jobs
+  and D8 packaged lifecycle remain explicitly deferred. The new independent
+  three-route trials will pin this implementation revision. No functional
+  execution has occurred at this checkpoint.
+- Private architecture guide version 16 deployed successfully from Site source
+  `ec43f61c001a25ca563ceadb51965aa68899ff5c`, with links pinned to the published
+  implementation. Site privacy and local-link hygiene passed. Q10 now explains
+  the retained limit and evaluation rather than requesting segment approval.

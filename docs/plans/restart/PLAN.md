@@ -46,10 +46,14 @@ changing stable IDs, locators or existing pages. Older agents must read the new
 contract, and managed-connector compatibility still requires evidence.
 
 
-**Published accepted-work checkpoint:** `972ac4f1023be1aad4003af6a44ffbe527cb0c8f`
-on `codex/restart-implementation`, remote verified. This checkpoint predates the
-Q10 decision and is not the complete implementation publication. Publishing it
-does not start or authorize early trials.
+**Complete retained implementation publication:**
+`138ca7954bdb3b7e9de065199fdb4903d6a924a3` on
+`codex/restart-implementation`, pushed and remote revision verified on 2026-09-16.
+The [coverage map](implementation/COVERAGE.md) covers every principle/use case
+and T1–T10 with explicit D2/D7/D8 deferrals. No functional test or ingestion has
+run. The next action is the already-authorized three isolated ingestion/audit
+trials at this fixed implementation revision, including page-size evaluation.
+This publication is not a claim of connector, agent or semantic qualification.
 
 ## Current execution authorization
 
@@ -595,7 +599,7 @@ report before interpreting `wrong_association` or the earlier pass/failure total
   before dependent code; no current architecture question is open. Do not
   silently change the Drive file/table layout.
   Prepare a proposed test inventory and fixtures without running them.
-- [ ] Publish the agreed code and updated continuity documents. Report the
+- [x] Publish the agreed retained code and updated continuity documents. Report the
   exact revision, coverage of every deliverable, pending decisions, known risks, tests not
   run and the authorized testing sequence. Proceed only to the three specified trials.
 

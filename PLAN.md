@@ -4,8 +4,10 @@
 **Status:** retained restart MVP operations, contracts, adapters, and examples
 are authored and statically reviewed; they remain untested and
 unqualified. Q10 is resolved: the linked-piece proposal was rejected and the
-delegated assessment retains the single 64 KiB page maximum. No trials may begin
-before complete implementation publication and remote verification.
+delegated assessment retains the single 64 KiB page maximum. Implementation revision
+`138ca7954bdb3b7e9de065199fdb4903d6a924a3` is published and remote verified.
+Next: the three authorized isolated ingestion/audit trials at that revision;
+none has started.
 
 The authoritative [restart plan](docs/plans/restart/PLAN.md) records decisions,
 retained scope, explicit deferrals and the
