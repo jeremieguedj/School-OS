@@ -1,5 +1,9 @@
 # Restart trial results
 
+The [root-cause review](ROOT-CAUSE-REVIEW.md) consolidates all three intended routes,
+separates repeat attempts and traces saved-data failures into the question results.
+The user has authorized read-only diagnosis, with no fixes or new trials.
+
 ## Second browser attempts — completed; review before fixes
 
 The user authorized fresh Spark and ChatGPT Work attempts after reviewing the
@@ -15,7 +19,7 @@ setup success. Work visibly uses GPT-5.6 Sol Light.
 | Route | Independent setup audit | Next stage |
 | --- | --- | --- |
 | Gemini Spark, second attempt | Failed: required canonical catalogue routes are missing | Ingestion blocked; preserve instance for review |
-| ChatGPT Work, second attempt | Pass with documented limits | 16/17 emails ingested; six task-semantic defects and one omitted deadline; questions: five pass, one qualified, one fail |
+| ChatGPT Work, second attempt | Pass with documented limits | 17 discovered/saved; 16 fully ingested, one not ingested; eight material instances: one incomplete source, six Task defects and one omitted deadline; questions: five pass, one qualified, one fail |
 
 Both authorized attempts and their bounded audits are concluded. Preserve the
 instances and evidence. No product repair, cleanup, new attempt or broader test

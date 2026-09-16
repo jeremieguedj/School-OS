@@ -10,13 +10,40 @@ with documented limits and saved partial ingestion, with one of 17 emails
 remaining incomplete. The independent audit found six task-semantic defects and
 one omitted response deadline beyond that explicit input gap. Seven answers
 graded five pass, one qualified and one fail. The authorized attempts/audits are
-concluded; stop for joint review before fixes or further trials. No broad product
+concluded. The user subsequently authorized read-only root-cause diagnosis;
+stop for joint review before fixes or further trials. No broad product
 qualification is claimed. See
 [trial results](TRIAL-RESULTS.md) for evidence and limitations; earlier checkpoints
 below are historical. The [artifact guide](README.md) distinguishes the active
 contract from frozen studies and superseded proposals.
 
 ## Current testing authority — report findings, do not repair
+
+### Read-only root-cause investigation authorized
+
+The user subsequently requested a complete three-route accounting and root-cause
+investigation in the existing Spark session, plus detailed diagnosis of Work's
+seven-question outcome. This authorizes diagnostic conversations and read-only
+inspection of accessible prior action/tool history, existing trial artifacts and
+installed instructions. Ask for concise decision explanations tied to observable
+evidence, not hidden chain-of-thought. Separate proven divergence from provider
+retrospective explanations and unresolved hypotheses.
+
+No product fixes, instance repair/cleanup, new ingestion, replay, new trial,
+source expansion, mailbox mutation, task-app effect, outbound brief or schedule is
+authorized. Temporary downloadable diagnostic reports are evidence artifacts;
+they do not authorize Drive writes. Keep provider controllers isolated and serialize
+browser actions. Reuse preserved evidence and avoid a second whole-corpus audit.
+The fresh Sol test run must appear alongside the Spark and Work results; the two
+browser reruns are additional attempts, not the entire three-route assignment.
+
+The [root-cause report](ROOT-CAUSE-REVIEW.md) records the local evidence review.
+Work’s existing conversation is generating its diagnostic response. Spark’s
+follow-up is not dispatched because fresh isolated worker creation was denied;
+the user’s choice about a coordinator-led fallback is pending.
+Exact next action: obtain bounded diagnostic reports from the existing sessions,
+cross-check them against preserved evidence, publish the three-route/root-cause
+accounting and stop for joint review before fixes.
 
 ### Second browser attempts authorized — isolated controllers
 

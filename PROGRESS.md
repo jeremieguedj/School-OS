@@ -6477,3 +6477,47 @@ requirements, then read this log from top to bottom.
   user. Do not repair bugs, clean up trial artifacts, or launch new tests without
   subsequent direction. The authorized bounded evaluation is complete; the
   School-OS product is not qualified for routine use.
+
+## 2026-09-16 — Read-only root-cause review and three-route reconciliation
+
+- The user requested a model/cost recommendation, clarification of the omitted
+  fresh-Sol run in the last response, and diagnosis in the existing Spark and Work
+  sessions. The prior final response summarized only the browser reruns; the
+  original Sol ingestion and audit remain preserved and must be included in the
+  combined account. No missing third run is silently created or rerun.
+- User authority now permits read-only diagnostic conversations and existing
+  evidence inspection. Request concise action/decision explanations supported by
+  observable history, not hidden reasoning. Provider self-explanations remain
+  claims until checked; no fixes, replay, new ingestion or provider effects.
+- Work's existing isolated Sol controller prepared a bounded diagnostic prompt;
+  an independent Sol reviewer is mapping proven divergences from local evidence.
+  Root keeps browser leases exclusive and manages the Spark investigation without
+  passing Work context to its controller. A retained agent-slot limit requires
+  staging delegation rather than starting overlapping browser controllers.
+- Exact next action: gather and cross-check the diagnostic reports, consolidate
+  all three route outcomes and publish qualified causes and remaining unknowns.
+
+- The independent local review is now in `ROOT-CAUSE-REVIEW.md`. It establishes
+  Q2's source-to-Knowledge omission, propagation to Task and wrong answer; Q7's
+  citation weakness; four Task findings first visible in Knowledge disposition
+  and two in completion-subject derivation. These are proven output divergences,
+  not proof of a hidden model mechanism. Sol and Work share the high-level Task
+  pattern, while Work's recurring finding has an additional scope aspect.
+- Work's old tab handle was unavailable. Its isolated controller reopened the
+  exact existing conversation URL, verified the original history and absence of
+  a prior diagnostic, submitted once and observed the response start. Subsequent
+  bounded observations retain an active Stop control and no supported error.
+  No completed diagnostic artifact has yet been captured. No new provider task,
+  prompt replay, ingestion or fix occurred.
+- A new isolated Spark controller was refused by the app's retained-agent limit,
+  including after the local reviewer completed. The user was asked whether root
+  may conduct a read-only Spark-only diagnostic directly. That answer is pending;
+  Spark has received no diagnostic prompt and its prior evidence is preserved.
+- A bounded second document review corrected a summary count, distinguished the
+  repeated high-level pattern from Work's extra scope defect, and kept the image
+  access question separate from explicit semantic requirements. Publication
+  hygiene is limited to diff, privacy, document links, hooks/CI and Git state.
+- This is an interim diagnostic checkpoint, not a completed root-cause phase or
+  permission to fix. Exact next action: capture Work's existing response when it
+  finishes; resolve the Spark controller choice; obtain/cross-check its diagnostic
+  and return to joint review. Product/starter and trial instances remain unchanged.
