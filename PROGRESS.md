@@ -5216,3 +5216,17 @@ requirements, then read this log from top to bottom.
   have only inactive sample hooks. The restart branch has no open pull request;
   existing CI applies to main pushes, pull requests or manual dispatch. The
   Site is static and owner-private. No checks were disabled or tests triggered.
+
+- Publication completed: review commit
+  `fbfc16d568fdc9879496e23dc7ec4491470c16e4` was pushed to
+  `codex/restart-school-os` and the exact remote revision verified. Site source
+  `a4fc2da7542e0f525984644deea5b9e1e6222080` was pushed, packaged as static
+  content and published as version 11. Deployment status reports success at
+  https://school-os-architecture-guide.jeremieg.chatgpt.site/#open-questions.
+  Existing owner-private access was preserved. Site publication hygiene found
+  144 local links/anchors resolving and zero privacy findings; no browser or
+  functional test was performed.
+- Publication of this review is complete. Exact next action: supply the concrete
+  Q1/Q2/Q6 proposals and resolve the remaining numbered choices before dependent
+  implementation. No approval, feature completion or testing authority is
+  inferred from this documentation publication.

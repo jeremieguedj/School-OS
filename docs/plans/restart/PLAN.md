@@ -22,8 +22,12 @@ Q2 (topic/entity lookup conventions) and Q6 (content-read reuse evidence) need
 concrete proposals before final approval. Q3–Q5 and Q7–Q9 have recommendations
 for review. The full-range fallback proposed in Q4 applies every daily run and
 may repeat content reads depending on Q6; it is not adopted or qualified.
-Next: publish this consolidated review, then supply those three missing proposal
-packets and resolve the remaining choices before their dependent implementation.
+The consolidated review was published from repository commit
+`fbfc16d568fdc9879496e23dc7ec4491470c16e4`, verified on the remote restart branch.
+Site version 11 deployed successfully at
+[the numbered question section](https://school-os-architecture-guide.jeremieg.chatgpt.site/#open-questions).
+Next: supply those three missing proposal packets and resolve the remaining
+choices before their dependent implementation.
 Continue independent approved work. No new architecture approval is recorded.
 The testing phase remains stopped until the user's subsequent direction.
 
@@ -274,8 +278,8 @@ be adopted silently. Remaining D4 precision/search/repeated-appearance details,
 D6 audio/manual limited-brief and specific remaining architecture choices remain pending.
 D3’s minimal Python/agent split is approved; the record/save framework is deferred. Existing source-metadata and coverage invariants remain authoritative.
 
-Exact next action: publish the consolidated [nine-question review](implementation/OPEN-QUESTIONS.md),
-then supply concrete proposals for Q1 data fields/links, Q2 lookup conventions
+The consolidated [nine-question review](implementation/OPEN-QUESTIONS.md) is published.
+Exact next action: supply concrete proposals for Q1 data fields/links, Q2 lookup conventions
 and Q6 read-reuse evidence, and resolve the remaining numbered choices with the
 user before dependent implementation. These are specific gaps in retained
 features, not a generic record/write framework or a reopening of D1/D5 approvals. Continue approved helper and
