@@ -9,6 +9,17 @@ experiments and historical proposals.
 
 ## Current coordinator checkpoint — architecture approval pending
 
+Latest published instruction/documentation subset:
+`087c061507731bac997624936dc6610ef0674f19` on `codex/restart-school-os`, verified
+against the remote branch. The existing architecture website now reflects these
+setup, shared-adapter, parent-confirmation and brief-recipe approvals, with D1
+storage diagrams and retrieval/save walkthroughs. Publication succeeded. No
+functional tests ran; this is not the whole-project implementation handoff.
+Next: resolve the still-pending D4 scope/identity/discovery and D6 audio/manual
+limited-brief choices while continuing independent approved implementation.
+The testing phase remains stopped until the user's subsequent direction.
+
+
 The 2026-09-14 implementation session remains in the existing repository directory
 on `codex/restart-school-os`. Its clean starting revision was
 `39d752c364a1cf404e5a6fc5739148b7d35a6b35`. The annotated preservation tag

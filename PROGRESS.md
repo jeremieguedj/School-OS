@@ -5168,3 +5168,13 @@ requirements, then read this log from top to bottom.
   resolve; diff whitespace checks pass. Applicable Git hooks are inactive
   samples. CI is unchanged and runs on main pushes, pull requests or manual
   dispatch; this restart branch has no open pull request. No checks were disabled.
+
+- Publication completed: instruction/guide commit
+  `087c061507731bac997624936dc6610ef0674f19` was pushed and the exact remote
+  restart revision verified. The existing owner-private architecture website
+  was updated successfully with nine static pages referencing that source.
+  Website publication hygiene found 141 local links/anchors resolving and no
+  privacy findings. No browser test or deployed-page fetch was performed.
+- Next action is now the remaining architecture choices and independent approved
+  implementation stated above; publication of this subset is no longer pending.
+  Testing remains stopped, and no whole-project completion claim is made.
