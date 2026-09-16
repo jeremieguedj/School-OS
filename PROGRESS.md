@@ -6104,3 +6104,66 @@ requirements, then read this log from top to bottom.
   partition; the largest remains approximately 46.6 KB. Near-limit behavior is
   unexercised. Continue the already-authorized exact readback/query comparison,
   then review the evidence and publish results without repairs.
+
+## 2026-09-16 — Independent public-summary precision review
+
+- Corrected the Entity count: ten saved Entity records in total, including one
+  established from source evidence during ingestion. Earlier entries listing one
+  source-established Entity describe the ingestion addition, not the full total.
+- Distinguished ingestion-coverage `fully_ingested` states from parent task
+  completion, and canonical-task inventory disagreements from absence of any
+  source-supported guidance. No source expectations changed.
+- Narrowed the independent six-core-page claim to successful receipt decoding
+  and exact handle/page-ID binding. The tester's reported write/readback equality
+  is separate evidence, not a comparison independently repeated by that audit.
+- Clarified the qualified query answer: its conflict citation is precise; the
+  separate supports relation has no exact citation in that answer and is outside
+  the independent frozen correction support. No answers or product files changed.
+
+## 2026-09-16 — Live size comparison finished; keep the existing limit
+
+- Sol completed comparison provider operations with no reported failure or
+  retry: 30 uploaded candidate pages, 30 full verification readbacks and 24
+  query reads, plus four evaluation-folder creates. No further provider call
+  is planned; final independent query review uses preserved evidence only.
+- Independent local audit verified 30/30 exact candidate readbacks and identical
+  reconstruction of 105 ordered whole records across ten family boundaries.
+  All three limits produce the same grouping. Largest canonical core page is
+  46,597 bytes; largest comparison page is 46,607 bytes, 71.1% of 64 KiB; largest
+  compact record is 2,335 bytes. No near-limit, multi-page-family or oversize
+  behavior is exercised. Evaluation artifacts remain isolated inside the Sol root.
+- The coordinator retains the existing 64 KiB maximum. This sample supplies no
+  packing benefit from a larger limit and cannot qualify larger payloads or
+  their cost. Model-visible bytes, actual tokens, cost and active time are unknown.
+- Each candidate's seven-question batch read eight pages/101 records; reported
+  answers are semantically equal. Final independent grading is underway. The
+  evaluation's direct page routing differs from production index traversal, so
+  fewer reads than the baseline do not establish a benefit from larger pages.
+- Next: finish evidence review and final publication, verify the remote revision,
+  and stop for joint user review. The implementation and starter remain frozen;
+  failures are retained without fixes, cleanup or retests.
+
+## 2026-09-16 — Trial audit concluded; stop for joint review
+
+- Final independent comparison-query review verifies all 24 receipts against
+  preserved candidate pages/caches and all answer payloads against retrieved
+  records. Grades are 18 passes and three qualified passes across 21 answers;
+  each candidate repeats the same six passes and one citation qualification.
+  No remembered-only factual payload was found, and the oracle stayed unchanged.
+- Exact full-page query bytes are 125,509 / 125,517 / 125,517; the eight-byte
+  difference is threshold-label length. Requested-field bytes, model-visible
+  context, billed tokens and cost are unknown. The direct evaluation route
+  cannot establish a larger-page efficiency benefit over indexed retrieval.
+- Authorized trials and audits are concluded: one Sol ingestion with semantic
+  failures, failed Spark setup and failed Work launch. Dependent stages on the
+  browser routes remain unexercised. This is not a successful three-agent
+  ingestion comparison or broad product qualification. No repairs were made.
+- Retain the existing 64 KiB maximum. Publish the sanitized results and updated
+  plan/protocol, verify the exact remote revision, and stop for joint user review.
+  After publication, the next action is the user's decision about findings; no
+  fixes, cleanup, browser retries or further tests are authorized implicitly.
+- Publication hygiene covers diff/privacy/document links, Git state and remote
+  revision only; it does not add functional validation. Private files are 0600
+  under 0700 directories and remain ignored. Only sample hooks and no active
+  workflows were found; no check was disabled. Starter source remains
+  `ba6bcc3bec96dfc542fd83cb792318ac8e54ce56`.

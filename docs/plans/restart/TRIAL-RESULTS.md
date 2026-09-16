@@ -5,9 +5,10 @@
 The starter is implemented, but these trials do not qualify it for routine use.
 All three setup attempts were launched. Only Sol reached ingestion; its saved
 output contains material semantic defects despite verified persistence. Spark
-failed setup, and ChatGPT Work failed before its interview. No product fixes,
-cleanup or replacement attempts were made. The size comparison is the final
-active evaluation; joint review follows its publication.
+failed setup, and ChatGPT Work failed before its interview. No product fixes or
+replacement attempts were made, and failed artifacts are preserved. The authorized trial attempts and audits have concluded. Only one route
+reached ingestion; the other two are preserved failed attempts. The next action
+is joint review with the user before any fixes or retests.
 
 | Route | Setup | Ingestion | Saved-data questions | Key limit or failure |
 | --- | --- | --- | --- | --- |
@@ -22,11 +23,11 @@ writes, audio, outbound briefs, schedules and upgrades were not exercised.
 
 **Most important findings for joint review:**
 
-1. Saved completion flags are too strong for the observed result: one substantive
+1. Saved ingestion-coverage `fully_ingested` states are too strong for the observed result: one substantive
    update was missing from Knowledge/Task content, despite all 17 observed emails
    being marked fully ingested.
-2. Task extraction changes meaning in several cases: two unexpected canonical
-   tasks, lost conditional/recurring state, and per-individual work represented
+2. Task extraction changes meaning in several cases: two canonical Tasks outside the frozen canonical-task
+   inventory, lost conditional/recurring state, and per-individual work represented
    by family-level completion. Good question answers sometimes compensate by
    reading supporting prose; they do not repair those Task fields.
 3. The seven-question retrieval used 83 file reads and six folder listings,
@@ -159,8 +160,9 @@ is addressed. No implementation fix or defect workaround is permitted.
   search responses were lost on local receipt-sink failures; subsequent preserved
   reads followed a sink self-check. This evaluator intervention and incomplete
   initial receipt chain must remain in the audit.
-- **Still under evaluation:** page-size comparison and its independent review.
-  The saved semantic output has confirmed material defects as described below.
+- **Final evaluation boundary:** all authorized attempts and audits are concluded.
+  Only Sol reached ingestion; its semantic output has material defects. No
+  successful three-agent ingestion comparison or broad qualification is claimed.
   Coordinator source reads and folder creation are distinct from those outcomes.
   No mailbox mutation or outbound effect was authorized or performed.
 
@@ -168,15 +170,17 @@ is addressed. No implementation fix or defect workaround is permitted.
 
 Sol exhausted the fixed search with 17 observations, read all 17 messages and
 reported processing three required attachment groups. Saved output is 17 Email,
-three Attachment Group, 21 Knowledge, 10 Task, 17 Topic and one source-established
-Entity record. Actual readbacks establish core page persistence; the tester also
+three Attachment Group, 21 Knowledge, 10 Task, 17 Topic and 10 Entity records
+total, including one Entity established from source evidence during ingestion. Actual readbacks establish core page persistence; the tester also
 reports final derived indexes, coverage and completed discovery state saved and
 read back, with 17/17 marked fully ingested. Folder counts remain nonexhaustive
 observations. Fresh attachment-pixel semantics remain independently unqualified.
 
 The independent audit compared the six core page readbacks with expectations
-bound to source evidence before seeing the generated output. All six byte
-comparisons match. All 17 saved source identities bind to the reference metadata,
+bound to source evidence before seeing the generated output. All six core readback receipts decoded successfully, and their page IDs and
+exact handles match the private ingestion manifest. This independently establishes
+which saved pages were reviewed; it does not independently establish every
+upload-versus-readback byte comparison reported by the tester. All 17 saved source identities bind to the reference metadata,
 with original Date instants preserved through UTC normalization, and all saved
 Knowledge and Task source references resolve. These structural passes coexist
 with seven material semantic findings:
@@ -214,17 +218,71 @@ passes and one qualified pass, with zero incorrect main answers. All seven
 disclose a relevant scope, applicability, completion or evidence limitation.
 Three correct answers recover conditions or separate completion units from
 saved prose despite canonical Task defects, so answer accuracy does not validate
-Task storage. The qualified answer reaches the supported negative conclusion
-about corrections but cites its ancillary relationships imprecisely; broad
-retrieval evidence is not a substitute for a precise claim-level citation. No expected answer was supplied, no mailbox was reopened,
-and no record was repaired. The separate 64/128/256 KiB comparison is now running
-only against already-saved records in the assigned Sol instance's private,
-noncanonical evaluation area. Spark and Work cannot exercise those dependent
+Task storage. The qualified answer reaches the supported negative correction conclusion. Its
+conflict relation is precisely cited; a separate supports relation exists in
+saved data but lacks an exact citation in that answer and remains outside the
+independent frozen correction support. No expected answer was supplied, no mailbox was reopened,
+and no record was repaired. The separate 64/128/256 KiB comparison has finished
+against already-saved records in the assigned Sol instance's private,
+noncanonical evaluation area; independent query review is complete. Spark and Work cannot exercise those dependent
 stages because their initial attempts failed.
 
-Next: complete size assessment and independent review, publish the sanitized audit,
-and stop for joint review with the user. Do not fix, clean up or restart failed
-routes. The earlier guided attempt and its oracle below remain historical.
+### Page-size assessment
+
+**Decision: retain the existing 64 KiB maximum.** This is the already-approved
+single limit, unchanged. Larger limits produced no packing or page-count benefit
+for the observed corpus; no source record exceeded the present limit.
+
+The comparison used only the same 105 complete saved records, preserving ten
+family/routing boundaries. Independent review verified every candidate's exact
+ordered reconstruction, manifest sizes and record counts, parent/handle lineage,
+and all 30 complete byte-for-byte Drive readbacks. Candidate files remained in a
+marked noncanonical evaluation area within the assigned Sol root, outside the
+canonical folders and without bootstrap/index links.
+
+| Candidate maximum | Pages | Complete records | Largest encoded candidate page | Capacity conclusion |
+| --- | --- | --- | --- | --- |
+| 64 KiB | 10 | 105 | At most 46,607 bytes | Sample fits; near-limit behavior unexercised |
+| 128 KiB | 10 | 105 | At most 46,607 bytes | Same grouping; larger capacity unexercised |
+| 256 KiB | 10 | 105 | At most 46,607 bytes | Same grouping; larger capacity unexercised |
+
+The largest original canonical core page was 46,597 bytes. Evaluation wrappers
+add a few bytes: the largest comparison page is 46,607 bytes, or 71.1% of 64 KiB.
+The largest complete compact record is 2,335 bytes. Full evaluation-page bytes
+differ by their threshold labels; the record grouping and values are identical.
+This corpus does not exercise a multi-page family, an oversize record, rejection
+at the limit, or a 128/256 KiB payload. It cannot establish connector capacity or
+retrieval quality near those larger limits. Fresh image semantics and broader
+managed-agent compatibility remain unqualified.
+
+The tester reports 88 comparison Drive operations: four folder creations,
+30 uploads, 30 verification reads and 24 query reads, with no provider failure
+or retry. Each candidate query batch read eight pages/101 records and answered
+all seven questions. Independent review verifies all 24 query receipts against candidate page bytes
+and caches, and every answer's factual payload against the retrieved records.
+The unchanged-source-reference grades are 18 passes and three qualified passes
+across 21 answers: six passes and the same citation-qualified answer per
+candidate, with no incorrect main answer. Equality of answers was not used as
+the sole correctness proof. Candidate navigation skips the
+production index/catalogue route by design, so eight reads versus the baseline's
+83 file reads is **not** evidence of a larger-page performance benefit. All
+three candidate limits use the same layout and comparison route. Exact full-page
+query bytes were 125,509 / 125,517 / 125,517 for the three candidates; the eight-byte
+difference comes from threshold-label length. It is not a capacity benefit, a
+requested-field byte measurement or a model-context/token measurement.
+
+Phase totals remain separate. Independently verified setup evidence has 135
+attempts, including one predispatch rejection; baseline questions have 89
+non-error operations. The tester reports ingestion-only activity of 153 Drive
+operations, six Gmail operations and six attachment-download attempts; batched
+operations must not be mistaken for message counts. Actual model-visible bytes,
+billed tokens, monetary cost and active time were not exposed and remain
+unknown. Stored/downloaded bytes do not establish model context consumption.
+
+**Stop for joint review.** All authorized attempts and evidence audits are
+concluded. Publish only the sanitized report and continuity, verify its remote
+revision, and wait for the user to choose what to address. Do not repair, delete
+failed artifacts, retry either browser route or start additional tests. The earlier guided attempt and its oracle below remain historical.
 
 ## Earlier guided attempt (historical)
 

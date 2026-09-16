@@ -1,18 +1,16 @@
 # Authorized three-agent ingestion trials
 
-Status: the user approved the revised tests and uploads after the published
-starter readiness handoff. Follow the active plan for current route authorization
-and any runtime approval blocker. The user explicitly requires observation and
-reporting only: **do not repair bugs or work around product defects**. Earlier
-guided-trial activity is preserved in [results](TRIAL-RESULTS.md). The fresh Sol
-route reports persisted setup with exact readback and has received the separate
-ingestion request. Core setup evidence passed with documented verification gaps.
-Sol has persisted ingestion with material semantic defects established by the
-independent audit. Independent grading of seven saved-data queries is complete: six passes and
-one qualified pass. The separate size comparison and its review are underway. Both browser opening prompts
-were submitted: Work returned a network error; Spark's user-directed Drive ZIP
-route failed setup and is preserved without repair. The independent source
-audit has prepared questions, with fresh attachment-pixel semantics unverified.
+Status: the authorized revised trial attempts and audits are concluded. The
+user requires joint review before any bug is addressed: **do not repair bugs,
+clean up failed artifacts, retry the browser routes or start additional tests**.
+The frozen starter produced one persisted Sol ingestion with material semantic
+defects, one failed Spark setup and one failed Work launch. Sol's seven baseline
+questions graded six passes and one qualified pass. The three size candidates
+preserved identical record grouping and the same grades; larger-capacity behavior
+remains unexercised. Keep the existing 64 KiB limit. Full current findings and
+historical attempts are in [results](TRIAL-RESULTS.md); private source and receipt
+evidence remains outside Git. Publish sanitized continuity, verify the remote
+revision and stop for review with the user.
 The [active plan](PLAN.md#current-execution-authorization) controls authorization.
 This evaluator protocol is never supplied as the agent's opening prompt. Use the
 [minimal handoff](TRIAL-PROMPTS.md); keep source values and instance links private.

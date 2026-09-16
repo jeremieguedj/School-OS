@@ -30,7 +30,8 @@ sanitized findings and continuity records may be published.
 
 - **Fresh Sol:** core setup and subsequent ingestion persisted with actual
   readbacks. Saved output includes 17 Email, three Attachment Group, 21 Knowledge,
-  10 Task, 17 Topic and one source-established Entity record. Coverage marks
+  10 Task, 17 Topic and 10 Entity records total, including one Entity established
+  from source evidence during ingestion. Coverage marks
   17/17 observed emails fully ingested. This is a persisted state, not proof of
   semantic completeness. Independent source comparison found one substantive
   knowledge/task-content omission, two tasks outside the frozen canonical-task
@@ -38,7 +39,9 @@ sanitized findings and continuity records may be published.
   flattening, and two household-level completion-unit collapses. Seven queries
   have been independently graded: six pass and one qualified pass, with no
   incorrect main answer. Three answers recover meaning from prose despite the
-  weaker canonical Tasks. The separate page-size comparison remains underway. Do not repair the instance or coach the
+  weaker canonical Tasks. The size comparison and its independent query review are complete. All
+  candidates preserve the same ten-page layout and receive the same six passes
+  plus one qualified answer. The existing 64 KiB maximum is retained. Do not repair the instance or coach the
   tester with evaluator expectations.
 - **Gemini Spark:** failed setup after the user-directed change to a Drive ZIP
   link in the same task. Root stopped the response on uncertain-effect claims
@@ -87,11 +90,20 @@ Spark transcript visibility changed in saved UI views without a captured root
 Edit invocation; the cause remains unknown. The user chose to investigate that
 UI issue, so the coordinator ended the inquiry without resending answers.
 
-**Exact next action:** finish the authorized 64/128/256 KiB assessment and
-independent review using only already-saved records. Publish sanitized
-results and continuity, verify the remote commit, and hand all findings to the
-user for joint review. Preserve every failed route. No fixes or retests are
-implicitly authorized by completion of this audit.
+**Review checkpoint — testing stopped:** the authorized attempts and evidence
+reviews have concluded. Only Sol reached ingestion; its semantic defects remain.
+This is not a successful three-agent ingestion comparison. The 64/128/256 KiB
+comparison preserved 105 records in the same ten pages, with 30/30 exact page
+readbacks and 24/24 exact query-read receipts. The largest comparison page is
+46,607 bytes; larger-capacity behavior is unexercised. Retain the existing 64 KiB
+maximum, with no implementation change.
+
+**Exact next action:** publish these sanitized results/continuity and verify the
+remote revision, then review [the findings](TRIAL-RESULTS.md) with the user.
+After publication, wait for explicit direction before fixes, cleanup, retries or
+additional testing. Do not resume the failed Spark or Work attempts. No source
+or provider operations remain in this authorized trial phase; the implementation
+and starter remain frozen. Source details and full receipts stay private.
 
 <a id="current-checkpoint--one-link-setup-implementation-and-testing-hold"></a>
 
