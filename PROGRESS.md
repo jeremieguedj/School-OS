@@ -5952,3 +5952,27 @@ requirements, then read this log from top to bottom.
 - No product implementation changed. Await setup readback or concrete blockers,
   then separately request ingestion only on configured routes. Work's failure
   remains preserved; no unrequested retry or replacement was launched.
+- Subsequent saved-evidence review clarified that Work has only provisional
+  frontend conversation state; no durable server task handle is established.
+  Spark remains running without interview questions. Independent second review
+  confirmed the source reference's attachment and receipt-chain limitations.
+
+## 2026-09-16 — Sol setup readback complete; ingestion requested
+
+- Sol reports exact actual readback for the configured entry point and all 37
+  instance JSON files: five core, 11 locator roots, eight catalogues and 13
+  indexes. It also checked public system inventory and folder contents. Source
+  access, ingestion and external effects were not claimed as part of setup.
+- The same test worker received the separate common seven-day ingestion request.
+  No evaluator expectations or other-instance data were supplied. It remains
+  under no-fix/no-workaround and read-only-mailbox limits, with canonical writes
+  confined to its assigned Drive instance. Query evaluation follows later.
+- A separate Sol reviewer is checking preserved setup evidence against the
+  approved contracts and ordinary interview answers. This independent review
+  distinguishes actual readback from echoes, exact saved values from semantic
+  validity, and folder observations from proven exhaustion. No product repairs.
+- Spark reached its ordinary setup interview after the user-directed Drive ZIP
+  handoff. Root supplied the authorized private answers and standard starter
+  brief-template preference as configuration only. Spark is setting up; no
+  ingestion request has been sent to it. Work remains at its un-retried network
+  failure with no confirmed durable task handle.

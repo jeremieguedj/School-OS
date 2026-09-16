@@ -35,7 +35,10 @@ is addressed. No implementation fix or defect workaround is permitted.
   saved in four ignored private evidence files. Coordinator verified directory
   mode 0700 and file modes 0600. After an initial capacity error, the same worker
   resumed with ordinary interview answers and reached its assigned Drive root.
-  No canonical instance or saved setup success is established yet.
+  It subsequently reported exact actual readback of the entry point and 37
+  instance JSON files, plus public system inventory and folder checks. Independent
+  setup review is in progress. The separate ingestion request is now supplied;
+  no ingestion outcome is yet established.
 - **Browser launch:** the user's direct start statement cleared the earlier
   authorization issue. No prompt was submitted during the operator's tab-binding
   error or two stalled native-app attachments. Root took over and submitted the
@@ -46,9 +49,13 @@ is addressed. No implementation fix or defect workaround is permitted.
   requested a Drive ZIP link. Root uploaded the unchanged release ZIP, verified
   returned metadata and supplied its link to the same task. Continued setup is
   under observation; the original GitHub-link path did not succeed unaided.
+  Spark then asked the ordinary household/source/location/tool interview. Root
+  answered it under the user's explicit personal-data authority, including the
+  standard starter brief template as configuration only. No ingestion requested.
 - **ChatGPT Work:** selected UI model was GPT-5.6 Sol Light. The recorded first
   response was a network error, before interview or setup completion. No Retry
-  was submitted. The available UI does not establish its underlying cause.
+  was submitted. Evidence establishes provisional frontend state, not a durable
+  server task handle. The available UI does not establish the error's cause.
 - **Configured upload authority:** review rejected Sol's initial configured
   bootstrap upload for insufficiently specific personal-data approval. The user
   then explicitly authorized uploading needed personal data to Drive and the
@@ -74,8 +81,8 @@ is addressed. No implementation fix or defect workaround is permitted.
   search responses were lost on local receipt-sink failures; subsequent preserved
   reads followed a sink self-check. This evaluator intervention and incomplete
   initial receipt chain must remain in the audit.
-- **Not exercised:** persisted setup, email discovery/ingestion, saved knowledge
-  or tasks by the tested agents, query retrieval and page-size comparison.
+- **Not yet established:** complete email ingestion and saved knowledge/tasks
+  by the tested agents, query retrieval and page-size comparison.
   Coordinator source reads and folder creation are distinct from those outcomes.
   No mailbox mutation or outbound effect was authorized or performed.
 

@@ -5,8 +5,9 @@ starter readiness handoff. Follow the active plan for current route authorizatio
 and any runtime approval blocker. The user explicitly requires observation and
 reporting only: **do not repair bugs or work around product defects**. Earlier
 guided-trial activity is preserved in [results](TRIAL-RESULTS.md). The fresh Sol
-route has answered its interview and reached Drive-root qualification; no revised
-persisted setup or ingestion outcome is established. Both browser opening prompts
+route reports persisted setup with exact readback and has received the separate
+ingestion request; an independent setup-evidence audit is underway. No ingestion
+outcome is established. Both browser opening prompts
 are submitted: Work returned a network error; Spark continues using a Drive ZIP
 link at the user's explicit direction. The independent source
 audit has prepared questions, with fresh attachment-pixel semantics unverified.

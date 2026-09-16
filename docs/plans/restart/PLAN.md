@@ -29,20 +29,30 @@ same folder's returned ID succeeded. No folder creation was retried. Record this
 coordinator connector observation without changing product code or contracts.
 
 The same initial Sol trial resumed after the source evaluator finished. Its
-ordinary interview answers were supplied and it reached Drive-root qualification;
-no persisted setup or ingestion success is yet established. Preserve its already
-reported repository-instruction exposure; no replacement trial was spawned.
+ordinary interview answers were supplied. It reports verified setup: exact
+content readback for the entry point and all 37 instance JSON files, plus public
+system inventory and folder checks. An independent evidence review is underway;
+write/readback equality is distinct from full semantic correctness. The separate
+common ingestion request has now been supplied to this same instance. Ingestion
+success is not yet established. Preserve its repository-instruction exposure;
+no replacement trial was spawned.
 
 The browser operator could not bind the coordinator-owned empty Spark tab; two
 native-app selection calls stalled and were interrupted without a submitted
 prompt. Root took over UI and submitted both exact minimal opening requests.
 ChatGPT Work's UI identified GPT-5.6 Sol Light. Its first response was a network
-error before the interview; Retry remains untouched under the no-repair boundary.
+error before the interview; a durable server task handle is unconfirmed and
+Retry remains untouched under the no-repair boundary.
 Spark reported an external-download limitation. The user then specifically
 directed use of a Google Drive ZIP link for Spark. Root uploaded the unchanged
 98,205-byte starter under the verified tests parent, verified metadata, and sent
 its returned link to the same Spark task. This is an explicit distribution
 intervention, not a clean first-link success or an unreported replacement trial.
+Spark then reached its ordinary setup interview and claimed the ZIP had been
+unpacked as a fresh unconfigured starter, with no earlier Drive writes. Root
+supplied the authorized destination, household/source/tool choices and standard
+starter brief-template preference. Spark is setting up the instance; ingestion
+has not been requested.
 
 Approval review initially rejected Sol's configured bootstrap upload for needing
 specific personal-data authority. The user subsequently authorized personal-data
