@@ -1,6 +1,17 @@
 # Restart trial results
 
-## Current outcome
+## Second browser attempts — in progress
+
+The user authorized fresh Spark and ChatGPT Work attempts after reviewing the
+first findings. Two new context-free Sol controllers have separate assigned
+Drive folders, private packets/evidence directories and exclusive browser tabs.
+Root serializes their browser-action leases and does not operate either tab.
+No controller receives the other's transcript, outcomes or evaluator oracle.
+Controlled transient retries are authorized; product fixes remain prohibited.
+The starter and fixed seven-day interval are unchanged. Setup must be verified
+before ingestion. No second-attempt outcome is established yet.
+
+## First-attempt outcome
 
 The starter is implemented, but these trials do not qualify it for routine use.
 All three setup attempts were launched. Only Sol reached ingestion; its saved

@@ -11,6 +11,42 @@ contract from frozen studies and superseded proposals.
 
 ## Current testing authority — report findings, do not repair
 
+## Second browser attempts authorized — isolated controllers
+
+The user subsequently directed: proceed with Spark and ChatGPT Work, with each
+controller completely isolated from the other's browser interaction and context.
+This explicitly supersedes the preceding no-retry/no-new-attempt hold for these
+two named routes only. The unchanged pinned starter is used in fresh provider
+sessions and distinct new Drive folders; earlier failed instances stay preserved.
+No product repair, canonical architecture change, external task-app write,
+outbound brief/audio, mailbox mutation or schedule is authorized.
+
+Use two fresh Sol controllers with no inherited conversation. Each receives only
+its own opening prompt, interview answer sheet, destination and later scoped
+requests; no other route transcript, result, oracle or expected answer. Controllers
+own separate new browser tabs and private evidence directories. Root does not
+operate their tabs. Serialize all controller browser actions through a root-owned
+lease so typing, focus and navigation cannot overlap; provider tasks may continue
+in parallel. Never use app-global controls or inspect another controller's tab.
+Report any platform-injected context or isolation limitation honestly.
+
+Spark opens with the already-verified Drive ZIP link. Work opens with the same
+published starter asset and uses the unchanged Drive copy if a download route is
+unavailable. Keep the minimal “setup my schoolOS” prompt and ordinary interview.
+Allow a bounded controlled retry of transient launch/read/download failures;
+verify uncertain write effects before any retry. Do not invent a diagnosis,
+silently fix product defects, or repeat unknown writes. Let setup finish unless
+a real isolation violation or other concrete blocker requires stopping.
+
+Each route must pass actual saved-state setup review before its separate ingestion
+request. Retain the same fixed seven-day interval and independent source reference
+for comparability. Audit saved questions afterward, without coaching or filling
+missing knowledge from the oracle. New destinations and raw metadata receipts
+are private. Exact next action: launch both isolated controllers, verify each
+setup, then continue the authorized ingestion/query audit or report its blocker.
+
+## Previous completed trial authority and outcomes
+
 The user explicitly said, “The goal is unblocked. Start all three tests and
 uploads now,” and subsequently authorized needed personal-data uploads to Drive
 and the named agents. The user also requires joint review of all findings before

@@ -1,6 +1,9 @@
 # Authorized three-agent ingestion trials
 
-Status: the authorized revised trial attempts and audits are concluded. The
+Status: the first revised trial attempts and audits are concluded. The user has
+now authorized second Spark and Work attempts under the active plan's isolated-
+controller rules, including controlled transient retries. The following review
+stop records the first attempts; it does not override this newer authorization. The
 user requires joint review before any bug is addressed: **do not repair bugs,
 clean up failed artifacts, retry the browser routes or start additional tests**.
 The frozen starter produced one persisted Sol ingestion with material semantic

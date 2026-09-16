@@ -6167,3 +6167,20 @@ requirements, then read this log from top to bottom.
   under 0700 directories and remain ignored. Only sample hooks and no active
   workflows were found; no check was disabled. Starter source remains
   `ba6bcc3bec96dfc542fd83cb792318ac8e54ce56`.
+
+## 2026-09-16 — Second browser attempts authorized with strict controller isolation
+
+- User explicitly authorized new Spark and ChatGPT Work attempts and required
+  separate isolated controller contexts and browser interaction. Use fresh Sol
+  controllers without inherited turns, distinct new tabs/folders/private logs,
+  no cross-route transcript or oracle exposure, and serialized browser-action
+  leases. Root coordinates and reviews, without operating their tabs.
+- Reverified the existing tests parent and unchanged Drive ZIP metadata; created
+  and metadata-verified two new assigned destinations. No previous instance was
+  modified. Prepared private route-only interview/request packets with verified
+  destination replacements and unchanged fixed seven-day source interval.
+- Explicit new authority allows controlled transient launch/read retries. Unknown
+  write effects still require verification. Product fixes remain forbidden.
+  Setup must be independently verified before ingestion is requested.
+- Next: launch the isolated controllers, preserve complete private observations,
+  and continue setup/ingestion/query cases within each approved boundary.
