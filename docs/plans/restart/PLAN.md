@@ -64,12 +64,20 @@ Drive metadata. The operating implementation remains pinned at
 `138ca7954bdb3b7e9de065199fdb4903d6a924a3`. Coordinator searches by both Gmail
 identifier and metadata observed 17 matching message entries in the fixed
 interval and no continuation; this is an observed provider-entry inventory, not
-a count of canonical logical emails. The independent oracle has read those 17
-bodies and prepared source-bound expectations and questions. Three image
-attachment receipts expose authenticated file references but no local binary or
-inline image; their visual meaning remains unknown, so source coverage is not
-complete. Approved metadata comparisons, not RFC or provider message IDs,
-govern logical associations.
+a count of canonical logical emails. The independent oracle has reviewed all 17
+bodies and all three JPEG candidates. The pixels add qualified, source-bound
+visual knowledge for two parent messages; partially legible handwriting and
+exact chart-mark counts remain unknown. No task or completion expectation changed,
+and the existing common questions need no answer or source-support amendment.
+Approved metadata comparisons, not RFC or provider message IDs, govern logical
+associations.
+
+The first two raw source responses used for visual follow-up were returned but
+lost before private preservation because the local receipt sink failed. They were
+not interpreted. After a large synthetic Unicode payload verified bounded,
+mode-0600 chunked capture and atomic rename, two targeted raw rereads were saved
+and bound to the visual addendum before decoding. This is source-audit and local
+capture-repair evidence, not validation of School-OS ingestion or retrieval.
 
 The first private launch-input preparation mistakenly retained only one of two
 configured school-sender domains. That version is frozen as evidence; corrected

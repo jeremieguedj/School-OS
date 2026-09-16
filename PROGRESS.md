@@ -5668,3 +5668,28 @@ requirements, then read this log from top to bottom.
 - Next: follow the same fresh-worker handle and inspect its actual result. When
   ingestion is ready, administer the independent common questions against that
   route. Separately await explicit consent before either browser prompt upload.
+
+## 2026-09-16 — Independent source oracle visual coverage completed
+
+- The independent oracle now covers all 17 observed message bodies and all three
+  JPEG candidates across two parent messages. Visual evidence adds qualified,
+  source-bound knowledge for both parents. Partially legible handwriting and
+  exact chart-mark counts remain explicit unknowns.
+- No task or completion expectation changed. Review against the seven existing
+  common questions found no expected-answer or source-support amendment, so the
+  original prompts remain unchanged. A private current-oracle manifest binds the
+  immutable baseline expectations and questions to the versioned visual addendum
+  and exact source receipts, preventing accidental reuse of stale 0/3 coverage.
+- During the first capture attempt, two raw connector responses were returned but
+  lost before private preservation when the local receipt sink failed; neither
+  was interpreted. A synthetic Unicode payload then verified bounded chunked
+  mode-0600 capture and atomic rename. Two targeted source rereads were preserved
+  completely before decoding and visual review. This narrow receipt-capture
+  repair is source-audit evidence, not product validation.
+- The fresh Sol first-route worker remains running. Its launch still does not
+  prove setup or ingestion succeeded; browser upload intervention also remains
+  pending. Gemini Spark and ChatGPT Work are unsubmitted while explicit private
+  transfer approval is pending, with no bypass used.
+- Next: follow the same fresh-worker handle and inspect its actual result, then
+  administer the independent common questions when ingestion is ready. Await
+  explicit transfer approval before either browser launch.
