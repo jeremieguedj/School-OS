@@ -1,17 +1,18 @@
 # School-OS restart architecture and simulation
 
-Status: the user has authorized the complete autonomous remediation cycle in
-[AUTONOMOUS-REMEDIATION-CYCLE.md](AUTONOMOUS-REMEDIATION-CYCLE.md). The exact
-pre-cycle revision is preserved by the immutable
-`school-os-autonomous-remediation-baseline-2026-09-17` tag and release, which
-peel to commit `db68b12840aab3d0c94cfbb7d036a85f31b311f2`. The cycle captures
-the completed round-two results as its first baseline round, runs one unchanged
-fresh pre-fix round on all three routes, classifies every issue, implements only
-approved-architecture or nonarchitectural treatments, and runs two independent
-post-fix rounds without changes between them. A treatment that needs a new or
-changed architecture decision is recorded in the backlog and is not implemented
-without explicit user approval. The cycle ends with a privacy-safe repository
-report and self-contained website brief, then stops.
+Status: the authorized autonomous remediation cycle in
+[AUTONOMOUS-REMEDIATION-CYCLE.md](AUTONOMOUS-REMEDIATION-CYCLE.md) is complete.
+The exact pre-cycle revision remains preserved by the immutable
+`school-os-autonomous-remediation-baseline-2026-09-17` tag and release at commit
+`db68b12840aab3d0c94cfbb7d036a85f31b311f2`. One treatment package was
+implemented and held unchanged across two post-fix rounds. It improved setup
+validation but did not produce repeatable setup: post-fix A passed 1/3 setup
+gates and post-fix B passed 0/3. No tested ingestion occurred. The privacy-safe
+[final cycle results](AUTONOMOUS-REMEDIATION-RESULTS.md) and
+[issue ledger](AUTONOMOUS-REMEDIATION-ISSUES.md) are the current checkpoint.
+Stop for joint review; do not repair the trial instances, implement another
+treatment, or run another setup or ingestion before the user directs the next
+cycle.
 
 No broad product qualification is claimed. See the [round-two
 results](ROUND-2-TRIAL-RESULTS.md) and historical first-round [trial
@@ -28,7 +29,7 @@ response and never supplied answers. The technical cause of that observation
 failure remains unknown. Its earlier review stop has been superseded only by the
 bounded authority in the autonomous remediation cycle.
 
-## 2026-09-17 autonomous remediation cycle — active
+## 2026-09-17 autonomous remediation cycle — completed
 
 The user's latest instruction authorizes the coordinator to complete the full
 sequence without another routine approval checkpoint:

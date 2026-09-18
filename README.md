@@ -7,9 +7,9 @@ source links, scope, dates and qualifications.
 
 ## Set up a fresh School-OS
 
-[Download the clean round-two starter ZIP](https://github.com/jeremieguedj/School-OS/releases/download/school-os-starter-2026-09-17-round-2/School-OS-setup-round-2.zip)
-from the dedicated unqualified prerelease. Use this asset, not the repository
-source-code archive.
+[Download the current remediation starter ZIP](https://github.com/jeremieguedj/School-OS/releases/tag/school-os-starter-2026-09-18-remediation)
+from the dedicated unqualified prerelease. Use its attached School-OS starter
+asset, not the repository source-code archive.
 
 Give a new agent session one accessible link to the fresh School-OS ZIP or folder
 and say only: **“setup my schoolOS.”** The agent starts with
@@ -37,16 +37,15 @@ The [operation guide](operations/README.md) contains the reusable instructions.
 [approved restart plan](docs/plans/restart/PLAN.md) govern development of this
 repository, not a parent's ordinary setup session.
 
-**Status:** the approved restart MVP and second-round T01–T19 remediation are
-implemented in source and published from exact commit
-`aae44ef13be8392130f9b5aec7889b040c0ca45b`. Deterministic local checks pass.
-The three fresh-agent retests ended with 0/3 setup gates passed, so ingestion and
-query stages did not run; see the
-[round-two results](docs/plans/restart/ROUND-2-TRIAL-RESULTS.md) or the
-[readable website report](https://school-os-architecture-guide.jeremieg.chatgpt.site/round-2-results.html).
-The [round-two root-cause retrospective](docs/plans/restart/ROUND-2-ROOT-CAUSE-RETRO.md)
-separates independently observed evidence from later agent explanations and
-remaining unknowns.
+**Status:** the approved restart MVP and selected nonarchitectural remediation
+are implemented in source and published from exact commit
+`e83ce22b1e1a0083d32bab8aedcfdba79c072101`. Seventy-three prepared
+deterministic checks passed before publication. The treatment improved the setup
+gate but did not make setup repeatable: the two post-fix rounds passed 1/3 and
+0/3 setup gates. No tested ingestion or query stage ran. See the
+[final cycle results](docs/plans/restart/AUTONOMOUS-REMEDIATION-RESULTS.md), the
+[complete issue ledger](docs/plans/restart/AUTONOMOUS-REMEDIATION-ISSUES.md), or
+the [self-contained website brief](https://school-os-architecture-guide.jeremieg.chatgpt.site/autonomous-remediation-results.html).
 The retired
 implementation is not the foundation of this project. No provider compatibility
 claim is made from source or local checks alone.

@@ -1,11 +1,11 @@
 # Autonomous remediation issue and treatment ledger
 
-Status: the captured round-two baseline and the unchanged pre-fix round are
-recorded. Every observed boundary now has a treatment class, disposition and
-post-fix observable. The selected class A and B treatment set is prepared for
-integration and validation; post-fix rounds A and B have not run. Class C items
-remain unimplemented architecture backlog. Class D items receive no speculative
-product fix.
+Status: complete through both authorized post-fix rounds. The selected class A
+and B treatments were integrated once, published once, and held unchanged across
+the two rounds. They improved the truthfulness of the setup gate, but did not
+produce repeatable setup across Sol, Gemini Spark, and ChatGPT Work. Class C
+items remain unimplemented architecture backlog. New post-fix findings are
+recorded without repair, as required by the cycle stop.
 
 The governing execution plan is the
 [autonomous remediation cycle](AUTONOMOUS-REMEDIATION-CYCLE.md). The underlying
@@ -144,8 +144,8 @@ yet integrated or functionally validated at this ledger update.
 | --- | --- |
 | Captured round two | **Observed:** invalid shared locator; setup failed |
 | New unchanged pre-fix round | **Did not recur:** Sol used two distinct Task roots and setup passed |
-| Post-fix round A | `pending` |
-| Post-fix round B | `pending` |
+| Post-fix round A | See the final outcome matrix below. |
+| Post-fix round B | See the final outcome matrix below. |
 
 ## `AR-R2-SOL-002` — bootstrap validator accepted the invalid alias
 
@@ -200,8 +200,9 @@ root remains eligible for validation.
 `helpers/prepared_checks/check_bootstrap_contract.py` and `helpers/README.md`
 contain the checker, fictional regression case and operator explanation. The
 combined local prepared-check suite ran on 2026-09-18: all 73 tests passed, and
-Python compilation passed. The treatment commit and immutable starter binding
-remain pending publication at this ledger update.
+Python compilation passed. The treatment was published in commit
+`e83ce22b1e1a0083d32bab8aedcfdba79c072101` and the immutable remediation
+starter identified in the final matrix below.
 
 **Rollback baseline:** source commit
 `db68b12840aab3d0c94cfbb7d036a85f31b311f2`, immutable tag/release
@@ -211,8 +212,8 @@ remain pending publication at this ledger update.
 | --- | --- |
 | Captured round two | **Observed:** invalid topology returned `valid` with no diagnostic |
 | New unchanged pre-fix round | **Did not recur:** the distinct-root bootstrap returned `valid`; alias rejection itself remained unexercised |
-| Post-fix round A | `pending` |
-| Post-fix round B | `pending` |
+| Post-fix round A | See the final outcome matrix below. |
+| Post-fix round B | See the final outcome matrix below. |
 
 ## `AR-R2-SPARK-001` — setup crossed toward retrieval before authorization
 
@@ -279,8 +280,8 @@ method is recorded under `AR-R2-CTRL-SPARK-001`.
 | --- | --- |
 | Captured round two | **Observed:** premature retrieval-labeled transition; mailbox dispatch unproven |
 | New unchanged pre-fix round | **Did not recur:** Spark completed setup-only work and made no ingestion request |
-| Post-fix round A | `pending` |
-| Post-fix round B | `pending` |
+| Post-fix round A | See the final outcome matrix below. |
+| Post-fix round B | See the final outcome matrix below. |
 
 ## `AR-R2-CTRL-SPARK-001` — interview answers created a second unintended task
 
@@ -336,8 +337,8 @@ integrated or functionally validated at this ledger update.
 | --- | --- |
 | Captured round two | **Observed:** wrong-composer submission and unintended second task |
 | New unchanged pre-fix round | **Did not recur:** interview answer stayed in the exact Spark task |
-| Post-fix round A | `pending` |
-| Post-fix round B | `pending` |
+| Post-fix round A | See the final outcome matrix below. |
+| Post-fix round B | See the final outcome matrix below. |
 
 ## `AR-R2-CTRL-WORK-001` — the controller missed Work's completed interview
 
@@ -406,8 +407,8 @@ yet integrated or functionally validated at this ledger update.
 | --- | --- |
 | Captured round two | **Observed:** completed interview missed; control later hung; setup remained unanswered |
 | New unchanged pre-fix round | **Different incident:** Work visibly received the answer but stalled; see `AR-PF-WORK-001` |
-| Post-fix round A | `pending` |
-| Post-fix round B | `pending` |
+| Post-fix round A | See the final outcome matrix below. |
+| Post-fix round B | See the final outcome matrix below. |
 
 ## `AR-PF-SOL-001` — ingestion messages were rejected before delivery
 
@@ -458,8 +459,8 @@ ingestion contract. If it rejects again, it remains a provider/platform result.
 | --- | --- |
 | Captured round two | Unexercised; setup failed before ingestion |
 | New unchanged pre-fix round | **Observed twice:** initial and one proven-no-dispatch retry rejected before delivery; no Gmail or ingestion effect |
-| Post-fix round A | `pending` |
-| Post-fix round B | `pending` |
+| Post-fix round A | See the final outcome matrix below. |
+| Post-fix round B | See the final outcome matrix below. |
 
 ## `AR-PF-SPARK-001` — setup claimed complete with no installed system tree
 
@@ -519,8 +520,9 @@ created.
 `operations/setup.md`, `operations/storage.md` and `docs/setup-bundle.md` contain
 the pure comparison, prepared fictional cases and operator instructions. The
 combined local prepared-check suite ran on 2026-09-18: all 73 tests passed, and
-Python compilation passed. The treatment commit and immutable starter binding
-remain pending publication at this ledger update.
+Python compilation passed. The treatment was published in commit
+`e83ce22b1e1a0083d32bab8aedcfdba79c072101` and the immutable remediation
+starter identified in the final matrix below.
 
 **Rollback baseline:** source commit
 `db68b12840aab3d0c94cfbb7d036a85f31b311f2`, immutable tag/release
@@ -530,8 +532,8 @@ remain pending publication at this ledger update.
 | --- | --- |
 | Captured round two | Unexercised as a distinct audit; Spark did not complete setup |
 | New unchanged pre-fix round | **Observed:** empty `system/`, valid 27-page instance graph, false setup-complete claim |
-| Post-fix round A | `pending` |
-| Post-fix round B | `pending` |
+| Post-fix round A | See the final outcome matrix below. |
+| Post-fix round B | See the final outcome matrix below. |
 
 ## `AR-PF-WORK-001` — Work stalled after receiving the assigned root
 
@@ -590,8 +592,8 @@ still stall; that outcome must remain a provider result.
 | --- | --- |
 | Captured round two | A different controller missed the completed interview; no Work product failure established |
 | New unchanged pre-fix round | **Observed:** 25m50s stall after visible root answer; retrospective wait claim contradicted the conversation |
-| Post-fix round A | `pending` |
-| Post-fix round B | `pending` |
+| Post-fix round A | See the final outcome matrix below. |
+| Post-fix round B | See the final outcome matrix below. |
 
 ## `AR-PF-CTRL-SPARK-001` — browser tab export was unsupported
 
@@ -622,8 +624,8 @@ downloaded route report.
 | --- | --- |
 | Captured round two | Unexercised |
 | New unchanged pre-fix round | **Observed:** optional export unsupported; visible and saved-state evidence remained available |
-| Post-fix round A | `pending` |
-| Post-fix round B | `pending` |
+| Post-fix round A | See the final outcome matrix below. |
+| Post-fix round B | See the final outcome matrix below. |
 
 ## `AR-PF-EVAL-RECEIPT-001` — early local receipt protocols were unusable
 
@@ -657,8 +659,8 @@ trial report template and controller-state reporting make the boundary explicit.
 | --- | --- |
 | Captured round two | Unexercised |
 | New unchanged pre-fix round | **Observed and contained:** three unusable attempts discarded; fresh verified receipts supported the audit |
-| Post-fix round A | `pending` |
-| Post-fix round B | `pending` |
+| Post-fix round A | See the final outcome matrix below. |
+| Post-fix round B | See the final outcome matrix below. |
 
 ## `AR-PF-EVAL-ORACLE-001` — the available source oracle did not match the round
 
@@ -699,10 +701,10 @@ excluded entries, with an end-boundary entry excluded.
 **Prepared diff and validation status.** `helpers/trial_evaluation.py`,
 `helpers/prepared_checks/check_trial_evaluation.py`, `helpers/README.md`,
 `TRIAL-PROTOCOL.md`, `TRIAL-PROMPTS.md` and the report template contain the
-preflight and prepared fictional checks. The combined diff is not yet integrated
-into a published starter. The local prepared-check suite ran on 2026-09-18: all
-73 tests passed, and Python compilation passed. The treatment commit and
-immutable starter binding remain pending publication at this ledger update.
+preflight and prepared fictional checks. The local prepared-check suite ran on
+2026-09-18: all 73 tests passed, and Python compilation passed. The treatment
+was published in commit `e83ce22b1e1a0083d32bab8aedcfdba79c072101` and the
+immutable remediation starter identified in the final matrix below.
 
 **Rollback baseline:** source commit
 `db68b12840aab3d0c94cfbb7d036a85f31b311f2`, immutable tag/release
@@ -712,8 +714,8 @@ immutable starter binding remain pending publication at this ledger update.
 | --- | --- |
 | Captured round two | No source-semantic audit ran |
 | New unchanged pre-fix round | **Observed and corrected:** stale oracle rejected; exact interval rebuilt independently |
-| Post-fix round A | `pending` |
-| Post-fix round B | `pending` |
+| Post-fix round A | See the final outcome matrix below. |
+| Post-fix round B | See the final outcome matrix below. |
 
 ## `AR-PF-EVAL-CALL-001` — three image reads first failed local validation
 
@@ -766,8 +768,8 @@ are in the evaluator helper, prepared checks and trial protocol listed for
 | --- | --- |
 | Captured round two | Unexercised |
 | New unchanged pre-fix round | **Observed and corrected:** three local no-dispatch failures; three bounded corrected reads succeeded |
-| Post-fix round A | `pending` |
-| Post-fix round B | `pending` |
+| Post-fix round A | See the final outcome matrix below. |
+| Post-fix round B | See the final outcome matrix below. |
 
 ## `AR-ARCH-TASK-001` — persisted Task partition selector
 
@@ -793,8 +795,8 @@ in the post-fix starter.
 | --- | --- |
 | Captured round two | Representation gap exposed but no representation approved |
 | New unchanged pre-fix round | Distinct existing Task roots worked without a new selector |
-| Post-fix round A | `pending` |
-| Post-fix round B | `pending` |
+| Post-fix round A | See the final outcome matrix below. |
+| Post-fix round B | See the final outcome matrix below. |
 
 ## `AR-ARCH-INSTALL-001` — persistent installation manifest
 
@@ -820,8 +822,8 @@ manifest or setup receipt persists in the instance.
 | --- | --- |
 | Captured round two | Not proposed |
 | New unchanged pre-fix round | Empty system tree showed need for a completion gate, not persistent installer state |
-| Post-fix round A | `pending` |
-| Post-fix round B | `pending` |
+| Post-fix round A | See the final outcome matrix below. |
+| Post-fix round B | See the final outcome matrix below. |
 
 ## Stable evidence constraints
 
@@ -831,10 +833,10 @@ allow later rounds to state whether the same evidence limit remained.
 
 | Stable ID | Constraint established in round two | Consequence for inference | Later slots |
 | --- | --- | --- | --- |
-| `AR-R2-EVID-SOL-001` | Sol's finite referenced setup targets and explicit derived-page continuations were reviewed, but the Drive listing route supplied no explicit end marker. | Exhaustive folder inventory remains unknown; a short or matching list cannot establish exhaustion. | Pre-fix: same constraint; the 28-page finite graph and explicit continuations were verified. Post-fix A/B: `pending`. |
-| `AR-R2-EVID-SOL-002` | The public evidence does not establish complete content readback for every one of round-two Sol's 67 written files. | That round's bounded audited targets support their stated findings, but not a claim that every write was fully read back. | Pre-fix: a different route's 28 finite page bytes were fully read and matched declared sizes; the earlier-round limit remains. Post-fix A/B: `pending`. |
-| `AR-R2-EVID-WORK-001` | Round-two Work action records were not fully expanded and independently audited. | Temporary starter retrieval and the claimed absence of every downstream action remain provider claims beyond visible state and assigned-root readback. | Pre-fix: raw connector receipts again were not exposed; the visible root-answer contradiction and empty-root readback are independently established. Post-fix A/B: `pending`. |
-| `AR-R2-ENV-BROWSER-001` | Spark and Work use distinct tasks, controllers, tabs, roots and evidence areas but share one signed-in Chrome profile. | Cookies, account state, visible UI state and unknown provider memory are not isolated or measured; no account-level or provider-memory isolation claim is valid. | Pre-fix: constraint remained. Post-fix A/B: `pending`. |
+| `AR-R2-EVID-SOL-001` | Sol's finite referenced setup targets and explicit derived-page continuations were reviewed, but the Drive listing route supplied no explicit end marker. | Exhaustive folder inventory remains unknown; a short or matching list cannot establish exhaustion. | Pre-fix: same constraint; the 28-page finite graph and explicit continuations were verified. Post-fix A/B: see the final outcome matrix below. |
+| `AR-R2-EVID-SOL-002` | The public evidence does not establish complete content readback for every one of round-two Sol's 67 written files. | That round's bounded audited targets support their stated findings, but not a claim that every write was fully read back. | Pre-fix: a different route's 28 finite page bytes were fully read and matched declared sizes; the earlier-round limit remains. Post-fix A/B: see the final outcome matrix below. |
+| `AR-R2-EVID-WORK-001` | Round-two Work action records were not fully expanded and independently audited. | Temporary starter retrieval and the claimed absence of every downstream action remain provider claims beyond visible state and assigned-root readback. | Pre-fix: raw connector receipts again were not exposed; the visible root-answer contradiction and empty-root readback are independently established. Post-fix A/B: see the final outcome matrix below. |
+| `AR-R2-ENV-BROWSER-001` | Spark and Work use distinct tasks, controllers, tabs, roots and evidence areas but share one signed-in Chrome profile. | Cookies, account state, visible UI state and unknown provider memory are not isolated or measured; no account-level or provider-memory isolation claim is valid. | Pre-fix: constraint remained. Post-fix A/B: see the final outcome matrix below. |
 
 ## Cross-round update rules
 
@@ -849,3 +851,67 @@ passes support repeatability only for the exact tested routes, accounts,
 permissions, inputs and observed conditions. Unknown effects stay unknown unless
 new independent evidence resolves them. Architecture-changing treatments remain
 backlogged until explicitly approved.
+
+## Final implementation and outcome matrix
+
+The selected class A and B treatment package was published from exact commit
+`e83ce22b1e1a0083d32bab8aedcfdba79c072101`, tagged
+`school-os-starter-2026-09-18-remediation`. The exact 117,680-byte starter has
+SHA-256
+`1f0fadfbc5a5852ea361b1184ff501bf5588281d355130729aedd6af38211680`.
+Seventy-three prepared deterministic checks and Python compilation passed before
+publication. Those are local checks, not provider or product qualification.
+
+| Stable issue | Implemented disposition | Post-fix A | Post-fix B |
+| --- | --- | --- | --- |
+| `AR-R2-SOL-001` | Class A: require distinct existing Task roots without adding a selector. | Sol and Work used distinct roots when their setup reached the gate. | Sol and Work used distinct roots; Spark created neither root. |
+| `AR-R2-SOL-002` | Class B: reject aliased, duplicated, absent, or wrongly bound Task roles. | The gate enforced distinct roots. | The gate enforced distinct roots. |
+| `AR-R2-SPARK-001` | Class B: make setup authority boundaries explicit. | No mailbox action; setup still failed with an empty installed system. | No mailbox action; setup remained incomplete. |
+| `AR-PF-SPARK-001` | Class A/B: check immutable installation material before and after setup. | Empty installed system was detected and failed. | All immutable files were exact; Spark then failed later stages. |
+| `AR-PF-WORK-001` | Class D: no provider-specific product repair. | Substantial setup saved; intent evidence remained insufficient. | Substantial valid setup saved; the same intent-evidence gap remained. |
+| `AR-PF-EVAL-RECEIPT-001` | Class B: preflight an owner-only receipt sink before route operations. | Preflight passed; later capture correction stayed separate. | One local receipt was lost, then sink recovery and re-preflight succeeded. |
+| `AR-PF-EVAL-ORACLE-001` | Class B: bind the source oracle to exact interval, immutable starter, and independent evidence. | Bound oracle prepared; ingestion did not become eligible. | Bound oracle prepared; ingestion did not become eligible. |
+| `AR-PF-EVAL-CALL-001` | Class B: validate required access arguments before dispatch. | No repeat of the original omitted-argument incident. | No repeat of the original omitted-argument incident. |
+| `AR-ARCH-TASK-001` | Class C: unimplemented architecture backlog. | Unexercised by design. | Unexercised by design. |
+| `AR-ARCH-INSTALL-001` | Class C: unimplemented architecture backlog. | Unexercised by design. | Unexercised by design. |
+
+The full privacy-safe comparison is in
+[AUTONOMOUS-REMEDIATION-RESULTS.md](AUTONOMOUS-REMEDIATION-RESULTS.md).
+
+## New post-fix findings and contained evaluator incidents
+
+These IDs were created after the package was frozen. No product fix was applied
+to them during or after the post-fix rounds.
+
+| Stable ID | Evidence and classification | Disposition and principle alignment |
+| --- | --- | --- |
+| `AR-PB-SOL-TIMEZONE-001` | Exact saved state used the ISO `Z` suffix as a timezone label instead of the requested UTC meaning. Sol attributed the value to its local builder; persisted-byte checks did not compare meaning with the frozen answer. Product/setup generation defect; immediate cause confidence high. | Preserve and review. A routine semantic check may be possible, but no change is adopted in this completed cycle. Truthful date meaning and exact parent choices govern. |
+| `AR-PB-SPARK-PARTIAL-001` | All immutable files were exact, but only a partial canonical graph was saved; configuration, source-account and Task roots were absent and ten observed references were unresolved. Spark reported failed/timed-out subagents and incomplete batches. Saved-state failure is proven; provider cause is partly self-report. | Preserve and review. The hard gate correctly refused completion. Do not add general interrupted-write recovery without architecture approval. |
+| `AR-PB-WORK-ENTRYPOINT-001` | Work saved a structurally valid instance but preserved neither an independent pre-write byte expectation nor a configured-entrypoint readback. The same evidence gap occurred in both post-fix rounds. | Preserve and review. Any routine treatment must retain independent intent and readback without inventing persisted installer state. |
+| `AR-PA-CTRL-INTERVAL-001` | A controller packet carried conflicting interval values in post-fix A. It was corrected before ingestion and no source action followed. Evaluator incident. | Exclude from product grading; retain the corrected packet and disclosed method drift. |
+| `AR-PA-SPARK-SCOPE-001` | Spark created two test artifacts outside its assigned root in post-fix A. They were identified during audit; no product success claim relies on them. Tested-agent scope incident. | Preserve; do not silently clean or count them as assigned-root setup. |
+| `AR-PA-WORK-REVIEW-001` | A provider review interruption left a Work effect unknown in post-fix A. No blind retry occurred. Provider boundary. | Report unknown; verify only from independent saved state. |
+| `AR-PB-CTRL-DEST-001` | The controller initially omitted the destination from round-B interview answers and supplied it in a later follow-up. Controller incident. | Disclose; grade saved state and exact answers actually delivered. |
+| `AR-PB-CTRL-DUP-SOL-001` | A duplicate Sol controller task was created during identity recovery, then stopped and excluded before external writes. Controller incident. | Exclude from route comparison. It performed no Gmail action. |
+| `AR-PB-CTRL-SPARK-CLIP-001` | The first Spark task received stale clipboard text, was stopped, and was excluded. Controller incident. | Exclude and use only the separately identified valid task. |
+| `AR-PB-EVAL-RECEIPT-001` | One local receipt write failed before provider evidence was durably captured. The evaluator recovered, re-preflighted the private sink, and did not infer a provider result from the local failure. | Evaluator incident, not product failure. Preserve dispatch, provider response and receipt persistence as separate facts. |
+| `AR-ARCH-TASK-DESC-001` | The implemented rule proves distinct Task root ownership but does not define ownership of future continuation descendants. No observed collision requires a new rule yet. | Architecture backlog. Obtain explicit approval before broadening canonical ownership semantics. |
+
+## Final route outcomes
+
+| Round | Sol | Gemini Spark | ChatGPT Work | Eligible for ingestion |
+| --- | --- | --- | --- | --- |
+| Captured baseline | Failed | Failed/incomplete | Incomplete | 0/3 |
+| Unchanged pre-fix | Passed | Failed | Incomplete | 1/3, but Sol delivery was rejected before the tested thread |
+| Post-fix A | Passed | Failed | Insufficient evidence | 1/3, but Sol delivery was blocked by the host boundary |
+| Post-fix B | Failed on timezone meaning | Incomplete partial graph | Insufficient evidence | 0/3 |
+
+No route performed the tested ingestion. Common questions, independent semantic
+source grading, and the 64/128/256 KiB private comparison therefore remain
+unexercised. The approved 65,536-byte canonical maximum remains unchanged.
+
+## Final stop
+
+The autonomous remediation cycle is complete. Do not repair these trial
+instances, implement another treatment, run another setup, or attempt ingestion
+before joint review. New architecture remains backlog until explicitly approved.

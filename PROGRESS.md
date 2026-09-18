@@ -6767,3 +6767,52 @@ requirements, then read this log from top to bottom.
 - Exact next action: publish and remotely verify this execution-plan checkpoint,
   then create three fresh pre-fix Drive roots and fresh route sessions using the
   unchanged round-two starter. Preserve all baseline instances and evidence.
+
+## 2026-09-18 — Autonomous remediation cycle completed; joint-review stop
+
+- Preserved the exact pre-treatment repository at commit
+  `db68b12840aab3d0c94cfbb7d036a85f31b311f2` with immutable tag and release
+  `school-os-autonomous-remediation-baseline-2026-09-17`; preserved website
+  version 25 and source commit
+  `708d46611cbf2175d4bc68b7c5cb53e96826083e` as the separate website rollback
+  point.
+- Published the one authorized treatment package at exact commit
+  `e83ce22b1e1a0083d32bab8aedcfdba79c072101` and immutable starter tag
+  `school-os-starter-2026-09-18-remediation`. Its 117,680-byte starter has
+  SHA-256
+  `1f0fadfbc5a5852ea361b1184ff501bf5588281d355130729aedd6af38211680`.
+  Seventy-three prepared deterministic checks and Python compilation passed
+  before publication; these are local checks, not managed-agent or connector
+  qualification.
+- Completed the unchanged pre-fix round and two independent post-fix rounds on
+  Sol, Gemini Spark, and ChatGPT Work. The post-fix package remained unchanged
+  between rounds. Post-fix A passed 1/3 setup gates; post-fix B passed 0/3.
+- The package materially improved validation: the Task-root alias is rejected;
+  empty or changed immutable installation material fails setup; entrypoint,
+  bootstrap, receipt, source-oracle, continuation, reference and export evidence
+  checks are stricter; browser isolation claims now match the actual shared
+  profile boundary.
+- Remaining route findings are preserved without repair. Sol B saved the wrong
+  timezone meaning in one canonical field. Spark B installed the immutable
+  system but stopped with a partial canonical graph and unresolved references.
+  Work repeated the configured-entrypoint intended-byte evidence gap in both
+  post-fix rounds. The related observable-action retrospectives and independent
+  Drive audits are retained privately.
+- No route completed the tested seven-day ingestion. Sol was the only eligible
+  route in the unchanged pre-fix and post-fix A rounds, but its separate
+  ingestion message was blocked before delivery by provider/host admission.
+  Common questions, independent source-semantic grading and the private
+  64/128/256 KiB comparison therefore remain unexercised. The approved 65,536-
+  byte canonical maximum remains unchanged.
+- The privacy-safe final report is
+  `docs/plans/restart/AUTONOMOUS-REMEDIATION-RESULTS.md`; the detailed treatment
+  and issue history is
+  `docs/plans/restart/AUTONOMOUS-REMEDIATION-ISSUES.md`. Controller/evaluator
+  incidents remain separate from product findings.
+- Architecture backlog remains unimplemented: a persisted Task partition
+  selector, a persistent installation manifest, and a possible descendant Task-
+  root ownership rule each require explicit approval before adoption.
+- Exact next action: publish and remotely verify this final evidence checkpoint
+  and its owner-private website brief, then stop for joint review. Do not repair
+  trial instances, implement another treatment, run another setup, or attempt
+  ingestion until the user directs the next cycle.
