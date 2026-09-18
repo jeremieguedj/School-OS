@@ -42,7 +42,9 @@ implemented in source and published from exact commit
 `aae44ef13be8392130f9b5aec7889b040c0ca45b`. Deterministic local checks pass.
 The three fresh-agent retests ended with 0/3 setup gates passed, so ingestion and
 query stages did not run; see the
-[round-two results](docs/plans/restart/ROUND-2-TRIAL-RESULTS.md). The retired
+[round-two results](docs/plans/restart/ROUND-2-TRIAL-RESULTS.md) or the
+[readable website report](https://school-os-architecture-guide.jeremieg.chatgpt.site/round-2-results.html).
+The retired
 implementation is not the foundation of this project. No provider compatibility
 claim is made from source or local checks alone.
 

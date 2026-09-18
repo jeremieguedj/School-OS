@@ -6694,3 +6694,20 @@ requirements, then read this log from top to bottom.
   `docs/plans/restart/ROUND-2-TRIAL-RESULTS.md`. Exact next action: publish this
   report and return to the user for joint review. Proposed fixes and any further
   test require explicit approval.
+
+## 2026-09-17 — Round-two findings published; joint-review stop
+
+- Published the privacy-safe repository report and continuity update at exact
+  commit `fe1f8d98b903cc030504582bf5a340ca086c3384` on
+  `codex/restart-implementation`; the remote branch was verified at that exact
+  revision before this final continuity entry.
+- Published version 23 of the existing School-OS architecture guide. The
+  self-contained results page is
+  `https://school-os-architecture-guide.jeremieg.chatgpt.site/round-2-results.html`.
+  The Sites deployment reported `succeeded`.
+- Publication hygiene only: the updated Markdown links resolve, the privacy scan
+  and diff checks pass, and the site page's local links and required result
+  sections were checked. These are not functional product validation.
+- Exact next action: stop for joint review. The six follow-up proposals in the
+  report are not approved. Do not repair, clean up, retry or run additional
+  tests until the user explicitly directs the next work.
