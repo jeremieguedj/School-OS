@@ -6596,3 +6596,22 @@ requirements, then read this log from top to bottom.
 - Exact next action: continue recording the user's decisions treatment by
   treatment. Wait for an explicit instruction to implement before changing the
   approved product procedures, contracts, helpers, fixtures or starter.
+
+## 2026-09-17 — Complete remediation package approved; implementation still held
+
+- The user explicitly approved T02 through T19 in addition to the previously
+  approved T01 and both prerequisite architecture recommendations. The full
+  second-round remediation design is therefore approved as one cohesive package.
+- T17 is approved with a specific constraint: do not require separate Chrome
+  profiles, because an alternate profile would not have the user's signed-in
+  Spark and ChatGPT Work services. Use separate agent conversations/sessions,
+  controllers, serially operated tabs, Drive instances and evidence boundaries;
+  disclose the shared signed-in profile and do not claim account-level or
+  provider-memory isolation.
+- This work unit records decisions only. No School-OS product code, procedure,
+  helper, fixture or starter was changed; no test, trial, connector operation,
+  instance repair or external effect was performed.
+- Exact next action: wait for the user's explicit instruction to implement the
+  approved remediation package. After implementation and publication, stop at
+  the plan's retest authorization gate unless the user separately directs the
+  retest.

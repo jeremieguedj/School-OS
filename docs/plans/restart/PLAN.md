@@ -46,13 +46,31 @@ second-round remediation plan:
    bounds; return `valid`, `invalid` or `insufficient_evidence`; and keep setup
    incomplete unless saved-state evidence passes. The helper performs no Drive
    I/O and does not choose the expected route set.
+4. **T02-T19 remediation treatments.** The user approved every remaining
+   treatment in the published second-round plan: source-to-saved semantic
+   comparison; knowledge/task classification and task cardinality; explicit
+   date roles; bounded query planning and claim-level citations; substantive
+   embedded-image ingestion; fresh-context checks; tool-choice interviewing;
+   Drive write confinement; identical starter provenance; conservative launch
+   retry; exhaustive-listing evidence; private receipt-sink verification;
+   contract-defined reference traversal; task-bound report provenance;
+   accurately described browser isolation; independently grounded image
+   expectations; and evaluation of the retained 64 KiB page limit.
+5. **T17 browser constraint.** Do not require separate Chrome profiles for the
+   Spark and ChatGPT Work routes because those profiles would not contain the
+   user's signed-in agent services. Use the existing signed-in profile and
+   isolate the routes through separate agent conversations/sessions,
+   controllers, tabs used serially, Drive instances and private evidence. The
+   final methodology must disclose the shared profile, cookies/account state
+   and any resulting limit; it must not claim account-level or provider-memory
+   isolation.
 
-These approvals do not approve T02-T19 as a group and do not authorize
-implementation, test execution, trial replay, instance repair or external
-effects yet. The user is reviewing the treatments one by one and explicitly
-directed the coordinator to wait for further instruction before acting on the
-approved items. The proposed conversation/worktree fork was dropped and creates
-no alternate implementation line.
+All T01-T19 treatments and the two prerequisite architecture recommendations
+are now approved. This decision record still does not authorize implementation,
+test execution, trial replay, instance repair or external effects. The user
+explicitly directed the coordinator to record the decisions and wait for a
+separate instruction to act. The proposed conversation/worktree fork was
+dropped and creates no alternate implementation line.
 
 ## Current testing authority — report findings, do not repair
 
