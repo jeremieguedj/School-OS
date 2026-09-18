@@ -6573,3 +6573,26 @@ requirements, then read this log from top to bottom.
 - Spark and Work diagnostics are now complete and cross-checked. No fix, replay,
   fresh source read or external mutation occurred. After publishing this no-fix
   diagnostic checkpoint, the exact next action is joint review with the user.
+
+## 2026-09-17 — First remediation approvals recorded; implementation held
+
+- The user dropped the proposed conversation/worktree experiment and is
+  reviewing the published second-round remediation treatments one by one.
+- The user explicitly approved both architecture recommendations: a temporary
+  finite setup-route manifest over the existing concrete catalogue pages, with
+  no persisted catalogue-of-routes schema; and one least-stateful read of a
+  directly embedded substantive remote email image through an authorized route,
+  represented as parent-email body content rather than an Attachment Group.
+  Remote locators remain access aids, never identity evidence, and unavailable
+  content keeps the whole Email `not_ingested`.
+- The user explicitly approved T01 bootstrap contract validation. Its proposed
+  standard-library helper consumes already-read saved page bytes and the
+  temporary manifest, performs no Drive I/O or route selection, and returns
+  `valid`, `invalid` or `insufficient_evidence` for the specified structural and
+  reachability invariants.
+- No T01 code, remote-image behavior, data-contract text, setup/storage recipe,
+  fixture or starter package was implemented in this work unit. No test, trial,
+  connector operation, instance repair or external effect was performed.
+- Exact next action: continue recording the user's decisions treatment by
+  treatment. Wait for an explicit instruction to implement before changing the
+  approved product procedures, contracts, helpers, fixtures or starter.

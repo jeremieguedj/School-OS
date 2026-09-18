@@ -17,6 +17,43 @@ qualification is claimed. See
 below are historical. The [artifact guide](README.md) distinguishes the active
 contract from frozen studies and superseded proposals.
 
+## 2026-09-17 remediation approval ledger — implementation on hold
+
+The user has approved the following recommendations from the published
+second-round remediation plan:
+
+1. **Finite setup-route validation.** Setup may derive a temporary finite
+   manifest of the concrete catalogue routes it intends to install from the
+   selected source accounts and initial source scope. The bootstrap check may
+   validate that manifest against actual saved page bytes. The manifest is not
+   canonical Drive state, creates no catalogue-of-routes record or record
+   family, and is discarded after the setup check. Later source/month routes
+   continue to be created through the existing storage procedure when first
+   needed.
+2. **Bounded substantive remote-image access and representation.** When an
+   image directly embedded in an in-scope email carries substantive school
+   information, ordinary ingestion may perform one least-stateful read through
+   an authorized route. It must not crawl, submit forms, sign in or retain the
+   raw image. The parent Email remains the canonical source. Extracted claims
+   use the existing body source-reference meaning with a descriptive location;
+   the remote locator is a replaceable access aid and never identity evidence.
+   Unsupported, inaccessible or uncertain access keeps the whole Email
+   `not_ingested`.
+3. **T01 bootstrap contract validation.** The proposed T01 treatment is
+   approved: add a pure Python standard-library checker over already-read page
+   bytes and the temporary finite manifest; validate instance identity, approved
+   families/routes, references, continuation, duplicates/conflicts and page
+   bounds; return `valid`, `invalid` or `insufficient_evidence`; and keep setup
+   incomplete unless saved-state evidence passes. The helper performs no Drive
+   I/O and does not choose the expected route set.
+
+These approvals do not approve T02-T19 as a group and do not authorize
+implementation, test execution, trial replay, instance repair or external
+effects yet. The user is reviewing the treatments one by one and explicitly
+directed the coordinator to wait for further instruction before acting on the
+approved items. The proposed conversation/worktree fork was dropped and creates
+no alternate implementation line.
+
 ## Current testing authority — report findings, do not repair
 
 ### Read-only root-cause investigation authorized
