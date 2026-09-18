@@ -18,6 +18,10 @@ Read [the data contract](../contracts/data.md#instance-configuration),
 [Drive setup and storage](storage.md#bootstrap-an-instance) and the supplied
 [shared mappings](../adapters/README.md). Use their concrete references and page
 rules; do not copy an old instance or infer configuration from fictional examples.
+Use the parent-supplied starter as the setup source. Do not inspect an ambient
+development repository, another agent's transcript or a prior instance to
+supplement it. Disclose inherited context instead of claiming bundle-only
+discovery.
 
 ## 1. Discover the supplied material and establish instance state
 
@@ -55,6 +59,10 @@ rules; do not copy an old instance or infer configuration from fictional example
 7. Classify the request as new setup, configuration change or support for a new
    tool. A conformant tool mapping is compatible expansion; new canonical meaning
    or incompatible behavior still needs explicit architecture approval.
+
+Do not inventory connectors, packages, dependencies or unrelated applications
+before the interview. First learn the outcomes the parent wants; capability
+inspection in step 3 is then limited to relevant routes this agent can offer.
 
 ## 2. Interview the parent
 
@@ -119,6 +127,10 @@ installed instance may perform separately authorized qualification under the
 applicable operation. Repository development follows the publication prerequisite
 and exact trial scope in the active plan; these instructions do not expand it.
 
+Do not perform broad tool discovery after the interview. Inspect only the routes
+needed for requested outcomes and the selected storage destination. If a route
+cannot be inspected without a live effect, present it as unknown or unsupported.
+
 ## 4. Select or prepare one shared adapter per tool
 
 For each selected source, storage, task, delivery or audio tool:
@@ -157,6 +169,14 @@ For a genuinely new instance, now follow the
 relative references and identify the supplied published revision in the readable
 entry point.
 
+Confine every persistent write to the parent-selected School-OS root. Before a
+write, resolve that root and the intended relative destination. Afterward,
+establish actual parent or ancestry from the connector response or an available
+read/list operation, then read the complete content back and compare it with the
+intended value. Wrong or unknown placement, or mismatched content, stops
+dependent setup work. Preserve the response; do not create a second copy, move
+an unknown object or delete evidence merely to continue.
+
 Assign School-OS-owned UUIDs for the instance and new Entity, Topic and Membership
 records using the data contract. Keep the parent-declared household, children,
 schools/classes and their dated relationships; an unknown enrollment date stays
@@ -179,6 +199,11 @@ Create the bounded family/page directories required for the selected configurati
 using the storage procedure. Read the entry point, configuration and referenced
 roots back. Check instance IDs, actual values, reference targets and page bounds;
 an empty directory is complete only when that empty inventory is established.
+Record each Drive folder/search scope and follow every supported provider
+continuation to an explicit end. Provider listing continuation and School-OS
+page continuation are separate checks. If exhaustive listing is unavailable,
+verify the finite required bootstrap targets through known references and report
+all other inventory as unknown; a short or empty list is not exhaustion evidence.
 Make every selected adapter and user-created recipe discoverable from those
 references. Do not report missing roots as an empty school history.
 
@@ -194,6 +219,8 @@ Report to the parent:
   the household;
 - the descriptive evidence for the current agent's required operations;
 - every unsupported or unknown operation and its practical effect;
+- any placement or listing-exhaustion limit that prevents complete setup
+  verification;
 - unresolved product choices that prevent a default; and
 - whether only setup occurred or the parent separately authorized another
   operation to follow it.

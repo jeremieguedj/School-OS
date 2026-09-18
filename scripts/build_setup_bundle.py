@@ -38,6 +38,7 @@ SYSTEM_SOURCES = (
     "operations/ingestion.md",
     "operations/knowledge.md",
     "operations/query.md",
+    "operations/semantic-review.md",
     "operations/setup.md",
     "operations/startup.md",
     "operations/storage.md",
@@ -47,6 +48,7 @@ SYSTEM_SOURCES = (
     "contracts/data.md",
     "contracts/identity.md",
     "helpers/README.md",
+    "helpers/bootstrap_contract.py",
     "helpers/source_metadata.py",
     "adapters/README.md",
     "adapters/elevenlabs.md",
@@ -123,6 +125,20 @@ def pinned_development_links(member: str, text: str, revision: str) -> str:
         replacements["prepared_checks/check_source_metadata.py"] = (
             f"{GITHUB_BLOB_ROOT}/{revision}/helpers/prepared_checks/"
             "check_source_metadata.py"
+        )
+        replacements["prepared_checks/check_bootstrap_contract.py"] = (
+            f"{GITHUB_BLOB_ROOT}/{revision}/helpers/prepared_checks/"
+            "check_bootstrap_contract.py"
+        )
+        replacements["prepared_checks/check_trial_evaluation.py"] = (
+            f"{GITHUB_BLOB_ROOT}/{revision}/helpers/prepared_checks/"
+            "check_trial_evaluation.py"
+        )
+        replacements["../examples/evaluation/README.md"] = (
+            f"{GITHUB_BLOB_ROOT}/{revision}/examples/evaluation/README.md"
+        )
+        replacements["(trial_evaluation.py)"] = (
+            f"({GITHUB_BLOB_ROOT}/{revision}/helpers/trial_evaluation.py)"
         )
     for old, new in replacements.items():
         text = text.replace(old, new)

@@ -1,6 +1,6 @@
 # Whole-project restart coverage
 
-Updated 2026-09-16 from the [product principles](../../../product-principles.md),
+Updated 2026-09-17 from the [product principles](../../../product-principles.md),
 [active plan](../PLAN.md), [metadata recipe](../identity/METADATA-RECIPE.md) and
 [historical lifecycle scenarios](../SIMULATION.md). The lifecycle model's
 mechanisms and old runtime do not supply missing architecture approvals.
@@ -36,9 +36,12 @@ earlier exclusions below; it is not an approval gate for MVP coding. Q3 run-star
 manual/audio policies are approved. Concrete data/index and discovery/reuse rules are now explicitly approved. New architecture cannot be invented through generic delegation.
 Supplier capability availability is user-reported, not independently qualified.
 The retained operations, contracts, shared adapter mappings and fictional
-examples are authored and the starter is published. The named live trials ran
-under explicit user authority and exposed material failures; they do not qualify
-the project or a vendor generally. No current architecture question remains.
+examples are authored. The approved T01–T19
+[second-round remediation](../ROUND-2-REMEDIATION.md) is implemented in source,
+and its 37 deterministic local checks pass. The earlier named live trials exposed
+material failures; the user has authorized publication and three fresh-agent
+retests. Neither local checks nor the earlier trials qualify the project or a
+vendor generally. No current architecture question remains.
 See the current qualification table below and [trial results](../TRIAL-RESULTS.md).
 Prepared fictional suites remain unexecuted. Fixes and further trials require
 joint review with the user.

@@ -41,6 +41,12 @@ authorized connector, applies the shared mapping, follows continuations, reasons
 over school meaning, saves canonical data and validates results through available
 authorized reads.
 
+Following continuations means observing an explicit provider end state, not
+assuming a short or empty response is complete. If exhaustion is unavailable,
+the agent may resolve a finite required target set through known references but
+must describe every unreferenced item as unknown. Provider pagination and
+School-OS page continuation are independent checks.
+
 The agent interprets the actual connector result through the shared semantic
 mapping. This does not require a new wrapper, projection module or code layer,
 and it is not permission to create different canonical meanings for each agent.
@@ -72,7 +78,9 @@ unambiguous rejection unless the selected mapping explicitly establishes it.
 3. Confirm that the mapping describes the required read, update and verification
    semantics and states its unsupported areas.
 4. Confirm that this agent's connector can actually supply the mapped inputs and
-   operations. Declared availability is not live qualification.
+   operations, including exhaustive-listing evidence or a documented finite-target
+   fallback where completeness matters. Declared availability is not live
+   qualification.
 5. Reference the selected shared mapping from existing configuration. Do not
    copy it into an agent-named fork.
 

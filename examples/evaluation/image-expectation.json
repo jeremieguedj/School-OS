@@ -1,0 +1,34 @@
+{
+  "grounded_shape": {
+    "reviewed_artifact_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+    "visible_evidence": {
+      "kind": "exact_pixels",
+      "portions_reviewed": ["full fictional newsletter image"]
+    },
+    "expectation": {
+      "basis": "independent_visual_review",
+      "authored_before_tested_output": true,
+      "tested_output_used": false,
+      "facts": ["Fictional picture day is September 24."],
+      "actions": []
+    },
+    "ocr": {"used": false}
+  },
+  "unavailable_pixels_shape": {
+    "reviewed_artifact_sha256": "unknown",
+    "visible_evidence": {
+      "kind": "unavailable",
+      "portions_reviewed": []
+    },
+    "expectation": {
+      "basis": "filename_only",
+      "authored_before_tested_output": true,
+      "tested_output_used": false,
+      "facts": [],
+      "actions": []
+    },
+    "ocr": {"used": false},
+    "expected_status": "evaluation_limitation"
+  },
+  "privacy_note": "Real school images, renderings, hashes, and semantic expectations stay in private evidence."
+}

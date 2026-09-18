@@ -1,14 +1,12 @@
 # School-OS restart: current plan and artifacts
 
-Updated 2026-09-16. The latest approved addition is a clean starter ZIP and the
-one-link “setup my schoolOS” flow, with a discoverable dedicated setup guide and
-parent interview. See [starter distribution](../../setup-bundle.md) and the
-[revised trial handoff](TRIAL-PROMPTS.md). The starter is published, the user
-authorized the named live trials and later isolated browser attempts, and their
-[results](TRIAL-RESULTS.md) include material failures. The authorized attempts and
-audits are concluded. The subsequent [read-only root-cause review](ROOT-CAUSE-REVIEW.md)
-is complete; stop for joint review before fixes or new trials. Earlier guided
-attempts remain historical; the active plan controls current authority.
+Updated 2026-09-17. The user approved both architecture recommendations and all
+T01–T19 treatments in the [second-round remediation](ROUND-2-REMEDIATION.md),
+then authorized implementation, publication and three fresh-agent retests. The
+first-round [results](TRIAL-RESULTS.md) and
+[root-cause review](ROOT-CAUSE-REVIEW.md) remain historical evidence. The active
+plan controls the new implementation and test authority, including the rule not
+to repair defects after the retest begins.
 
 Start here when resuming the restart. The retained MVP
 implementation is authored but not yet qualified. Earlier experiments and the
@@ -29,12 +27,11 @@ long-term scope; these explicit MVP exceptions take precedence for delivery.
 
 [Fictional scenarios and proposed tests](implementation/TESTING-PROPOSAL.md) and
 the [isolated development model](identity/revised-model/README.md) are authored
-preparation only. Frozen studies stay unchanged. These prepared suites and model
-replays were not run; the separately authorized live trials are recorded in the
-results rather than being inferred from this preparation.
-The [minimal helpers](../../../helpers/README.md) are authored with prepared
-checks whose suite was not executed. Authorship or indirect use in an agent trial
-does not establish helper qualification.
+preparation only. Frozen studies stay unchanged. Historical broad suites and
+model replays were not run. The remediation helper checks and privacy scan did
+run locally and passed; those deterministic checks do not establish connector,
+agent or product qualification. The separately authorized live trials are
+recorded in the results rather than inferred from local checks.
 
 For a guided review, open the [HTML architecture decision guide](implementation/architecture-guide.html).
 Its [single numbered section](implementation/architecture-guide.html#open-questions)
@@ -68,12 +65,13 @@ The [product principles](../../product-principles.md#decision-authority) are the
 source of truth and grounding for uncovered decisions. Every new or changed
 architecture decision requires explicit user approval before adoption or
 implementation, except where the user has explicitly delegated a recorded choice.
-The three isolated seven-day attempts and matched 64/128/256 KiB evaluation ran
+The first isolated seven-day attempts and matched 64/128/256 KiB evaluation ran
 under explicit user authority; only the first Sol route reached that size
-comparison, and larger-capacity behavior was not exercised. Later Spark/Work
-attempts also require their own qualified outcomes. No new test or provider effect
-starts automatically; retain the current 64 KiB maximum and wait for joint review
-before any fix or further trial. The [coordinator handoff](ASTRA-HANDOFF.md) has a historical
+comparison, and larger-capacity behavior was not exercised. The user has now
+authorized the implemented remediation's three-route retest. Retain the current
+64 KiB maximum, preserve any new defect without repair after execution starts,
+and stop for joint review after the comparative report. The
+[coordinator handoff](ASTRA-HANDOFF.md) has a historical
 filename; the active plan controls current authority.
 
 The assignment covers the [whole project](PLAN.md#whole-project-implementation-scope):
@@ -149,8 +147,8 @@ optional, and short pages with continuation require continued enumeration.
 
 The retained implementation covers the MVP checklist subject to its explicit
 deferrals. An identity model alone is not the completed project. Publish and
-verify the starter revision, report readiness and wait for the user to direct
-the three revised isolated trials. Actual route behavior, attachment-group processing,
+verify the starter revision, then run the three revised isolated trials already
+authorized by the user. Actual route behavior, attachment-group processing,
 complete discovery, fresh-session handoff, page-size cost and retrieval remain
 qualification work; unrelated pilots, scheduling and external effects remain
 unauthorized.
@@ -162,10 +160,10 @@ The user has explicitly approved all remaining published Q1/Q2, Q4 and Q6
 recommendations. Earlier proposal/pending language in historical review material
 records the discussion at that time, not a remaining approval gate. The active
 [plan](PLAN.md#current-execution-authorization) records the final authority and
-three isolated post-publication ingestion/audit trials. That earlier automatic
-launch timing is now superseded by the one-link setup readiness stop; subsequent
-user direction is required. Unrelated qualification and outbound effects remain
-unauthorized.
+three isolated post-publication ingestion/audit trials. The user subsequently
+authorized implementation, publication and immediate execution of those three
+isolated retests. No further readiness approval is required. Unrelated
+qualification and outbound effects remain unauthorized.
 
 The requested **OrgoS Restart Documentation** snapshot preserves all tracked
 documentation, decisions, architecture, plans, source history and frozen evidence

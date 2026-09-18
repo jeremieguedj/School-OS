@@ -37,6 +37,11 @@ state comes before requiring a stable Drive bootstrap.
    [storage](storage.md) and the selected operation's directories. Ingestion checks
    unfinished source windows and known not-ingested mail. A query checks relevant
    source/index freshness. A general question does not drain unrelated work first.
+   When a provider listing is needed, follow every supported continuation to an
+   explicit end before treating it as exhaustive. If exhaustion cannot be
+   established, resolve only the finite referenced targets needed and keep all
+   other inventory unknown. Provider listing and School-OS page continuations
+   are separate checks.
 6. **Proceed under existing authority.** Read saved state and perform only the
    selected authorized operation. If a relevant dependency is incomplete, resolve
    it within authorization or disclose the limitation under the query/manual-brief

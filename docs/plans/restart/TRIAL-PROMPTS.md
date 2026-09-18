@@ -29,6 +29,12 @@ Record any platform-injected instructions or local repository visibility as an
 environment difference; a context-free launch alone does not prove identical
 harnesses. Do not secretly supplement a struggling agent's setup instructions.
 
+Spark and ChatGPT Work use the user's existing signed-in Chrome profile. Keep
+their conversations, controllers, serially operated tabs, Drive destinations and
+private evidence separate. Record the shared profile, cookies/account state and
+any unknown provider memory as methodology limits; do not claim account-level
+isolation. Any detected cross-route contamination invalidates the comparison.
+
 ## What should happen without coaching
 
 1. The agent opens the link and reads the starter folder's entry documents.
@@ -82,6 +88,13 @@ Use the installed ingestion recipe. A connector limitation must remain visible;
 do not supply hidden extraction shortcuts or evaluator expectations. The prior
 source oracle supports only its original interval: reuse it only if that exact
 interval is deliberately retained; otherwise prepare a new independent oracle.
+
+Evaluator-only preflight stays out of the agent prompt. Before any source or
+Drive dispatch, verify the owner-only private receipt sink. During audit, traverse
+the contract-defined nested references and continuations rather than a remembered
+field list. Use downloaded reports only with same-task export provenance, and use
+image-specific expectations only after independent review of the exact pixels or
+a faithful private rendering.
 
 ## Questions and page-size evaluation come later
 

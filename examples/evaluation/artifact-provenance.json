@@ -1,0 +1,19 @@
+{
+  "case": "same-name-local-file-without-task-bound-export",
+  "task_alias": "fictional-work-route",
+  "events": {
+    "prompt": {"observed": true, "task_alias": "fictional-work-route"},
+    "final_response": {"observed": true, "task_alias": "fictional-work-route"},
+    "export_action": {"observed": false, "task_alias": "fictional-work-route"},
+    "provider_receipt": {"state": "unavailable", "task_alias": "fictional-work-route"}
+  },
+  "artifact": {
+    "local_filename": "school-os-report.md",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "expected": {
+    "status": "visible_output_only",
+    "authoritative_evidence": "visible_response",
+    "reason": "A matching filename and plausible content do not bind the local file to the tested task."
+  }
+}

@@ -2,7 +2,9 @@
 
 Use this procedure after source discovery and content reading establish
 substantive information. Follow [the retained data contract](../contracts/data.md)
-and [bounded storage procedure](storage.md). Source discovery completeness,
+and [bounded storage procedure](storage.md). Before finalizing coverage, use
+[semantic review](semantic-review.md) to compare the actual saved records with
+the source-bound checklist. Source discovery completeness,
 email ingestion, canonical Knowledge, and Tasks are separate outcomes.
 
 ## Author a Knowledge record
@@ -111,6 +113,7 @@ relationship.
 
 Confirm that substantive claims, qualifications, scope, dates, topics, source
 locations, action disposition, relationships, and Tasks were all retained and
-read back. Confirm attachment requirement and email-level ingestion state.
+read back and passed the shared semantic review. Confirm attachment requirement
+and email-level ingestion state.
 Temporary source cleanup follows the ingestion procedure only after
 verified persistence.

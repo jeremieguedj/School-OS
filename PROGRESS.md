@@ -6615,3 +6615,27 @@ requirements, then read this log from top to bottom.
   approved remediation package. After implementation and publication, stop at
   the plan's retest authorization gate unless the user separately directs the
   retest.
+
+## 2026-09-17 — Remediation implemented locally; publication review in progress
+
+- The user supplied the separate instruction to implement the complete approved
+  package, publish it and run fresh isolated Sol, Gemini Spark and ChatGPT Work
+  setup and seven-day ingestion trials, followed by a comparative report. No
+  additional readiness approval is required.
+- T01-T19 and both prerequisite architecture decisions are implemented in the
+  active contracts, operating instructions, setup entrypoints, standard-library
+  helpers and fictional evaluation fixtures. Drive remains canonical; no queue,
+  scheduler, database, lock, generic write-repair engine or second-model judge
+  was introduced.
+- The integrated deterministic suite passed 37 tests, Python compilation passed
+  with a temporary bytecode cache, and privacy, Markdown-link and whitespace
+  publication checks passed. These are local checks, not agent or connector
+  qualification.
+- An independent Sol integration review found pre-publication gaps in starter
+  link packaging, strict bootstrap reference validation, evaluator continuation
+  validation and stale trial-status text. These are being corrected before the
+  implementation commit and do not count as trial findings.
+- Exact next action: finish those pre-publication corrections, rerun the allowed
+  local checks, commit and publish the exact starter, then start the authorized
+  three-route retest. After the first trial operation, preserve new defects
+  without repair and stop after the privacy-safe comparative report.

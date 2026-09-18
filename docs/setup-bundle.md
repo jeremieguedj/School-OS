@@ -31,6 +31,14 @@ file from the named Git commit rather than from working-tree content. Commit and
 publication verification remain coordinator responsibilities; creating the ZIP
 does not establish that its revision is pushed or released.
 
+For a comparable multi-agent trial, build this artifact once, calculate its
+SHA-256 digest, upload those exact bytes once to the authorized delivery location
+and give every route the same immutable link. Record the source commit, digest,
+upload observation and link in the private artifact manifest. A matching digest
+establishes the uploaded artifact's provenance. When a tested agent cannot expose
+the bytes it consumed, report that every route received the same link without
+claiming each route independently proved its downloaded bytes.
+
 The ZIP has one top directory, `School-OS/`. Its root contains the generated
 consumer `README.md`, `START-HERE.md`, `AGENTS.md`, and the exact Claude import
 `CLAUDE.md`. The root README records the source revision. Existing reusable
@@ -70,11 +78,13 @@ tests, prepared checks and review cases, private receipts and configuration,
 cache files, existing distribution artifacts, and developer scripts. The
 packager itself is not shipped in the ZIP.
 
-Two development-only relative references may appear in reusable source material:
-the active restart plan and the prepared helper checks. When present, the builder
-rewrites only those link targets to public GitHub URLs pinned to the same source
-revision. They are optional background references and are not required setup
-inputs. Other local Markdown links must resolve inside the final ZIP.
+Development-only relative references may appear in reusable source material:
+the active restart plan, prepared helper checks, the private-trial evaluator and
+its fictional public examples. When present, the builder rewrites only those
+link targets to public GitHub URLs pinned to the exact source revision supplied
+to the build. They are optional background references and are not required setup
+or runtime inputs; evaluator code, checks and examples are not copied into the
+consumer starter. Other local Markdown links must resolve inside the final ZIP.
 
 ## Static packaging checks
 
@@ -90,3 +100,27 @@ probes, browser operations, or live-account operations. It does not qualify an
 agent, provider, setup route, or persisted instance. Publish the reviewed ZIP as
 an agent-accessible GitHub release asset only after the ordinary repository
 publication process is complete.
+
+## Fresh-context trial delivery and launch failures
+
+A one-link trial begins in a new projectless agent session with no inherited
+School-OS conversation or access to this development checkout. Its opening input
+is the same immutable starter link plus “setup my schoolOS.” Record unavoidable
+platform instructions and the actual browser/profile/account boundary. If the
+agent sees repository instructions, another route's answers or output, or another
+route's Drive instance, the run cannot establish fresh starter discovery.
+
+If the common link is inaccessible, classify an input-access failure and do not
+silently substitute a source archive, emailed file, pasted tree or different
+channel. For a generic launch error, preserve the exact response and check for a
+created provider task/session, Drive object or other possible effect. Retry the
+identical opening once only when evidence establishes that dispatch did not occur
+and no durable effect exists. Continue an existing task when one exists. If the
+effect is unknown, stop and report uncertainty. Keep the first response, state
+checks, retry decision and any second response separate in private evidence; a
+generic error is not proof of timeout, throttling or authentication failure.
+
+These delivery records are evaluation evidence, not part of the starter ZIP,
+canonical instance state or School-OS identity. An inaccessible common link or
+ineligible retry is a route result and does not justify changing another route's
+input.

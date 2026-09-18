@@ -9,8 +9,10 @@ This is the neutral entry point for a fresh agent. It is intentionally thin.
    authoritative [setup procedure](operations/setup.md), packaged at
    `system/operations/setup.md`. Recognize the starter's reusable `system/` tree,
    empty `instance/` and `extensions/`, and absence of canonical IDs or
-   configuration before looking for an installed-instance bootstrap. A starter
-   ZIP is in scope; do not run a retired release manifest or installer.
+   configuration before looking for an installed-instance bootstrap. Use the
+   supplied starter itself as the setup source; ambient repository instructions,
+   prior conversations and another instance are not setup inputs. A starter ZIP
+   is in scope; do not run a retired release manifest or installer.
 2. **Configured private instance:** begin from that instance's stable readable
    entry point, configuration and [startup procedure](operations/startup.md),
    packaged at `system/operations/startup.md`. Preserve its data and extensions.
@@ -106,18 +108,18 @@ verified/corrected information and relevant open tasks, shows original source
 dates and discloses failed task-app sync; source accuracy, truthful task/coverage
 state and the daily ingestion gate remain required.
 
-The latest testing boundary is a publication/readiness stop. Finish and publish
-the fresh one-link starter and revised setup material, verify the publication,
-report readiness, and wait for the user's direction before launching the revised
-three-route setup and ingestion trials. Earlier guided-trial attempts and their
-unresolved effects remain historical evidence; do not resume their private v2
-handoffs. The retained later-test scope still uses one fresh context-free Sol
-worker, Gemini Spark and ChatGPT Work in separate new folders, with ingestion
-authorized separately after verified setup. It does not permit outbound briefs,
-task-app writes, schedules or changes to existing instances. Preserve private
-evidence and report incomplete capabilities honestly. Inspect hooks and CI before
-publication; never silently bypass checks. See
-[the current execution boundary](docs/plans/restart/PLAN.md#current-checkpoint--one-link-setup-implementation-and-testing-hold).
+The user has authorized implementation and the revised three-route setup and
+ingestion trials. Publish and verify the integrated implementation and one
+immutable starter, then use one fresh context-free Sol agent, Gemini Spark and
+ChatGPT Work in separate new folders. Each setup must pass independent saved-state
+review before its separate ingestion request. Earlier attempts and unresolved
+effects remain historical evidence; do not reuse their folders or handoffs. The
+trial does not permit outbound briefs, task-app writes, schedules or changes to
+existing instances. Preserve private evidence and report incomplete capabilities
+honestly. After a trial begins, do not repair defects or start a repair/retest
+loop; finish independent unaffected checks and return the comparison to the user.
+Inspect hooks and CI before publication; never silently bypass checks. See
+[the current execution boundary](docs/plans/restart/PLAN.md#2026-09-17-current-implementation-and-retest-authorization--active).
 
 ## Instruction hierarchy
 

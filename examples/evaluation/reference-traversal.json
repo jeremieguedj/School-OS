@@ -1,0 +1,61 @@
+{
+  "root_page_ids": ["page_fictional_entity_index_root"],
+  "pages": [
+    {
+      "instance_id": "inst_fictional",
+      "family": "entity_index",
+      "page_id": "page_fictional_entity_index_root",
+      "schema_version": "1",
+      "content_revision": 1,
+      "directory_key": "entity_index_root",
+      "entries": [
+        {
+          "lookup_id": "entity_fictional_robin",
+          "buckets": [
+            {
+              "time_bucket": "2026-09",
+              "page_ids": ["page_fictional_entity_index_september"]
+            }
+          ]
+        }
+      ],
+      "continuation": {
+        "state": "continues",
+        "next_page_id": "page_fictional_entity_index_root_2"
+      }
+    },
+    {
+      "instance_id": "inst_fictional",
+      "family": "entity_index",
+      "page_id": "page_fictional_entity_index_september",
+      "schema_version": "1",
+      "content_revision": 1,
+      "index_key": {
+        "entity_id": "entity_fictional_robin",
+        "time_bucket": "2026-09"
+      },
+      "entries": [],
+      "continuation": {"state": "exhausted"}
+    },
+    {
+      "instance_id": "inst_fictional",
+      "family": "entity_index",
+      "page_id": "page_fictional_entity_index_root_2",
+      "schema_version": "1",
+      "content_revision": 1,
+      "directory_key": "entity_index_root",
+      "entries": [],
+      "continuation": {"state": "exhausted"}
+    }
+  ],
+  "expected": {
+    "status": "complete",
+    "visited_page_ids": [
+      "page_fictional_entity_index_root",
+      "page_fictional_entity_index_root_2",
+      "page_fictional_entity_index_september"
+    ],
+    "unresolved_page_reference_count": 0,
+    "unresolved_record_reference_count": 0
+  }
+}

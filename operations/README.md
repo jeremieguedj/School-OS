@@ -11,14 +11,16 @@ For an existing configured instance read [startup](startup.md). The installed
 readable START-HERE points to that instance's `system`, `instance` and
 `extensions` areas, internal identity, selected configuration and relevant
 directories. Do not load the repository's historical studies or retired release
-instructions into normal operations.
+instructions into normal operations. A first setup uses the supplied starter and
+the parent's answers; an ambient development checkout, prior agent transcript or
+unrelated instance does not supplement it.
 
 ## Choose the requested operation
 
 | Request | Procedure | Needed supporting material |
 |---|---|---|
 | Setup my School-OS from this fresh ZIP/folder | [Setup and interview](setup.md) | [Tool mappings](tool-adapters.md), [storage](storage.md), [data contract](../contracts/data.md) |
-| Import or catch up school mail | [Ingestion](ingestion.md) | [Identity](../contracts/identity.md), [extraction](extraction.md), [knowledge](knowledge.md), storage |
+| Import or catch up school mail | [Ingestion](ingestion.md) | [Identity](../contracts/identity.md), [extraction](extraction.md), [semantic review](semantic-review.md), [knowledge](knowledge.md), storage |
 | Resume unfinished discovery or missed mail | [Continuation](continuation.md) | Ingestion and saved coverage |
 | Answer a fact or historical trend question | [Query](query.md) | Knowledge, data contract and relevant coverage |
 | Synchronize parent task edits | [Task sync](task-sync.md) | Selected shared adapter, [completion review](completion-review.md) |

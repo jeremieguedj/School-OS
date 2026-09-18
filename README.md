@@ -15,7 +15,9 @@ Give a new agent session one accessible link to the fresh School-OS ZIP or folde
 and say only: **“setup my schoolOS.”** The agent starts with
 [START-HERE.md](START-HERE.md), reads [AGENTS.md](AGENTS.md), and follows the one
 authoritative [setup procedure](operations/setup.md). In a distributed starter,
-that procedure is at `system/operations/setup.md`.
+that procedure is at `system/operations/setup.md`. A fresh-setup evaluation must
+start outside this development repository and without a prior School-OS
+conversation; otherwise it does not establish discovery from the starter alone.
 
 The fresh starter has reusable operating material plus empty `instance/` and
 `extensions/` areas. It contains no configured household, canonical IDs or
@@ -35,10 +37,11 @@ The [operation guide](operations/README.md) contains the reusable instructions.
 [approved restart plan](docs/plans/restart/PLAN.md) govern development of this
 repository, not a parent's ordinary setup session.
 
-**Status:** the approved restart MVP is being implemented. Existing helpers and
-instructions are authored but not qualified. The retired implementation is not
-the foundation of this project. No provider compatibility claim is made by this
-repository state.
+**Status:** the approved restart MVP and second-round T01–T19 remediation are
+implemented in source. Deterministic local checks pass; publication and three
+fresh-agent trials are tracked in the active restart plan. The retired
+implementation is not the foundation of this project. No provider compatibility
+claim is made from source or local checks alone.
 
 ## Current project material
 

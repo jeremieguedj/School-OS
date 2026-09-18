@@ -1,22 +1,14 @@
 # Authorized three-agent ingestion trials
 
-Status: the first revised trials and the later authorized second Spark/Work
-attempts are concluded. The second attempts used isolated Sol controllers and
-controlled transient retries. Spark failed setup; Work passed setup but saved
-partial ingestion with material semantic defects. Work's seven questions graded
-five pass, one qualified and one fail. The active boundary is joint findings
-review before fixes, cleanup, new attempts or broader tests. The following
-paragraph preserves the earlier first-attempt outcome. The
-user requires joint review before any bug is addressed: **do not repair bugs,
-clean up failed artifacts, retry the browser routes or start additional tests**.
-The frozen starter produced one persisted Sol ingestion with material semantic
-defects, one failed Spark setup and one failed Work launch. Sol's seven baseline
-questions graded six passes and one qualified pass. The three size candidates
-preserved identical record grouping and the same grades; larger-capacity behavior
-remains unexercised. Keep the existing 64 KiB limit. Full current findings and
-historical attempts are in [results](TRIAL-RESULTS.md); private source and receipt
-evidence remains outside Git. Publish sanitized continuity, verify the remote
-revision and stop for review with the user.
+Status: the earlier trials and root-cause review are historical evidence. The
+user has approved the T01-T19 remediation and explicitly authorized publication
+followed by a new three-route retest using fresh Sol, Gemini Spark and ChatGPT
+Work instances. Once this new series begins, do not repair product or instance
+defects, clean up failed artifacts or start an unapproved retry loop. Preserve
+each outcome, publish the privacy-safe comparison and stop for joint review.
+Keep the existing 64 KiB canonical limit. Historical findings remain in
+[results](TRIAL-RESULTS.md); private source and receipt evidence remains outside
+Git.
 The [active plan](PLAN.md#current-execution-authorization) controls authorization.
 This evaluator protocol is never supplied as the agent's opening prompt. Use the
 [minimal handoff](TRIAL-PROMPTS.md); keep source values and instance links private.
@@ -45,6 +37,17 @@ folders and unresolved effects, for:
 2. A new Gemini Spark task through the user's browser.
 3. A new ChatGPT Work task through the user's browser.
 
+The browser routes use the user's existing signed-in Chrome profile. Give each
+route a separate conversation/session, controller, tab, Drive instance and
+private evidence directory, and operate the shared browser UI serially. Record
+the controller, task/session alias, tab, signed-in provider account, assigned
+Drive destination and evidence boundary. The final methodology must disclose
+shared profile, cookies and account state and any unknown provider memory. It
+may claim separate conversations, tabs and Drive instances, but not
+browser-profile, account-level or provider-memory isolation. Never paste one
+route's output into another; detected cross-route contamination invalidates the
+comparison.
+
 Provide the assigned folder when the agent asks for its destination and before
 its first persistent write. State that it must disregard previous School-OS
 instances and confine writes to that folder and descendants. Record this as the
@@ -63,12 +66,12 @@ to satisfy a test the user did not request.
 
 ## Publication checkpoint
 
-Before starting, report retained deliverables, explicit MVP deferrals, published
-SHA, the starter asset link, coverage map and unqualified capabilities. Preserve
-the snapshot and frozen studies. Stop at readiness and await the user's direction
-for the revised flow. Do not submit private v2 trial attachments or automatically
-resume the earlier guided prompts. Fresh source/Drive work begins only in the
-subsequent user-directed testing phase.
+Before starting, record retained deliverables, explicit MVP deferrals, the
+published SHA, starter asset link, coverage map and unqualified capabilities.
+Preserve the snapshot and frozen studies. The user's 2026-09-17 instruction
+already authorizes the revised flow after publication verification; no additional
+readiness approval is required. Do not submit private v2 trial attachments or
+resume the earlier guided prompts. Use the new minimal one-link setup flow.
 
 ## Independent reference and receipts
 
@@ -79,6 +82,17 @@ complete relevant connector results privately before normalization; keep raw
 failures with mode 0600 under an admitted ignored directory. Do not use a
 provider-entry count as the count of logical emails. Distinguish observations,
 logical associations, unresolved associations and actual processed content.
+
+Before the first source or Drive dispatch, create the route's admitted
+gitignored private evidence directory with owner-only access. Use the local
+[`trial_evaluation`](../../../helpers/trial_evaluation.py) preflight to write,
+read back and remove a harmless synthetic receipt. Stop before dispatch if it
+fails. For every later connector operation, preserve the complete response
+envelope or thrown exception before normalization and record dispatch, observed
+provider response and verified receipt persistence separately. Only then derive
+a privacy-safe report row. A receipt failure after dispatch is evaluator failure,
+not provider failure or success. Verify a possible remote effect with an
+available safe read; never repeat a write blindly. Repeat only a known-safe read.
 
 Build expectations directly from the source evidence, independently of the
 agents' extracted output. Cover substantive claims, qualifications, date meaning,
@@ -141,6 +155,33 @@ claims and source references, relevant correction/coverage checks, answer and
 limitations. Request a concise explanation of supporting evidence, never private
 hidden reasoning. A persuasive explanation is not a substitute for correct data.
 
+Audit coverage from the configuration page and the concrete bootstrap roles for
+that instance. Follow the installed contract rather than a remembered flat field
+list: every explicit continuation; nested
+`entries[].buckets[].page_ids[]`; window source-index roots; locator, catalogue
+and index-coverage targets; and supported `page_hint` values. Resolve canonical
+record references through hints, locators and bounded directory/catalogue
+fallback. Record visited pages, unresolved hard references, unresolved advisory
+hints, unknown required shapes, duplicate/conflicting IDs, cycles and exhaustion
+privately. An unresolved required target, unknown shape or unfinished
+continuation makes the audit incomplete rather than empty. The evaluator helper
+reads already-collected pages only and never repairs the instance.
+
+Use an exported answer or diagnostic only when the evaluated prompt, final
+response, explicit export action, supported receipt and exact received bytes all
+bind to the same tested task/session. A same-name local file or plausible content
+is insufficient. Without that chain, grade the visible response and disclose the
+artifact limitation. Canonical Drive readback and independent source evidence
+remain primary.
+
+Before defining an image-dependent expectation, preserve the exact private image
+or a faithful private rendering and show every relevant page, crop or frame to an
+independent evaluator. Record the artifact and portion reviewed, then author the
+expected facts/actions before inspecting the tested agent's extraction. Label
+OCR as derived. Missing, cropped or unreadable pixels remove only the unsupported
+image-specific expectation and become an evaluation limitation. Private school
+images, renderings and hashes remain outside Git and public reports.
+
 ## Page-size measurement and narrow comparison
 
 Measure page behavior only during the subsequently user-directed trials, after
@@ -195,6 +236,15 @@ claiming it qualified. The comparison supplies evidence for a later coordinator
 decision; it does not itself change the shared contract maximum or require another
 user approval checkpoint.
 
+Retain the fictional near-limit prepared case in
+[`examples/evaluation`](../../../examples/evaluation/README.md): one complete
+record fits near 64 KiB, adding the next whole record rolls to another page, and
+readback reconstructs both records exactly. It is preparation, not provider or
+limit qualification. In the authorized comparison, preserve canonical family
+and route boundaries and measure exact bytes including the marked noncanonical
+envelope. If one record alone exceeds a candidate maximum, record its required
+page bytes and do not truncate or reconstruct it from raw source.
+
 ## Failures, changes and final report
 
 A failed trial is evidence; do not erase its folder or quietly replace it. Keep
@@ -211,3 +261,7 @@ channel. Do not put raw school messages, child information, provider IDs, privat
 folder URLs or credentials in Git or a public website. Report implemented,
 exercised, passed, failed and unexercised status separately; do not claim broad
 vendor compatibility or product qualification from three trials.
+Use the privacy-safe
+[`trial report template`](../../../examples/evaluation/TRIAL-REPORT-TEMPLATE.md)
+so receipt state, reference completeness, export provenance, visual grounding,
+achieved browser isolation and 64/128/256 KiB evidence remain separate.

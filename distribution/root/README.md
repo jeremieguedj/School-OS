@@ -13,6 +13,12 @@ already configured, follow [startup](system/operations/startup.md) and select th
 parent's current requested operation. Do not rerun setup merely because these
 consumer root files remain present.
 
+Treat this supplied bundle as the source for first setup. Do not search an
+ambient development repository, reuse another agent's transcript or copy an
+earlier instance to fill its empty private areas. If unrelated context is already
+visible, keep it out of setup and disclose that limit when setup is being used to
+evaluate fresh one-link discovery.
+
 The bundle has the approved three areas:
 
 - `system/` contains the pinned reusable product instructions, contracts,

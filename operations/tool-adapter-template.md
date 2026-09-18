@@ -42,6 +42,11 @@ Describe:
 
 If a connector may silently cap or summarize results, mark complete enumeration
 unsupported unless another authorized route supplies exhaustion evidence.
+Define the connector's explicit end state. A short or empty list is not an end
+state by itself. Where exhaustive listing is unavailable, describe how an
+operation resolves a finite set of known referenced targets and requires all
+remaining inventory to stay unknown. Keep provider listing continuation distinct
+from School-OS JSON page continuation.
 
 ## Update semantics
 
@@ -82,6 +87,10 @@ Describe what authorized tool read can verify after an update, send or generatio
 - which intended values must agree;
 - what the observation proves and does not prove; and
 - visibility delay, partial search or missing-marker limitations.
+
+For storage tools, also describe how the connector exposes actual saved parent
+or ancestry. Verification requires both placement beneath the selected root and
+full-content readback; an echoed intended parent is not placement evidence.
 
 A generic success response, provider receipt, empty search or missing transport
 response is not automatically canonical verification. The executing agent uses

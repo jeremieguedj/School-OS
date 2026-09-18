@@ -1,23 +1,17 @@
 # School-OS restart architecture and simulation
 
-Status: the approved restart implementation and fresh starter are published. The
-user subsequently authorized the three isolated setup/ingestion trials and
-requires reporting only, with no fixes before joint review. The first trial
-had one persisted ingestion with material semantic defects, one failed setup,
-and one failed browser launch. Two subsequent browser attempts are now under
-review: Spark failed its saved-setup audit; Work passed the required setup gate
-with documented limits and saved partial ingestion, with one of 17 emails
-remaining incomplete. The independent audit found six task-semantic defects and
-one omitted response deadline beyond that explicit input gap. Seven answers
-graded five pass, one qualified and one fail. The authorized attempts/audits are
-concluded. The user subsequently authorized read-only root-cause diagnosis;
-stop for joint review before fixes or further trials. No broad product
+Status: the first-round implementation, trials and root-cause review are
+published historical evidence. The user approved both prerequisite architecture
+recommendations and the complete T01-T19 remediation package, then explicitly
+authorized its implementation, publication, three fresh-agent retests and a
+comparative report. The coordinator must not repair defects found during those
+trials before reviewing the results with the user. No broad product
 qualification is claimed. See
 [trial results](TRIAL-RESULTS.md) for evidence and limitations; earlier checkpoints
 below are historical. The [artifact guide](README.md) distinguishes the active
 contract from frozen studies and superseded proposals.
 
-## 2026-09-17 remediation approval ledger — implementation on hold
+## 2026-09-17 remediation approval ledger — historical checkpoint
 
 The user has approved the following recommendations from the published
 second-round remediation plan:
@@ -66,11 +60,39 @@ second-round remediation plan:
    isolation.
 
 All T01-T19 treatments and the two prerequisite architecture recommendations
-are now approved. This decision record still does not authorize implementation,
-test execution, trial replay, instance repair or external effects. The user
-explicitly directed the coordinator to record the decisions and wait for a
-separate instruction to act. The proposed conversation/worktree fork was
-dropped and creates no alternate implementation line.
+are now approved. At that checkpoint, the decision record did not authorize
+implementation, test execution, trial replay, instance repair or external
+effects; the user directed the coordinator to wait for a separate instruction
+to act. That later instruction is recorded immediately below. The proposed
+conversation/worktree fork was dropped and creates no alternate implementation
+line.
+
+## 2026-09-17 current implementation and retest authorization — active
+
+The user has now supplied the separate instruction to act. Implement the complete
+approved package, perform appropriate local validation, publish and verify the
+restart branch and one revised starter, then run three fresh isolated setup and
+seven-day ingestion routes: context-free Sol, Gemini Spark and ChatGPT Work.
+Use bounded Sol workers only; the coordinator owns integration, architecture
+escalations, Git/publication and the final comparison.
+
+Use one identical revised starter and the preserved independently reviewed fixed
+seven-day source interval for comparability. Create new Drive roots and preserve
+all earlier instances and evidence. The tested agents receive the realistic
+one-link setup prompt, ordinary interview answers when asked and the separate
+ingestion request only after setup passes the independent saved-state gate.
+Mailbox access stays read-only. Outbound briefs, audio delivery, task-provider
+writes and schedules remain outside this trial authorization.
+
+T17 uses the user's existing signed-in Chrome profile. Keep the Spark and Work
+routes separate through distinct fresh conversations, controllers, serial tab
+operation, Drive roots and evidence; disclose the shared profile and never claim
+account-level or provider-memory isolation.
+
+After the trial series begins, preserve failures and report them. Do not modify
+the product, starter or failed trial instances to repair an observed defect; do
+not start an unapproved repair/retest loop. Continue only independent unaffected
+checks. Publish a privacy-safe comparative report and stop for joint review.
 
 ## Current testing authority — report findings, do not repair
 

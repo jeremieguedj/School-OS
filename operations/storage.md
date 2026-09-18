@@ -52,6 +52,25 @@ missing, conflicting, or inaccessible root is unresolved setup, not an empty
 history. New bounded continuation pages extend the listed root and do not require
 adding every page to the bootstrap.
 
+### Validate the saved bootstrap
+
+Before any setup success claim, derive a temporary finite manifest from the
+Source Accounts and initial source scope selected in this setup. Give each
+logical role its root page ID, approved family, and exact saved route key. List
+the concrete source/account/month or pending page-catalogue routes individually;
+never substitute one generic catalogue root or a remembered universal file or
+role count. Later routes remain ordinary first-use storage work.
+
+Read the exact saved bytes of every manifest root and every referenced or
+continued page needed to exhaust those roots. Pass those bytes, expected
+instance ID, schema revision, and temporary manifest to
+[`check_bootstrap`](../helpers/bootstrap_contract.py). `valid` permits setup to
+continue. `invalid` requires correction and a fresh readback; if correction
+cannot finish, report the blocker. `insufficient_evidence` means the saved graph
+was not proved and also keeps setup incomplete. The helper performs no Drive
+read and cannot select the expected routes for the agent. Discard the manifest
+and diagnostics after a successful check; neither becomes canonical state.
+
 ## Route a canonical record
 
 1. Validate the record family, School-OS ID, required fields, references,

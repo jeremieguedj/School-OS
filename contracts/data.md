@@ -46,6 +46,26 @@ fields:
   minimum page size required to retain it, and leave the affected operation
   incomplete under the current shared maximum.
 
+### Temporary bootstrap validation input
+
+Setup derives a finite temporary manifest from the selected Source Accounts and
+initial source scope. Each manifest item names one logical role, its root
+`page_id`, the expected approved `family`, and the exact applicable route key:
+`locator_key`, `route`, `directory_key`, or `index_key`. This manifest is not a
+canonical record, is never saved as instance state, and does not define a fixed
+route count. Later source/month routes continue to be created through ordinary
+storage when first needed.
+
+Before setup completes, reread the exact UTF-8 bytes for every manifest root and
+every contract-defined page reference reachable from those roots. Validate the
+expected instance and schema revision; approved family and route keys; page and
+entry bounds; unique, nonconflicting page IDs; explicit continuation; and
+referenced target family/route. Missing readback is insufficient evidence.
+Observed malformed or conflicting saved state is invalid. Only a valid saved
+graph completes the bootstrap check. The helper may perform this comparison but
+must not access Drive, choose the manifest, create pages, repair state, or retain
+the temporary manifest or diagnostics.
+
 ## References and identity
 
 Every canonical record has one School-OS-owned UUID v4. A readable family
@@ -417,6 +437,25 @@ group's requirement is known; and every required group was processed with its
 Knowledge saved and read back. Otherwise use `not_ingested` and report the
 blocking reason operationally. Do not retain a partial-email resume state.
 
+`processed_saved_verified` is a semantic claim, not merely a byte-persistence
+claim. Before using it, build a temporary source-bound checklist from the actual
+body or candidate: every substantive statement, qualification, correction,
+date and date role, request, condition, recurrence rule, applicable person or
+group, action disposition, and independent completion unit. Reread the saved
+Knowledge and applicable Tasks and compare their meaning with that independent
+checklist. Missing or changed meaning keeps the whole Email `not_ingested`.
+Discard the checklist after a successful comparison; it is not another record.
+
+A directly embedded remote image that visibly carries substantive information
+may be read once through an authorized least-stateful route. Its extracted
+claims remain part of the parent Email body: use `part: "body"` and a descriptive
+image location in the Knowledge source reference. The remote locator is an
+optional replaceable access aid, never Email identity or evidence of successful
+processing, and the image does not become an Attachment Group. Do not crawl,
+sign in, submit a form, or retain the raw image. Unsupported, inaccessible,
+unauthorized, or uncertain access keeps the Email `not_ingested`, with those
+outcomes kept distinct operationally.
+
 A unique, sufficiently supported metadata match to an existing
 `fully_ingested` Email reuses that result and skips its body and attachments.
 Explicit new or contradictory inventory or coverage evidence reopens the Email
@@ -538,6 +577,28 @@ Each `source_refs` entry identifies the `email_ref`, `part` (`body` or
 requires `attachment_group_ref` and its group-local `candidate_ref`. Primary
 source original Date month determines the canonical Knowledge route. Preserve
 all sources.
+
+Classify source action meaning before deriving Tasks:
+
+| Source meaning | `action_disposition` | Canonical Task result |
+|---|---|---|
+| Information or optional guidance | `none` | No source-derived Task. |
+| One-time obligation | `finite` | One Task for each independently completable unit. |
+| Obligation that applies only if a stated condition holds | `conditional` | Conditional Task(s) preserving that condition and completion unit. |
+| Ongoing repeating obligation | `recurring` | One recurring series plus independently completable projected occurrences under the existing projection rule. |
+
+Importance alone never establishes an obligation. One household submission is
+one Task; one independently completed submission per child is one Task per
+child. If the existing fields cannot preserve the source meaning, leave the
+Email incomplete and report the representation gap rather than changing the
+classification or cardinality.
+
+Every substantive source date or time appears in `dates` with its own role,
+value, precision, and source-supplied timezone when present. Original Email
+Date, response deadline, event timing, effective timing, recurrence timing, and
+parent planning are distinct. A correct value stored under the wrong role is a
+semantic failure. Do not fill an unstated year, time, or timezone. A later
+correction preserves both observations and the evidenced relationship.
 
 An outgoing relationship is stored on the newer record and contains
 `relationship` (`supports`, `corrects`, `replaces`, or `conflicts_with`),
@@ -801,6 +862,19 @@ affected canonical source/month and active-task pages, and report an unfinished
 fallback if it cannot be completed. Even a fresh topic index can miss a concept
 that was classified too narrowly; completeness-sensitive queries also review
 the relevant entity/scope/time candidates semantically.
+
+For one question, retain the selected page IDs only in temporary working memory
+and reuse each page already read. Start from resolved Entity, Topic, time, Task,
+and coverage routes; broaden to affected source/month catalogues only for a
+stated stale-index, semantic-fallback, relationship, or coverage reason. This
+temporary read set is not a cache or another index.
+
+An answer citation resolves to readable canonical Knowledge and its source
+location, not merely a catalogue, directory, index page, or provider handle.
+Every source that changes a material claim's condition, correction,
+qualification, or confidence must be cited. A completeness-sensitive negative
+claim additionally requires readable discovery and ingestion coverage for the
+stated scope. Omit or qualify a material claim when that support is unavailable.
 
 ## Boundaries
 

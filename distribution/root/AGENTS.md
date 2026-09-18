@@ -20,6 +20,13 @@ only under the parent-selected private `instance/` destination, and place
 compatible household-authored additions in `extensions/` as the setup procedure
 directs. Do not alter official `system/` material during private setup.
 
+Use this bundle, the parent's answers and only the relevant capabilities exposed
+to this agent. Do not inspect an ambient development repository, another agent's
+conversation or an earlier instance to supplement a fresh setup. Ask which
+outcomes and tools the parent wants before inspecting connectors, then inspect
+only relevant available routes. If the setup is an evaluation and inherited
+context is unavoidable, disclose it instead of claiming bundle-only discovery.
+
 The bundle link authorizes reading the supplied material. It does not authorize
 mailbox ingestion, task-application writes, outbound messages or audio,
 schedules, or other external effects. While the instance is unconfigured,
@@ -28,6 +35,13 @@ configured, the parent's current request and the selected installed operation
 govern authority. Keep credentials out of School-OS files, preserve unknown
 capabilities honestly, and verify every persisted setup value through actual
 readback before reporting setup complete.
+
+Before every setup write, resolve the intended location beneath the
+parent-selected root. Afterward, establish the saved object's actual parent or
+ancestry and read its complete content back. Stop dependent work if placement or
+content is wrong or unknown. Follow every provider listing continuation to an
+explicit end before calling an inventory complete; otherwise verify only the
+finite referenced targets and leave the rest unknown.
 
 Revision-pinned public development references in the system material are
 optional context only. They are not required setup inputs and must not replace

@@ -2,7 +2,8 @@
 
 Use this procedure inside [ingestion](ingestion.md) when a logical email needs
 content. Read [identity](../contracts/identity.md), [data](../contracts/data.md),
-[knowledge](knowledge.md) and [storage](storage.md). The agent interprets source
+[knowledge](knowledge.md), [semantic review](semantic-review.md) and
+[storage](storage.md). The agent interprets source
 material through its available authorized tools; these instructions do not
 require a resident process, particular model, document parser or task provider.
 
@@ -133,8 +134,9 @@ attachment identity or optional thread association.
 1. Save Knowledge, source references, dates, qualifications, scope, topics,
    relationships and resulting canonical Tasks under
    [the normal save sequence](storage.md#normal-save-sequence).
-2. Check ordinary readback against the substantive source meaning. Confirm
-   every action requirement and its disposition; do not verify an empty task
+2. Apply [semantic review](semantic-review.md) to the complete saved readback.
+   Confirm every substantive item, qualification, date role, scope, action
+   disposition and independent completion unit; do not verify an empty task
    inventory merely by rereading an empty inventory the agent just wrote.
 3. Save candidate processing evidence and resulting Knowledge references.
    An empty Knowledge list is valid only after actual reading establishes no

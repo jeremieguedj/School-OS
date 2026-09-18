@@ -22,4 +22,6 @@ during setup belong in `instance/`; compatible household additions belong in
 Do not infer mailbox access, ingestion permission, delivery permission, or task
 application write authority from the bundle link or from the request to set up
 School-OS. Do not use repository history or optional development references as
-household facts or required setup inputs.
+household facts or required setup inputs. Use this supplied bundle as the setup
+source; do not preload another School-OS conversation, development checkout or
+existing instance into a fresh setup.

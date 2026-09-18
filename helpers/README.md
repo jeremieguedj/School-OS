@@ -1,23 +1,72 @@
-# Small source-metadata helpers
+# Small deterministic helpers
 
-Status: **written, not run or qualified**. These Python standard-library
+Status: **written and locally checked; not provider-qualified**. These Python standard-library
 functions support the approved
 [metadata recipe](../contracts/identity.md). They have no
 I/O, provider dependency, command-line entry point, persistence layer or model
 calls. No Python version or minimum runtime is pinned here.
 
-The executing agent may use [source_metadata.py](source_metadata.py) for these
-specific operations when its code environment supports them. An agent may also
-perform the same approved normalization through its available tools, retaining
-the same meaning and uncertainty boundaries. The approved requirement that
-School-OS agents can execute code still applies; using a tool for one operation
-does not introduce a supported no-code runtime.
+The executing agent may use [source_metadata.py](source_metadata.py) and
+[bootstrap_contract.py](bootstrap_contract.py) for these specific operations
+when its code environment supports them. An agent may also perform the same
+approved checks through its available tools, retaining the same meaning and
+uncertainty boundaries. The approved requirement that School-OS agents can
+execute code still applies; using a tool for one operation does not introduce a
+supported no-code runtime.
 
 | Function | Intended use and result |
 |---|---|
 | normalize_subject(text: str, *, representation: str) -> str | Require representation to be raw_header or decoded. Decode/unfold raw headers once; preserve already decoded text literally. Both trim outer whitespace while preserving case, punctuation, reply/forward prefixes and meaningful interior spacing. |
 | normalize_address_parts(local_part: str, domain: str) -> tuple | Given already reliably extracted address parts, trim outer space/tab, preserve local-part spelling/dots/plus tags and lowercase the domain. Return the two parts as a tuple. |
 | utf8_size(text: str) -> int | Measure the exact UTF-8 byte length of supplied text. It does not serialize an object, select a storage limit, split a page or write data. |
+| check_bootstrap(contract_revision, instance_id, manifest, page_bytes) -> dict | Validate a temporary finite setup-route manifest against exact page bytes already read back. The result is `valid`, `invalid`, or `insufficient_evidence` with deterministic diagnostics. |
+
+## Bootstrap contract check
+
+`check_bootstrap` is a pure contract-revision-1 check. The caller supplies a
+temporary manifest with a non-empty `routes` array. Each route contains a unique
+human-readable `role`, a `root_page_id`, and an `expected` object containing the
+approved page `family` plus its exact route key when applicable:
+
+```json
+{
+  "routes": [
+    {
+      "role": "fictional-mailbox-pending-knowledge",
+      "root_page_id": "page_catalogue_<uuid-v4>",
+      "expected": {
+        "family": "page_catalogue",
+        "route": {
+          "canonical_family": "knowledge",
+          "source_account_id": "source_account_<uuid-v4>",
+          "source_month": "pending"
+        }
+      }
+    }
+  ]
+}
+```
+
+The manifest is setup's finite expectation, not retained instance data. Setup
+derives it from the parent's selected Source Accounts and initial source scope;
+the helper never chooses accounts, months, logical roles, or pages. Pass every
+complete page readback as a separate `bytes` value. Do not reserialize parsed
+objects: the original bytes establish the encoded-size check and ensure the
+helper assesses the actual saved representation.
+
+The helper checks strict UTF-8 JSON, duplicate JSON keys, the shared 65,536-byte
+limit, identity and schema revision, approved page families and route keys,
+positive revisions, directory/index entry bounds, continuation shape, duplicate
+or conflicting page IDs, manifest roots, and contract-defined page references.
+It follows configuration roots, continuations, locators, catalogues, derived
+index directories, index coverage, and Discovery Window Email directories. A
+missing root or referenced readback yields `insufficient_evidence`; an observed
+contract contradiction yields `invalid`. Either result keeps setup incomplete.
+
+This is deliberately not a schema catalogue, provider reader, graph repairer,
+writer, or route generator. Diagnostics and the manifest stay temporary. The
+helper does not retain source content, call Drive, invent a universal route
+count, or turn a generic catalogue root into an approved route.
 
 Retain the original observed values alongside comparison values. These helpers
 return only derived values and cannot preserve originals for the caller. They
@@ -66,7 +115,7 @@ newlines, unchanged; invalid Unicode that cannot encode as strict UTF-8 is
 rejected. A caller must handle errors without printing private inputs or an
 unsanitized connector exception.
 
-There is no date parser, association threshold, canonical record schema,
+There is no date parser, association threshold, general canonical record schema,
 serializer, provider SDK, pagination code, writer, batch manager, ordinary-save
 framework or recovery framework here. Resource management, substantive content
 processing and authorized provider work stay with the executing agent and its
@@ -79,8 +128,49 @@ decoded counterparts, missing/unknown representation, folded versus invalid
 headers, mixed literal/encoded spacing, strict decoding, preserved address
 distinctions, rejected unextracted forms and exact multibyte UTF-8 measurement.
 That developer-only artifact is not required for setup or operation and may be
-absent from a distributed starter. The checks are **written but not run**. No
-module import, compilation, example execution, test, build, formatter, typecheck
-or connector probe was performed during authoring. Do not run these prepared
-developer checks until the user's testing direction. This hold does not prohibit
-authorized installed operations from using the helper functions.
+absent from a distributed starter. The source-metadata, bootstrap and evaluator
+prepared checks ran locally on 2026-09-17; all 37 combined tests passed. Python
+compilation also passed with bytecode cache output directed to an admitted
+temporary directory. These checks make no connector, agent or provider claim.
+
+## Private trial-evaluation helper
+
+[`trial_evaluation.py`](trial_evaluation.py) implements the approved T14–T19
+local evaluator support. It is a development/trial harness, not part of an
+installed School-OS instance and not a provider connector. It can:
+
+- preflight an admitted gitignored receipt directory with an owner-only
+  synthetic write/read/delete and save exact receipt bytes exclusively as mode
+  0600;
+- keep dispatch, provider-response observation and local receipt persistence as
+  separate states;
+- traverse already-read pages from caller-supplied configuration/bootstrap roots
+  through every page-reference shape in the current contract, including nested
+  bucket page IDs, continuations and replaceable page hints, while resolving
+  canonical record references and preserving incomplete/unknown results;
+- determine whether report bytes have a same-task prompt/final/export/receipt
+  chain, otherwise limiting evidence to the observed visible response;
+- require an exact private image/rendering binding and an independently authored
+  expectation before an image-specific finding is allowed; and
+- measure exact canonical readback bytes and create marked noncanonical
+  64/128/256 KiB comparison pages from the same ordered complete records.
+
+The helper performs no Gmail, Drive, browser or model operation. Its reference
+audit consumes bytes/pages the evaluator has already acquired; it does not
+choose bootstrap roots or repair missing state. `page_hint` remains advisory:
+an unresolved hint is reported separately, while an unresolved canonical record
+or required page/continuation makes the audit incomplete. Candidate packing
+never changes the installed 64 KiB contract and never splits one record.
+
+The fictional examples and report template live in
+[`examples/evaluation`](../examples/evaluation/README.md). The corresponding
+[`prepared checks`](prepared_checks/check_trial_evaluation.py) passed locally on
+2026-09-17. They include injected receipt-sink classification, exact nested
+reference traversal, same-name artifact rejection, independently grounded image
+expectations and a near-limit whole-record rollover case.
+
+The optional fictional bootstrap checks in
+[`prepared_checks/check_bootstrap_contract.py`](prepared_checks/check_bootstrap_contract.py)
+exercise a valid empty instance and targeted invalid or indeterminate variants.
+They also passed locally on 2026-09-17 and are not included in the distributed
+starter.

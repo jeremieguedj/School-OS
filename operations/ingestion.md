@@ -8,7 +8,7 @@ was requested.
 
 Read [identity](../contracts/identity.md), [data](../contracts/data.md),
 [storage](storage.md), [knowledge](knowledge.md), [extraction](extraction.md) and
-[continuation](continuation.md), plus the selected source and Drive semantic
+[semantic review](semantic-review.md), [continuation](continuation.md), plus the selected source and Drive semantic
 adapters. Read only relevant instance configuration and directories; do not load
 all canonical bodies at startup. The executing agent uses its own authorized
 connectors and manages resources without a School-OS batch controller.
@@ -111,7 +111,8 @@ source references and content evidence.
 
 Save the whole email's intended Knowledge, Tasks, source references, attachment
 groups and required locator/index changes in bounded pages. Use the normal
-storage readback procedure. Maintain index coverage/revisions under the data
+storage readback procedure, then apply the source-to-saved
+[semantic review](semantic-review.md). Maintain index coverage/revisions under the data
 contract; a stale derived index must remain marked by its old coverage and use
 the documented fallback, never pretend to contain the new data.
 
@@ -119,10 +120,10 @@ Only then evaluate `ingestion_coverage.ingestion_state`:
 
 | Condition | Required evidence |
 |---|---|
-| Body processed | Actual individual body read, including a source-established empty body; substantive Knowledge saved and checked. |
+| Body processed | Actual individual body read, including a source-established empty body; substantive Knowledge and applicable Tasks pass source-to-saved semantic review. |
 | Inventory established | Complete for the selected message route and configured scope; unknown inventory is not zero attachments. |
 | Every group classified | `required`, `not_required` or `unknown` with a source-grounded reason; any unknown requirement blocks full ingestion. |
-| Every required candidate processed | All exposed required candidates read, substantive information saved and checked, with group-qualified provenance where needed. |
+| Every required candidate processed | All exposed required candidates read; their substantive Knowledge and applicable Tasks pass source-to-saved semantic review, with group-qualified provenance where needed. |
 
 When all conditions hold, save `fully_ingested`, its Knowledge references and
 processing evidence, then read the final coverage page back and check it.

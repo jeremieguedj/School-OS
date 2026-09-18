@@ -7,7 +7,7 @@ evidence that a managed agent supports the operation.
 
 | Mapping | Operations | Required capability boundary |
 |---|---|---|
-| [Google Drive](google-drive.md) | Setup, bounded canonical storage and readback | Full file contents, selected-root access, bounded listing and verified writes. |
+| [Google Drive](google-drive.md) | Setup, bounded canonical storage and readback | Full file contents, selected-root access, explicit listing exhaustion, actual-parent evidence and verified writes. |
 | [Gmail](gmail.md) | Individual-message discovery, content and authorized email send | Original metadata, declared search-time meaning, complete continuation, body/attachment access; sending is separately authorized. |
 | [Google Sheets](google-sheets.md) | Optional parent task projection | Identified rows, mapped columns, parent-edit readback and complete relevant range access. |
 | [Todoist](todoist.md) | Optional parent task projection | Read/write owned identity marker, task state and selected review section; occurrence coverage where recurrence is used. |
