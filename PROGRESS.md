@@ -6639,3 +6639,24 @@ requirements, then read this log from top to bottom.
   local checks, commit and publish the exact starter, then start the authorized
   three-route retest. After the first trial operation, preserve new defects
   without repair and stop after the privacy-safe comparative report.
+
+## 2026-09-17 — Remediation and immutable round-two starter published
+
+- The independent regression review found all pre-publication blockers clear.
+  The final deterministic suite passed 46 tests, Python compilation passed, and
+  the privacy and staged-diff checks passed. No active repository hook or CI
+  workflow was found that would trigger live testing indirectly.
+- Published and remotely verified implementation commit
+  `aae44ef13be8392130f9b5aec7889b040c0ca45b` on
+  `codex/restart-implementation`.
+- Built the starter from that exact commit. The archive contains 41 files and
+  the empty instance/extensions directory entries. Its SHA-256 is
+  `5cabbe0779c39a8ac547ee17ec8365cb0d244a95591cccc20658aab27e142f50`.
+- Published the exact bytes as `School-OS-setup-round-2.zip` on the immutable
+  `school-os-starter-2026-09-17-round-2` prerelease. A fresh release download
+  matched the local archive byte for byte and reported the same digest.
+- These checks establish publication integrity only. The exact next action is
+  to upload those same bytes once to the authorized School OS Tests Drive area,
+  create three new isolated destinations and run the already authorized fresh
+  Sol, Gemini Spark and ChatGPT Work setup/ingestion trials. Once trial execution
+  begins, preserve defects without repair and stop after the comparative report.

@@ -7,7 +7,7 @@ source links, scope, dates and qualifications.
 
 ## Set up a fresh School-OS
 
-[Download the clean starter ZIP](https://github.com/jeremieguedj/School-OS/releases/download/school-os-starter-2026-09-16/School-OS-setup.zip)
+[Download the clean round-two starter ZIP](https://github.com/jeremieguedj/School-OS/releases/download/school-os-starter-2026-09-17-round-2/School-OS-setup-round-2.zip)
 from the dedicated unqualified prerelease. Use this asset, not the repository
 source-code archive.
 
@@ -38,8 +38,9 @@ The [operation guide](operations/README.md) contains the reusable instructions.
 repository, not a parent's ordinary setup session.
 
 **Status:** the approved restart MVP and second-round T01–T19 remediation are
-implemented in source. Deterministic local checks pass; publication and three
-fresh-agent trials are tracked in the active restart plan. The retired
+implemented in source and published from exact commit
+`aae44ef13be8392130f9b5aec7889b040c0ca45b`. Deterministic local checks pass;
+three fresh-agent trials are tracked in the active restart plan. The retired
 implementation is not the foundation of this project. No provider compatibility
 claim is made from source or local checks alone.
 

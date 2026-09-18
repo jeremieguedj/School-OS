@@ -94,6 +94,16 @@ the product, starter or failed trial instances to repair an observed defect; do
 not start an unapproved repair/retest loop. Continue only independent unaffected
 checks. Publish a privacy-safe comparative report and stop for joint review.
 
+**Published implementation and starter.** The remotely verified implementation
+is exact commit `aae44ef13be8392130f9b5aec7889b040c0ca45b` on
+`codex/restart-implementation`. The immutable round-two starter is published on
+the
+[dedicated prerelease](https://github.com/jeremieguedj/School-OS/releases/tag/school-os-starter-2026-09-17-round-2)
+with SHA-256
+`5cabbe0779c39a8ac547ee17ec8365cb0d244a95591cccc20658aab27e142f50`.
+The release download matched the reviewed local bytes. The next authorized
+action is the three-route trial series above, without another readiness gate.
+
 ## Current testing authority — report findings, do not repair
 
 ### Read-only root-cause investigation authorized

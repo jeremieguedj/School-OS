@@ -8,13 +8,19 @@ They do not duplicate the setup procedure.
 
 ## Publication channel
 
-The starter is published as [School-OS-setup.zip](https://github.com/jeremieguedj/School-OS/releases/download/school-os-starter-2026-09-16/School-OS-setup.zip)
-on the dedicated [school-os-starter-2026-09-16 prerelease](https://github.com/jeremieguedj/School-OS/releases/tag/school-os-starter-2026-09-16).
-Its verified source commit is `ba6bcc3bec96dfc542fd83cb792318ac8e54ce56`. Use that asset, not GitHub's
-source-code ZIP: a repository archive includes development/history material and
-is not the clean unconfigured starter. The existing documentation snapshot and
-old release assets are preserved. PLAN and PROGRESS record publication status;
-this preparation document alone does not claim a successful release.
+The current starter is published as
+[School-OS-setup-round-2.zip](https://github.com/jeremieguedj/School-OS/releases/download/school-os-starter-2026-09-17-round-2/School-OS-setup-round-2.zip)
+on the dedicated
+[school-os-starter-2026-09-17-round-2 prerelease](https://github.com/jeremieguedj/School-OS/releases/tag/school-os-starter-2026-09-17-round-2).
+Its verified source commit is `aae44ef13be8392130f9b5aec7889b040c0ca45b`,
+and its SHA-256 digest is
+`5cabbe0779c39a8ac547ee17ec8365cb0d244a95591cccc20658aab27e142f50`.
+The downloaded release asset was compared byte for byte with the reviewed local
+archive. Use that asset, not GitHub's source-code ZIP: a repository archive
+includes development/history material and is not the clean unconfigured starter.
+The existing documentation snapshot and old release assets are preserved. PLAN
+and PROGRESS record publication status and trial authority. This static
+publication verification does not qualify agent or connector behavior.
 
 ## Build the artifact
 
