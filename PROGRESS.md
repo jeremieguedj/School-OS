@@ -6812,7 +6812,13 @@ requirements, then read this log from top to bottom.
 - Architecture backlog remains unimplemented: a persisted Task partition
   selector, a persistent installation manifest, and a possible descendant Task-
   root ownership rule each require explicit approval before adoption.
-- Exact next action: publish and remotely verify this final evidence checkpoint
-  and its owner-private website brief, then stop for joint review. Do not repair
-  trial instances, implement another treatment, run another setup, or attempt
-  ingestion until the user directs the next cycle.
+- Published and remotely verified the privacy-safe final repository report at
+  exact commit `d83cf6ce6706f93767942076f497156952452b1f` on
+  `codex/restart-implementation`. Published owner-private website version 26
+  from exact Sites source commit
+  `4f6f453f9e412008d0c0c5c4e914a0b353adc1a4`; the production deployment
+  reported `succeeded` at
+  `https://school-os-architecture-guide.jeremieg.chatgpt.site/autonomous-remediation-results.html`.
+- Exact next action: stop for joint review. Do not repair trial instances,
+  implement another treatment, run another setup, or attempt ingestion until
+  the user directs the next cycle.
