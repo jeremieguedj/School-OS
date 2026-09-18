@@ -39,8 +39,10 @@ repository, not a parent's ordinary setup session.
 
 **Status:** the approved restart MVP and second-round T01–T19 remediation are
 implemented in source and published from exact commit
-`aae44ef13be8392130f9b5aec7889b040c0ca45b`. Deterministic local checks pass;
-three fresh-agent trials are tracked in the active restart plan. The retired
+`aae44ef13be8392130f9b5aec7889b040c0ca45b`. Deterministic local checks pass.
+The three fresh-agent retests ended with 0/3 setup gates passed, so ingestion and
+query stages did not run; see the
+[round-two results](docs/plans/restart/ROUND-2-TRIAL-RESULTS.md). The retired
 implementation is not the foundation of this project. No provider compatibility
 claim is made from source or local checks alone.
 

@@ -1,12 +1,11 @@
 # Authorized three-agent ingestion trials
 
-Status: the earlier trials and root-cause review are historical evidence. The
-user has approved the T01-T19 remediation and explicitly authorized publication
-followed by a new three-route retest using fresh Sol, Gemini Spark and ChatGPT
-Work instances. Once this new series begins, do not repair product or instance
-defects, clean up failed artifacts or start an unapproved retry loop. Preserve
-each outcome, publish the privacy-safe comparison and stop for joint review.
-Keep the existing 64 KiB canonical limit. Historical findings remain in
+Status: the T01-T19 three-route retest is complete at the setup gate. Zero of
+three routes passed, so no authorized ingestion, common-question or page-size
+comparison stage ran. Do not repair product or instance defects, clean up failed
+artifacts or start an unapproved retry loop. Preserve each outcome and stop for
+joint review. Keep the existing 64 KiB canonical limit. See the
+[round-two results](ROUND-2-TRIAL-RESULTS.md) and historical
 [results](TRIAL-RESULTS.md); private source and receipt evidence remains outside
 Git.
 The [active plan](PLAN.md#current-execution-authorization) controls authorization.

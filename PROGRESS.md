@@ -6660,3 +6660,37 @@ requirements, then read this log from top to bottom.
   create three new isolated destinations and run the already authorized fresh
   Sol, Gemini Spark and ChatGPT Work setup/ingestion trials. Once trial execution
   begins, preserve defects without repair and stop after the comparative report.
+
+## 2026-09-17 — Round-two trials stopped at setup gate; 0 of 3 passed
+
+- All routes received the same Drive-hosted immutable starter and distinct fresh
+  Drive destinations. Spark and Work used separate controllers, conversations,
+  serial browser operation and evidence areas within the user's one signed-in
+  Chrome profile; account/profile/provider-memory isolation is not claimed.
+- Fresh Sol discovered the starter, completed the interview and saved 67 files,
+  including 35 JSON pages. Its independent audit preserved 55 of 55 Drive
+  responses and found the saved Active Task and Completed Task history roles
+  collapsed onto one undifferentiated empty Task locator. The finite manifest
+  had 24 logical roles but 23 unique roots. The T01 helper incorrectly returned
+  `valid` because its selector could not distinguish the two Task roles. Sol
+  failed setup review and received no ingestion request.
+- Spark received the setup prompt and interview answers but began source
+  retrieval before setup completion or an ingestion request, so it was stopped.
+  A controller top-level-composer mistake also created a second unintended task,
+  which was stopped. Spark made no setup-completion claim; its assigned Drive
+  root read back empty. Provider or methodological effects outside that root
+  remain unknown.
+- Work accepted the opening prompt and remained visibly working without showing
+  an interview, completion, error or provider action. Browser control then hung,
+  including one pending call for about 1,012 seconds. The controller was
+  interrupted without retry; the assigned Drive root read back empty and the
+  provider task's final state remains unknown.
+- Result: 0/3 setup gates passed. Therefore no authorized ingestion, common
+  questions, source-semantic audit or 64/128/256 KiB comparison ran. Sol's
+  5,327-byte setup-page maximum is not canonical Knowledge/Task size evidence;
+  retain 64 KiB.
+- No product or instance repair, cleanup, retry loop, mailbox mutation, outbound
+  effect, task-app write, audio or schedule occurred. The privacy-safe report is
+  `docs/plans/restart/ROUND-2-TRIAL-RESULTS.md`. Exact next action: publish this
+  report and return to the user for joint review. Proposed fixes and any further
+  test require explicit approval.

@@ -1,7 +1,8 @@
 # Approved second-round remediation
 
-Status: implemented in source on 2026-09-17; local deterministic checks passed.
-Publication and the three fresh-agent trials are tracked in the active
+Status: implemented and published on 2026-09-17; the final local deterministic
+suite passed 46 checks. The three fresh-agent trials ended at the setup gate with
+zero passes. See the [round-two results](ROUND-2-TRIAL-RESULTS.md), active
 [plan](PLAN.md) and [progress log](../../../PROGRESS.md). This document records
 the cohesive implementation and does not replace first-round evidence in
 [trial results](TRIAL-RESULTS.md) or the [root-cause review](ROOT-CAUSE-REVIEW.md).
@@ -53,7 +54,7 @@ the cohesive implementation and does not replace first-round evidence in
 
 The following checks were executed after integration:
 
-- 37 Python standard-library tests covering privacy scanning, metadata helpers,
+- 46 Python standard-library tests covering privacy scanning, metadata helpers,
   bootstrap validation and evaluator helpers: passed;
 - compilation of current helper and build scripts with temporary bytecode cache:
   passed; and

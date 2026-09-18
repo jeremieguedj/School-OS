@@ -3,10 +3,11 @@
 Updated 2026-09-17. The user approved both architecture recommendations and all
 T01–T19 treatments in the [second-round remediation](ROUND-2-REMEDIATION.md),
 then authorized implementation, publication and three fresh-agent retests. The
-first-round [results](TRIAL-RESULTS.md) and
-[root-cause review](ROOT-CAUSE-REVIEW.md) remain historical evidence. The active
-plan controls the new implementation and test authority, including the rule not
-to repair defects after the retest begins.
+[round-two results](ROUND-2-TRIAL-RESULTS.md) record that zero setup gates
+passed, so no authorized ingestion or question phase ran. The first-round
+[results](TRIAL-RESULTS.md) and [root-cause review](ROOT-CAUSE-REVIEW.md) remain
+historical evidence. The active plan now requires joint review before any fix,
+cleanup, retry or additional test.
 
 Start here when resuming the restart. The retained MVP
 implementation is authored but not yet qualified. Earlier experiments and the
@@ -68,9 +69,10 @@ implementation, except where the user has explicitly delegated a recorded choice
 The first isolated seven-day attempts and matched 64/128/256 KiB evaluation ran
 under explicit user authority; only the first Sol route reached that size
 comparison, and larger-capacity behavior was not exercised. The user has now
-authorized the implemented remediation's three-route retest. Retain the current
-64 KiB maximum, preserve any new defect without repair after execution starts,
-and stop for joint review after the comparative report. The
+authorized the implemented remediation's three-route retest. That retest is now
+complete at the setup gate: 0/3 passed and dependent stages did not run. Retain
+the current 64 KiB maximum and preserve the failed/unknown states without repair
+until joint review. The
 [coordinator handoff](ASTRA-HANDOFF.md) has a historical
 filename; the active plan controls current authority.
 

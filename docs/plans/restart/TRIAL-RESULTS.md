@@ -1,5 +1,9 @@
 # Restart trial results
 
+> **Historical first-round report.** The later remediation retest stopped with
+> zero of three setup gates passed. Its current findings and next decisions are
+> in [ROUND-2-TRIAL-RESULTS.md](ROUND-2-TRIAL-RESULTS.md).
+
 The [root-cause review](ROOT-CAUSE-REVIEW.md) consolidates all three intended routes,
 separates repeat attempts and traces saved-data failures into the question results.
 The user has authorized read-only diagnosis, with no fixes or new trials.

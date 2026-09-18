@@ -10,13 +10,12 @@ docs/product-principles.md, the current docs/plans/restart/PLAN.md, the latest
 PROGRESS.md entries and the approved data/identity contracts before acting.
 Inspect actual branch, working tree and history. The active plan's
 [current execution authorization](PLAN.md#current-execution-authorization)
-records explicit authority for the completed first trials and two subsequent
-isolated browser attempts, the approved T01–T19 remediation, its implementation
-and the three fresh-agent retests. Read the first-round
+records the completed first trials and browser attempts, the approved T01–T19
+remediation, its implementation, and the completed three-route setup-gated
+retest. Read the [round-two results](ROUND-2-TRIAL-RESULTS.md), first-round
 [trial results](TRIAL-RESULTS.md) and [root-cause review](ROOT-CAUSE-REVIEW.md)
-before acting. Earlier findings-only and publication/readiness holds are
-historical. Once the new retest series begins, preserve defects without repair
-and return the completed comparison to the user.
+before acting. Zero round-two setup gates passed, so no authorized ingestion or
+question phase ran. Preserve defects without repair and wait for joint review.
 
 All remaining published Q1/Q2, Q4 and Q6 recommendations are explicitly approved.
 Do not re-request those decisions. Any new architecture still requires approval.
@@ -40,17 +39,14 @@ be truncated or assigned an invented format. Use no more than three
 bounded Sol workers with clear file ownership. Root reviews product/principle
 conformance and does not silently reduce retained scope.
 
-Build and publish one revised starter from the exact integrated remediation
-commit, then use its immutable bytes for three isolated seven-day trials:
-a fresh context-free worker, Gemini Spark through the user's browser, and ChatGPT
-Work through the browser. Each gets its own new Drive instance within the user's
-test folder, the same starter revision and the same fixed interval. Start with
-only the starter link and minimal setup request; the agent discovers the guide
-and asks the parent for missing choices. Ingestion follows as a separate request. Never reuse prior
-instance contents or authorize outbound briefs, personal task edits or schedules
-by implication. Keep raw evidence private; report observable retrieval and decision
-evidence, not hidden internal reasoning. Preserve failures and report capabilities
-honestly. Broader qualification remains outside this authorization.
+The revised starter was published from exact implementation commit
+`aae44ef13be8392130f9b5aec7889b040c0ca45b` and used for three isolated setup
+attempts. Sol failed independent saved-state review because its Active and
+Completed Task roles shared one undifferentiated locator and T01 accepted it.
+Spark crossed the setup-only source boundary and did not finish setup. Work
+stalled in an unresolved working state before interview. Their assigned states
+and private evidence are preserved. Do not repair, clean up, retry or send the
+ingestion request without new explicit approval.
 
 Historically, the first Sol route reached ingestion with semantic defects. The first Spark
 setup and Work launch failed. In the authorized second attempts, Spark failed
@@ -61,8 +57,6 @@ pass, one qualified and one fail. Keep all earlier attempts and private evidence
 separate from the new roots. Bounded observer retries and the answer-report format
 adjustment are documented in the results/progress log.
 
-Update plan/progress and publish each meaningful accepted work unit. Publish the
-integrated implementation and exact starter, execute the authorized routes,
-publish their qualified findings, verify the remote revision and stop for joint
-review. A failed or incomplete trial is a reported outcome, not product
-qualification or permission to fix it.
+Update plan/progress and publish the privacy-safe round-two report, verify the
+remote revision and stop for joint review. A failed or incomplete trial is a
+reported outcome, not product qualification or permission to fix it.

@@ -1,12 +1,11 @@
 # School-OS restart architecture and simulation
 
-Status: the first-round implementation, trials and root-cause review are
-published historical evidence. The user approved both prerequisite architecture
-recommendations and the complete T01-T19 remediation package, then explicitly
-authorized its implementation, publication, three fresh-agent retests and a
-comparative report. The coordinator must not repair defects found during those
-trials before reviewing the results with the user. No broad product
-qualification is claimed. See
+Status: the approved T01-T19 remediation is published, and its three-route
+setup-gated retest is complete. Zero of three setup gates passed, so no route
+received an authorized ingestion request. The coordinator must not repair,
+clean up or retry defects before reviewing the results with the user. No broad
+product qualification is claimed. See the
+[round-two results](ROUND-2-TRIAL-RESULTS.md) and historical first-round
 [trial results](TRIAL-RESULTS.md) for evidence and limitations; earlier checkpoints
 below are historical. The [artifact guide](README.md) distinguishes the active
 contract from frozen studies and superseded proposals.
@@ -67,7 +66,7 @@ to act. That later instruction is recorded immediately below. The proposed
 conversation/worktree fork was dropped and creates no alternate implementation
 line.
 
-## 2026-09-17 current implementation and retest authorization — active
+## 2026-09-17 implementation and retest authorization — completed; review stop
 
 The user has now supplied the separate instruction to act. Implement the complete
 approved package, perform appropriate local validation, publish and verify the
@@ -101,8 +100,13 @@ the
 [dedicated prerelease](https://github.com/jeremieguedj/School-OS/releases/tag/school-os-starter-2026-09-17-round-2)
 with SHA-256
 `5cabbe0779c39a8ac547ee17ec8365cb0d244a95591cccc20658aab27e142f50`.
-The release download matched the reviewed local bytes. The next authorized
-action is the three-route trial series above, without another readiness gate.
+The release download matched the reviewed local bytes. The authorized series is
+now complete: Sol failed independent setup review, Spark did not complete setup
+and crossed the setup-only boundary, and Work remained in an unresolved working
+state before browser control stalled. Zero routes passed setup, so ingestion,
+common questions and the page-size comparison were not run. The exact next
+action is joint review of the [round-two results](ROUND-2-TRIAL-RESULTS.md).
+No proposed repair, cleanup, retry or additional test is approved.
 
 ## Current testing authority — report findings, do not repair
 
