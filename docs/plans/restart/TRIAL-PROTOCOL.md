@@ -1,14 +1,16 @@
 # Authorized three-agent ingestion trials
 
-Status: the T01-T19 three-route retest is complete at the setup gate. Zero of
-three routes passed, so no authorized ingestion, common-question or page-size
-comparison stage ran. Do not repair product or instance defects, clean up failed
-artifacts or start an unapproved retry loop. Preserve each outcome and stop for
-joint review. Keep the existing 64 KiB canonical limit. See the
-[round-two results](ROUND-2-TRIAL-RESULTS.md) and historical
+Status: the T01-T19 three-route retest is complete at the setup gate and is now
+the captured first baseline round for the authorized
+[autonomous remediation cycle](AUTONOMOUS-REMEDIATION-CYCLE.md). That cycle
+supersedes the former joint-review stop only for one unchanged fresh pre-fix
+round, selected nonarchitectural or already approved-architecture treatments,
+and two unchanged post-fix rounds. Keep the existing 64 KiB canonical limit.
+Architecture-changing treatments remain backlogged until explicit approval.
+See the [round-two results](ROUND-2-TRIAL-RESULTS.md) and historical
 [results](TRIAL-RESULTS.md); private source and receipt evidence remains outside
-Git.
-The [active plan](PLAN.md#current-execution-authorization) controls authorization.
+Git. The [active plan](PLAN.md#2026-09-17-autonomous-remediation-cycle--active)
+and cycle plan control authorization.
 This evaluator protocol is never supplied as the agent's opening prompt. Use the
 [minimal handoff](TRIAL-PROMPTS.md); keep source values and instance links private.
 

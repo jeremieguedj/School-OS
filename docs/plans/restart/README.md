@@ -1,13 +1,18 @@
 # School-OS restart: current plan and artifacts
 
-Updated 2026-09-17. The user approved both architecture recommendations and all
-T01–T19 treatments in the [second-round remediation](ROUND-2-REMEDIATION.md),
-then authorized implementation, publication and three fresh-agent retests. The
-[round-two results](ROUND-2-TRIAL-RESULTS.md) record that zero setup gates
-passed, so no authorized ingestion or question phase ran. The first-round
-[results](TRIAL-RESULTS.md) and [root-cause review](ROOT-CAUSE-REVIEW.md) remain
-historical evidence. The active plan now requires joint review before any fix,
-cleanup, retry or additional test.
+Updated 2026-09-17. The active work is the authorized
+[autonomous remediation cycle](AUTONOMOUS-REMEDIATION-CYCLE.md). The exact
+starting revision is preserved by the immutable
+`school-os-autonomous-remediation-baseline-2026-09-17` tag/release at commit
+`db68b12840aab3d0c94cfbb7d036a85f31b311f2`. The completed
+[round-two results](ROUND-2-TRIAL-RESULTS.md) are the first baseline round. The
+cycle adds one unchanged fresh pre-fix round, evidence-bound root cause and issue
+classification, only approved-architecture or nonarchitectural fixes, and two
+unchanged post-fix rounds before a final website brief and stop. Architecture
+changes remain backlogged until explicit approval.
+
+The historical first-round [results](TRIAL-RESULTS.md) and [root-cause
+review](ROOT-CAUSE-REVIEW.md) remain evidence, not current execution instructions.
 The current [round-two root-cause retrospective](ROUND-2-ROOT-CAUSE-RETRO.md)
 records the route-specific evidence strength and later agent explanations.
 

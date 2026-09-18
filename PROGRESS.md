@@ -6741,3 +6741,29 @@ requirements, then read this log from top to bottom.
 - The public retrospective is
   `docs/plans/restart/ROUND-2-ROOT-CAUSE-RETRO.md`. Exact next action remains
   joint review; no repair, cleanup, retry or additional trial is approved.
+## 2026-09-17 — Autonomous remediation cycle authorized and baseline preserved
+
+- The user authorized an end-to-end autonomous cycle: preserve the current
+  state; use the completed round-two trial as baseline round one; run one fresh
+  unchanged pre-fix round across context-free Sol, Gemini Spark and ChatGPT Work;
+  collect evidence-bound route retrospectives and independent audits; create a
+  cohesive treatment plan; implement only nonarchitectural or already approved
+  architecture treatments; run two independent post-fix rounds without changes
+  between them; publish a self-contained website brief; and stop.
+- The exact pre-cycle source is commit
+  `db68b12840aab3d0c94cfbb7d036a85f31b311f2`. The annotated tag and GitHub
+  release `school-os-autonomous-remediation-baseline-2026-09-17` were published
+  and verified to peel to that commit. The existing planning website baseline is
+  version 25.
+- The detailed execution contract is
+  `docs/plans/restart/AUTONOMOUS-REMEDIATION-CYCLE.md`. It fixes the source
+  interval, starter provenance, route isolation, setup gate, private evidence
+  rules, issue packet and treatment ledger, architecture backlog, two post-fix
+  rounds and final stop.
+- Twelve new private route/shared receipt directories were created for the
+  unchanged pre-fix round and two post-fix rounds. Each directory is mode 0700;
+  a harmless mode-0600 synthetic write/read/delete preflight succeeded in each.
+  No provider, Drive or mailbox operation was performed by that local preflight.
+- Exact next action: publish and remotely verify this execution-plan checkpoint,
+  then create three fresh pre-fix Drive roots and fresh route sessions using the
+  unchanged round-two starter. Preserve all baseline instances and evidence.

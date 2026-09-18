@@ -108,18 +108,26 @@ verified/corrected information and relevant open tasks, shows original source
 dates and discloses failed task-app sync; source accuracy, truthful task/coverage
 state and the daily ingestion gate remain required.
 
-The user has authorized implementation and the revised three-route setup and
-ingestion trials. Publish and verify the integrated implementation and one
-immutable starter, then use one fresh context-free Sol agent, Gemini Spark and
-ChatGPT Work in separate new folders. Each setup must pass independent saved-state
-review before its separate ingestion request. Earlier attempts and unresolved
-effects remain historical evidence; do not reuse their folders or handoffs. The
-trial does not permit outbound briefs, task-app writes, schedules or changes to
-existing instances. Preserve private evidence and report incomplete capabilities
-honestly. After a trial begins, do not repair defects or start a repair/retest
-loop; finish independent unaffected checks and return the comparison to the user.
+The user has authorized the bounded autonomous remediation sequence in
+[the cycle plan](docs/plans/restart/AUTONOMOUS-REMEDIATION-CYCLE.md). Preserve
+the exact baseline, bind the completed round-two trial as the first baseline
+round, run one unchanged fresh three-route pre-fix round, classify every issue,
+implement only approved-architecture or nonarchitectural treatments, and run two
+fresh post-fix rounds from one frozen revised starter without changes between
+them. Each round uses one context-free Sol agent, Gemini Spark and ChatGPT Work
+in separate new folders. Every setup must pass independent saved-state review
+before its separate ingestion request. Earlier instances and unresolved effects
+remain historical evidence and are never repaired or reused.
+
+Every treatment that introduces or changes architecture goes to the approval
+backlog and is not implemented. The cycle does not permit outbound briefs,
+task-app writes, schedules, mailbox mutation, cleanup of prior instances or
+unrelated source expansion. Preserve private evidence, obtain concise
+evidence-bound provider decision summaries rather than hidden reasoning, and
+report incomplete capabilities honestly. After the two post-fix rounds, publish
+the self-contained final comparison and stop.
 Inspect hooks and CI before publication; never silently bypass checks. See
-[the current execution boundary](docs/plans/restart/PLAN.md#2026-09-17-current-implementation-and-retest-authorization--active).
+[the active execution boundary](docs/plans/restart/PLAN.md#2026-09-17-autonomous-remediation-cycle--active).
 
 ## Instruction hierarchy
 

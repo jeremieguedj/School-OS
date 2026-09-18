@@ -1,12 +1,21 @@
 # School-OS restart architecture and simulation
 
-Status: the approved T01-T19 remediation is published, and its three-route
-setup-gated retest is complete. Zero of three setup gates passed, so no route
-received an authorized ingestion request. The coordinator must not repair,
-clean up or retry defects before reviewing the results with the user. No broad
-product qualification is claimed. See the
-[round-two results](ROUND-2-TRIAL-RESULTS.md) and historical first-round
-[trial results](TRIAL-RESULTS.md) for evidence and limitations; earlier checkpoints
+Status: the user has authorized the complete autonomous remediation cycle in
+[AUTONOMOUS-REMEDIATION-CYCLE.md](AUTONOMOUS-REMEDIATION-CYCLE.md). The exact
+pre-cycle revision is preserved by the immutable
+`school-os-autonomous-remediation-baseline-2026-09-17` tag and release, which
+peel to commit `db68b12840aab3d0c94cfbb7d036a85f31b311f2`. The cycle captures
+the completed round-two results as its first baseline round, runs one unchanged
+fresh pre-fix round on all three routes, classifies every issue, implements only
+approved-architecture or nonarchitectural treatments, and runs two independent
+post-fix rounds without changes between them. A treatment that needs a new or
+changed architecture decision is recorded in the backlog and is not implemented
+without explicit user approval. The cycle ends with a privacy-safe repository
+report and self-contained website brief, then stops.
+
+No broad product qualification is claimed. See the [round-two
+results](ROUND-2-TRIAL-RESULTS.md) and historical first-round [trial
+results](TRIAL-RESULTS.md) for evidence and limitations; earlier checkpoints
 below are historical. The [artifact guide](README.md) distinguishes the active
 contract from frozen studies and superseded proposals.
 
@@ -16,8 +25,38 @@ blind spot, records Spark's visible premature transition and its retrospective
 inference-error explanation without claiming Gmail dispatch, and establishes
 that Work reached the expected setup interview but its controller missed the
 response and never supplied answers. The technical cause of that observation
-failure remains unknown. This evidence does not approve a repair, cleanup,
-retry or new trial.
+failure remains unknown. Its earlier review stop has been superseded only by the
+bounded authority in the autonomous remediation cycle.
+
+## 2026-09-17 autonomous remediation cycle — active
+
+The user's latest instruction authorizes the coordinator to complete the full
+sequence without another routine approval checkpoint:
+
+1. preserve and verify an exact rollback snapshot of the current code and
+   published planning site;
+2. bind the completed round-two trial and retrospective as the first baseline
+   round;
+3. run one new unchanged fresh round with context-free Sol, Gemini Spark and
+   ChatGPT Work, using the same immutable starter and fixed seven-day interval;
+4. obtain evidence-bound decision summaries from the tested agents, audit saved
+   state and source semantics independently, and classify every issue;
+5. create one cohesive treatment plan grounded in product principles;
+6. implement and publish only treatments that apply already approved
+   architecture or are nonarchitectural;
+7. backlog every treatment that would introduce or change architecture until the
+   user explicitly approves it; and
+8. run two independent post-fix rounds from one frozen revised starter, with no
+   fixes or method changes between the rounds, then publish the final report and
+   stop.
+
+The detailed phase gates, receipt rules, route isolation, rollback ledger,
+method-drift rules and completion condition are authoritative in
+[AUTONOMOUS-REMEDIATION-CYCLE.md](AUTONOMOUS-REMEDIATION-CYCLE.md). This section
+supersedes the earlier joint-review/no-retry stop only for that named sequence.
+It does not authorize outbound briefs or audio, task-app writes, schedules,
+mailbox mutation, cleanup of earlier instances, unrelated source expansion or
+an architecture-changing treatment.
 
 ## 2026-09-17 remediation approval ledger — historical checkpoint
 
