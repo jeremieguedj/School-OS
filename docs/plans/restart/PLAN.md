@@ -13,9 +13,11 @@ contract from frozen studies and superseded proposals.
 The [round-two root-cause retrospective](ROUND-2-ROOT-CAUSE-RETRO.md) is now
 complete. It establishes Sol's immediate shared-locator decision and validator
 blind spot, records Spark's visible premature transition and its retrospective
-inference-error explanation without claiming Gmail dispatch, and leaves Work's
-cause unknown because the prior provider task could not be identified safely.
-This evidence does not approve a repair, cleanup, retry or new trial.
+inference-error explanation without claiming Gmail dispatch, and establishes
+that Work reached the expected setup interview but its controller missed the
+response and never supplied answers. The technical cause of that observation
+failure remains unknown. This evidence does not approve a repair, cleanup,
+retry or new trial.
 
 ## 2026-09-17 remediation approval ledger — historical checkpoint
 
@@ -109,8 +111,8 @@ with SHA-256
 `5cabbe0779c39a8ac547ee17ec8365cb0d244a95591cccc20658aab27e142f50`.
 The release download matched the reviewed local bytes. The authorized series is
 now complete: Sol failed independent setup review, Spark did not complete setup
-and crossed the setup-only boundary, and Work remained in an unresolved working
-state before browser control stalled. Zero routes passed setup, so ingestion,
+and crossed the setup-only boundary, and Work reached the expected interview but
+its controller missed the response and never supplied answers. Zero routes passed setup, so ingestion,
 common questions and the page-size comparison were not run. The exact next
 action is joint review of the [round-two results](ROUND-2-TRIAL-RESULTS.md).
 No proposed repair, cleanup, retry or additional test is approved.

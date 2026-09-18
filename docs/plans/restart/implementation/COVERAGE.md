@@ -55,7 +55,7 @@ The frozen studies and pretrial checkpoints are not current qualification eviden
 
 | Deliverables / use cases | Observed trial coverage and limits |
 | --- | --- |
-| T1 / U0 setup | Round two: 0/3 passed. Sol saved 67 files but failed independent review because active/completed Task roles shared one locator and T01 accepted it. Spark crossed the setup-only source boundary without completing setup. Work stalled before interview. Earlier Work setup success remains historical evidence for the prior revision only. |
+| T1 / U0 setup | Round two: 0/3 passed. Sol saved 67 files but failed independent review because active/completed Task roles shared one locator and T01 accepted it. Spark crossed the setup-only source boundary without completing setup. Work reached the expected interview, but its controller missed the response and never supplied answers, so setup remained pending. Earlier Work setup success remains historical evidence for the prior revision only. |
 | T2–T3 / U1 canonical data and ingestion | Round-two ingestion was correctly withheld after setup-gate failures. Historical seven-day instances exposed material semantic defects; no complete three-agent comparison has succeeded. |
 | T4 / U2 queries | Round-two common questions did not run. Historical query grades remain revision-specific and do not qualify the remediation. A year of trends, lost-source queries and fresh-session retrieval remain unestablished. |
 | T5 / U4 tasks | Canonical task extraction was exercised and has source-meaning defects. External task-app synchronization, parent edits and detected-completion presentation were not exercised. |
@@ -63,7 +63,7 @@ The frozen studies and pretrial checkpoints are not current qualification eviden
 | T7 / U3 tools and schedules | Selected Drive/mail access and ordinary setup interviews were exercised. New adapter authorship and cross-connector reuse were not qualified. Central known-job queries remain deferred; no schedules ran. |
 | T8 / continuation | Saved coverage and readback were inspected. Agent replacement, lost-token replay, missed-work recovery and interruption handling were not independently qualified; D2 write repair stays deferred. |
 | T9 / U6–U7 extensions and upgrades | Starter distribution/setup was exercised with the above limits. New extensions, upgrades and preservation across upgrades were not exercised; automated lifecycle machinery remains deferred. |
-| T10 / portability and efficiency | Three round-two surfaces were attempted, but none passed setup. Spark had a controller/UI routing incident and premature source activity; Work browser control stalled; Sol setup required extensive writes/reads and still failed topology review. The size comparison did not run. No universal compatibility or efficiency claim follows. |
+| T10 / portability and efficiency | Three round-two surfaces were attempted, but none passed setup. Spark had a controller/UI routing incident and premature source transition; Work followed the expected flow through interview but its controller missed the response and stalled; Sol setup required extensive writes/reads and still failed topology review. The size comparison did not run. No universal compatibility or efficiency claim follows. |
 
 The principle/use-case obligations below remain required despite these limits.
 Runtime files are frozen during this findings-only phase. The current 64 KiB

@@ -44,9 +44,11 @@ The revised starter was published from exact implementation commit
 attempts. Sol failed independent saved-state review because its Active and
 Completed Task roles shared one undifferentiated locator and T01 accepted it.
 Spark crossed the setup-only source boundary and did not finish setup. Work
-stalled in an unresolved working state before interview. Their assigned states
-and private evidence are preserved. Do not repair, clean up, retry or send the
-ingestion request without new explicit approval.
+reached the expected setup interview after a 58-second first response, but its
+controller missed the response and never supplied answers. The technical cause
+of that observation failure remains unknown. Their assigned states and private
+evidence are preserved. Do not repair, clean up, retry or send the ingestion
+request without new explicit approval.
 
 Historically, the first Sol route reached ingestion with semantic defects. The first Spark
 setup and Work launch failed. In the authorized second attempts, Spark failed

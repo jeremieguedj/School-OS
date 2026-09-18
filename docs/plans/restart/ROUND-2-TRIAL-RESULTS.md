@@ -11,9 +11,12 @@ Retrospective status: the privacy-safe
 It finds sufficient evidence for Sol's immediate shared-locator generation
 failure and validator alias blind spot, sufficient evidence for Spark's visible
 premature transition but not an exhaustive proof of Gmail dispatch, and
-insufficient causal evidence for Work. It records the second Spark task as a
-separate controller/UI incident, leaves the concrete Sol representation
-unapproved, and authorizes or performs no repair, cleanup, retry, or new trial.
+sufficient evidence that Work followed the expected setup path through an
+unanswered interview. The Work trial stopped because the controller missed the
+response and later hung; no Work tested-agent or product failure is established.
+The retrospective records the second Spark task as a separate controller/UI incident,
+leaves the concrete Sol representation unapproved, and authorizes or performs no
+repair, cleanup, retry, or new trial.
 
 ## Executive result
 
@@ -35,18 +38,20 @@ on any of the three routes.
   task; its exact creation path and effects remain unresolved.
   Spark made no setup-completion claim, and its assigned Drive root reads back as
   empty.
-- Work received the exact opening request on a verified fresh surface. Its only
-  visible state was `Working` / `Stop answering`. It showed no interview,
-  completion claim, error, Drive or Gmail action, write, or ingestion. Browser
-  control later hung, including a final app lookup for about 1,012 seconds. The
-  controller was interrupted without retry. Its assigned Drive root reads back
-  as empty, and the provider task's state after the last visible `Working` state
-  is unknown.
+- Work received the exact opening request on a verified fresh surface. The exact
+  task was later verified by its title, Work label, and matching opening prompt.
+  Its first response, marked at 58 seconds, contains the expected setup interview
+  and preserves the boundary between setup and later source processing. No
+  interview answer was supplied, so setup remained pending and nothing persisted
+  in the assigned root. The original controller saw only the running state and
+  later hung; it likely missed the response during or after processing, but the
+  technical cause remains unknown.
 
-The one structural defect observed in Sol and the browser-route failures prevent
-any claim of product qualification, provider compatibility, ingestion quality,
-query quality, or page-size economics. The existing 64 KiB canonical maximum
-remains unchanged pending later evidence.
+The structural defect observed in Sol, Spark's premature transition, and Work's
+incomplete unanswered interview mean that no route passed the setup gate. They
+prevent any claim of product qualification, provider compatibility, ingestion
+quality, query quality, or page-size economics. The existing 64 KiB canonical
+maximum remains unchanged pending later evidence.
 
 ## Release and method
 
@@ -88,13 +93,14 @@ errors.
 | --- | --- | --- | --- | --- |
 | Sol | Discovered the starter, interviewed the parent, locally validated, wrote 67 files including 35 bootstrap/canonical JSON pages, and claimed setup success. | Fifty-five Drive reads produced 55 responses and 55 owner-only mode-0600 receipts, with no connector errors. Review verified ancestry, expected structure and system files, configuration scope, 35 unique JSON pages, and 31 derived pages whose explicit continuations were exhausted. The largest page was 5,327 bytes; the largest page had 10 entries; no reviewed page was duplicated or over the limit. Active Tasks and Completed Task history nevertheless shared one empty Task locator root. | **Failed** | No ingestion request; no ingestion, questions, semantic audit, or size comparison. |
 | Spark | Received the exact opening prompt and interview answers. It entered a retrieval-labeled action before authorization and was stopped. It did not claim setup completion. Visible history does not prove a Gmail dispatch. | Assigned root readback was empty. A controller/UI routing mistake also created a second unintended Spark task; its exact creation path and effects remain unknown. | **Failed / incomplete** | No authorized ingestion request or run; no questions, semantic audit, or size comparison. |
-| Work | Received the exact opening prompt on a verified fresh surface. The only visible provider state was `Working` / `Stop answering`. | Assigned root readback was empty. Browser-control calls hung; the controller was interrupted without retry. | **Failed / incomplete** | No interview, setup claim, visible provider action, ingestion request or run, questions, semantic audit, or size comparison. |
+| Work | Received the exact opening prompt. The verified task's first response, marked at 58 seconds, contains the expected setup interview and states the separation between setup and later source processing. No interview answer was supplied. | Assigned root readback was empty. Work says its starter discovery stayed temporary and read-only; the underlying action records were not fully expanded, so those details remain provider claims. The original controller missed the response and later hung for an unknown technical reason. | **Failed / incomplete** | Setup remained pending for configuration answers; no persisted setup, authorized ingestion request or run, questions, semantic audit, or size comparison. |
 
 Sol's successful writes and readbacks do not override the invalid task-route
 topology. Spark's retrieval-labeled transition is an observed authorization-boundary
 violation at the planning/status layer, not a proven or authorized ingestion run.
-Empty assigned roots establish only
-the absence of observed saved state in those roots at readback time.
+Work's visible unanswered interview establishes expected setup behavior through
+that point, but it does not pass the setup gate. Empty assigned roots establish
+only the absence of observed saved state in those roots at readback time.
 
 ## Observed failures and cause boundaries
 
@@ -105,11 +111,11 @@ the absence of observed saved state in those roots at readback time.
 | Sol Drive inventory | Every finite referenced target used for the gate was reviewed, including explicit continuations in the derived pages. | The Drive listing route exposed no explicit end marker, so exhaustive folder inventory remains unknown. A short or matching listing is not proof of exhaustion. |
 | Spark premature transition | The main Spark task entered a retrieval-labeled action before setup completion and without an ingestion request, despite the explicit setup-only instruction. It was stopped. | Spark retrospectively attributes the transition to its own inference error: it treated future mailbox filters as current permission. That account fits the visible sequence but remains a provider claim. The visible history does not exhaustively prove or disprove Gmail dispatch. |
 | Spark second task | The controller sent interview answers through the top-level composer by mistake, creating a second unintended task. | This routing mistake is evaluator/controller behavior. The exact UI/orchestration creation path and any effects remain unknown; it is not evidence that the main Spark task dispatched mailbox work. |
-| Work stall | The fresh Work surface accepted the opening prompt and remained visibly working. Control calls later hung, including one app lookup for about 1,012 seconds, after which the controller was interrupted. | The evidence does not establish whether the provider task completed, failed, remained active, or performed an unseen action after the last visible state. It also does not establish the cause of the control hang. |
+| Work interview and controller observation failure | The exact task is verified, and its first response visibly contains the expected setup interview after a 58-second processing interval. No answer was supplied. The original controller observed only the running state and later hung. | The visible unanswered interview supports Work's pending classification and establishes expected setup behavior through the interview. Work's detailed account of temporary starter retrieval and no downstream actions remains a provider claim because every action record was not independently expanded. The controller likely missed the response during or after processing, but the technical cause remains unknown. |
 
-No hidden chain of thought or retrospective provider explanation was used as
-evidence. Conclusions are limited to visible UI state, saved-state readback, and
-the preserved operation receipts described above.
+No hidden chain of thought was used as evidence. Retrospective provider claims
+are labeled separately from visible UI state, saved-state readback, and preserved
+operation receipts; they support inference only to the stated confidence.
 
 ## Effect on T01-T19 qualification
 
@@ -122,8 +128,8 @@ the preserved operation receipts described above.
 | T05 — bounded query planning | **Unexercised.** No common questions ran. |
 | T06 — claim-level canonical/source citations | **Unexercised.** No common questions ran. |
 | T07 — substantive embedded-image handling | **Unexercised.** No authorized ingestion ran. |
-| T08 — fresh setup from supplied bundle and parent answers | **Partially exercised; not qualified.** Sol discovered and used the starter and interview, but its saved setup was invalid. Spark did not finish setup, and Work did not reach an interview. |
-| T09 — outcomes-first interview and relevant capability inspection | **Partially exercised.** Sol completed the interview and Spark received interview answers; Work did not. No route completed a valid setup, so the treatment is not qualified end to end. |
+| T08 — fresh setup from supplied bundle and parent answers | **Partially exercised; not qualified.** Sol discovered and used the starter and interview, but its saved setup was invalid. Spark did not finish setup. Work reached the expected interview, but no answers were supplied and no setup persisted. |
+| T09 — outcomes-first interview and relevant capability inspection | **Partially exercised.** Sol completed the interview, Spark received interview answers, and Work presented the expected interview but received no answer. No route completed a valid setup, so the treatment is not qualified end to end. |
 | T10 — write placement and full readback | **Partially evidenced; not qualified.** Sol's audited targets had verified ancestry and content within its selected root, but the supplied evidence does not establish a complete content readback for every one of the 67 written files. Spark and Work wrote nothing observable to their assigned roots. |
 | T11 — identical immutable starter provenance | **Passed for artifact publication and route input.** The three routes received the identical Drive-hosted ZIP bound to the exact size and digest above. This is an artifact-provenance result, not setup or product qualification. |
 | T12 — one retry only after proving no dispatch/effect | **Unexercised.** No compliant launch retry was performed. The unintended second Spark task was a controller mistake and does not count as an authorized retry. |
@@ -131,7 +137,7 @@ the preserved operation receipts described above.
 | T14 — private receipt-sink preflight and receipt preservation | **Passed for the Sol setup audit.** The owner-only sink preflight passed, and 55 dispatched Drive reads produced 55 responses and 55 mode-0600 receipts with no connector errors. Spark and Work did not reach comparable setup audits, so this does not qualify their routes. |
 | T15 — contract-defined reference traversal | **Partially exercised.** The Sol audit traversed the referenced setup topology and exposed the Task-route collision. A valid installed instance and dependent ingestion topology were unavailable. |
 | T16 — task-bound report provenance | **Unexercised.** No downloaded route report was used or graded. |
-| T17 — disclosed browser isolation | **Method partially achieved with a controller incident.** Spark and Work used distinct conversations, controllers, tabs, roots, and evidence areas in one shared signed-in profile. The Spark top-level-composer mistake is reported separately. Account and provider-memory isolation remain unclaimed. |
+| T17 — disclosed browser isolation | **Method partially achieved with controller incidents.** Spark and Work used distinct conversations, controllers, tabs, roots, and evidence areas in one shared signed-in profile. The Spark top-level-composer mistake and Work missed-response/control hang are reported separately. Account and provider-memory isolation remain unclaimed. |
 | T18 — independently grounded image expectations | **Unexercised.** No image-dependent expectation or ingestion audit ran. |
 | T19 — retained 64 KiB canonical pages and 64/128/256 KiB evaluation | **Unexercised as a size comparison.** Sol's 5,327-byte maximum is setup-only evidence and says nothing about canonical knowledge-page economics. |
 
@@ -143,7 +149,7 @@ and T15 do not compensate for the failed setup gates.
 
 | Principle or use case | Evidence from this series |
 | --- | --- |
-| One-link first-use setup | Exercised on three routes; **0/3 passed**. Sol reached an invalid persisted setup, Spark crossed the setup-only boundary at the planning/status layer, and Work did not progress observably beyond working state. |
+| One-link first-use setup | Exercised on three routes; **0/3 passed**. Sol reached an invalid persisted setup, Spark crossed the setup-only boundary at the planning/status layer, and Work correctly reached the interview but received no answers and persisted no setup after a controller observation failure. |
 | Deterministic, discoverable Drive topology | Failed in Sol at the Task-route distinction. The validator's zero-diagnostic `valid` result did not match the independently reviewed contract topology. |
 | Losslessness and provenance | Not assessed. There was no authorized ingestion corpus or source-semantic comparison. |
 | Bounded, efficient execution | Setup-page bounds were observed in Sol, but ingestion, selective retrieval, model-visible bytes, tokens, cost, and accumulated-history behavior were not measured. |
@@ -195,17 +201,12 @@ cleanup, retry, or another trial series.
    independent setup gate passes, and stop immediately on premature source
    activity. Treat this as evaluator/controller hardening separately from the
    product defect.
-4. **Decide whether to authorize one bounded Work follow-up.** Before any retry,
-   inspect the preserved task and assigned root to establish the observable
-   dispatch/effect state. If that cannot be established, retain the outcome as
-   unknown rather than resubmitting. Any retry should use explicit controller
-   watchdog bounds and a fresh, separately recorded authorization.
-5. **Publish a new immutable starter only after the approved repair passes local
+4. **Publish a new immutable starter only after the approved repair passes local
    validation.** Then run setup-only gates on fresh roots first. Send the fixed
    seven-day ingestion request to a route only after its saved-state review
    passes. Preserve failed instances and do not clean them up as part of the
    retest.
-6. **Keep the 64 KiB limit.** Revisit 64/128/256 KiB only after a valid route has
+5. **Keep the 64 KiB limit.** Revisit 64/128/256 KiB only after a valid route has
    produced a real canonical ingestion corpus that can be repacked and queried
    under the authorized evaluation procedure.
 
@@ -222,16 +223,19 @@ that Spark or Work caused the Sol defect.
 - Sol's 55 successful Drive responses and receipts establish the bounded reads
   described here. They do not prove an exhaustive provider folder inventory,
   because the listing route supplied no explicit exhaustion marker.
-- Empty Spark and Work root readbacks do not prove that no provider-side or
-  out-of-scope effect occurred. Spark's effects outside the assigned root and
-  Work's final task state remain unknown.
+- Empty Spark and Work root readbacks establish only that no saved state was
+  observed there at readback. Spark's effects outside its assigned root remain
+  unknown. For Work, the visible unanswered interview supports pending status;
+  its detailed no-effect account remains a provider claim because the underlying
+  action records were not fully expanded.
 - Existing task titles were visible in the shared browser profile. No other task
   was opened. Shared cookies, account state, UI state, and provider memory were
   not isolated or measured.
 - The controller's top-level-composer mistake is a methodological incident. It is
   not attributed to product or provider behavior.
-- The Work control hang is an observed controller/UI failure. Its technical
-  cause and the provider task's final state are not established.
+- The Work control hang and missed interview response are observed controller/UI
+  failures. Their technical cause is not established; the verified task itself
+  shows an unanswered interview and expected pending setup behavior.
 - The local 46/46 suite and publication checks are not substitutes for Drive,
   connector, provider, or semantic qualification.
 

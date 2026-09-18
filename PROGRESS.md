@@ -6708,7 +6708,7 @@ requirements, then read this log from top to bottom.
 - Publication hygiene only: the updated Markdown links resolve, the privacy scan
   and diff checks pass, and the site page's local links and required result
   sections were checked. These are not functional product validation.
-- Exact next action: stop for joint review. The six follow-up proposals in the
+- Exact next action: stop for joint review. The follow-up proposals in the
   report are not approved. Do not repair, clean up, retry or run additional
   tests until the user explicitly directs the next work.
 
@@ -6730,9 +6730,14 @@ requirements, then read this log from top to bottom.
   explanation fits the timeline but remains retrospective; visible history does
   not prove a Gmail request dispatched. The adjacent second task remains a
   separate controller/UI incident with an unresolved creation path.
-- Work's exact recorded task alias now resolves to the generic ChatGPT home
-  surface. The prior task could not be identified safely, so no retrospective
-  prompt was sent. Its tested-agent cause remains unknown.
+- The exact Work task was subsequently located by its title, Work label and
+  matching opening prompt. Its first response, marked at 58 seconds, contains
+  the expected setup interview; no answer followed. Work reports temporary
+  read-only starter inspection and no persistent or downstream action. The
+  visible unanswered interview establishes a correctly pending setup; detailed
+  tool activity remains a provider claim. The original controller missed the
+  response while browser control hung, and that observation failure's technical
+  cause remains unknown.
 - The public retrospective is
   `docs/plans/restart/ROUND-2-ROOT-CAUSE-RETRO.md`. Exact next action remains
   joint review; no repair, cleanup, retry or additional trial is approved.
