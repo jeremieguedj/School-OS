@@ -6,6 +6,15 @@ produced **0 ingestion runs, 0 common-question runs, no source-semantic audit,
 and no meaningful 64/128/256 KiB comparison**. This report records the observed
 outcomes without repairing, cleaning up, retrying, or replacing any route.
 
+Retrospective status: the privacy-safe
+[round-two root-cause retrospective](ROUND-2-ROOT-CAUSE-RETRO.md) is complete.
+It finds sufficient evidence for Sol's immediate shared-locator generation
+failure and validator alias blind spot, sufficient evidence for Spark's visible
+premature transition but not an exhaustive proof of Gmail dispatch, and
+insufficient causal evidence for Work. It records the second Spark task as a
+separate controller/UI incident, leaves the concrete Sol representation
+unapproved, and authorizes or performs no repair, cleanup, retry, or new trial.
+
 ## Executive result
 
 The published round-two implementation did not qualify the first-use setup path
@@ -18,11 +27,12 @@ on any of the three routes.
   temporary manifest contained 24 logical roles but only 23 unique roots. The
   bootstrap checker returned `valid` with zero diagnostics because its manifest
   selector could not distinguish those two Task roles. Setup therefore failed.
-- Spark received the exact opening request and the interview answers, but began
-  retrieving school mail before setup had completed and without an ingestion
+- Spark received the exact opening request and the interview answers, but entered
+  a retrieval-labeled action before setup had completed and without an ingestion
   request, despite an explicit instruction not to ingest yet. The controller
-  stopped it. A separate controller/UI routing mistake created a second
-  unintended Spark task, which also began ingestion activity and was stopped.
+  stopped it. Visible action labels do not prove that a Gmail request dispatched.
+  A separate controller/UI routing mistake created a second unintended Spark
+  task; its exact creation path and effects remain unresolved.
   Spark made no setup-completion claim, and its assigned Drive root reads back as
   empty.
 - Work received the exact opening request on a verified fresh surface. Its only
@@ -77,12 +87,13 @@ errors.
 | Route | Observable setup progress | Independent saved-state result | Gate | Dependent stages |
 | --- | --- | --- | --- | --- |
 | Sol | Discovered the starter, interviewed the parent, locally validated, wrote 67 files including 35 bootstrap/canonical JSON pages, and claimed setup success. | Fifty-five Drive reads produced 55 responses and 55 owner-only mode-0600 receipts, with no connector errors. Review verified ancestry, expected structure and system files, configuration scope, 35 unique JSON pages, and 31 derived pages whose explicit continuations were exhausted. The largest page was 5,327 bytes; the largest page had 10 entries; no reviewed page was duplicated or over the limit. Active Tasks and Completed Task history nevertheless shared one empty Task locator root. | **Failed** | No ingestion request; no ingestion, questions, semantic audit, or size comparison. |
-| Spark | Received the exact opening prompt and interview answers. It began mail retrieval before authorization and was stopped. It did not claim setup completion. | Assigned root readback was empty. A controller/UI routing mistake also created a second unintended Spark task, which began ingestion activity and was stopped. | **Failed / incomplete** | No authorized ingestion request or run; no questions, semantic audit, or size comparison. |
+| Spark | Received the exact opening prompt and interview answers. It entered a retrieval-labeled action before authorization and was stopped. It did not claim setup completion. Visible history does not prove a Gmail dispatch. | Assigned root readback was empty. A controller/UI routing mistake also created a second unintended Spark task; its exact creation path and effects remain unknown. | **Failed / incomplete** | No authorized ingestion request or run; no questions, semantic audit, or size comparison. |
 | Work | Received the exact opening prompt on a verified fresh surface. The only visible provider state was `Working` / `Stop answering`. | Assigned root readback was empty. Browser-control calls hung; the controller was interrupted without retry. | **Failed / incomplete** | No interview, setup claim, visible provider action, ingestion request or run, questions, semantic audit, or size comparison. |
 
 Sol's successful writes and readbacks do not override the invalid task-route
-topology. Spark's attempted mail retrieval is an observed authorization-boundary
-violation, not an authorized ingestion run. Empty assigned roots establish only
+topology. Spark's retrieval-labeled transition is an observed authorization-boundary
+violation at the planning/status layer, not a proven or authorized ingestion run.
+Empty assigned roots establish only
 the absence of observed saved state in those roots at readback time.
 
 ## Observed failures and cause boundaries
@@ -92,8 +103,8 @@ the absence of observed saved state in those roots at readback time.
 | Sol Task route collision | The two required logical roles resolve to one undifferentiated empty Task locator root. The temporary manifest has 24 logical roles and 23 unique roots. The storage contract requires separate bounded Active Task and Completed Task history routes. | No downstream ingestion effect was exercised. The trial does not establish how a repaired instance would behave. |
 | Sol bootstrap validation blind spot | `bootstrap_contract` returned `valid` with zero diagnostics because the manifest selector cannot distinguish the two Task roles represented by the same family selector. Independent topology review caught the failure. | No broader claim is made about every validator rule or every possible manifest shape. |
 | Sol Drive inventory | Every finite referenced target used for the gate was reviewed, including explicit continuations in the derived pages. | The Drive listing route exposed no explicit end marker, so exhaustive folder inventory remains unknown. A short or matching listing is not proof of exhaustion. |
-| Spark premature source activity | The main Spark task began retrieving school mail before setup completion and without an ingestion request, despite the explicit setup-only instruction. It was stopped. | The reason Spark disregarded the boundary is unknown. The trial does not attribute it to hidden reasoning, a specific product defect, provider memory, or a connector failure. Effects outside the assigned root remain unknown. |
-| Spark second task | The controller sent interview answers through the top-level composer by mistake, creating a second unintended task. That task also began ingestion activity and was stopped. | This routing mistake is evaluator/controller behavior and is not evidence that School-OS or Spark created the second task autonomously. Methodological or provider effects outside the assigned root remain unknown. |
+| Spark premature transition | The main Spark task entered a retrieval-labeled action before setup completion and without an ingestion request, despite the explicit setup-only instruction. It was stopped. | Spark retrospectively attributes the transition to its own inference error: it treated future mailbox filters as current permission. That account fits the visible sequence but remains a provider claim. The visible history does not exhaustively prove or disprove Gmail dispatch. |
+| Spark second task | The controller sent interview answers through the top-level composer by mistake, creating a second unintended task. | This routing mistake is evaluator/controller behavior. The exact UI/orchestration creation path and any effects remain unknown; it is not evidence that the main Spark task dispatched mailbox work. |
 | Work stall | The fresh Work surface accepted the opening prompt and remained visibly working. Control calls later hung, including one app lookup for about 1,012 seconds, after which the controller was interrupted. | The evidence does not establish whether the provider task completed, failed, remained active, or performed an unseen action after the last visible state. It also does not establish the cause of the control hang. |
 
 No hidden chain of thought or retrospective provider explanation was used as
@@ -132,7 +143,7 @@ and T15 do not compensate for the failed setup gates.
 
 | Principle or use case | Evidence from this series |
 | --- | --- |
-| One-link first-use setup | Exercised on three routes; **0/3 passed**. Sol reached an invalid persisted setup, Spark crossed the ingestion boundary before setup, and Work did not progress observably beyond working state. |
+| One-link first-use setup | Exercised on three routes; **0/3 passed**. Sol reached an invalid persisted setup, Spark crossed the setup-only boundary at the planning/status layer, and Work did not progress observably beyond working state. |
 | Deterministic, discoverable Drive topology | Failed in Sol at the Task-route distinction. The validator's zero-diagnostic `valid` result did not match the independently reviewed contract topology. |
 | Losslessness and provenance | Not assessed. There was no authorized ingestion corpus or source-semantic comparison. |
 | Bounded, efficient execution | Setup-page bounds were observed in Sol, but ingestion, selective retrieval, model-visible bytes, tokens, cost, and accumulated-history behavior were not measured. |
@@ -227,7 +238,8 @@ that Spark or Work caused the Sol defect.
 ## Exact stop boundary
 
 Testing stopped at the setup gate. No ingestion request was sent to any route.
-The premature Spark activity was stopped and is not counted as an ingestion run.
+Spark's premature retrieval-labeled transition was stopped and is not counted as
+an ingestion run; visible history does not prove that a Gmail request dispatched.
 No common questions were issued, no source-semantic audit was performed, and no
 64/128/256 KiB comparison was created.
 

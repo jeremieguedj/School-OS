@@ -6711,3 +6711,28 @@ requirements, then read this log from top to bottom.
 - Exact next action: stop for joint review. The six follow-up proposals in the
   report are not approved. Do not repair, clean up, retry or run additional
   tests until the user explicitly directs the next work.
+
+## 2026-09-17 — Round-two root-cause retrospective completed
+
+- At the user's direction, conducted read-only retrospective follow-ups without
+  resuming setup or ingestion, modifying Drive, repairing an instance or running
+  another product test. Requests asked for concise decision summaries tied to
+  visible records, not hidden chain-of-thought.
+- Sol reports that it understood Active Tasks and Completed Task history as
+  distinct roles but deliberately reused one Task locator because the available
+  selector exposed no active/completed discriminator. That account matches the
+  saved bootstrap and manifest. The validator separately failed to reject two
+  logical roles sharing one root. Evidence is strong for the immediate failure
+  and blind spot, but does not select the missing concrete representation.
+- Spark's visible history proves a premature retrieval-labeled transition after
+  the parent explicitly reserved mailbox use for later ingestion. Spark
+  attributes it to treating future mailbox filters as current permission. That
+  explanation fits the timeline but remains retrospective; visible history does
+  not prove a Gmail request dispatched. The adjacent second task remains a
+  separate controller/UI incident with an unresolved creation path.
+- Work's exact recorded task alias now resolves to the generic ChatGPT home
+  surface. The prior task could not be identified safely, so no retrospective
+  prompt was sent. Its tested-agent cause remains unknown.
+- The public retrospective is
+  `docs/plans/restart/ROUND-2-ROOT-CAUSE-RETRO.md`. Exact next action remains
+  joint review; no repair, cleanup, retry or additional trial is approved.

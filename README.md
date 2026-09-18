@@ -44,6 +44,9 @@ The three fresh-agent retests ended with 0/3 setup gates passed, so ingestion an
 query stages did not run; see the
 [round-two results](docs/plans/restart/ROUND-2-TRIAL-RESULTS.md) or the
 [readable website report](https://school-os-architecture-guide.jeremieg.chatgpt.site/round-2-results.html).
+The [round-two root-cause retrospective](docs/plans/restart/ROUND-2-ROOT-CAUSE-RETRO.md)
+separates independently observed evidence from later agent explanations and
+remaining unknowns.
 The retired
 implementation is not the foundation of this project. No provider compatibility
 claim is made from source or local checks alone.

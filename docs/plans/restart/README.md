@@ -8,6 +8,8 @@ passed, so no authorized ingestion or question phase ran. The first-round
 [results](TRIAL-RESULTS.md) and [root-cause review](ROOT-CAUSE-REVIEW.md) remain
 historical evidence. The active plan now requires joint review before any fix,
 cleanup, retry or additional test.
+The current [round-two root-cause retrospective](ROUND-2-ROOT-CAUSE-RETRO.md)
+records the route-specific evidence strength and later agent explanations.
 
 Start here when resuming the restart. The retained MVP
 implementation is authored but not yet qualified. Earlier experiments and the

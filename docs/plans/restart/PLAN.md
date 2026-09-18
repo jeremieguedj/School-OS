@@ -10,6 +10,13 @@ product qualification is claimed. See the
 below are historical. The [artifact guide](README.md) distinguishes the active
 contract from frozen studies and superseded proposals.
 
+The [round-two root-cause retrospective](ROUND-2-ROOT-CAUSE-RETRO.md) is now
+complete. It establishes Sol's immediate shared-locator decision and validator
+blind spot, records Spark's visible premature transition and its retrospective
+inference-error explanation without claiming Gmail dispatch, and leaves Work's
+cause unknown because the prior provider task could not be identified safely.
+This evidence does not approve a repair, cleanup, retry or new trial.
+
 ## 2026-09-17 remediation approval ledger — historical checkpoint
 
 The user has approved the following recommendations from the published
