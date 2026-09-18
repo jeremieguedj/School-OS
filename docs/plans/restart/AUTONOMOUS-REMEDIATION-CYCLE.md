@@ -139,12 +139,12 @@ Use privacy-safe aliases and private receipt paths. A hash may bind private
 developer evidence; it is never canonical email or attachment identity.
 
 One evaluator independent of the tested routes must bind a frozen source oracle
-to the exact authorized interval: enumerate the interval, follow available
+to the exact authorized half-open interval: enumerate the interval, follow available
 continuation, review the substantive body and required attachments, and preserve
 the supporting receipts before comparing tested output. Every later round reuses
-that exact closed-interval oracle. Re-enumerate or reread source only when receipt
+that exact half-open-interval oracle. Re-enumerate or reread source only when receipt
 integrity is insufficient, the source becomes unavailable, or concrete evidence
-shows that the closed interval or source projection changed; record that bounded
+shows that the half-open interval or source projection changed; record that bounded
 recheck as a method event. This avoids repeated whole-corpus source I/O and
 comparison drift while every route's saved state is still audited independently.
 Expectations cover claims, qualifications, applicability, date role and

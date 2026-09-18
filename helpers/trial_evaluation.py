@@ -7,13 +7,16 @@ inside an admitted gitignored private directory and publish only sanitized
 aggregates.
 """
 
+from datetime import datetime, timezone
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import re
 import secrets
 import stat
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 
 PAGE_MAX_BYTES = 65_536
@@ -37,10 +40,649 @@ DERIVED_FAMILIES = {
     "incoming_relationship_index", "index_coverage",
 }
 _SAFE_OPERATION_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,95}\Z")
+CONTROLLER_STATES = {
+    "active",
+    "awaiting_user_input",
+    "completed",
+    "approval_blocked_before_delivery",
+    "dispatched_unknown_effect",
+    "controller_observation_unavailable",
+}
+_BINDING_FIELDS = (
+    "provider_alias",
+    "task_alias",
+    "conversation_alias",
+    "route_alias",
+    "root_alias",
+)
+_SUPPORTED_ARRIVAL_MEANINGS = {"arrival", "received"}
+_SUPPORTED_TIME_PRECISIONS = {"second", "millisecond", "microsecond"}
+_SIMPLE_CALL_TYPES = {
+    "array": list,
+    "boolean": bool,
+    "integer": int,
+    "null": type(None),
+    "number": (int, float),
+    "object": dict,
+    "string": str,
+}
+_TIMESTAMP_PATTERN = re.compile(
+    r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}"
+    r"(?P<fraction>\.\d+)?(?P<offset>Z|[+-]\d{2}:\d{2})\Z"
+)
 
 
 class EvaluationError(ValueError):
     """A sanitized local validation error."""
+
+
+def _required_nonempty_string(value, label):
+    if not isinstance(value, str) or not value.strip():
+        raise EvaluationError(label + " must be a nonempty string")
+    return value
+
+
+def _exact_binding(value, label):
+    if not isinstance(value, dict):
+        raise EvaluationError(label + " must be an object")
+    binding = {}
+    for field in _BINDING_FIELDS:
+        binding[field] = _required_nonempty_string(value.get(field), label + "." + field)
+    return binding
+
+
+def normalize_controller_observation(observation):
+    """Normalize one controller observation without inferring hidden task state.
+
+    ``composer_scope`` is intentionally explicit. Only ``bound_task`` can later
+    authorize a follow-up; ``top_level`` and ``unknown`` remain blocked.
+    """
+    if not isinstance(observation, dict):
+        raise EvaluationError("Controller observation must be an object")
+    binding = _exact_binding(observation.get("binding"), "observation.binding")
+    stage = _required_nonempty_string(observation.get("stage"), "observation.stage")
+    state = observation.get("state")
+    if state not in CONTROLLER_STATES:
+        raise EvaluationError("Unsupported controller state")
+    composer_scope = observation.get("composer_scope")
+    if composer_scope not in {"bound_task", "top_level", "unknown"}:
+        raise EvaluationError("Unsupported composer scope")
+    response_kind = observation.get("response_kind")
+    if response_kind not in {
+        "running_snapshot", "final_response", "controller_event",
+    }:
+        raise EvaluationError("Unsupported response kind")
+    sequence = observation.get("sequence")
+    if not isinstance(sequence, int) or isinstance(sequence, bool) or sequence < 0:
+        raise EvaluationError("Observation sequence must be a nonnegative integer")
+    return {
+        "binding": binding,
+        "stage": stage,
+        "state": state,
+        "composer_scope": composer_scope,
+        "response_kind": response_kind,
+        "sequence": sequence,
+    }
+
+
+def resolve_controller_observations(observations):
+    """Resolve ordered observations, retaining a later final response as current.
+
+    A final response observed at a later sequence supersedes an earlier running
+    snapshot. Once such a final response exists, a stale running snapshot with a
+    lower or equal sequence cannot make the route look active again.
+    """
+    normalized = [
+        normalize_controller_observation(item)
+        for item in _list(observations, "observations")
+    ]
+    if not normalized:
+        return {
+            "state": "controller_observation_unavailable",
+            "current": None,
+            "superseded_running_snapshots": 0,
+        }
+    seen_sequences = set()
+    for item in normalized:
+        if item["sequence"] in seen_sequences:
+            raise EvaluationError("Controller observation sequences must be unique")
+        seen_sequences.add(item["sequence"])
+    ordered = sorted(normalized, key=lambda item: item["sequence"])
+    current = ordered[-1]
+    later_finals = [
+        item for item in ordered
+        if item["response_kind"] == "final_response"
+    ]
+    if later_finals:
+        latest_final = later_finals[-1]
+        if latest_final["sequence"] >= current["sequence"]:
+            current = latest_final
+    superseded = sum(
+        item["response_kind"] == "running_snapshot"
+        and item["sequence"] < current["sequence"]
+        and current["response_kind"] == "final_response"
+        for item in ordered
+    )
+    return {
+        "state": current["state"],
+        "current": current,
+        "superseded_running_snapshots": superseded,
+    }
+
+
+def authorize_bound_followup(*, expected_binding, expected_stage, observations, allowed_states):
+    """Authorize a controller follow-up only for the exact bound task composer."""
+    expected = _exact_binding(expected_binding, "expected_binding")
+    stage = _required_nonempty_string(expected_stage, "expected_stage")
+    if not isinstance(allowed_states, (list, tuple, set, frozenset)) or not allowed_states:
+        raise EvaluationError("allowed_states must be a nonempty collection")
+    allowed = set(allowed_states)
+    if not allowed.issubset(CONTROLLER_STATES):
+        raise EvaluationError("allowed_states contains an unsupported controller state")
+    resolved = resolve_controller_observations(observations)
+    current = resolved["current"]
+    if current is None:
+        return {**resolved, "authorized": False, "reason": "controller_observation_unavailable"}
+    mismatches = [
+        field for field in _BINDING_FIELDS
+        if current["binding"][field] != expected[field]
+    ]
+    if mismatches:
+        return {
+            **resolved,
+            "authorized": False,
+            "reason": "binding_mismatch",
+            "mismatched_fields": mismatches,
+        }
+    if current["stage"] != stage:
+        return {**resolved, "authorized": False, "reason": "stage_mismatch"}
+    if current["composer_scope"] != "bound_task":
+        return {**resolved, "authorized": False, "reason": "composer_not_bound_to_task"}
+    if current["state"] not in allowed:
+        return {**resolved, "authorized": False, "reason": "state_not_authorized"}
+    return {**resolved, "authorized": True, "reason": "exact_binding_verified"}
+
+
+def authorize_single_no_dispatch_retry(
+    attempts, *, expected_binding, expected_opening_message_bytes,
+):
+    """Allow one exact-opening retry only after proven no dispatch/effect."""
+    expected = _exact_binding(expected_binding, "expected_binding")
+    if not isinstance(expected_opening_message_bytes, bytes):
+        raise EvaluationError("expected_opening_message_bytes must be exact bytes")
+    expected_message_sha256 = hashlib.sha256(
+        expected_opening_message_bytes
+    ).hexdigest()
+    normalized = _list(attempts, "attempts")
+    retry_count = 0
+    initial = None
+    for index, attempt in enumerate(normalized):
+        if not isinstance(attempt, dict):
+            raise EvaluationError("attempts[" + str(index) + "] must be an object")
+        binding = _exact_binding(
+            attempt.get("binding"), "attempts[" + str(index) + "].binding",
+        )
+        if binding != expected:
+            return {"authorized": False, "state": "binding_mismatch", "retry_count": retry_count}
+        if attempt.get("opening_message_sha256") != expected_message_sha256:
+            return {
+                "authorized": False,
+                "state": "opening_message_mismatch",
+                "retry_count": retry_count,
+            }
+        kind = attempt.get("attempt_kind")
+        if kind == "initial":
+            if initial is not None:
+                raise EvaluationError("Retry record must contain exactly one initial attempt")
+            initial = attempt
+        elif kind == "proven_no_dispatch_retry":
+            retry_count += 1
+        else:
+            raise EvaluationError("Unsupported attempt kind")
+    if initial is None:
+        return {"authorized": False, "state": "initial_attempt_missing", "retry_count": retry_count}
+    if retry_count:
+        return {"authorized": False, "state": "single_retry_already_used", "retry_count": retry_count}
+    proven = (
+        initial.get("dispatch_state") == "not_dispatched"
+        and initial.get("effect_state") == "no_effect_proven"
+        and initial.get("evidence_state") == "saved_verified"
+    )
+    return {
+        "authorized": proven,
+        "state": "one_no_dispatch_retry_authorized" if proven else "no_dispatch_not_proven",
+        "retry_count": retry_count,
+        "next_attempt_kind": "proven_no_dispatch_retry" if proven else None,
+        "opening_message_sha256": expected_message_sha256 if proven else None,
+    }
+
+
+def _validate_call_signature(signature):
+    if not isinstance(signature, dict):
+        raise EvaluationError("Call signature must be an object")
+    allowed_signature_fields = {"required", "optional", "mutually_exclusive"}
+    if not set(signature).issubset(allowed_signature_fields):
+        raise EvaluationError("Call signature contains an unsupported field")
+    required = signature.get("required", {})
+    optional = signature.get("optional", {})
+    if not isinstance(required, dict) or not isinstance(optional, dict):
+        raise EvaluationError("Call signature required and optional fields must be objects")
+    overlap = set(required) & set(optional)
+    if overlap:
+        raise EvaluationError("Call signature cannot declare one argument twice")
+    declared = {}
+    for group_name, group in (("required", required), ("optional", optional)):
+        for name, type_name in group.items():
+            _required_nonempty_string(name, "signature." + group_name + ".argument")
+            if type_name not in _SIMPLE_CALL_TYPES:
+                raise EvaluationError("Call signature contains an unsupported simple type")
+            declared[name] = type_name
+    exclusive_groups = signature.get("mutually_exclusive", [])
+    if not isinstance(exclusive_groups, list):
+        raise EvaluationError("Call signature mutually_exclusive must be an array")
+    normalized_groups = []
+    for index, group in enumerate(exclusive_groups):
+        if (
+            not isinstance(group, list)
+            or len(group) < 2
+            or any(not isinstance(name, str) or not name for name in group)
+            or len(set(group)) != len(group)
+            or any(name not in declared for name in group)
+        ):
+            raise EvaluationError(
+                "signature.mutually_exclusive[" + str(index) + "] is invalid"
+            )
+        normalized_groups.append(tuple(group))
+    return required, optional, normalized_groups
+
+
+def _matches_simple_call_type(value, type_name):
+    if type_name == "integer":
+        return isinstance(value, int) and not isinstance(value, bool)
+    if type_name == "number":
+        if isinstance(value, bool):
+            return False
+        if isinstance(value, int):
+            return True
+        return isinstance(value, float) and math.isfinite(value)
+    return isinstance(value, _SIMPLE_CALL_TYPES[type_name])
+
+
+def validate_call_schema(signature, arguments):
+    """Validate one proposed tool call against an exact caller-supplied schema.
+
+    The helper is route neutral and performs no dispatch. It validates only
+    argument names, required/optional membership, simple JSON-like types and
+    caller-declared mutually exclusive groups.
+    """
+    required, optional, exclusive_groups = _validate_call_signature(signature)
+    if not isinstance(arguments, dict):
+        return {
+            "status": "invalid",
+            "diagnostics": [{
+                "code": "arguments_not_object",
+                "path": "arguments",
+            }],
+        }
+    diagnostics = []
+    invalid_names = [
+        name for name in arguments
+        if not isinstance(name, str) or not name
+    ]
+    if invalid_names:
+        diagnostics.append({
+            "code": "invalid_argument_name",
+            "path": "arguments",
+            "count": len(invalid_names),
+        })
+    declared = {**required, **optional}
+    supplied_names = {name for name in arguments if isinstance(name, str) and name}
+    for name in sorted(supplied_names - set(declared)):
+        diagnostics.append({"code": "unknown_argument", "path": "arguments." + name})
+    for name in sorted(set(required) - supplied_names):
+        diagnostics.append({
+            "code": "missing_required_argument",
+            "path": "arguments." + name,
+        })
+    for name in sorted(supplied_names & set(declared)):
+        if not _matches_simple_call_type(arguments[name], declared[name]):
+            diagnostics.append({
+                "code": "wrong_argument_type",
+                "path": "arguments." + name,
+                "expected": declared[name],
+            })
+    for group in exclusive_groups:
+        present = [name for name in group if name in arguments]
+        if len(present) > 1:
+            diagnostics.append({
+                "code": "mutually_exclusive_arguments",
+                "path": "arguments",
+                "arguments": present,
+            })
+    return {
+        "status": "invalid" if diagnostics else "valid",
+        "diagnostics": diagnostics,
+    }
+
+
+def _parse_precise_timestamp(timestamp, *, precision, timezone_label, label):
+    value = _required_nonempty_string(timestamp, label + ".value")
+    if precision not in _SUPPORTED_TIME_PRECISIONS:
+        raise EvaluationError(label + " has unsupported precision")
+    _required_nonempty_string(timezone_label, label + ".timezone")
+    match = _TIMESTAMP_PATTERN.fullmatch(value)
+    if match is None:
+        raise EvaluationError(label + " is not a supported offset timestamp")
+    fraction = (match.group("fraction") or "")[1:]
+    expected_digits = {"second": 0, "millisecond": 3, "microsecond": 6}[precision]
+    if len(fraction) != expected_digits:
+        raise EvaluationError(label + " does not match its declared precision")
+    normalized = value[:-1] + "+00:00" if value.endswith("Z") else value
+    try:
+        parsed = datetime.fromisoformat(normalized)
+    except ValueError as exc:
+        raise EvaluationError(label + " is not an ISO 8601 timestamp") from exc
+    if parsed.tzinfo is None or parsed.utcoffset() is None:
+        raise EvaluationError(label + " must include a comparable UTC offset")
+    if timezone_label == "UTC":
+        if parsed.utcoffset() != timezone.utc.utcoffset(parsed):
+            raise EvaluationError(label + " offset does not match UTC")
+    elif re.fullmatch(r"[+-]\d{2}:\d{2}", timezone_label):
+        if match.group("offset") != timezone_label:
+            raise EvaluationError(label + " offset does not match its timezone")
+    else:
+        try:
+            declared_zone = ZoneInfo(timezone_label)
+        except ZoneInfoNotFoundError as exc:
+            raise EvaluationError(label + " timezone is not supported") from exc
+        if parsed.utcoffset() != parsed.astimezone(declared_zone).utcoffset():
+            raise EvaluationError(label + " offset does not match its timezone")
+    return parsed.astimezone(timezone.utc)
+
+
+def _normalize_half_open_interval(interval, label):
+    if not isinstance(interval, dict):
+        raise EvaluationError(label + " must be an object")
+    expected_fields = {"start", "end", "timezone", "precision", "boundary"}
+    if set(interval) != expected_fields:
+        raise EvaluationError(label + " must contain the exact interval fields")
+    if interval.get("boundary") != "[start,end)":
+        raise EvaluationError(label + " must be start-inclusive and end-exclusive")
+    timezone_label = _required_nonempty_string(interval.get("timezone"), label + ".timezone")
+    precision = interval.get("precision")
+    start = _parse_precise_timestamp(
+        interval.get("start"), precision=precision, timezone_label=timezone_label,
+        label=label + ".start",
+    )
+    end = _parse_precise_timestamp(
+        interval.get("end"), precision=precision, timezone_label=timezone_label,
+        label=label + ".end",
+    )
+    if not start < end:
+        raise EvaluationError(label + " start must be before end")
+    return {
+        "start": interval["start"],
+        "end": interval["end"],
+        "timezone": timezone_label,
+        "precision": precision,
+        "boundary": "[start,end)",
+        "_start_utc": start,
+        "_end_utc": end,
+    }
+
+
+def _validate_enumeration_chain(pages):
+    if not isinstance(pages, list) or not pages:
+        return {"status": "rejected", "reason": "enumeration_pages_missing"}
+    expected_fields = {
+        "request_token", "observed_next_token", "receipt_bytes", "receipt_sha256",
+    }
+    expected_request_token = None
+    seen_request_tokens = set()
+    for index, page in enumerate(pages):
+        if not isinstance(page, dict):
+            return {
+                "status": "rejected",
+                "reason": "enumeration_page_shape_invalid",
+                "page_index": index,
+            }
+        missing_receipt_fields = {
+            "receipt_bytes", "receipt_sha256",
+        } - set(page)
+        if missing_receipt_fields:
+            return {
+                "status": "rejected",
+                "reason": "enumeration_receipt_missing",
+                "page_index": index,
+            }
+        if set(page) != expected_fields:
+            return {
+                "status": "rejected",
+                "reason": "enumeration_page_shape_invalid",
+                "page_index": index,
+            }
+        request_token = page["request_token"]
+        next_token = page["observed_next_token"]
+        if request_token is not None and (
+            not isinstance(request_token, str) or not request_token
+        ):
+            return {
+                "status": "rejected",
+                "reason": "enumeration_request_token_invalid",
+                "page_index": index,
+            }
+        if next_token is not None and (
+            not isinstance(next_token, str) or not next_token
+        ):
+            return {
+                "status": "rejected",
+                "reason": "enumeration_next_token_invalid",
+                "page_index": index,
+            }
+        if request_token != expected_request_token:
+            return {
+                "status": "rejected",
+                "reason": "enumeration_token_discontinuity",
+                "page_index": index,
+            }
+        if request_token is not None:
+            if request_token in seen_request_tokens:
+                return {
+                    "status": "rejected",
+                    "reason": "enumeration_token_cycle",
+                    "page_index": index,
+                }
+            seen_request_tokens.add(request_token)
+        receipt_bytes = page["receipt_bytes"]
+        receipt_digest = page["receipt_sha256"]
+        if not isinstance(receipt_bytes, bytes) or not isinstance(receipt_digest, str):
+            return {
+                "status": "rejected",
+                "reason": "enumeration_receipt_missing",
+                "page_index": index,
+            }
+        if hashlib.sha256(receipt_bytes).hexdigest() != receipt_digest:
+            return {
+                "status": "rejected",
+                "reason": "enumeration_receipt_digest_mismatch",
+                "page_index": index,
+            }
+        if next_token is None and index != len(pages) - 1:
+            return {
+                "status": "rejected",
+                "reason": "enumeration_ended_before_last_page",
+                "page_index": index,
+            }
+        expected_request_token = next_token
+    if pages[-1]["observed_next_token"] is not None:
+        return {"status": "rejected", "reason": "enumeration_chain_not_exhausted"}
+    return {
+        "status": "ready",
+        "page_count": len(pages),
+        "receipt_digests_verified": len(pages),
+    }
+
+
+def _source_input_query_aliases(source_input_bytes):
+    try:
+        source_input = json.loads(source_input_bytes.decode("utf-8", errors="strict"))
+    except (UnicodeError, json.JSONDecodeError) as exc:
+        raise EvaluationError("Source input is not valid UTF-8 JSON") from exc
+    if not isinstance(source_input, dict):
+        raise EvaluationError("Source input root must be an object")
+    aliases = source_input.get("enumeration_query_aliases")
+    if (
+        not isinstance(aliases, list)
+        or not aliases
+        or any(not isinstance(alias, str) or not alias.strip() for alias in aliases)
+        or len(set(aliases)) != len(aliases)
+    ):
+        raise EvaluationError(
+            "Source input requires unique nonempty enumeration_query_aliases"
+        )
+    return aliases
+
+
+def _validate_enumeration_chains(chains, required_aliases):
+    if not isinstance(chains, list) or not chains:
+        return {"status": "rejected", "reason": "enumeration_chains_missing"}
+    observed_aliases = []
+    page_count = 0
+    receipt_count = 0
+    for index, chain in enumerate(chains):
+        if not isinstance(chain, dict) or set(chain) != {"query_alias", "pages"}:
+            return {
+                "status": "rejected",
+                "reason": "enumeration_chain_shape_invalid",
+                "chain_index": index,
+            }
+        alias = chain["query_alias"]
+        if not isinstance(alias, str) or not alias.strip():
+            return {
+                "status": "rejected",
+                "reason": "enumeration_query_alias_invalid",
+                "chain_index": index,
+            }
+        if alias in observed_aliases:
+            return {
+                "status": "rejected",
+                "reason": "duplicate_enumeration_query_alias",
+                "chain_index": index,
+            }
+        observed_aliases.append(alias)
+        result = _validate_enumeration_chain(chain["pages"])
+        if result["status"] != "ready":
+            return {**result, "chain_index": index}
+        page_count += result["page_count"]
+        receipt_count += result["receipt_digests_verified"]
+    missing = set(required_aliases) - set(observed_aliases)
+    unexpected = set(observed_aliases) - set(required_aliases)
+    if missing:
+        return {
+            "status": "rejected",
+            "reason": "required_enumeration_query_alias_missing",
+            "missing_alias_count": len(missing),
+        }
+    if unexpected:
+        return {
+            "status": "rejected",
+            "reason": "unexpected_enumeration_query_alias",
+            "unexpected_alias_count": len(unexpected),
+        }
+    return {
+        "status": "ready",
+        "chain_count": len(chains),
+        "page_count": page_count,
+        "receipt_digests_verified": receipt_count,
+    }
+
+
+def preflight_source_oracle(oracle, round_manifest_bytes, source_input_bytes):
+    """Bind and locally filter one source oracle to one exact round manifest.
+
+    The manifest and source input are accepted as exact bytes so edited input
+    cannot silently reuse an earlier oracle. The helper verifies supplied
+    enumeration receipt digests, caller-observed token continuity and terminal
+    null; it does not parse an opaque receipt to rediscover its next token.
+    """
+    if (
+        not isinstance(oracle, dict)
+        or not isinstance(round_manifest_bytes, bytes)
+        or not isinstance(source_input_bytes, bytes)
+    ):
+        raise TypeError(
+            "Oracle must be an object; manifest and source input must be exact bytes"
+        )
+    try:
+        manifest = json.loads(round_manifest_bytes.decode("utf-8", errors="strict"))
+    except (UnicodeError, json.JSONDecodeError) as exc:
+        raise EvaluationError("Round manifest is not valid UTF-8 JSON") from exc
+    if not isinstance(manifest, dict):
+        raise EvaluationError("Round manifest root must be an object")
+    manifest_digest = hashlib.sha256(round_manifest_bytes).hexdigest()
+    if oracle.get("round_manifest_sha256") != manifest_digest:
+        return {"status": "rejected", "reason": "round_manifest_mismatch"}
+    source_input_digest = hashlib.sha256(source_input_bytes).hexdigest()
+    if oracle.get("source_input_sha256") != source_input_digest:
+        return {"status": "rejected", "reason": "source_input_mismatch"}
+    required_aliases = _source_input_query_aliases(source_input_bytes)
+    manifest_interval = _normalize_half_open_interval(
+        manifest.get("source_interval"), "manifest.source_interval",
+    )
+    oracle_interval = _normalize_half_open_interval(
+        oracle.get("source_interval"), "oracle.source_interval",
+    )
+    interval_fields = ("start", "end", "timezone", "precision", "boundary")
+    public_manifest_interval = {
+        key: manifest_interval[key] for key in interval_fields
+    }
+    public_oracle_interval = {
+        key: oracle_interval[key] for key in interval_fields
+    }
+    if public_manifest_interval != public_oracle_interval:
+        return {"status": "rejected", "reason": "source_interval_mismatch"}
+    enumeration = _validate_enumeration_chains(
+        oracle.get("enumeration_chains"), required_aliases,
+    )
+    if enumeration["status"] != "ready":
+        return enumeration
+    entries = _list(oracle.get("entries"), "oracle.entries")
+    in_scope, excluded = [], []
+    for index, entry in enumerate(entries):
+        if not isinstance(entry, dict):
+            raise EvaluationError("oracle.entries[" + str(index) + "] must be an object")
+        arrival = entry.get("arrival_timestamp")
+        if (
+            not isinstance(arrival, dict)
+            or arrival.get("meaning") not in _SUPPORTED_ARRIVAL_MEANINGS
+        ):
+            return {
+                "status": "rejected",
+                "reason": "comparable_arrival_timestamp_missing",
+                "entry_index": index,
+            }
+        observed = _parse_precise_timestamp(
+            arrival.get("value"),
+            precision=arrival.get("precision"),
+            timezone_label=arrival.get("timezone"),
+            label="oracle.entries[" + str(index) + "].arrival_timestamp",
+        )
+        if manifest_interval["_start_utc"] <= observed < manifest_interval["_end_utc"]:
+            in_scope.append(entry)
+        else:
+            excluded.append(entry)
+    return {
+        "status": "ready",
+        "reason": "exact_inputs_interval_and_enumeration_verified",
+        "round_manifest_sha256": manifest_digest,
+        "source_input_sha256": source_input_digest,
+        "source_interval": public_manifest_interval,
+        "enumeration_chain_count": enumeration["chain_count"],
+        "enumeration_page_count": enumeration["page_count"],
+        "enumeration_receipt_digests_verified": enumeration["receipt_digests_verified"],
+        "in_scope_entries": in_scope,
+        "excluded_entries": excluded,
+    }
 
 
 def _strict_json_bytes(value):
@@ -466,16 +1108,50 @@ def bind_report_artifact(binding, artifact_bytes):
     )
     export_seen = events.get("export_action", {}).get("observed") is True
     receipt = events.get("provider_receipt", {})
-    receipt_bound = receipt.get("state") == "saved_verified" and receipt.get("task_alias") == task
-    expected = binding.get("artifact", {}).get("sha256")
-    digest_matches = isinstance(expected, str) and hashlib.sha256(artifact_bytes).hexdigest() == expected
-    if same_task and prompt_seen and final_seen and export_seen and receipt_bound and digest_matches:
+    receipt_saved = (
+        receipt.get("state") == "saved_verified"
+        and receipt.get("task_alias") == task
+    )
+    artifact = binding.get("artifact", {})
+    actual_digest = hashlib.sha256(artifact_bytes).hexdigest()
+    actual_byte_count = len(artifact_bytes)
+    expected_digest = artifact.get("sha256")
+    expected_byte_count = artifact.get("byte_count")
+    receipt_digest = receipt.get("artifact_sha256")
+    receipt_byte_count = receipt.get("artifact_byte_count")
+    digest_matches = (
+        isinstance(expected_digest, str)
+        and expected_digest == actual_digest
+        and receipt_digest == actual_digest
+    )
+    byte_count_matches = (
+        isinstance(expected_byte_count, int)
+        and not isinstance(expected_byte_count, bool)
+        and expected_byte_count == actual_byte_count
+        and isinstance(receipt_byte_count, int)
+        and not isinstance(receipt_byte_count, bool)
+        and receipt_byte_count == actual_byte_count
+    )
+    receipt_artifact_bound = receipt_saved and digest_matches and byte_count_matches
+    if (
+        same_task
+        and prompt_seen
+        and final_seen
+        and export_seen
+        and receipt_artifact_bound
+    ):
         status, usable = "task_bound", "downloaded_artifact"
     elif final_seen:
         status, usable = "visible_output_only", "visible_response"
     else:
         status, usable = "unbound", "none"
-    return {"status": status, "authoritative_evidence": usable, "digest_matches": digest_matches}
+    return {
+        "status": status,
+        "authoritative_evidence": usable,
+        "digest_matches": digest_matches,
+        "byte_count_matches": byte_count_matches,
+        "receipt_artifact_bound": receipt_artifact_bound,
+    }
 
 
 def evaluate_image_expectation(binding, reviewed_artifact_bytes):

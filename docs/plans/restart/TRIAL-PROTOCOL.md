@@ -49,6 +49,40 @@ browser-profile, account-level or provider-memory isolation. Never paste one
 route's output into another; detected cross-route contamination invalidates the
 comparison.
 
+### Controller binding before every follow-up
+
+Before sending an interview answer, ingestion request, common question,
+retrospective request or evaluation request, the controller compares the visible
+destination with the private round manifest. All six values must match: provider,
+provider task, conversation, route, assigned Drive root and current stage. The
+composer must be visibly attached to that exact task. A top-level composer, a
+composer whose task cannot be established, or any mismatch blocks the follow-up.
+Navigating to the expected page is insufficient; record a new observation
+immediately before the send.
+
+The evaluator records one of these states without collapsing them into a generic
+running or failed label:
+
+| State | Meaning and controller consequence |
+| --- | --- |
+| `active` | The bound task is still processing. Observe; do not answer an interview that has not appeared. |
+| `awaiting_user_input` | The bound task has asked for input. A follow-up is allowed only when the exact binding, stage and task composer are verified. |
+| `completed` | The current stage has a final response. Advance only through the next gate defined by this protocol. |
+| `approval_blocked_before_delivery` | The provider stopped before an external delivery or other approval-gated effect. Preserve the stop; do not report delivery or bypass it. |
+| `dispatched_unknown_effect` | Dispatch may have occurred but its effect cannot be established. Verify safely when possible; never retry the possible effect blindly. |
+| `controller_observation_unavailable` | The controller cannot establish current state or task binding. Do not send a follow-up through an unverified surface. |
+
+Observations are ordered. A later final response supersedes an earlier running
+snapshot; the earlier snapshot remains evidence but cannot keep the route marked
+active. A controller interruption does not turn the last running snapshot into a
+failure or prove that no final response appeared.
+
+One launch retry is allowed only when preserved evidence proves both that the
+original attempt was not dispatched and that it had no effect. Record that
+attempt separately as `proven_no_dispatch_retry`. The retry uses the same exact
+route binding and opening message. A second retry, a retry after unknown
+dispatch, or a retry after an unknown effect is blocked.
+
 Provide the assigned folder when the agent asks for its destination and before
 its first persistent write. State that it must disregard previous School-OS
 instances and confine writes to that folder and descendants. Record this as the
@@ -95,6 +129,50 @@ a privacy-safe report row. A receipt failure after dispatch is evaluator failure
 not provider failure or success. Verify a possible remote effect with an
 available safe read; never repeat a write blindly. Repeat only a known-safe read.
 
+Before each trial connector dispatch, capture the exact callable tool signature
+or schema exposed to that controller and the proposed argument object. Run the
+route-neutral `validate_call_schema` gate with those inputs. It checks exact
+argument names, required and optional keys, simple declared types, and any
+caller-declared mutually exclusive locator groups. An invalid result blocks
+dispatch and is recorded as local call-schema validation, not a provider error.
+For example, an object does not satisfy a declared string `query`, and an
+attachment read with required `message_id` and `attachment_id` does not validate
+when only the attachment locator is present. The evaluator must not infer a
+provider signature from another route or add provider-specific defaults.
+
+Bind the oracle to the exact bytes of one private round manifest and one exact
+private source-input record. Preserve and verify both SHA-256 digests. The source
+input declares a nonempty set of private query/input aliases without publishing
+the underlying addresses or query values. The oracle supplies exactly one
+ordered enumeration chain for every declared alias. Each chain begins with a
+null request token; every later request token equals the preceding observed next
+token; every page carries exact preserved receipt bytes and their digest; and the
+final observed next token is null. Missing, duplicate or unexpected aliases,
+missing or altered receipt bytes, broken token continuity, or a non-null final
+token rejects the oracle.
+
+The interval is recorded as `[start,end)`: start inclusive, end exclusive, with
+explicit timezone and precision. Preserve each candidate's supported comparable
+arrival/received timestamp and apply the interval boundary locally. A provider
+query can narrow candidates but is not boundary proof by itself. Missing or
+incomparable arrival evidence fails the oracle preflight instead of silently
+including or excluding that candidate.
+
+Before a tested route can use the oracle, verify the exact round-manifest and
+source-input byte digests, exact interval fields, every independent enumeration
+chain and receipt digest, terminal nulls, and local boundary-filter result.
+Reject an oracle bound to another manifest, source input or interval, even when
+its dates appear similar. Reuse is allowed only with those same exact inputs.
+Re-enumerate or reread source only when receipt integrity is
+insufficient, the source becomes unavailable, or evidence shows the bound source
+projection changed; record that bounded recheck as a method event.
+
+This preflight proves integrity of the supplied receipt bytes, exact source-input
+binding, caller-recorded token continuity and caller-recorded terminal nulls. It
+does not parse an opaque provider receipt to derive its token, prove that the
+provider returned every possible item, or turn provider-entry counts into logical
+email counts. Those observations and limits remain separate audit evidence.
+
 Build expectations directly from the source evidence, independently of the
 agents' extracted output. Cover substantive claims, qualifications, date meaning,
 child/family/school applicability, deadlines, finite/conditional/recurring actions,
@@ -106,6 +184,48 @@ Required attachments are part of whole-email ingestion. Unsupported reads,
 unknown inventory, unavailable exact original Date or incomplete listing remain
 visible failures/limitations. Do not silently redefine the trial as body-only or
 weaken association to provider IDs, content or rounded timestamps.
+
+## Independent setup gate
+
+The tested agent's setup-complete statement and its own checks are observations,
+not the evaluator's setup verdict. The independent evaluator derives the first
+finite installation expectation directly from the exact immutable starter
+supplied to that route. After verifying the starter revision and bytes, enumerate
+every supplied root document and every file beneath `system/`, preserving each
+safe relative path and its exact bytes. Do not obtain this inventory from the
+tested agent, its generated instance or a remembered file list.
+
+For the final installation-material gate, create a second exact expectation by
+replacing only the starter's `START-HERE.md` value with the exact complete
+configured-entrypoint bytes intended by this setup operation. Keep the starter
+bytes for every other root document and every `system/` file. Read every expected
+installed target from the route's assigned Drive root, preserving its complete
+saved bytes and observed ancestry through the selected root. There is no mutable
+or arbitrary-byte exception for `START-HERE.md`. A listing alone, the ZIP
+remaining beside an empty folder, a link written into the entrypoint, or a
+tested-agent self-report does not establish installed material.
+
+Run `check_installation_materials` over the phase-two exact expectation and saved
+readbacks. Preserve its result as `valid`, `invalid` or
+`insufficient_evidence`, with privacy-safe diagnostic counts and codes.
+
+Next, independently read the complete saved `START-HERE.md` bytes and derive the
+temporary bootstrap manifest only from the roles, root page IDs, families and
+route/scope values visibly enumerated there. Record whether that derivation is
+`valid` or `insufficient_evidence`; exact bytes without a complete visible
+manifest do not pass. Do not fill missing values from the tested agent's report,
+another file, a prior round or the evaluator's expected topology.
+
+Only after successful entrypoint derivation, run `check_bootstrap` over that
+derived manifest and exact canonical page readbacks. Preserve its `valid`,
+`invalid` or `insufficient_evidence` result separately. The evaluator does not
+accept any of these three results from the tested agent.
+
+The setup gate passes only when the installation-material result, entrypoint
+derivation result and bootstrap result are all `valid`. An `invalid` result is a
+setup failure. Otherwise any `insufficient_evidence` result keeps setup
+incomplete. Do not send the ingestion request while the combined gate is failed
+or incomplete.
 
 ## What each agent must do
 
@@ -156,9 +276,10 @@ claims and source references, relevant correction/coverage checks, answer and
 limitations. Request a concise explanation of supporting evidence, never private
 hidden reasoning. A persuasive explanation is not a substitute for correct data.
 
-Audit coverage from the configuration page and the concrete bootstrap roles for
-that instance. Follow the installed contract rather than a remembered flat field
-list: every explicit continuation; nested
+After the independent setup gate passes, audit coverage from the configuration
+page and the concrete bootstrap roles for that instance. Follow the installed
+contract rather than a remembered flat field list: every explicit continuation;
+nested
 `entries[].buckets[].page_ids[]`; window source-index roots; locator, catalogue
 and index-coverage targets; and supported `page_hint` values. Resolve canonical
 record references through hints, locators and bounded directory/catalogue
@@ -169,9 +290,12 @@ continuation makes the audit incomplete rather than empty. The evaluator helper
 reads already-collected pages only and never repairs the instance.
 
 Use an exported answer or diagnostic only when the evaluated prompt, final
-response, explicit export action, supported receipt and exact received bytes all
-bind to the same tested task/session. A same-name local file or plausible content
-is insufficient. Without that chain, grade the visible response and disclose the
+response and explicit export action bind to the same tested task/session, and the
+supported export receipt itself carries the exact expected artifact SHA-256 and
+byte count. The separately recorded artifact metadata, receipt values and exact
+downloaded bytes must all agree. A saved receipt without that artifact binding, a
+digest or byte-count mismatch, a same-name local file, or plausible content is
+insufficient. In those cases, grade the visible response and disclose the
 artifact limitation. Canonical Drive readback and independent source evidence
 remain primary.
 
@@ -249,11 +373,12 @@ page bytes and do not truncate or reconstruct it from raw source.
 ## Failures, changes and final report
 
 A failed trial is evidence; do not erase its folder or quietly replace it. Keep
-first-attempt results intact. The user has explicitly withheld authority to
-implement or address bugs during these trials. Preserve the exact failed evidence
-and report the blocked capability; do not fix, substitute a workaround or start a
-repair/retest loop. Continue independent unaffected cases only. Review all results
-with the user before proposing or implementing repairs.
+first-attempt results intact. Follow the active remediation cycle's phase
+boundary: no issue found inside a round is repaired before that round closes.
+After the pre-fix round, implement only treatments classified and authorized as
+class A or B; backlog class C architecture decisions. Do not change the product
+between post-fix rounds A and B. Continue independent unaffected cases when it is
+safe and verifiable to do so.
 
 Keep detailed private audit artifacts separate from reusable public documentation.
 Publish sanitized failures, inefficiencies, coverage/results and implementation

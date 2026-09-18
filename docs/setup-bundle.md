@@ -76,6 +76,20 @@ their presence does not force a configured instance through first setup again.
 This transition uses the existing readable-bootstrap architecture and adds no
 status field, setup manifest, installer state, or other canonical schema.
 
+Setup verifies installation material in two transient phases. Immediately after
+placement, every supplied root document and every `system/` file must be present
+beneath the selected root and match the starter's exact bytes. At the final
+setup gate, the caller constructs a second exact expected map containing the
+intended complete configured `START-HERE.md` bytes plus the original supplied
+bytes for every other root document and every `system/` file. Every saved byte
+sequence and ancestry must match that map; the entrypoint has no arbitrary-byte
+exception. The agent then derives the temporary bootstrap manifest from the
+complete saved entrypoint, where every submitted role, root, family and
+route/scope must be visibly enumerated, and validates its referenced pages. An
+entrypoint that matches intended bytes but cannot yield that manifest does not
+complete setup. These gates add no rigid entrypoint parser, installed manifest
+or canonical state.
+
 ## Excluded material
 
 The literal build allowlist excludes repository/development entry files, Git

@@ -16,8 +16,11 @@ household data.
 
 Read [the data contract](../contracts/data.md#instance-configuration),
 [Drive setup and storage](storage.md#bootstrap-an-instance) and the supplied
-[shared mappings](../adapters/README.md). Use their concrete references and page
-rules; do not copy an old instance or infer configuration from fictional examples.
+[shared mappings](../adapters/README.md). Use the pure
+[setup checks](../helpers/bootstrap_contract.py) for the transient
+installation-material and canonical-bootstrap comparisons described below. Use
+their concrete references and page rules; do not copy an old instance or infer
+configuration from fictional examples.
 Use the parent-supplied starter as the setup source. Do not inspect an ambient
 development repository, another agent's transcript or a prior instance to
 supplement it. Disclose inherited context instead of claiming bundle-only
@@ -53,6 +56,14 @@ discovery.
    interview and tool-selection steps below resolve the required choices. Normal
    operations need no development plans, studies, tests or prior chat. No retired
    installer, release manifest, migration or activation engine is involved.
+   Derive a temporary finite expectation from every supplied root document and
+   every supplied file under `system/`. After placement, read each saved file's
+   complete bytes and actual ancestry and pass that evidence to
+   `check_installation_materials` with the exact supplied bytes as the first-phase
+   expected map. Continue only when the result is `valid`. Empty or partly copied
+   `system/`, missing ancestry or
+   missing readback is `insufficient_evidence`; wrong bytes or placement outside
+   the selected root is `invalid`.
 6. Preserve every existing explicit household choice and user-created extension.
    Ask again only when a value is missing, conflicting or the parent asks to
    change it; do not add an automatic reconfirmation gate.
@@ -206,6 +217,26 @@ verify the finite required bootstrap targets through known references and report
 all other inventory as unknown; a short or empty list is not exhaustion evidence.
 Make every selected adapter and user-created recipe discoverable from those
 references. Do not report missing roots as an empty school history.
+
+Before reporting setup complete, repeat the transient installation-material
+check with a phase-specific exact expected map. Replace only the supplied
+`START-HERE.md` bytes in that map with the exact complete configured-entrypoint
+bytes intended by this setup; keep the supplied byte expectation for every
+other root document and every `system/` member. Read every saved file's complete
+bytes and ancestry again. There is no arbitrary-byte exception for the rewritten
+entrypoint.
+
+Derive the temporary canonical-bootstrap manifest from the complete saved
+`START-HERE.md` readback itself. Every role, root page ID, family and route/scope
+passed to `check_bootstrap` must be visibly enumerated in that readback. If the
+manifest cannot be derived completely from it, setup has
+`insufficient_evidence`; an exact byte match against an unusable intended
+entrypoint is not enough. This is a semantic setup/evaluation gate rather than a
+new fixed entrypoint format or parser. Run `check_bootstrap` with the required
+`active-tasks` and `completed-task-history` roles exactly once each. Setup is
+complete only when the phase-two installation-material check, the entrypoint
+derivation gate and the canonical bootstrap check all pass. Keep expectations
+and diagnostics transient; do not save a setup receipt or installer manifest.
 
 When changing an existing instance, change only authorized configuration and
 preserve data and extensions. A new default does not silently move existing task

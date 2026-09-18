@@ -1,7 +1,7 @@
-"""Prepared unittest cases; NOT RUN. No automatic test-run entry point.
+"""Prepared unittest cases using fictional source metadata.
 
-Execution/import belongs to the user's later testing phase. These expectations
-use fictional strings and make no provider or production qualification claim.
+Last run locally on 2026-09-18 as part of the 73-test prepared-check suite.
+These checks make no provider or production qualification claim.
 """
 
 import unittest

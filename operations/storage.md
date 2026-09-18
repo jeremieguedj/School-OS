@@ -52,14 +52,33 @@ missing, conflicting, or inaccessible root is unresolved setup, not an empty
 history. New bounded continuation pages extend the listed root and do not require
 adding every page to the bootstrap.
 
+Active Tasks and Completed Task history are separate bounded roots. They may
+both use the existing `record_locator` selector for canonical family `task`, but
+their owned root page IDs must differ. In setup's temporary finite manifest use
+the reserved logical role names `active-tasks` and
+`completed-task-history`, each exactly once. `check_bootstrap` treats a missing,
+renamed or duplicate required role as insufficient evidence and rejects one root
+ID assigned to both roles. Each must select exactly the existing
+`record_locator` family and `{"canonical_family": "task"}` locator key; a
+reserved role cannot relabel a Knowledge, Email or other root as a Task route.
+This is a topology check over existing pages, not a new persisted field,
+selector or Task schema.
+
 ### Validate the saved bootstrap
 
-Before any setup success claim, derive a temporary finite manifest from the
-Source Accounts and initial source scope selected in this setup. Give each
-logical role its root page ID, approved family, and exact saved route key. List
-the concrete source/account/month or pending page-catalogue routes individually;
-never substitute one generic catalogue root or a remembered universal file or
-role count. Later routes remain ordinary first-use storage work.
+Before any setup success claim, read the complete saved `START-HERE.md` and
+derive the temporary finite manifest from the roles visibly enumerated there,
+using the Source Accounts and initial source scope selected in this setup. Give
+each logical role its root page ID, approved family, and exact saved route key.
+List the concrete source/account/month or pending page-catalogue routes
+individually; never substitute one generic catalogue root or a remembered
+universal file or role count. Every manifest role, root page ID, family and
+route/scope submitted to `check_bootstrap` must be visible in that saved
+entrypoint readback. If the manifest cannot be derived completely from it, setup
+has insufficient evidence even when separately supplied page bytes would
+validate. Later routes remain ordinary first-use storage work. This semantic
+derivation is an agent/evaluator gate; the helper does not impose a rigid
+entrypoint format or parser.
 
 Read the exact saved bytes of every manifest root and every referenced or
 continued page needed to exhaust those roots. Pass those bytes, expected
@@ -70,6 +89,11 @@ cannot finish, report the blocker. `insufficient_evidence` means the saved graph
 was not proved and also keeps setup incomplete. The helper performs no Drive
 read and cannot select the expected routes for the agent. Discard the manifest
 and diagnostics after a successful check; neither becomes canonical state.
+
+A valid canonical bootstrap is only one setup-completion gate. The setup
+procedure separately checks that the supplied reusable installation material was
+placed and remains intact. Both transient checks must return `valid`; neither
+result is stored as canonical data.
 
 ## Route a canonical record
 

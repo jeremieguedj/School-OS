@@ -1,7 +1,8 @@
 # Realistic first-use trial handoff
 
 Status: the user explicitly directed all three tests and uploads to start.
-Use this handoff for the current trials; preserve the no-repair boundary.
+Use this handoff for the current trials; preserve the no-repair boundary inside
+each round.
 The user requested a normal new-user setup, not a developer-authored trial prompt.
 The [protocol](TRIAL-PROTOCOL.md) belongs to the evaluator; it is not an attachment
 for the agent being tested. The [earlier guided prompts](TRIAL-PROMPTS-GUIDED-HISTORICAL.md)
@@ -34,6 +35,20 @@ their conversations, controllers, serially operated tabs, Drive destinations and
 private evidence separate. Record the shared profile, cookies/account state and
 any unknown provider memory as methodology limits; do not claim account-level
 isolation. Any detected cross-route contamination invalidates the comparison.
+
+Before every message after the opening request, the evaluator verifies the exact
+provider, provider task, conversation, route, assigned Drive root, current stage
+and task-bound composer against the private round manifest. Never send through a
+top-level composer or an unverified/mismatched task composer. Record the current
+state as `active`, `awaiting_user_input`, `completed`,
+`approval_blocked_before_delivery`, `dispatched_unknown_effect` or
+`controller_observation_unavailable`. A later final response replaces an earlier
+running snapshot as the current observation. If control is unavailable, stop the
+follow-up instead of guessing that the task is still running or has failed.
+
+Only one identical launch retry is available, and only after preserved evidence
+proves no dispatch and no effect. Label it `proven_no_dispatch_retry` and keep it
+separate from the initial attempt. Unknown dispatch or effect blocks retry.
 
 ## What should happen without coaching
 
@@ -85,16 +100,26 @@ an extra implementation manual. All routes use the same package revision and
 interval; record both privately before starting the series.
 
 Use the installed ingestion recipe. A connector limitation must remain visible;
-do not supply hidden extraction shortcuts or evaluator expectations. The prior
-source oracle supports only its original interval: reuse it only if that exact
-interval is deliberately retained; otherwise prepare a new independent oracle.
+do not supply hidden extraction shortcuts or evaluator expectations. Before the
+ingestion request, preflight the independent oracle against the exact private
+round-manifest bytes. The manifest and oracle must agree on the same
+`[start,end)` interval, timezone and precision; discovery continuation must be
+explicitly exhausted; every candidate must have a supported comparable
+arrival/received timestamp; and the evaluator applies the boundary locally. The
+prior source oracle supports only its exact manifest and interval. Reject it for
+any other interval and prepare a newly bound independent oracle.
 
 Evaluator-only preflight stays out of the agent prompt. Before any source or
-Drive dispatch, verify the owner-only private receipt sink. During audit, traverse
-the contract-defined nested references and continuations rather than a remembered
-field list. Use downloaded reports only with same-task export provenance, and use
-image-specific expectations only after independent review of the exact pixels or
-a faithful private rendering.
+Drive dispatch, verify the owner-only private receipt sink and validate the
+proposed call arguments against that route's exact callable signature. Keep an
+invalid call local; do not dispatch it or relabel it as a provider error. Bind the
+oracle to exact private source-input bytes and require one independently
+exhausted, receipt-backed pagination chain for every private query alias declared
+there. During audit, traverse the contract-defined nested references and
+continuations rather than a remembered field list. Use downloaded reports only
+when the same-task export receipt's artifact digest and byte count both match the
+artifact metadata and downloaded bytes. Use image-specific expectations only
+after independent review of the exact pixels or a faithful private rendering.
 
 ## Questions and page-size evaluation come later
 

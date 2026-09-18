@@ -1,8 +1,8 @@
-"""Pure validation for a finite School-OS bootstrap readback.
+"""Pure validation for School-OS setup material and bootstrap readback.
 
-The caller chooses the temporary route manifest and supplies the exact bytes
-already read back from storage.  This module performs no I/O and retains no
-state.
+The caller chooses each temporary finite expectation and supplies the exact
+bytes and ancestry already read back from storage. This module performs no I/O
+and retains no state.
 """
 
 from __future__ import annotations
@@ -11,6 +11,7 @@ import json
 import re
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
+from pathlib import PurePosixPath
 from typing import Any
 
 
@@ -47,6 +48,10 @@ APPROVED_FAMILIES = CANONICAL_FAMILIES | DERIVED_FAMILIES
 SOURCE_ROUTED_FAMILIES = frozenset(
     {"email", "attachment_group", "ingestion_coverage", "knowledge"}
 )
+REQUIRED_TASK_ROLE_EXPECTATION = {
+    "family": "record_locator",
+    "locator_key": {"canonical_family": "task"},
+}
 ROOT_FIELDS = {
     "entity_directory_page_id": ("record_locator", {"canonical_family": "entity"}),
     "membership_directory_page_id": (
@@ -164,6 +169,186 @@ def _valid_expected(expected: Any) -> bool:
     else:
         permitted = set()
     return len(selector_keys) <= 1 and selector_keys <= permitted
+
+
+def _valid_material_path(value: Any) -> bool:
+    if not isinstance(value, str) or not value or "\\" in value:
+        return False
+    path = PurePosixPath(value)
+    if (
+        path.is_absolute()
+        or path.as_posix() != value
+        or any(part in {"", ".", ".."} for part in path.parts)
+    ):
+        return False
+    return (len(path.parts) == 1 and path.parts[0] != "system") or (
+        len(path.parts) > 1 and path.parts[0] == "system"
+    )
+
+
+def check_installation_materials(
+    selected_root_id: str,
+    expected_files: Mapping[str, bytes],
+    saved_readbacks: Iterable[Mapping[str, object]],
+) -> dict[str, object]:
+    """Compare transient starter expectations with already-read saved material.
+
+    ``expected_files`` maps supplied root-document and ``system/`` relative paths
+    to their exact bytes. Each saved readback provides ``relative_path``, exact
+    ``content_bytes``, and ``ancestor_ids`` observed by the caller. Every saved
+    byte sequence must match the phase-specific expected bytes exactly. The
+    helper performs no storage access and retains no manifest or result.
+    """
+
+    diagnostics = _Diagnostics()
+    usable_root = isinstance(selected_root_id, str) and bool(selected_root_id)
+    if not usable_root:
+        diagnostics.add(
+            "insufficient_evidence",
+            "missing_selected_root",
+            "selected_root_id",
+            "selected installation root identity is required",
+        )
+
+    expected: dict[str, bytes] = {}
+    if not isinstance(expected_files, Mapping) or not expected_files:
+        diagnostics.add(
+            "insufficient_evidence",
+            "missing_material_expectation",
+            "expected_files",
+            "a non-empty finite installation-material expectation is required",
+        )
+    else:
+        for expected_path, content in expected_files.items():
+            diagnostic_path = (
+                f"expected_files.{expected_path}"
+                if isinstance(expected_path, str)
+                else "expected_files"
+            )
+            if not _valid_material_path(expected_path):
+                diagnostics.add(
+                    "insufficient_evidence",
+                    "invalid_expected_material_path",
+                    diagnostic_path,
+                    "expected path must be a safe root document or system path",
+                )
+                continue
+            if not isinstance(content, bytes):
+                diagnostics.add(
+                    "insufficient_evidence",
+                    "invalid_expected_material_bytes",
+                    diagnostic_path,
+                    "expected material must be supplied as exact bytes",
+                )
+                continue
+            expected[expected_path] = content
+
+    try:
+        supplied_readbacks = list(saved_readbacks)
+    except TypeError:
+        supplied_readbacks = []
+        diagnostics.add(
+            "insufficient_evidence",
+            "invalid_material_readbacks",
+            "saved_readbacks",
+            "saved material readbacks must be iterable",
+        )
+
+    observed: dict[str, tuple[bytes, tuple[str, ...]]] = {}
+    for number, readback in enumerate(supplied_readbacks):
+        path = f"saved_readbacks[{number}]"
+        if not isinstance(readback, Mapping):
+            diagnostics.add(
+                "insufficient_evidence",
+                "invalid_material_readback",
+                path,
+                "saved material readback must be an object",
+            )
+            continue
+
+        relative_path = readback.get("relative_path")
+        if not _valid_material_path(relative_path):
+            diagnostics.add(
+                "invalid",
+                "invalid_saved_material_path",
+                f"{path}.relative_path",
+                "saved path must be a safe root document or system path",
+            )
+            continue
+        assert isinstance(relative_path, str)
+
+        content = readback.get("content_bytes")
+        if not isinstance(content, bytes):
+            diagnostics.add(
+                "insufficient_evidence",
+                "missing_material_bytes",
+                f"{path}.content_bytes",
+                "exact saved bytes were not supplied",
+            )
+            continue
+
+        ancestor_ids_value = readback.get("ancestor_ids")
+        if (
+            not isinstance(ancestor_ids_value, (list, tuple))
+            or not ancestor_ids_value
+            or any(not isinstance(item, str) or not item for item in ancestor_ids_value)
+        ):
+            diagnostics.add(
+                "insufficient_evidence",
+                "missing_material_ancestry",
+                f"{path}.ancestor_ids",
+                "complete observed ancestry is required",
+            )
+            continue
+        ancestor_ids = tuple(ancestor_ids_value)
+        if usable_root and selected_root_id not in ancestor_ids:
+            diagnostics.add(
+                "invalid",
+                "material_outside_selected_root",
+                f"{path}.ancestor_ids",
+                "saved material is not beneath the selected installation root",
+            )
+
+        previous = observed.get(relative_path)
+        if previous is not None:
+            code = (
+                "duplicate_material_readback"
+                if previous == (content, ancestor_ids)
+                else "conflicting_material_readback"
+            )
+            diagnostics.add(
+                "invalid",
+                code,
+                f"saved_material.{relative_path}",
+                "installation material path was supplied more than once",
+            )
+            continue
+        observed[relative_path] = (content, ancestor_ids)
+
+        if relative_path not in expected:
+            diagnostics.add(
+                "invalid",
+                "unexpected_material_readback",
+                f"saved_material.{relative_path}",
+                "saved installation material was not in the supplied expectation",
+            )
+        elif content != expected[relative_path]:
+            diagnostics.add(
+                "invalid",
+                "material_bytes_mismatch",
+                f"saved_material.{relative_path}",
+                "saved bytes differ from the supplied installation material",
+            )
+
+    for relative_path in sorted(set(expected) - set(observed)):
+        diagnostics.add(
+            "insufficient_evidence",
+            "missing_material_readback",
+            f"saved_material.{relative_path}",
+            "required installation material was not read back",
+        )
+
+    return diagnostics.result()
 
 
 def _continuation_target(
@@ -674,6 +859,8 @@ def check_bootstrap(
         _validate_family_shape(page, page_id, diagnostics)
 
     roots: list[str] = []
+    root_by_role: dict[str, str] = {}
+    role_counts: dict[str, int] = {}
     seen_roles: set[str] = set()
     for number, route in enumerate(routes):
         path = f"manifest.routes[{number}]"
@@ -683,6 +870,8 @@ def check_bootstrap(
         role = route.get("role")
         root_page_id = route.get("root_page_id")
         expected = route.get("expected")
+        if isinstance(role, str) and role:
+            role_counts[role] = role_counts.get(role, 0) + 1
         if not isinstance(role, str) or not role or role in seen_roles:
             diagnostics.add("insufficient_evidence", "invalid_manifest_role", f"{path}.role", "role must be a unique non-empty string")
         else:
@@ -691,9 +880,21 @@ def check_bootstrap(
             diagnostics.add("insufficient_evidence", "invalid_manifest_root", f"{path}.root_page_id", "root page ID is required")
             continue
         roots.append(root_page_id)
+        if isinstance(role, str) and role and role_counts[role] == 1:
+            root_by_role[role] = root_page_id
         if not _valid_expected(expected):
             diagnostics.add("insufficient_evidence", "invalid_manifest_expectation", f"{path}.expected", "expected family and route key are required")
             continue
+        if (
+            role in {"active-tasks", "completed-task-history"}
+            and expected != REQUIRED_TASK_ROLE_EXPECTATION
+        ):
+            diagnostics.add(
+                "invalid",
+                "required_task_role_expectation_mismatch",
+                f"{path}.expected",
+                "required Task role must select the existing Task record-locator topology",
+            )
         page = parsed_pages.get(root_page_id)
         if page is None:
             diagnostics.add("insufficient_evidence", "missing_root_readback", f"{path}.root_page_id", "manifest root was not supplied")
@@ -703,6 +904,39 @@ def check_bootstrap(
         expected_selector = {key: value for key, value in expected.items() if key != "family"}
         if _selector(page) != expected_selector:
             diagnostics.add("invalid", "manifest_route_mismatch", path, "root route key differs from the finite manifest")
+
+    required_task_roles = ("active-tasks", "completed-task-history")
+    for role in required_task_roles:
+        count = role_counts.get(role, 0)
+        if count == 0:
+            diagnostics.add(
+                "insufficient_evidence",
+                "missing_required_manifest_role",
+                "manifest.routes",
+                f"required manifest role {role} is missing",
+            )
+        elif count > 1:
+            diagnostics.add(
+                "insufficient_evidence",
+                "duplicate_required_manifest_role",
+                "manifest.routes",
+                f"required manifest role {role} appears more than once",
+            )
+
+    active_task_root = root_by_role.get("active-tasks")
+    completed_task_root = root_by_role.get("completed-task-history")
+    if (
+        role_counts.get("active-tasks") == 1
+        and role_counts.get("completed-task-history") == 1
+        and active_task_root is not None
+        and active_task_root == completed_task_root
+    ):
+        diagnostics.add(
+            "invalid",
+            "task_role_root_alias",
+            "manifest.routes",
+            "active-tasks and completed-task-history must use different owned root page IDs",
+        )
 
     references: list[_Reference] = []
     for page in parsed_pages.values():

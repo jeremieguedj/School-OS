@@ -1,18 +1,42 @@
-"""Prepared fictional bootstrap checks; NOT RUN.
+"""Prepared fictional setup-material and bootstrap checks.
 
-Execution/import belongs to the user's later testing phase.  The fixture uses
-only invented School-OS IDs and performs no provider or filesystem operation.
+Last run locally on 2026-09-18 as part of the 73-test prepared-check suite. The
+fixture uses only invented School-OS IDs and performs no provider operation.
 """
 
 import copy
 import json
 import unittest
 
-from helpers.bootstrap_contract import check_bootstrap
+from helpers.bootstrap_contract import check_bootstrap, check_installation_materials
 
 
 INSTANCE_ID = "inst_11111111-1111-4111-8111-111111111111"
 SOURCE_ACCOUNT_ID = "source_account_30000000-0000-4000-8000-000000000001"
+INSTALLATION_ROOT_ID = "drive_folder_fictional_school_os_root"
+
+
+def _installation_expectation():
+    return {
+        "README.md": b"fictional consumer readme\n",
+        "START-HERE.md": b"fictional starter entrypoint\n",
+        "AGENTS.md": b"fictional agent instructions\n",
+        "CLAUDE.md": b"@AGENTS.md\n",
+        "system/operations/setup.md": b"fictional setup procedure\n",
+        "system/contracts/data.md": b"fictional data contract\n",
+    }
+
+
+def _installation_readbacks(expected=None):
+    expected = _installation_expectation() if expected is None else expected
+    return [
+        {
+            "relative_path": path,
+            "content_bytes": content,
+            "ancestor_ids": [INSTALLATION_ROOT_ID, f"parent_for_{path}"],
+        }
+        for path, content in expected.items()
+    ]
 
 
 def _encoded(page):
@@ -263,6 +287,119 @@ class BootstrapContractChecks(unittest.TestCase):
         manifest, pages = _valid_fixture()
         self.assertEqual(self._check(manifest, pages), {"status": "valid", "diagnostics": []})
 
+    def test_active_and_completed_task_roles_cannot_alias_one_root(self):
+        manifest, pages = _valid_fixture()
+        active = next(route for route in manifest["routes"] if route["role"] == "active-tasks")
+        completed = next(
+            route
+            for route in manifest["routes"]
+            if route["role"] == "completed-task-history"
+        )
+        completed_original_root = completed["root_page_id"]
+        completed["root_page_id"] = active["root_page_id"]
+        pages = [page for page in pages if page["page_id"] != completed_original_root]
+        result = self._check(manifest, pages)
+        self.assertEqual(result["status"], "invalid")
+        self.assertIn(
+            "task_role_root_alias",
+            {item["code"] for item in result["diagnostics"]},
+        )
+
+    def test_required_task_role_omission_is_insufficient_evidence(self):
+        manifest, pages = _valid_fixture()
+        omitted_root = next(
+            route["root_page_id"]
+            for route in manifest["routes"]
+            if route["role"] == "completed-task-history"
+        )
+        manifest["routes"] = [
+            route
+            for route in manifest["routes"]
+            if route["role"] != "completed-task-history"
+        ]
+        pages = [page for page in pages if page["page_id"] != omitted_root]
+        result = self._check(manifest, pages)
+        self.assertEqual(result["status"], "insufficient_evidence")
+        self.assertIn(
+            "missing_required_manifest_role",
+            {item["code"] for item in result["diagnostics"]},
+        )
+
+    def test_required_task_role_rename_is_insufficient_evidence(self):
+        manifest, pages = _valid_fixture()
+        completed = next(
+            route
+            for route in manifest["routes"]
+            if route["role"] == "completed-task-history"
+        )
+        completed["role"] = "completed-tasks"
+        result = self._check(manifest, pages)
+        self.assertEqual(result["status"], "insufficient_evidence")
+        self.assertIn(
+            "missing_required_manifest_role",
+            {item["code"] for item in result["diagnostics"]},
+        )
+
+    def test_required_task_role_duplicate_is_insufficient_evidence(self):
+        manifest, pages = _valid_fixture()
+        active = next(route for route in manifest["routes"] if route["role"] == "active-tasks")
+        manifest["routes"].append(copy.deepcopy(active))
+        result = self._check(manifest, pages)
+        self.assertEqual(result["status"], "insufficient_evidence")
+        self.assertIn(
+            "duplicate_required_manifest_role",
+            {item["code"] for item in result["diagnostics"]},
+        )
+
+    def test_reserved_task_roles_cannot_label_other_family_roots(self):
+        for canonical_family in ("knowledge", "email"):
+            with self.subTest(canonical_family=canonical_family):
+                manifest, pages = _valid_fixture()
+                route = next(
+                    item for item in manifest["routes"] if item["role"] == "active-tasks"
+                )
+                other_root = next(
+                    page
+                    for page in pages
+                    if page.get("locator_key")
+                    == {"canonical_family": canonical_family}
+                )
+                route["root_page_id"] = other_root["page_id"]
+                route["expected"] = {
+                    "family": "record_locator",
+                    "locator_key": {"canonical_family": canonical_family},
+                }
+                result = self._check(manifest, pages)
+                self.assertEqual(result["status"], "invalid")
+                self.assertIn(
+                    "required_task_role_expectation_mismatch",
+                    {item["code"] for item in result["diagnostics"]},
+                )
+
+    def test_reserved_task_role_requires_exact_family_and_selector(self):
+        mutations = (
+            {"family": "knowledge"},
+            {
+                "family": "record_locator",
+                "locator_key": {"canonical_family": "email"},
+            },
+        )
+        for expected in mutations:
+            with self.subTest(expected=expected):
+                manifest, pages = _valid_fixture()
+                route = next(
+                    item
+                    for item in manifest["routes"]
+                    if item["role"] == "completed-task-history"
+                )
+                route["expected"] = expected
+                result = self._check(manifest, pages)
+                self.assertEqual(result["status"], "invalid")
+                self.assertIn(
+                    "required_task_role_expectation_mismatch",
+                    {item["code"] for item in result["diagnostics"]},
+                )
+
     def test_generic_catalogue_family_is_invalid(self):
         manifest, pages = _valid_fixture()
         catalogue = next(page for page in pages if page["family"] == "page_catalogue")
@@ -432,3 +569,147 @@ class BootstrapContractChecks(unittest.TestCase):
         duplicate = copy.deepcopy(pages[0])
         duplicate["content_revision"] = 2
         self.assertEqual(self._check(manifest, [*pages, duplicate])["status"], "invalid")
+
+
+class InstallationMaterialChecks(unittest.TestCase):
+    def _check(self, expected, readbacks):
+        return check_installation_materials(
+            INSTALLATION_ROOT_ID,
+            expected,
+            readbacks,
+        )
+
+    def test_exact_complete_installation_material_passes(self):
+        expected = _installation_expectation()
+        self.assertEqual(
+            self._check(expected, _installation_readbacks(expected)),
+            {"status": "valid", "diagnostics": []},
+        )
+
+    def test_empty_saved_system_is_insufficient_evidence(self):
+        expected = _installation_expectation()
+        readbacks = [
+            item
+            for item in _installation_readbacks(expected)
+            if not item["relative_path"].startswith("system/")
+        ]
+        result = self._check(expected, readbacks)
+        self.assertEqual(result["status"], "insufficient_evidence")
+        self.assertIn(
+            "missing_material_readback",
+            {item["code"] for item in result["diagnostics"]},
+        )
+
+    def test_one_missing_installation_file_is_insufficient_evidence(self):
+        expected = _installation_expectation()
+        readbacks = [
+            item
+            for item in _installation_readbacks(expected)
+            if item["relative_path"] != "AGENTS.md"
+        ]
+        self.assertEqual(self._check(expected, readbacks)["status"], "insufficient_evidence")
+
+    def test_wrong_saved_bytes_are_invalid(self):
+        expected = _installation_expectation()
+        readbacks = _installation_readbacks(expected)
+        readbacks[0]["content_bytes"] = b"different bytes\n"
+        result = self._check(expected, readbacks)
+        self.assertEqual(result["status"], "invalid")
+        self.assertIn(
+            "material_bytes_mismatch",
+            {item["code"] for item in result["diagnostics"]},
+        )
+
+    def test_material_outside_selected_root_is_invalid(self):
+        expected = _installation_expectation()
+        readbacks = _installation_readbacks(expected)
+        readbacks[0]["ancestor_ids"] = ["drive_folder_somewhere_else"]
+        result = self._check(expected, readbacks)
+        self.assertEqual(result["status"], "invalid")
+        self.assertIn(
+            "material_outside_selected_root",
+            {item["code"] for item in result["diagnostics"]},
+        )
+
+    def test_conflicting_readbacks_are_invalid(self):
+        expected = _installation_expectation()
+        readbacks = _installation_readbacks(expected)
+        conflict = dict(readbacks[0])
+        conflict["content_bytes"] = b"conflicting bytes\n"
+        result = self._check(expected, [*readbacks, conflict])
+        self.assertEqual(result["status"], "invalid")
+        self.assertIn(
+            "conflicting_material_readback",
+            {item["code"] for item in result["diagnostics"]},
+        )
+
+    def test_arbitrary_configured_entrypoint_bytes_are_invalid(self):
+        expected = _installation_expectation()
+        readbacks = _installation_readbacks(expected)
+        entrypoint = next(
+            item for item in readbacks if item["relative_path"] == "START-HERE.md"
+        )
+        entrypoint["content_bytes"] = b"garbled configured entrypoint\n"
+        result = self._check(expected, readbacks)
+        self.assertEqual(result["status"], "invalid")
+        self.assertIn(
+            "material_bytes_mismatch",
+            {item["code"] for item in result["diagnostics"]},
+        )
+
+    def test_exact_intended_configured_entrypoint_bytes_pass(self):
+        expected = _installation_expectation()
+        expected["START-HERE.md"] = b"intended configured bootstrap\n"
+        readbacks = _installation_readbacks(expected)
+        self.assertEqual(
+            self._check(expected, readbacks),
+            {"status": "valid", "diagnostics": []},
+        )
+
+    def test_exact_but_unusable_entrypoint_fails_the_external_semantic_gate(self):
+        expected = _installation_expectation()
+        expected["START-HERE.md"] = b"configured, but no visible bootstrap roles\n"
+        material_result = self._check(expected, _installation_readbacks(expected))
+        manifest, pages = _valid_fixture()
+        bootstrap_result = check_bootstrap(
+            "1", INSTANCE_ID, manifest, [_encoded(page) for page in pages]
+        )
+
+        # The setup procedure requires this evidence to come from the complete
+        # saved START-HERE readback. A byte helper cannot establish that semantic
+        # derivation without becoming a rigid entrypoint parser.
+        manifest_derived_from_saved_entrypoint = False
+        self.assertEqual(material_result["status"], "valid")
+        self.assertEqual(bootstrap_result["status"], "valid")
+        self.assertFalse(
+            material_result["status"] == "valid"
+            and bootstrap_result["status"] == "valid"
+            and manifest_derived_from_saved_entrypoint
+        )
+
+    def test_configured_entrypoint_does_not_relax_system_byte_equality(self):
+        expected = _installation_expectation()
+        expected["START-HERE.md"] = b"intended configured bootstrap\n"
+        readbacks = _installation_readbacks(expected)
+        system_file = next(
+            item
+            for item in readbacks
+            if item["relative_path"] == "system/operations/setup.md"
+        )
+        system_file["content_bytes"] = b"changed system procedure\n"
+        self.assertEqual(
+            self._check(expected, readbacks)["status"],
+            "invalid",
+        )
+
+    def test_valid_bootstrap_alone_does_not_complete_setup(self):
+        manifest, pages = _valid_fixture()
+        bootstrap_result = check_bootstrap(
+            "1", INSTANCE_ID, manifest, [_encoded(page) for page in pages]
+        )
+        material_result = self._check(_installation_expectation(), [])
+        self.assertEqual(bootstrap_result["status"], "valid")
+        self.assertEqual(material_result["status"], "insufficient_evidence")
+        self.assertFalse(
+            bootstrap_result["status"] == material_result["status"] == "valid"
+        )
